@@ -23,7 +23,7 @@
         <div class="title-block">
           <p class="kicker">Racetime.gg archive</p>
           <h1>ALTTPR Step Ladder</h1>
-          <p class="lede">When races start, where turnout gathers, and how each mode compares.</p>
+          <p class="lede">Historical schedule opportunities, turnout ranges, and the evidence behind each time window.</p>
         </div>
         <div class="source-block">
           <span>Data snapshot</span>
@@ -42,7 +42,7 @@
           <strong id="mode-total">--</strong>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Busiest start hour</span>
+          <span class="summary-label">Most offered hour</span>
           <strong id="peak-hour">--</strong>
         </div>
         <div class="summary-item summary-item--wide">
@@ -68,11 +68,31 @@
           <p class="period-current">Viewing <strong id="active-period-label">All data</strong></p>
         </section>
 
+        <article class="chart-panel chart-panel--green chart-panel--decision">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">01 / Schedule</p>
+              <h2>Candidate schedule windows</h2>
+            </div>
+            <p>Adjusted for mode and calendar half-year</p>
+          </header>
+          <div class="decision-summary">
+            <p>Positive lift means races in that window drew more entries than their matching mode-period baseline. Rankings are observational leads, not causal forecasts.</p>
+            <span>Minimum ranking sample: 20 races</span>
+          </div>
+          <div id="candidate-table" class="table-wrap table-wrap--candidates" aria-live="polite"></div>
+          <div class="heatmap-heading">
+            <h3>Opportunity map</h3>
+            <p><span class="heatmap-key heatmap-key--positive"></span>Above baseline <span class="heatmap-key heatmap-key--negative"></span>Below baseline <span class="heatmap-key heatmap-key--limited"></span>Limited evidence</p>
+          </div>
+          <div id="opportunity-heatmap" class="heatmap-host" aria-live="polite"></div>
+        </article>
+
         <article class="chart-panel chart-panel--blue chart-panel--participation">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">01 / Participation</p>
-              <h2>Average racers per race by 6-month period</h2>
+              <p class="panel-index">02 / Participation</p>
+              <h2>Average entries per race by 6-month period</h2>
             </div>
             <p>Total entrants per finished race</p>
           </header>
@@ -87,7 +107,7 @@
           <article class="chart-panel chart-panel--red">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">02 / Traffic</p>
+                <p class="panel-index">03 / Traffic</p>
                 <h2>Race starts by hour</h2>
               </div>
               <p>Finished races</p>
@@ -102,8 +122,8 @@
           <article class="chart-panel chart-panel--gold">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">03 / Turnout</p>
-                <h2>Average racers by hour</h2>
+                <p class="panel-index">04 / Turnout</p>
+                <h2>Average entries by hour</h2>
               </div>
               <p>Total entrants per race</p>
             </header>
@@ -118,8 +138,8 @@
         <article class="chart-panel chart-panel--green chart-panel--modes">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">04 / Modes</p>
-              <h2>Average racers per mode</h2>
+              <p class="panel-index">05 / Modes</p>
+              <h2>Average entries per mode</h2>
             </div>
             <p>Sorted by average turnout</p>
           </header>
@@ -133,7 +153,7 @@
     </main>
 
     <footer>
-      <p>Finished races only; ladder tests excluded. Periods are calendar half-years in fixed EDT (UTC-04:00). Racer totals include DQ and forfeited entrants.</p>
+      <p>Finished races only; ladder tests excluded. Schedule times use America/New_York wall-clock time. Entry totals include repeat, DQ, and forfeited participants.</p>
       <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
     </footer>
 

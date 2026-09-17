@@ -296,6 +296,154 @@ a:hover {
   margin-bottom: 24px;
 }
 
+.chart-panel--decision {
+  margin-bottom: 24px;
+}
+
+.decision-summary {
+  display: flex;
+  gap: 24px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 15px 24px;
+  border-bottom: 1px solid var(--grid);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.decision-summary p {
+  max-width: 850px;
+  margin-bottom: 0;
+}
+
+.decision-summary span {
+  flex: 0 0 auto;
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.table-wrap.table-wrap--candidates {
+  max-height: none;
+  padding-top: 12px;
+}
+
+.table-wrap--candidates tbody tr:first-child td {
+  background: rgba(18, 99, 74, 0.08);
+  font-weight: 700;
+}
+
+.candidate-empty {
+  margin: 0;
+  padding: 28px 24px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.heatmap-heading {
+  display: flex;
+  gap: 24px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 2px 24px 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.heatmap-heading h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.heatmap-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.heatmap-key {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 5px 0 12px;
+  vertical-align: -2px;
+  background: var(--green);
+}
+
+.heatmap-key:first-child {
+  margin-left: 0;
+}
+
+.heatmap-key--negative {
+  background: var(--red);
+}
+
+.heatmap-key--limited {
+  border: 1px dashed var(--muted);
+  background: transparent;
+}
+
+.heatmap-host {
+  overflow-x: auto;
+  padding: 14px 24px 24px;
+  scrollbar-color: var(--line) transparent;
+}
+
+.opportunity-heatmap {
+  display: grid;
+  grid-template-columns: 76px repeat(24, 46px);
+  grid-auto-rows: 38px;
+  gap: 3px;
+  width: max-content;
+  min-width: 100%;
+}
+
+.heatmap-corner,
+.heatmap-hour,
+.heatmap-weekday {
+  display: grid;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.heatmap-hour {
+  justify-content: center;
+}
+
+.heatmap-cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  border: 1px solid rgba(23, 33, 29, 0.12);
+  border-radius: 2px;
+  color: var(--ink);
+  font-size: 0.65rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.heatmap-cell--limited {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.heatmap-cell--strong {
+  color: #ffffff;
+}
+
+.heatmap-cell:focus-visible {
+  z-index: 1;
+  outline: 3px solid var(--blue);
+  outline-offset: 1px;
+}
+
 .chart-panel--modes {
   margin-top: 24px;
 }
@@ -674,6 +822,22 @@ footer p {
     max-width: none;
     margin-top: 8px;
     text-align: left;
+  }
+
+  .decision-summary,
+  .heatmap-heading {
+    display: block;
+  }
+
+  .decision-summary span,
+  .heatmap-heading p {
+    display: block;
+    margin-top: 8px;
+  }
+
+  .table-wrap--candidates,
+  .heatmap-host {
+    padding-inline: 16px;
   }
 
   .chart-host {

@@ -29,13 +29,16 @@ Open <http://localhost:8000>. The page must be served over HTTP because it loads
 
 - Only records whose `status.value` is `finished` are included.
 - Races whose normalized `info` mode is `ladder_test` or `ladder test` are excluded from every metric.
-- Hour buckets use a fixed EDT offset of UTC-04:00 for the entire historical dataset. They do not switch to EST seasonally.
-- Six-month periods are calendar half-years (`Jan-Jun` and `Jul-Dec`) determined from the race start in that same fixed UTC-04:00 offset.
-- Race turnout uses `entrants_count`, which includes entrants who were disqualified or forfeited.
-- Six-month participation is average racers per finished race: total race entries divided by races in that calendar half-year.
-- Average racers by hour is total entrants divided by finished races starting in that hour.
-- Average racers by mode is total entrants divided by finished races assigned to that mode.
+- Schedule buckets use `America/New_York`, including the seasonal switch between EST and EDT.
+- Six-month periods are calendar half-years (`Jan-Jun` and `Jul-Dec`) determined from the race's Eastern Time start. Edge periods are marked partial when the archive does not cover the full half-year.
+- Race turnout uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries, not unique people.
+- Six-month participation is average entries per finished race: total race entries divided by races in that calendar half-year.
+- Hour, weekday-hour, and mode averages use the same entries-per-finished-race definition.
+- Medians and quartiles describe the observed race-level distribution. The displayed 95% ranges are normal confidence intervals for the mean using the sample standard deviation; cells with fewer than two races have no interval.
+- Adjusted weekday-hour lift subtracts the matching mode-by-calendar-half-year mean from every race, then averages those residuals within each weekday-hour cell. This reduces mode and broad time-period mix effects.
 - Mode is the normalized first token in the `Step Ladder Series - [mode]` prefix of `info`. Later tags such as `[VT]` are ignored. A missing or malformed prefix is grouped as `unknown`.
+
+The candidate rankings are observational leads for schedule experiments, not causal estimates. They do not control for announcements, competing events, holidays, organizer effects, or player availability, and sparse windows may look extreme by chance. Use the strongest windows to design prospective schedule tests and compare repeated outcomes before making permanent changes.
 
 Data freshness is manual and build-time. The browser reads the local aggregate file and never crawls racetime.gg.
 

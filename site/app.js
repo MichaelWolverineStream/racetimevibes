@@ -5,6 +5,7 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
+const MINIMUM_CANDIDATE_SAMPLE = 20;
 
 function svgElement(name, attributes = {}, text = null) {
   const element = document.createElementNS(SVG_NS, name);
@@ -31,14 +32,13 @@ function hourRange(hour) {
   return `${fullHour(hour)}-${fullHour((hour + 1) % 24)}`;
 }
 
-function fixedEdtDate(isoString) {
-  const shifted = new Date(new Date(isoString).getTime() - 4 * 60 * 60 * 1000);
+function scheduleDate(isoString, timeZone) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
-    timeZone: "UTC",
-  }).format(shifted);
+    timeZone,
+  }).format(new Date(isoString));
 }
 
 function utcTimestamp(isoString) {
@@ -63,6 +63,16 @@ function niceMaximum(value) {
 
 function formatAverage(value) {
   return value === null ? "--" : decimalFormatter.format(value);
+}
+
+function formatSigned(value) {
+  if (value === null) return "--";
+  return `${value > 0 ? "+" : ""}${decimalFormatter.format(value)}`;
+}
+
+function formatInterval(low, high) {
+  if (low === null || high === null) return "--";
+  return `${formatSigned(low)} to ${formatSigned(high)}`;
 }
 
 function positionTooltip(clientX, clientY) {
@@ -96,6 +106,106 @@ function bindTooltip(target, text) {
   target.addEventListener("mouseleave", hideTooltip);
   target.addEventListener("focus", () => showTooltip(target, text));
   target.addEventListener("blur", hideTooltip);
+}
+
+function evidenceLabel(raceCount) {
+  if (raceCount >= 50) return "High sample";
+  if (raceCount >= 30) return "Moderate sample";
+  return "Minimum sample";
+}
+
+function renderCandidateTable(container, items) {
+  const candidates = items
+    .filter((item) => (
+      item.race_count >= MINIMUM_CANDIDATE_SAMPLE
+      && item.adjusted_average !== null
+    ))
+    .sort((left, right) => (
+      right.adjusted_average - left.adjusted_average
+      || right.race_count - left.race_count
+      || left.weekday - right.weekday
+      || left.hour - right.hour
+    ))
+    .slice(0, 10);
+
+  if (candidates.length === 0) {
+    const emptyState = document.createElement("p");
+    emptyState.className = "candidate-empty";
+    emptyState.textContent = "No weekday-hour window has at least 20 races in this period. Use the opportunity map for exploratory signals or return to All data for ranked candidates.";
+    container.replaceChildren(emptyState);
+    return;
+  }
+
+  renderTable(
+    container,
+    ["Candidate window", "Adjusted lift", "95% range", "Raw average", "Median", "Races", "Evidence"],
+    candidates.map((item) => [
+      `${item.weekday_label}, ${fullHour(item.hour)}`,
+      formatSigned(item.adjusted_average),
+      formatInterval(item.adjusted_ci95_low, item.adjusted_ci95_high),
+      formatAverage(item.average_racers),
+      formatAverage(item.median_racers),
+      integerFormatter.format(item.race_count),
+      evidenceLabel(item.race_count),
+    ]),
+  );
+}
+
+function renderOpportunityHeatmap(container, items) {
+  const observedValues = items
+    .map((item) => item.adjusted_average)
+    .filter((value) => value !== null);
+  const maximumMagnitude = Math.max(1, ...observedValues.map((value) => Math.abs(value)));
+  const grid = document.createElement("div");
+  grid.className = "opportunity-heatmap";
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "Mode and period adjusted entry lift by weekday and Eastern start hour");
+
+  const corner = document.createElement("div");
+  corner.className = "heatmap-corner";
+  corner.textContent = "Eastern";
+  grid.append(corner);
+  for (let hour = 0; hour < 24; hour += 1) {
+    const header = document.createElement("div");
+    header.className = "heatmap-hour";
+    header.textContent = compactHour(hour);
+    grid.append(header);
+  }
+
+  for (let weekday = 0; weekday < 7; weekday += 1) {
+    const rowItems = items.filter((item) => item.weekday === weekday);
+    const rowLabel = document.createElement("div");
+    rowLabel.className = "heatmap-weekday";
+    rowLabel.textContent = rowItems[0]?.weekday_label.slice(0, 3).toUpperCase() ?? "--";
+    grid.append(rowLabel);
+
+    rowItems.forEach((item) => {
+      const cell = document.createElement("div");
+      const isReliable = item.race_count >= MINIMUM_CANDIDATE_SAMPLE;
+      const value = item.adjusted_average;
+      const strength = value === null ? 0 : Math.abs(value) / maximumMagnitude;
+      const alpha = value === null ? 0 : (0.13 + strength * 0.72) * (isReliable ? 1 : 0.48);
+      cell.className = "heatmap-cell";
+      if (!isReliable) cell.classList.add("heatmap-cell--limited");
+      if (strength > 0.58 && isReliable) cell.classList.add("heatmap-cell--strong");
+      cell.tabIndex = 0;
+      cell.setAttribute("role", "img");
+      cell.style.backgroundColor = value === null
+        ? "transparent"
+        : value >= 0
+          ? `rgba(18, 99, 74, ${alpha})`
+          : `rgba(200, 74, 62, ${alpha})`;
+      cell.textContent = item.race_count === 0 ? "·" : formatSigned(value);
+      const label = item.race_count === 0
+        ? `${item.weekday_label}, ${hourRange(item.hour)}: no observed races`
+        : `${item.weekday_label}, ${hourRange(item.hour)}: ${formatSigned(value)} adjusted entries versus the matching mode-period baseline; ${formatAverage(item.average_racers)} raw average; ${integerFormatter.format(item.race_count)} races; adjusted 95% range ${formatInterval(item.adjusted_ci95_low, item.adjusted_ci95_high)}`;
+      cell.setAttribute("aria-label", label);
+      bindTooltip(cell, label);
+      grid.append(cell);
+    });
+  }
+
+  container.replaceChildren(grid);
 }
 
 function renderVerticalChart(container, items, options) {
@@ -186,7 +296,7 @@ function renderVerticalChart(container, items, options) {
     svgElement(
       "text",
       { class: "axis-label", x: margin.left + plotWidth / 2, y: height - 5, "text-anchor": "middle" },
-      "START HOUR / EDT (UTC-04:00)",
+      "START HOUR / EASTERN TIME",
     ),
   );
   container.replaceChildren(svg);
@@ -207,7 +317,7 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
     "aria-labelledby": "participation-chart-title participation-chart-description",
   });
   svg.append(
-    svgElement("title", { id: "participation-chart-title" }, "Average racers per race by six-month period"),
+    svgElement("title", { id: "participation-chart-title" }, "Average entries per race by six-month period"),
     svgElement(
       "desc",
       { id: "participation-chart-description" },
@@ -241,7 +351,7 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
     const barHeight = (average / maximum) * plotHeight;
     const x = margin.left + index * bandWidth + (bandWidth - barWidth) / 2;
     const y = margin.top + plotHeight - barHeight;
-    const label = `${period.label}: ${integerFormatter.format(period.entrant_total)} race entries across ${integerFormatter.format(period.race_count)} races (${decimalFormatter.format(average)} average)`;
+    const label = `${period.label}${period.is_complete ? "" : " (partial)"}: ${integerFormatter.format(period.entrant_total)} race entries across ${integerFormatter.format(period.race_count)} races (${decimalFormatter.format(average)} average)`;
     const isActive = selectedPeriodId === "all" || selectedPeriodId === period.id;
     const group = svgElement("g", {
       class: "chart-mark",
@@ -299,7 +409,7 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
     svgElement(
       "text",
       { class: "axis-label", x: 14, y: margin.top + plotHeight / 2, transform: `rotate(-90 14 ${margin.top + plotHeight / 2})`, "text-anchor": "middle" },
-      "AVERAGE RACERS PER RACE",
+      "AVERAGE ENTRIES PER RACE",
     ),
   );
   container.replaceChildren(svg);
@@ -319,7 +429,7 @@ function renderModeChart(container, items) {
     "aria-labelledby": "mode-chart-title mode-chart-description",
   });
   svg.append(
-    svgElement("title", { id: "mode-chart-title" }, "Average racers per mode"),
+    svgElement("title", { id: "mode-chart-title" }, "Average entries per mode"),
     svgElement(
       "desc",
       { id: "mode-chart-description" },
@@ -351,7 +461,7 @@ function renderModeChart(container, items) {
     const barHeight = 24;
     const barWidth = ((item.average_racers ?? 0) / maximum) * plotWidth;
     const modeName = item.mode.replaceAll("_", " ");
-    const label = `${modeName}: ${decimalFormatter.format(item.average_racers)} average racers across ${integerFormatter.format(item.race_count)} races`;
+    const label = `${modeName}: ${decimalFormatter.format(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`;
     const group = svgElement("g", {
       class: "chart-mark",
       tabindex: "0",
@@ -442,9 +552,13 @@ function renderTable(container, headers, rows) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 2
+    || data.schema_version !== 3
     || !Array.isArray(data.hourly)
     || data.hourly.length !== 24
+    || !Array.isArray(data.weekdays)
+    || data.weekdays.length !== 7
+    || !Array.isArray(data.weekday_hourly)
+    || data.weekday_hourly.length !== 168
     || !Array.isArray(data.modes)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
@@ -452,6 +566,10 @@ function validateData(data) {
       typeof period.id !== "string"
       || !Array.isArray(period.hourly)
       || period.hourly.length !== 24
+      || !Array.isArray(period.weekdays)
+      || period.weekdays.length !== 7
+      || !Array.isArray(period.weekday_hourly)
+      || period.weekday_hourly.length !== 168
       || !Array.isArray(period.modes)
     ))
     || !data.source
@@ -468,6 +586,8 @@ function allDataSelection(data) {
     entrant_total: data.source.included_entrant_count,
     included_date_range: data.source.included_date_range,
     hourly: data.hourly,
+    weekdays: data.weekdays,
+    weekday_hourly: data.weekday_hourly,
     modes: data.modes,
   };
 }
@@ -482,13 +602,18 @@ function renderSummary(data, selection) {
   document.querySelector("#mode-total").textContent = integerFormatter.format(selection.modes.length);
   document.querySelector("#peak-hour").textContent = hourRange(peakHour.hour);
   document.querySelector("#date-range").textContent = dateRange
-    ? `${fixedEdtDate(dateRange.start)} to ${fixedEdtDate(dateRange.end)}`
+    ? `${scheduleDate(dateRange.start, data.timezone.name)} to ${scheduleDate(dateRange.end, data.timezone.name)}`
     : "No finished races";
   document.querySelector("#active-period-label").textContent = selection.label;
 }
 
 function renderSelection(data, selection) {
   renderSummary(data, selection);
+  renderCandidateTable(document.querySelector("#candidate-table"), selection.weekday_hourly);
+  renderOpportunityHeatmap(
+    document.querySelector("#opportunity-heatmap"),
+    selection.weekday_hourly,
+  );
   renderParticipationChart(
     document.querySelector("#participation-chart"),
     data.periods,
@@ -498,7 +623,7 @@ function renderSelection(data, selection) {
     id: "race-count",
     valueKey: "race_count",
     title: "Race starts by hour",
-    description: "Vertical bars show the number of finished races starting in each fixed EDT hour.",
+    description: "Vertical bars show the number of finished races starting in each Eastern Time hour.",
     barClass: "bar--red",
     axisFormatter: (value) => integerFormatter.format(value),
     tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.race_count)} races`,
@@ -506,11 +631,11 @@ function renderSelection(data, selection) {
   renderVerticalChart(document.querySelector("#hourly-average-chart"), selection.hourly, {
     id: "hourly-average",
     valueKey: "average_racers",
-    title: "Average racers by hour",
-    description: "Vertical bars show average total entrants per finished race for each fixed EDT start hour.",
+    title: "Average entries by hour",
+    description: "Vertical bars show average total entrants per finished race for each Eastern Time start hour.",
     barClass: "bar--gold",
     axisFormatter: (value) => decimalFormatter.format(value),
-    tooltip: (item) => `${hourRange(item.hour)}: ${formatAverage(item.average_racers)} average racers across ${integerFormatter.format(item.race_count)} races`,
+    tooltip: (item) => `${hourRange(item.hour)}: ${formatAverage(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`,
   });
   renderModeChart(document.querySelector("#mode-average-chart"), selection.modes);
 
@@ -521,27 +646,30 @@ function renderSelection(data, selection) {
   ]);
   renderTable(
     document.querySelector("#participation-table"),
-    ["Period", "Avg racers", "Races", "Race entries"],
+    ["Period", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries"],
     data.periods.map((period) => [
       period.label,
-      decimalFormatter.format(period.entrant_total / period.race_count),
+      period.is_complete ? "Complete" : "Partial",
+      formatAverage(period.average_racers),
+      formatAverage(period.median_racers),
+      period.ci95_low === null ? "--" : `${formatAverage(period.ci95_low)} to ${formatAverage(period.ci95_high)}`,
       integerFormatter.format(period.race_count),
       integerFormatter.format(period.entrant_total),
     ]),
   );
   renderTable(
     document.querySelector("#race-count-table"),
-    ["Hour (EDT)", "Races", "Avg racers"],
+    ["Hour (ET)", "Races", "Avg entries"],
     hourlyRows,
   );
   renderTable(
     document.querySelector("#hourly-average-table"),
-    ["Hour (EDT)", "Races", "Avg racers"],
+    ["Hour (ET)", "Races", "Avg entries"],
     hourlyRows,
   );
   renderTable(
     document.querySelector("#mode-average-table"),
-    ["Mode", "Races", "Avg racers"],
+    ["Mode", "Races", "Avg entries"],
     selection.modes.map((item) => [
       item.mode.replaceAll("_", " "),
       integerFormatter.format(item.race_count),
@@ -558,7 +686,7 @@ function renderPeriodControls(data) {
     button.type = "button";
     button.className = "period-toggle__button";
     button.dataset.periodId = selection.id;
-    button.textContent = selection.label;
+    button.textContent = `${selection.label}${selection.id !== "all" && !selection.is_complete ? " · partial" : ""}`;
     button.setAttribute("aria-pressed", String(selection.id === "all"));
     button.addEventListener("click", () => {
       buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));

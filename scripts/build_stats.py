@@ -5,17 +5,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import re
+import statistics
 import sys
 import time
 from collections import Counter, defaultdict
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, Callable
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+from zoneinfo import ZoneInfo
 
 
 SOURCE_URL = "https://racetime.gg/alttpr-ladder/races/data"
@@ -27,7 +30,17 @@ COLLECTION_ATTEMPTS = 2
 USER_AGENT = "racetimevibes/1.0 (+static infographic data builder)"
 OUTPUT_PATH = Path(__file__).resolve().parents[1] / "site" / "data" / "race-stats.json"
 
-FIXED_EDT = timezone(timedelta(hours=-4), name="EDT")
+SCHEDULE_TIMEZONE_NAME = "America/New_York"
+SCHEDULE_TIMEZONE = ZoneInfo(SCHEDULE_TIMEZONE_NAME)
+WEEKDAY_LABELS = (
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+)
 MODE_PATTERN = re.compile(
     r"^\s*Step\s+Ladder\s+Series\s*-\s*\[([^\[\]]+)\]",
     re.IGNORECASE,
@@ -175,6 +188,75 @@ def _average(total: int, count: int) -> float | None:
     return total / count if count else None
 
 
+def _distribution(values: list[float], *, lower_bound: float | None = None) -> JsonObject:
+    if not values:
+        return {
+            "mean": None,
+            "median": None,
+            "q1": None,
+            "q3": None,
+            "standard_deviation": None,
+            "ci95_low": None,
+            "ci95_high": None,
+        }
+
+    ordered = sorted(values)
+    count = len(ordered)
+    mean = sum(ordered) / count
+    middle = count // 2
+    lower_half = ordered[:middle]
+    upper_half = ordered[(count + 1) // 2 :]
+    median = statistics.median(ordered)
+    q1 = statistics.median(lower_half) if lower_half else median
+    q3 = statistics.median(upper_half) if upper_half else median
+    standard_deviation = statistics.stdev(ordered) if count > 1 else None
+    if standard_deviation is None:
+        ci95_low = None
+        ci95_high = None
+    else:
+        margin = 1.96 * standard_deviation / math.sqrt(count)
+        ci95_low = mean - margin
+        ci95_high = mean + margin
+        if lower_bound is not None:
+            ci95_low = max(lower_bound, ci95_low)
+
+    return {
+        "mean": mean,
+        "median": median,
+        "q1": q1,
+        "q3": q3,
+        "standard_deviation": standard_deviation,
+        "ci95_low": ci95_low,
+        "ci95_high": ci95_high,
+    }
+
+
+def _entry_summary(values: list[int]) -> JsonObject:
+    distribution = _distribution(values, lower_bound=0)
+    return {
+        "race_count": len(values),
+        "entrant_total": sum(values),
+        "average_racers": distribution["mean"],
+        "median_racers": distribution["median"],
+        "q1_racers": distribution["q1"],
+        "q3_racers": distribution["q3"],
+        "standard_deviation": distribution["standard_deviation"],
+        "ci95_low": distribution["ci95_low"],
+        "ci95_high": distribution["ci95_high"],
+    }
+
+
+def _adjusted_summary(values: list[float]) -> JsonObject:
+    distribution = _distribution(values)
+    return {
+        "adjusted_average": distribution["mean"],
+        "adjusted_median": distribution["median"],
+        "adjusted_standard_deviation": distribution["standard_deviation"],
+        "adjusted_ci95_low": distribution["ci95_low"],
+        "adjusted_ci95_high": distribution["ci95_high"],
+    }
+
+
 def _date_range(started_at_values: list[datetime]) -> JsonObject | None:
     if not started_at_values:
         return None
@@ -185,50 +267,64 @@ def _date_range(started_at_values: list[datetime]) -> JsonObject | None:
 
 
 def _aggregate_records(records: list[JsonObject]) -> JsonObject:
-    hourly: dict[int, dict[str, int]] = {
-        hour: {"race_count": 0, "entrant_total": 0} for hour in range(24)
+    hourly: dict[int, list[int]] = {hour: [] for hour in range(24)}
+    weekdays: dict[int, list[int]] = {weekday: [] for weekday in range(7)}
+    weekday_hours: dict[tuple[int, int], list[JsonObject]] = {
+        (weekday, hour): [] for weekday in range(7) for hour in range(24)
     }
-    modes: dict[str, dict[str, int]] = defaultdict(
-        lambda: {"race_count": 0, "entrant_total": 0}
-    )
+    modes: dict[str, list[int]] = defaultdict(list)
 
     for record in records:
         hour = record["local_started_at"].hour
+        weekday = record["local_started_at"].weekday()
         mode = record["mode"]
         entrants_count = record["entrants_count"]
-        hourly[hour]["race_count"] += 1
-        hourly[hour]["entrant_total"] += entrants_count
-        modes[mode]["race_count"] += 1
-        modes[mode]["entrant_total"] += entrants_count
+        hourly[hour].append(entrants_count)
+        weekdays[weekday].append(entrants_count)
+        weekday_hours[(weekday, hour)].append(record)
+        modes[mode].append(entrants_count)
 
     hourly_output = [
-        {
-            "hour": hour,
-            "race_count": values["race_count"],
-            "entrant_total": values["entrant_total"],
-            "average_racers": _average(values["entrant_total"], values["race_count"]),
-        }
+        {"hour": hour} | _entry_summary(values)
         for hour, values in hourly.items()
     ]
-    mode_output = [
+    weekday_output = [
         {
-            "mode": mode,
-            "race_count": values["race_count"],
-            "entrant_total": values["entrant_total"],
-            "average_racers": _average(values["entrant_total"], values["race_count"]),
+            "weekday": weekday,
+            "label": WEEKDAY_LABELS[weekday],
         }
+        | _entry_summary(values)
+        for weekday, values in weekdays.items()
+    ]
+    weekday_hour_output = []
+    for (weekday, hour), values in weekday_hours.items():
+        entrant_values = [record["entrants_count"] for record in values]
+        adjusted_values = [record["adjusted_entries"] for record in values]
+        weekday_hour_output.append(
+            {
+                "weekday": weekday,
+                "weekday_label": WEEKDAY_LABELS[weekday],
+                "hour": hour,
+            }
+            | _entry_summary(entrant_values)
+            | _adjusted_summary(adjusted_values)
+        )
+    mode_output = [
+        {"mode": mode} | _entry_summary(values)
         for mode, values in modes.items()
     ]
     mode_output.sort(
         key=lambda item: (-(item["average_racers"] or 0), item["mode"])
     )
     started_at_values = [record["started_at"] for record in records]
+    overall = _entry_summary([record["entrants_count"] for record in records])
 
     return {
-        "race_count": len(records),
-        "entrant_total": sum(record["entrants_count"] for record in records),
+        **overall,
         "included_date_range": _date_range(started_at_values),
         "hourly": hourly_output,
+        "weekdays": weekday_output,
+        "weekday_hourly": weekday_hour_output,
         "modes": mode_output,
     }
 
@@ -243,6 +339,26 @@ def six_month_period(local_started_at: datetime) -> JsonObject:
         "label": f"{'Jan-Jun' if first_half else 'Jul-Dec'} {local_started_at.year}",
         "start": f"{local_started_at.year}-{start_month:02d}-01",
         "end": f"{local_started_at.year}-{end_month:02d}-{30 if end_month == 6 else 31}",
+    }
+
+
+def _period_coverage(
+    period: JsonObject,
+    records: list[JsonObject],
+    archive_start: date,
+    archive_end: date,
+) -> JsonObject:
+    observed_dates = [record["local_started_at"].date() for record in records]
+    period_start = date.fromisoformat(period["start"])
+    period_end = date.fromisoformat(period["end"])
+    is_complete = archive_start <= period_start and archive_end >= period_end
+    return {
+        "is_complete": is_complete,
+        "completeness": "complete" if is_complete else "partial",
+        "observed_local_date_range": {
+            "start": min(observed_dates).isoformat(),
+            "end": max(observed_dates).isoformat(),
+        },
     }
 
 
@@ -296,32 +412,60 @@ def aggregate_races(
         if mode == "unknown":
             unknown_mode_count += 1
 
-        local_started_at = started_at.astimezone(FIXED_EDT)
+        local_started_at = started_at.astimezone(SCHEDULE_TIMEZONE)
         period = six_month_period(local_started_at)
         record = {
             "started_at": started_at,
             "local_started_at": local_started_at,
             "entrants_count": entrants_count,
             "mode": mode,
+            "period_id": period["id"],
         }
         included_records.append(record)
         period_records[period["id"]].append(record)
         period_metadata[period["id"]] = period
 
+    if not included_records:
+        raise DataError("No races remained after filtering and validation")
+
+    mode_period_values: dict[tuple[str, str], list[int]] = defaultdict(list)
+    for record in included_records:
+        mode_period_values[(record["mode"], record["period_id"])].append(
+            record["entrants_count"]
+        )
+    mode_period_means = {
+        key: sum(values) / len(values) for key, values in mode_period_values.items()
+    }
+    for record in included_records:
+        baseline = mode_period_means[(record["mode"], record["period_id"])]
+        record["adjusted_entries"] = record["entrants_count"] - baseline
+
     overall = _aggregate_records(included_records)
     periods = []
+    archive_start = min(record["local_started_at"].date() for record in included_records)
+    archive_end = max(record["local_started_at"].date() for record in included_records)
     for period_id in sorted(period_records):
-        period = period_metadata[period_id] | _aggregate_records(period_records[period_id])
+        records = period_records[period_id]
+        period = (
+            period_metadata[period_id]
+            | _period_coverage(
+                period_metadata[period_id], records, archive_start, archive_end
+            )
+            | _aggregate_records(records)
+        )
         periods.append(period)
 
     generated = (generated_at or datetime.now(UTC)).astimezone(UTC)
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": SOURCE_URL,
-        "timezone": {"label": "EDT (UTC-04:00)", "utc_offset": "-04:00"},
+        "timezone": {
+            "label": "Eastern Time",
+            "name": SCHEDULE_TIMEZONE_NAME,
+        },
         "source": {
             "api_record_count": api_record_count,
             "fetched_record_count": len(races),
@@ -332,6 +476,8 @@ def aggregate_races(
             "included_date_range": overall["included_date_range"],
         },
         "hourly": overall["hourly"],
+        "weekdays": overall["weekdays"],
+        "weekday_hourly": overall["weekday_hourly"],
         "modes": overall["modes"],
         "periods": periods,
         "diagnostics": {
