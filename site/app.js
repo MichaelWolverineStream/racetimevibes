@@ -6,6 +6,7 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 const MINIMUM_CANDIDATE_SAMPLE = 20;
+const TOTAL_ENTRANTS_START_DATE = "2026-01-01";
 
 function svgElement(name, attributes = {}, text = null) {
   const element = document.createElementNS(SVG_NS, name);
@@ -39,6 +40,15 @@ function scheduleDate(isoString, timeZone) {
     year: "numeric",
     timeZone,
   }).format(new Date(isoString));
+}
+
+function localDate(dateString) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${dateString}T00:00:00Z`));
 }
 
 function utcTimestamp(isoString) {
@@ -549,6 +559,52 @@ function renderTable(container, headers, rows) {
   container.replaceChildren(table);
 }
 
+function totalEntrantsSince2026(data) {
+  const periods = data.periods
+    .filter((period) => period.start >= TOTAL_ENTRANTS_START_DATE)
+    .sort((left, right) => left.start.localeCompare(right.start));
+  const hourly = Array.from({ length: 24 }, (_, hour) => ({
+    hour,
+    race_count: periods.reduce(
+      (total, period) => total + period.hourly[hour].race_count,
+      0,
+    ),
+    entrant_total: periods.reduce(
+      (total, period) => total + period.hourly[hour].entrant_total,
+      0,
+    ),
+  }));
+
+  return {
+    hourly,
+    start: periods[0].observed_local_date_range.start,
+    end: periods.at(-1).observed_local_date_range.end,
+  };
+}
+
+function renderTotalEntrants(data) {
+  const totalView = totalEntrantsSince2026(data);
+  document.querySelector("#hourly-total-range").textContent = `${localDate(totalView.start)} to ${localDate(totalView.end)}`;
+  renderVerticalChart(document.querySelector("#hourly-total-chart"), totalView.hourly, {
+    id: "hourly-total",
+    valueKey: "entrant_total",
+    title: "Total entrants per hour from January 2026 onward",
+    description: "Vertical bars show recorded race entries across finished races in each Eastern Time start hour from January 2026 onward.",
+    barClass: "bar--blue",
+    axisFormatter: (value) => integerFormatter.format(value),
+    tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.entrant_total)} recorded entries across ${integerFormatter.format(item.race_count)} finished races`,
+  });
+  renderTable(
+    document.querySelector("#hourly-total-table"),
+    ["Hour (ET)", "Total entrants", "Finished races"],
+    totalView.hourly.map((item) => [
+      hourRange(item.hour),
+      integerFormatter.format(item.entrant_total),
+      integerFormatter.format(item.race_count),
+    ]),
+  );
+}
+
 function validateData(data) {
   if (
     !data
@@ -564,14 +620,24 @@ function validateData(data) {
     || data.periods.length === 0
     || data.periods.some((period) => (
       typeof period.id !== "string"
+      || typeof period.start !== "string"
+      || !period.observed_local_date_range
+      || typeof period.observed_local_date_range.start !== "string"
+      || typeof period.observed_local_date_range.end !== "string"
       || !Array.isArray(period.hourly)
       || period.hourly.length !== 24
+      || period.hourly.some((item, hour) => (
+        item.hour !== hour
+        || !Number.isFinite(item.race_count)
+        || !Number.isFinite(item.entrant_total)
+      ))
       || !Array.isArray(period.weekdays)
       || period.weekdays.length !== 7
       || !Array.isArray(period.weekday_hourly)
       || period.weekday_hourly.length !== 168
       || !Array.isArray(period.modes)
     ))
+    || !data.periods.some((period) => period.start >= TOTAL_ENTRANTS_START_DATE)
     || !data.source
   ) {
     throw new Error("The generated race dataset has an unsupported shape.");
@@ -699,6 +765,7 @@ function renderPeriodControls(data) {
 
 function renderDashboard(data) {
   renderPeriodControls(data);
+  renderTotalEntrants(data);
   renderSelection(data, allDataSelection(data));
 }
 

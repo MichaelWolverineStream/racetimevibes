@@ -265,6 +265,10 @@ a:hover {
   gap: 24px;
 }
 
+.chart-panel--hourly-total {
+  grid-column: 1 / -1;
+}
+
 .chart-panel {
   position: relative;
   min-width: 0;
@@ -471,6 +475,14 @@ a:hover {
   color: var(--muted);
   font-size: 0.78rem;
   text-align: right;
+}
+
+.metric-caveat {
+  margin: 0;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--grid);
+  color: var(--muted);
+  font-size: 0.76rem;
 }
 
 .chart-host {
@@ -822,6 +834,10 @@ footer p {
     max-width: none;
     margin-top: 8px;
     text-align: left;
+  }
+
+  .metric-caveat {
+    padding-inline: 16px;
   }
 
   .decision-summary,

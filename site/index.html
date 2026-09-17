@@ -133,12 +133,28 @@
               <div id="hourly-average-table" class="table-wrap"></div>
             </details>
           </article>
+
+          <article class="chart-panel chart-panel--blue chart-panel--hourly-total">
+            <header class="panel-heading">
+              <div>
+                <p class="panel-index">05 / Volume</p>
+                <h2>Total entrants per hour</h2>
+              </div>
+              <p>Recorded entries · <span id="hourly-total-range">Jan 2026 onward</span></p>
+            </header>
+            <p class="metric-caveat">Rooms with fewer than two entrants are deleted and absent from this total, so it is a lower bound. From January 2026, this view assumes roughly the same number of rooms were opened in every hour.</p>
+            <div id="hourly-total-chart" class="chart-host" aria-live="polite"></div>
+            <details class="data-details">
+              <summary>View hourly values</summary>
+              <div id="hourly-total-table" class="table-wrap"></div>
+            </details>
+          </article>
         </div>
 
         <article class="chart-panel chart-panel--green chart-panel--modes">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">05 / Modes</p>
+              <p class="panel-index">06 / Modes</p>
               <h2>Average entries per mode</h2>
             </div>
             <p>Sorted by average turnout</p>

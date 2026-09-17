@@ -34,6 +34,8 @@ Open <http://localhost:8000>. The page must be served over HTTP because it loads
 - Race turnout uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries, not unique people.
 - Six-month participation is average entries per finished race: total race entries divided by races in that calendar half-year.
 - Hour, weekday-hour, and mode averages use the same entries-per-finished-race definition.
+- Total entrants per hour sums recorded race entries from January 2026 onward. It is shown separately because 2025 used a different scheduling strategy, while room openings from January 2026 are assumed to be roughly uniform across hours.
+- Racerooms with fewer than two entrants are deleted and are not available through the archive. Hourly totals therefore omit those rooms and are a lower bound on realized participation, not an exact measure of demand or unique participants.
 - Medians and quartiles describe the observed race-level distribution. The displayed 95% ranges are normal confidence intervals for the mean using the sample standard deviation; cells with fewer than two races have no interval.
 - Adjusted weekday-hour lift subtracts the matching mode-by-calendar-half-year mean from every race, then averages those residuals within each weekday-hour cell. This reduces mode and broad time-period mix effects.
 - Mode is the normalized first token in the `Step Ladder Series - [mode]` prefix of `info`. Later tags such as `[VT]` are ignored. A missing or malformed prefix is grouped as `unknown`.
