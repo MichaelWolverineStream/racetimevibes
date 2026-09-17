@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#12634a">
+    <meta name="description" content="ALTTPR Step Ladder race activity and turnout statistics.">
+    <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <title>ALTTPR Step Ladder Race Signals</title>
+  </head>
+  <body>
+    <div class="top-rail" aria-hidden="true"></div>
+    <main>
+      <header class="masthead">
+        <img
+          class="category-mark"
+          src="assets/alttpr-ladder.png"
+          alt="ALTTPR Step Ladder category artwork"
+          width="112"
+          height="112"
+        >
+        <div class="title-block">
+          <p class="kicker">Racetime.gg archive</p>
+          <h1>ALTTPR Step Ladder</h1>
+          <p class="lede">When races start, where turnout gathers, and how each mode compares.</p>
+        </div>
+        <div class="source-block">
+          <span>Data snapshot</span>
+          <strong id="generated-at">Loading</strong>
+          <a href="https://racetime.gg/alttpr-ladder" target="_blank" rel="noreferrer">View category</a>
+        </div>
+      </header>
+
+      <section class="summary-strip" aria-label="Dataset summary">
+        <div class="summary-item">
+          <span class="summary-label">Finished races</span>
+          <strong id="race-total">--</strong>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Modes tracked</span>
+          <strong id="mode-total">--</strong>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Busiest start hour</span>
+          <strong id="peak-hour">--</strong>
+        </div>
+        <div class="summary-item summary-item--wide">
+          <span class="summary-label">Coverage</span>
+          <strong id="date-range">--</strong>
+        </div>
+      </section>
+
+      <p id="load-status" class="load-status" role="status">Loading race statistics...</p>
+
+      <section id="dashboard" class="dashboard" hidden>
+        <section class="period-toolbar" aria-labelledby="period-toolbar-title">
+          <div>
+            <p class="panel-index">Data view</p>
+            <h2 id="period-toolbar-title">Reporting period</h2>
+          </div>
+          <div
+            id="period-toggle"
+            class="period-toggle"
+            role="group"
+            aria-label="Choose a reporting period"
+          ></div>
+          <p class="period-current">Viewing <strong id="active-period-label">All data</strong></p>
+        </section>
+
+        <article class="chart-panel chart-panel--blue chart-panel--participation">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">01 / Participation</p>
+              <h2>Average racers per race by 6-month period</h2>
+            </div>
+            <p>Total entrants per finished race</p>
+          </header>
+          <div id="participation-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+          <details class="data-details">
+            <summary>View period values</summary>
+            <div id="participation-table" class="table-wrap"></div>
+          </details>
+        </article>
+
+        <div class="hourly-grid">
+          <article class="chart-panel chart-panel--red">
+            <header class="panel-heading">
+              <div>
+                <p class="panel-index">02 / Traffic</p>
+                <h2>Race starts by hour</h2>
+              </div>
+              <p>Finished races</p>
+            </header>
+            <div id="race-count-chart" class="chart-host" aria-live="polite"></div>
+            <details class="data-details">
+              <summary>View hourly values</summary>
+              <div id="race-count-table" class="table-wrap"></div>
+            </details>
+          </article>
+
+          <article class="chart-panel chart-panel--gold">
+            <header class="panel-heading">
+              <div>
+                <p class="panel-index">03 / Turnout</p>
+                <h2>Average racers by hour</h2>
+              </div>
+              <p>Total entrants per race</p>
+            </header>
+            <div id="hourly-average-chart" class="chart-host" aria-live="polite"></div>
+            <details class="data-details">
+              <summary>View hourly values</summary>
+              <div id="hourly-average-table" class="table-wrap"></div>
+            </details>
+          </article>
+        </div>
+
+        <article class="chart-panel chart-panel--green chart-panel--modes">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">04 / Modes</p>
+              <h2>Average racers per mode</h2>
+            </div>
+            <p>Sorted by average turnout</p>
+          </header>
+          <div id="mode-average-chart" class="chart-host chart-host--modes" aria-live="polite"></div>
+          <details class="data-details">
+            <summary>View mode values</summary>
+            <div id="mode-average-table" class="table-wrap"></div>
+          </details>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>Finished races only; ladder tests excluded. Periods are calendar half-years in fixed EDT (UTC-04:00). Racer totals include DQ and forfeited entrants.</p>
+      <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
+    </footer>
+
+    <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
+    <script src="app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,1041 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-09-17T22:20:28.299563Z",
+  "source_url": "https://racetime.gg/alttpr-ladder/races/data",
+  "timezone": {
+    "label": "EDT (UTC-04:00)",
+    "utc_offset": "-04:00"
+  },
+  "source": {
+    "api_record_count": 3014,
+    "fetched_record_count": 3014,
+    "num_pages": 31,
+    "included_race_count": 2944,
+    "included_entrant_count": 17324,
+    "excluded_race_count": 70,
+    "included_date_range": {
+      "start": "2025-04-20T19:59:56.306000Z",
+      "end": "2026-09-17T20:00:00.092000Z"
+    }
+  },
+  "hourly": [
+    {
+      "hour": 0,
+      "race_count": 133,
+      "entrant_total": 658,
+      "average_racers": 4.947368421052632
+    },
+    {
+      "hour": 1,
+      "race_count": 101,
+      "entrant_total": 421,
+      "average_racers": 4.1683168316831685
+    },
+    {
+      "hour": 2,
+      "race_count": 60,
+      "entrant_total": 202,
+      "average_racers": 3.3666666666666667
+    },
+    {
+      "hour": 3,
+      "race_count": 97,
+      "entrant_total": 330,
+      "average_racers": 3.402061855670103
+    },
+    {
+      "hour": 4,
+      "race_count": 88,
+      "entrant_total": 301,
+      "average_racers": 3.4204545454545454
+    },
+    {
+      "hour": 5,
+      "race_count": 58,
+      "entrant_total": 205,
+      "average_racers": 3.5344827586206895
+    },
+    {
+      "hour": 6,
+      "race_count": 96,
+      "entrant_total": 403,
+      "average_racers": 4.197916666666667
+    },
+    {
+      "hour": 7,
+      "race_count": 117,
+      "entrant_total": 442,
+      "average_racers": 3.7777777777777777
+    },
+    {
+      "hour": 8,
+      "race_count": 63,
+      "entrant_total": 305,
+      "average_racers": 4.841269841269841
+    },
+    {
+      "hour": 9,
+      "race_count": 135,
+      "entrant_total": 663,
+      "average_racers": 4.911111111111111
+    },
+    {
+      "hour": 10,
+      "race_count": 159,
+      "entrant_total": 981,
+      "average_racers": 6.169811320754717
+    },
+    {
+      "hour": 11,
+      "race_count": 108,
+      "entrant_total": 705,
+      "average_racers": 6.527777777777778
+    },
+    {
+      "hour": 12,
+      "race_count": 181,
+      "entrant_total": 1201,
+      "average_racers": 6.6353591160221
+    },
+    {
+      "hour": 13,
+      "race_count": 190,
+      "entrant_total": 1388,
+      "average_racers": 7.3052631578947365
+    },
+    {
+      "hour": 14,
+      "race_count": 122,
+      "entrant_total": 902,
+      "average_racers": 7.39344262295082
+    },
+    {
+      "hour": 15,
+      "race_count": 181,
+      "entrant_total": 1385,
+      "average_racers": 7.651933701657459
+    },
+    {
+      "hour": 16,
+      "race_count": 189,
+      "entrant_total": 1350,
+      "average_racers": 7.142857142857143
+    },
+    {
+      "hour": 17,
+      "race_count": 112,
+      "entrant_total": 734,
+      "average_racers": 6.553571428571429
+    },
+    {
+      "hour": 18,
+      "race_count": 143,
+      "entrant_total": 838,
+      "average_racers": 5.86013986013986
+    },
+    {
+      "hour": 19,
+      "race_count": 161,
+      "entrant_total": 978,
+      "average_racers": 6.074534161490683
+    },
+    {
+      "hour": 20,
+      "race_count": 85,
+      "entrant_total": 548,
+      "average_racers": 6.447058823529412
+    },
+    {
+      "hour": 21,
+      "race_count": 140,
+      "entrant_total": 958,
+      "average_racers": 6.8428571428571425
+    },
+    {
+      "hour": 22,
+      "race_count": 136,
+      "entrant_total": 879,
+      "average_racers": 6.463235294117647
+    },
+    {
+      "hour": 23,
+      "race_count": 89,
+      "entrant_total": 547,
+      "average_racers": 6.146067415730337
+    }
+  ],
+  "modes": [
+    {
+      "mode": "entrance",
+      "race_count": 661,
+      "entrant_total": 6370,
+      "average_racers": 9.636913767019667
+    },
+    {
+      "mode": "simple",
+      "race_count": 657,
+      "entrant_total": 4458,
+      "average_racers": 6.7853881278538815
+    },
+    {
+      "mode": "keys",
+      "race_count": 528,
+      "entrant_total": 2691,
+      "average_racers": 5.096590909090909
+    },
+    {
+      "mode": "fun",
+      "race_count": 296,
+      "entrant_total": 1089,
+      "average_racers": 3.679054054054054
+    },
+    {
+      "mode": "inverted",
+      "race_count": 307,
+      "entrant_total": 1126,
+      "average_racers": 3.6677524429967425
+    },
+    {
+      "mode": "spoiler",
+      "race_count": 42,
+      "entrant_total": 139,
+      "average_racers": 3.3095238095238093
+    },
+    {
+      "mode": "mystery",
+      "race_count": 257,
+      "entrant_total": 848,
+      "average_racers": 3.299610894941634
+    },
+    {
+      "mode": "glitched",
+      "race_count": 196,
+      "entrant_total": 603,
+      "average_racers": 3.076530612244898
+    }
+  ],
+  "periods": [
+    {
+      "id": "2025-H1",
+      "label": "Jan-Jun 2025",
+      "start": "2025-01-01",
+      "end": "2025-06-30",
+      "race_count": 282,
+      "entrant_total": 1675,
+      "included_date_range": {
+        "start": "2025-04-20T19:59:56.306000Z",
+        "end": "2025-06-30T19:00:00.078000Z"
+      },
+      "hourly": [
+        {
+          "hour": 0,
+          "race_count": 13,
+          "entrant_total": 55,
+          "average_racers": 4.230769230769231
+        },
+        {
+          "hour": 1,
+          "race_count": 13,
+          "entrant_total": 48,
+          "average_racers": 3.6923076923076925
+        },
+        {
+          "hour": 2,
+          "race_count": 3,
+          "entrant_total": 11,
+          "average_racers": 3.6666666666666665
+        },
+        {
+          "hour": 3,
+          "race_count": 17,
+          "entrant_total": 51,
+          "average_racers": 3.0
+        },
+        {
+          "hour": 4,
+          "race_count": 12,
+          "entrant_total": 41,
+          "average_racers": 3.4166666666666665
+        },
+        {
+          "hour": 5,
+          "race_count": 2,
+          "entrant_total": 9,
+          "average_racers": 4.5
+        },
+        {
+          "hour": 6,
+          "race_count": 16,
+          "entrant_total": 61,
+          "average_racers": 3.8125
+        },
+        {
+          "hour": 7,
+          "race_count": 11,
+          "entrant_total": 36,
+          "average_racers": 3.272727272727273
+        },
+        {
+          "hour": 8,
+          "race_count": 3,
+          "entrant_total": 25,
+          "average_racers": 8.333333333333334
+        },
+        {
+          "hour": 9,
+          "race_count": 20,
+          "entrant_total": 115,
+          "average_racers": 5.75
+        },
+        {
+          "hour": 10,
+          "race_count": 18,
+          "entrant_total": 148,
+          "average_racers": 8.222222222222221
+        },
+        {
+          "hour": 11,
+          "race_count": 3,
+          "entrant_total": 22,
+          "average_racers": 7.333333333333333
+        },
+        {
+          "hour": 12,
+          "race_count": 21,
+          "entrant_total": 156,
+          "average_racers": 7.428571428571429
+        },
+        {
+          "hour": 13,
+          "race_count": 16,
+          "entrant_total": 119,
+          "average_racers": 7.4375
+        },
+        {
+          "hour": 14,
+          "race_count": 3,
+          "entrant_total": 39,
+          "average_racers": 13.0
+        },
+        {
+          "hour": 15,
+          "race_count": 22,
+          "entrant_total": 192,
+          "average_racers": 8.727272727272727
+        },
+        {
+          "hour": 16,
+          "race_count": 16,
+          "entrant_total": 133,
+          "average_racers": 8.3125
+        },
+        {
+          "hour": 17,
+          "race_count": 2,
+          "entrant_total": 14,
+          "average_racers": 7.0
+        },
+        {
+          "hour": 18,
+          "race_count": 16,
+          "entrant_total": 101,
+          "average_racers": 6.3125
+        },
+        {
+          "hour": 19,
+          "race_count": 19,
+          "entrant_total": 98,
+          "average_racers": 5.157894736842105
+        },
+        {
+          "hour": 20,
+          "race_count": 2,
+          "entrant_total": 11,
+          "average_racers": 5.5
+        },
+        {
+          "hour": 21,
+          "race_count": 18,
+          "entrant_total": 109,
+          "average_racers": 6.055555555555555
+        },
+        {
+          "hour": 22,
+          "race_count": 14,
+          "entrant_total": 66,
+          "average_racers": 4.714285714285714
+        },
+        {
+          "hour": 23,
+          "race_count": 2,
+          "entrant_total": 15,
+          "average_racers": 7.5
+        }
+      ],
+      "modes": [
+        {
+          "mode": "simple",
+          "race_count": 46,
+          "entrant_total": 399,
+          "average_racers": 8.673913043478262
+        },
+        {
+          "mode": "entrance",
+          "race_count": 50,
+          "entrant_total": 427,
+          "average_racers": 8.54
+        },
+        {
+          "mode": "keys",
+          "race_count": 44,
+          "entrant_total": 268,
+          "average_racers": 6.090909090909091
+        },
+        {
+          "mode": "inverted",
+          "race_count": 34,
+          "entrant_total": 145,
+          "average_racers": 4.264705882352941
+        },
+        {
+          "mode": "glitched",
+          "race_count": 38,
+          "entrant_total": 159,
+          "average_racers": 4.184210526315789
+        },
+        {
+          "mode": "fun",
+          "race_count": 32,
+          "entrant_total": 132,
+          "average_racers": 4.125
+        },
+        {
+          "mode": "mystery",
+          "race_count": 38,
+          "entrant_total": 145,
+          "average_racers": 3.8157894736842106
+        }
+      ]
+    },
+    {
+      "id": "2025-H2",
+      "label": "Jul-Dec 2025",
+      "start": "2025-07-01",
+      "end": "2025-12-31",
+      "race_count": 997,
+      "entrant_total": 5558,
+      "included_date_range": {
+        "start": "2025-07-01T14:00:00.079000Z",
+        "end": "2026-01-01T01:00:00.085000Z"
+      },
+      "hourly": [
+        {
+          "hour": 0,
+          "race_count": 50,
+          "entrant_total": 225,
+          "average_racers": 4.5
+        },
+        {
+          "hour": 1,
+          "race_count": 44,
+          "entrant_total": 194,
+          "average_racers": 4.409090909090909
+        },
+        {
+          "hour": 2,
+          "race_count": 11,
+          "entrant_total": 35,
+          "average_racers": 3.1818181818181817
+        },
+        {
+          "hour": 3,
+          "race_count": 36,
+          "entrant_total": 115,
+          "average_racers": 3.1944444444444446
+        },
+        {
+          "hour": 4,
+          "race_count": 34,
+          "entrant_total": 116,
+          "average_racers": 3.411764705882353
+        },
+        {
+          "hour": 5,
+          "race_count": 10,
+          "entrant_total": 28,
+          "average_racers": 2.8
+        },
+        {
+          "hour": 6,
+          "race_count": 34,
+          "entrant_total": 144,
+          "average_racers": 4.235294117647059
+        },
+        {
+          "hour": 7,
+          "race_count": 52,
+          "entrant_total": 181,
+          "average_racers": 3.480769230769231
+        },
+        {
+          "hour": 8,
+          "race_count": 15,
+          "entrant_total": 66,
+          "average_racers": 4.4
+        },
+        {
+          "hour": 9,
+          "race_count": 54,
+          "entrant_total": 274,
+          "average_racers": 5.074074074074074
+        },
+        {
+          "hour": 10,
+          "race_count": 55,
+          "entrant_total": 293,
+          "average_racers": 5.327272727272727
+        },
+        {
+          "hour": 11,
+          "race_count": 19,
+          "entrant_total": 83,
+          "average_racers": 4.368421052631579
+        },
+        {
+          "hour": 12,
+          "race_count": 65,
+          "entrant_total": 356,
+          "average_racers": 5.476923076923077
+        },
+        {
+          "hour": 13,
+          "race_count": 73,
+          "entrant_total": 515,
+          "average_racers": 7.054794520547945
+        },
+        {
+          "hour": 14,
+          "race_count": 21,
+          "entrant_total": 116,
+          "average_racers": 5.523809523809524
+        },
+        {
+          "hour": 15,
+          "race_count": 72,
+          "entrant_total": 555,
+          "average_racers": 7.708333333333333
+        },
+        {
+          "hour": 16,
+          "race_count": 72,
+          "entrant_total": 479,
+          "average_racers": 6.652777777777778
+        },
+        {
+          "hour": 17,
+          "race_count": 22,
+          "entrant_total": 151,
+          "average_racers": 6.863636363636363
+        },
+        {
+          "hour": 18,
+          "race_count": 58,
+          "entrant_total": 320,
+          "average_racers": 5.517241379310345
+        },
+        {
+          "hour": 19,
+          "race_count": 67,
+          "entrant_total": 413,
+          "average_racers": 6.164179104477612
+        },
+        {
+          "hour": 20,
+          "race_count": 17,
+          "entrant_total": 153,
+          "average_racers": 9.0
+        },
+        {
+          "hour": 21,
+          "race_count": 51,
+          "entrant_total": 357,
+          "average_racers": 7.0
+        },
+        {
+          "hour": 22,
+          "race_count": 52,
+          "entrant_total": 312,
+          "average_racers": 6.0
+        },
+        {
+          "hour": 23,
+          "race_count": 13,
+          "entrant_total": 77,
+          "average_racers": 5.923076923076923
+        }
+      ],
+      "modes": [
+        {
+          "mode": "entrance",
+          "race_count": 225,
+          "entrant_total": 2044,
+          "average_racers": 9.084444444444445
+        },
+        {
+          "mode": "simple",
+          "race_count": 218,
+          "entrant_total": 1355,
+          "average_racers": 6.215596330275229
+        },
+        {
+          "mode": "keys",
+          "race_count": 183,
+          "entrant_total": 863,
+          "average_racers": 4.715846994535519
+        },
+        {
+          "mode": "inverted",
+          "race_count": 138,
+          "entrant_total": 510,
+          "average_racers": 3.6956521739130435
+        },
+        {
+          "mode": "fun",
+          "race_count": 138,
+          "entrant_total": 498,
+          "average_racers": 3.608695652173913
+        },
+        {
+          "mode": "mystery",
+          "race_count": 32,
+          "entrant_total": 106,
+          "average_racers": 3.3125
+        },
+        {
+          "mode": "glitched",
+          "race_count": 63,
+          "entrant_total": 182,
+          "average_racers": 2.888888888888889
+        }
+      ]
+    },
+    {
+      "id": "2026-H1",
+      "label": "Jan-Jun 2026",
+      "start": "2026-01-01",
+      "end": "2026-06-30",
+      "race_count": 1178,
+      "entrant_total": 6778,
+      "included_date_range": {
+        "start": "2026-01-01T09:00:00.144000Z",
+        "end": "2026-07-01T01:00:00.092000Z"
+      },
+      "hourly": [
+        {
+          "hour": 0,
+          "race_count": 48,
+          "entrant_total": 256,
+          "average_racers": 5.333333333333333
+        },
+        {
+          "hour": 1,
+          "race_count": 35,
+          "entrant_total": 141,
+          "average_racers": 4.0285714285714285
+        },
+        {
+          "hour": 2,
+          "race_count": 30,
+          "entrant_total": 88,
+          "average_racers": 2.933333333333333
+        },
+        {
+          "hour": 3,
+          "race_count": 30,
+          "entrant_total": 113,
+          "average_racers": 3.7666666666666666
+        },
+        {
+          "hour": 4,
+          "race_count": 27,
+          "entrant_total": 87,
+          "average_racers": 3.2222222222222223
+        },
+        {
+          "hour": 5,
+          "race_count": 29,
+          "entrant_total": 93,
+          "average_racers": 3.206896551724138
+        },
+        {
+          "hour": 6,
+          "race_count": 31,
+          "entrant_total": 131,
+          "average_racers": 4.225806451612903
+        },
+        {
+          "hour": 7,
+          "race_count": 35,
+          "entrant_total": 150,
+          "average_racers": 4.285714285714286
+        },
+        {
+          "hour": 8,
+          "race_count": 34,
+          "entrant_total": 156,
+          "average_racers": 4.588235294117647
+        },
+        {
+          "hour": 9,
+          "race_count": 42,
+          "entrant_total": 164,
+          "average_racers": 3.9047619047619047
+        },
+        {
+          "hour": 10,
+          "race_count": 63,
+          "entrant_total": 368,
+          "average_racers": 5.841269841269841
+        },
+        {
+          "hour": 11,
+          "race_count": 63,
+          "entrant_total": 397,
+          "average_racers": 6.301587301587301
+        },
+        {
+          "hour": 12,
+          "race_count": 68,
+          "entrant_total": 429,
+          "average_racers": 6.3088235294117645
+        },
+        {
+          "hour": 13,
+          "race_count": 74,
+          "entrant_total": 509,
+          "average_racers": 6.878378378378378
+        },
+        {
+          "hour": 14,
+          "race_count": 70,
+          "entrant_total": 510,
+          "average_racers": 7.285714285714286
+        },
+        {
+          "hour": 15,
+          "race_count": 65,
+          "entrant_total": 429,
+          "average_racers": 6.6
+        },
+        {
+          "hour": 16,
+          "race_count": 70,
+          "entrant_total": 470,
+          "average_racers": 6.714285714285714
+        },
+        {
+          "hour": 17,
+          "race_count": 64,
+          "entrant_total": 427,
+          "average_racers": 6.671875
+        },
+        {
+          "hour": 18,
+          "race_count": 52,
+          "entrant_total": 293,
+          "average_racers": 5.634615384615385
+        },
+        {
+          "hour": 19,
+          "race_count": 54,
+          "entrant_total": 323,
+          "average_racers": 5.981481481481482
+        },
+        {
+          "hour": 20,
+          "race_count": 45,
+          "entrant_total": 240,
+          "average_racers": 5.333333333333333
+        },
+        {
+          "hour": 21,
+          "race_count": 49,
+          "entrant_total": 301,
+          "average_racers": 6.142857142857143
+        },
+        {
+          "hour": 22,
+          "race_count": 51,
+          "entrant_total": 386,
+          "average_racers": 7.568627450980392
+        },
+        {
+          "hour": 23,
+          "race_count": 49,
+          "entrant_total": 317,
+          "average_racers": 6.469387755102041
+        }
+      ],
+      "modes": [
+        {
+          "mode": "entrance",
+          "race_count": 242,
+          "entrant_total": 2366,
+          "average_racers": 9.776859504132231
+        },
+        {
+          "mode": "simple",
+          "race_count": 263,
+          "entrant_total": 1859,
+          "average_racers": 7.068441064638783
+        },
+        {
+          "mode": "keys",
+          "race_count": 185,
+          "entrant_total": 900,
+          "average_racers": 4.864864864864865
+        },
+        {
+          "mode": "spoiler",
+          "race_count": 28,
+          "entrant_total": 102,
+          "average_racers": 3.642857142857143
+        },
+        {
+          "mode": "fun",
+          "race_count": 121,
+          "entrant_total": 431,
+          "average_racers": 3.56198347107438
+        },
+        {
+          "mode": "inverted",
+          "race_count": 135,
+          "entrant_total": 471,
+          "average_racers": 3.488888888888889
+        },
+        {
+          "mode": "mystery",
+          "race_count": 129,
+          "entrant_total": 447,
+          "average_racers": 3.4651162790697674
+        },
+        {
+          "mode": "glitched",
+          "race_count": 75,
+          "entrant_total": 202,
+          "average_racers": 2.6933333333333334
+        }
+      ]
+    },
+    {
+      "id": "2026-H2",
+      "label": "Jul-Dec 2026",
+      "start": "2026-07-01",
+      "end": "2026-12-31",
+      "race_count": 487,
+      "entrant_total": 3313,
+      "included_date_range": {
+        "start": "2026-07-01T05:00:00.143000Z",
+        "end": "2026-09-17T20:00:00.092000Z"
+      },
+      "hourly": [
+        {
+          "hour": 0,
+          "race_count": 22,
+          "entrant_total": 122,
+          "average_racers": 5.545454545454546
+        },
+        {
+          "hour": 1,
+          "race_count": 9,
+          "entrant_total": 38,
+          "average_racers": 4.222222222222222
+        },
+        {
+          "hour": 2,
+          "race_count": 16,
+          "entrant_total": 68,
+          "average_racers": 4.25
+        },
+        {
+          "hour": 3,
+          "race_count": 14,
+          "entrant_total": 51,
+          "average_racers": 3.642857142857143
+        },
+        {
+          "hour": 4,
+          "race_count": 15,
+          "entrant_total": 57,
+          "average_racers": 3.8
+        },
+        {
+          "hour": 5,
+          "race_count": 17,
+          "entrant_total": 75,
+          "average_racers": 4.411764705882353
+        },
+        {
+          "hour": 6,
+          "race_count": 15,
+          "entrant_total": 67,
+          "average_racers": 4.466666666666667
+        },
+        {
+          "hour": 7,
+          "race_count": 19,
+          "entrant_total": 75,
+          "average_racers": 3.9473684210526314
+        },
+        {
+          "hour": 8,
+          "race_count": 11,
+          "entrant_total": 58,
+          "average_racers": 5.2727272727272725
+        },
+        {
+          "hour": 9,
+          "race_count": 19,
+          "entrant_total": 110,
+          "average_racers": 5.7894736842105265
+        },
+        {
+          "hour": 10,
+          "race_count": 23,
+          "entrant_total": 172,
+          "average_racers": 7.478260869565218
+        },
+        {
+          "hour": 11,
+          "race_count": 23,
+          "entrant_total": 203,
+          "average_racers": 8.826086956521738
+        },
+        {
+          "hour": 12,
+          "race_count": 27,
+          "entrant_total": 260,
+          "average_racers": 9.62962962962963
+        },
+        {
+          "hour": 13,
+          "race_count": 27,
+          "entrant_total": 245,
+          "average_racers": 9.074074074074074
+        },
+        {
+          "hour": 14,
+          "race_count": 28,
+          "entrant_total": 237,
+          "average_racers": 8.464285714285714
+        },
+        {
+          "hour": 15,
+          "race_count": 22,
+          "entrant_total": 209,
+          "average_racers": 9.5
+        },
+        {
+          "hour": 16,
+          "race_count": 31,
+          "entrant_total": 268,
+          "average_racers": 8.64516129032258
+        },
+        {
+          "hour": 17,
+          "race_count": 24,
+          "entrant_total": 142,
+          "average_racers": 5.916666666666667
+        },
+        {
+          "hour": 18,
+          "race_count": 17,
+          "entrant_total": 124,
+          "average_racers": 7.294117647058823
+        },
+        {
+          "hour": 19,
+          "race_count": 21,
+          "entrant_total": 144,
+          "average_racers": 6.857142857142857
+        },
+        {
+          "hour": 20,
+          "race_count": 21,
+          "entrant_total": 144,
+          "average_racers": 6.857142857142857
+        },
+        {
+          "hour": 21,
+          "race_count": 22,
+          "entrant_total": 191,
+          "average_racers": 8.681818181818182
+        },
+        {
+          "hour": 22,
+          "race_count": 19,
+          "entrant_total": 115,
+          "average_racers": 6.052631578947368
+        },
+        {
+          "hour": 23,
+          "race_count": 25,
+          "entrant_total": 138,
+          "average_racers": 5.52
+        }
+      ],
+      "modes": [
+        {
+          "mode": "entrance",
+          "race_count": 144,
+          "entrant_total": 1533,
+          "average_racers": 10.645833333333334
+        },
+        {
+          "mode": "simple",
+          "race_count": 130,
+          "entrant_total": 845,
+          "average_racers": 6.5
+        },
+        {
+          "mode": "keys",
+          "race_count": 116,
+          "entrant_total": 660,
+          "average_racers": 5.689655172413793
+        },
+        {
+          "mode": "fun",
+          "race_count": 5,
+          "entrant_total": 28,
+          "average_racers": 5.6
+        },
+        {
+          "mode": "glitched",
+          "race_count": 20,
+          "entrant_total": 60,
+          "average_racers": 3.0
+        },
+        {
+          "mode": "spoiler",
+          "race_count": 14,
+          "entrant_total": 37,
+          "average_racers": 2.642857142857143
+        },
+        {
+          "mode": "mystery",
+          "race_count": 58,
+          "entrant_total": 150,
+          "average_racers": 2.586206896551724
+        }
+      ]
+    }
+  ],
+  "diagnostics": {
+    "excluded_by_status": {},
+    "excluded_by_mode": {
+      "ladder_test": 70
+    },
+    "invalid_records": {},
+    "unknown_mode_count": 0
+  }
+}
