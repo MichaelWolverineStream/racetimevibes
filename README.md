@@ -27,6 +27,19 @@ python3 -m http.server 8000 -d site
 
 Open <http://localhost:8000>. The page must be served over HTTP because it loads the generated JSON with `fetch`; opening `site/index.html` directly will not work in browsers that restrict local file requests.
 
+## Publish with GitHub Pages
+
+The workflow in `.github/workflows/pages.yml` runs the test suite and deploys the `site` directory whenever `main` is pushed. It can also be started manually from the repository's **Actions** tab.
+
+For the first deployment:
+
+1. Push the repository to GitHub.
+2. Open **Settings > Pages** in the GitHub repository.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Open **Actions > Deploy GitHub Pages** and run the workflow, or push another commit to `main`.
+
+The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. The workflow deploys the committed aggregate JSON; refresh it with `python3 scripts/build_stats.py` and commit the result when the data should change.
+
 ## Metric definitions
 
 - Only records whose `status.value` is `finished` are included.
