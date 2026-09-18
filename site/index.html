@@ -23,7 +23,7 @@
         <div class="title-block">
           <p class="kicker">Racetime.gg archive</p>
           <h1>ALTTPR Step Ladder</h1>
-          <p class="lede">Historical schedule opportunities, turnout ranges, and the evidence behind each time window.</p>
+          <p class="lede">2026 schedule opportunities, community reach, and the evidence behind each time window.</p>
         </div>
         <div class="source-block">
           <span>Data snapshot</span>
@@ -38,12 +38,20 @@
           <strong id="race-total">--</strong>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Modes tracked</span>
-          <strong id="mode-total">--</strong>
+          <span id="unique-player-label" class="summary-label">Identified racers</span>
+          <strong id="unique-player-total">--</strong>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Est. deleted rooms</span>
+          <strong id="deleted-room-total">--</strong>
         </div>
         <div class="summary-item">
           <span class="summary-label">Most offered hour</span>
           <strong id="peak-hour">--</strong>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Modes tracked</span>
+          <strong id="mode-total">--</strong>
         </div>
         <div class="summary-item summary-item--wide">
           <span class="summary-label">Coverage</span>
@@ -88,10 +96,30 @@
           <div id="opportunity-heatmap" class="heatmap-host" aria-live="polite"></div>
         </article>
 
+        <article class="chart-panel chart-panel--blue chart-panel--community">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">02 / Community</p>
+              <h2>Community orbit</h2>
+            </div>
+            <p>Player share by race-frequency cohort</p>
+          </header>
+          <div class="community-intro">
+            <p>Node area represents the share of identified racers. Connector weight and the annotation beneath each node show the share of identified entries they contributed.</p>
+            <span>Finished archived races only</span>
+          </div>
+          <div id="community-orbit" class="orbit-host" aria-live="polite"></div>
+          <p id="community-coverage" class="community-coverage"></p>
+          <details class="data-details">
+            <summary>View cohort values</summary>
+            <div id="community-table" class="table-wrap"></div>
+          </details>
+        </article>
+
         <article class="chart-panel chart-panel--blue chart-panel--participation">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">02 / Participation</p>
+              <p class="panel-index">03 / Participation</p>
               <h2>Average entries per race by 6-month period</h2>
             </div>
             <p>Total entrants per finished race</p>
@@ -107,7 +135,7 @@
           <article class="chart-panel chart-panel--red">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">03 / Traffic</p>
+                <p class="panel-index">04 / Traffic</p>
                 <h2>Race starts by hour</h2>
               </div>
               <p>Finished races</p>
@@ -122,7 +150,7 @@
           <article class="chart-panel chart-panel--gold">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">04 / Turnout</p>
+                <p class="panel-index">05 / Turnout</p>
                 <h2>Average entries by hour</h2>
               </div>
               <p>Total entrants per race</p>
@@ -137,12 +165,24 @@
           <article class="chart-panel chart-panel--blue chart-panel--hourly-total">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">05 / Volume</p>
+                <p class="panel-index">06 / Volume</p>
                 <h2>Total entrants per hour</h2>
               </div>
-              <p>Recorded entries · <span id="hourly-total-range">Jan 2026 onward</span></p>
+              <p>Recorded entries · <span id="hourly-total-range">All data</span></p>
             </header>
-            <p class="metric-caveat">Rooms with fewer than two entrants are deleted and absent from this total, so it is a lower bound. From January 2026, this view assumes roughly the same number of rooms were opened in every hour.</p>
+            <div class="room-survival" aria-label="Finished and inferred deleted room summary">
+              <div class="room-survival__metrics">
+                <div><span>Finished rooms</span><strong id="room-finished">--</strong></div>
+                <div><span>Est. deleted</span><strong id="room-deleted">--</strong></div>
+                <div><span>Est. deleted share</span><strong id="room-deleted-share">--</strong></div>
+                <div><span>Sensitivity range</span><strong id="room-sensitivity">--</strong></div>
+              </div>
+              <div class="room-survival__track" aria-hidden="true">
+                <span id="room-observed-bar" class="room-survival__observed"></span>
+                <span id="room-deleted-bar" class="room-survival__deleted"></span>
+              </div>
+              <p>Estimate assumes rooms opened uniformly by hour. The central baseline is the median finished-room count among the six busiest hours (<strong id="room-baseline">--</strong> rooms/hour); hourly deficits are clamped at zero. The range is sensitivity analysis, not statistical confidence.</p>
+            </div>
             <div id="hourly-total-chart" class="chart-host" aria-live="polite"></div>
             <details class="data-details">
               <summary>View hourly values</summary>
@@ -154,7 +194,7 @@
         <article class="chart-panel chart-panel--green chart-panel--modes">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">06 / Modes</p>
+              <p class="panel-index">07 / Modes</p>
               <h2>Average entries per mode</h2>
             </div>
             <p>Sorted by average turnout</p>
@@ -169,7 +209,7 @@
     </main>
 
     <footer>
-      <p>Finished races only; ladder tests excluded. Schedule times use America/New_York wall-clock time. Entry totals include repeat, DQ, and forfeited participants.</p>
+      <p>2026 finished races only; ladder tests excluded. Schedule times use America/New_York wall-clock time. Deleted-room values are model estimates, not recorded cancellations.</p>
       <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
     </footer>
 

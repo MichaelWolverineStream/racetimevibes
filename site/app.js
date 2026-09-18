@@ -6,7 +6,12 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 const MINIMUM_CANDIDATE_SAMPLE = 20;
-const TOTAL_ENTRANTS_START_DATE = "2026-01-01";
+const COHORTS = {
+  one_race: { label: "One race", range: "1 race", colorClass: "orbit-node--blue" },
+  occasional: { label: "Occasional", range: "2-5 races", colorClass: "orbit-node--gold" },
+  regular: { label: "Regular", range: "6-20 races", colorClass: "orbit-node--green" },
+  core: { label: "Core", range: "21+ races", colorClass: "orbit-node--red" },
+};
 
 function svgElement(name, attributes = {}, text = null) {
   const element = document.createElementNS(SVG_NS, name);
@@ -42,15 +47,6 @@ function scheduleDate(isoString, timeZone) {
   }).format(new Date(isoString));
 }
 
-function localDate(dateString) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${dateString}T00:00:00Z`));
-}
-
 function utcTimestamp(isoString) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -83,6 +79,10 @@ function formatSigned(value) {
 function formatInterval(low, high) {
   if (low === null || high === null) return "--";
   return `${formatSigned(low)} to ${formatSigned(high)}`;
+}
+
+function formatPercent(value) {
+  return `${decimalFormatter.format(value * 100)}%`;
 }
 
 function positionTooltip(clientX, clientY) {
@@ -559,45 +559,21 @@ function renderTable(container, headers, rows) {
   container.replaceChildren(table);
 }
 
-function totalEntrantsSince2026(data) {
-  const periods = data.periods
-    .filter((period) => period.start >= TOTAL_ENTRANTS_START_DATE)
-    .sort((left, right) => left.start.localeCompare(right.start));
-  const hourly = Array.from({ length: 24 }, (_, hour) => ({
-    hour,
-    race_count: periods.reduce(
-      (total, period) => total + period.hourly[hour].race_count,
-      0,
-    ),
-    entrant_total: periods.reduce(
-      (total, period) => total + period.hourly[hour].entrant_total,
-      0,
-    ),
-  }));
-
-  return {
-    hourly,
-    start: periods[0].observed_local_date_range.start,
-    end: periods.at(-1).observed_local_date_range.end,
-  };
-}
-
-function renderTotalEntrants(data) {
-  const totalView = totalEntrantsSince2026(data);
-  document.querySelector("#hourly-total-range").textContent = `${localDate(totalView.start)} to ${localDate(totalView.end)}`;
-  renderVerticalChart(document.querySelector("#hourly-total-chart"), totalView.hourly, {
+function renderTotalEntrants(selection) {
+  document.querySelector("#hourly-total-range").textContent = selection.label;
+  renderVerticalChart(document.querySelector("#hourly-total-chart"), selection.hourly, {
     id: "hourly-total",
     valueKey: "entrant_total",
-    title: "Total entrants per hour from January 2026 onward",
-    description: "Vertical bars show recorded race entries across finished races in each Eastern Time start hour from January 2026 onward.",
+    title: `Total entrants per hour for ${selection.label}`,
+    description: `Vertical bars show recorded race entries across finished races in each Eastern Time start hour for ${selection.label}.`,
     barClass: "bar--blue",
     axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.entrant_total)} recorded entries across ${integerFormatter.format(item.race_count)} finished races`,
+    tooltip: (item) => `${hourRange(item.hour)}, ${selection.label}: ${integerFormatter.format(item.entrant_total)} recorded entries across ${integerFormatter.format(item.race_count)} finished races`,
   });
   renderTable(
     document.querySelector("#hourly-total-table"),
     ["Hour (ET)", "Total entrants", "Finished races"],
-    totalView.hourly.map((item) => [
+    selection.hourly.map((item) => [
       hourRange(item.hour),
       integerFormatter.format(item.entrant_total),
       integerFormatter.format(item.race_count),
@@ -605,40 +581,207 @@ function renderTotalEntrants(data) {
   );
 }
 
+function renderRoomSurvival(selection) {
+  const estimate = selection.room_cancellation_estimate;
+  const sensitivity = estimate.sensitivity;
+  const observedShare = estimate.estimated_opened_rooms
+    ? estimate.observed_finished_rooms / estimate.estimated_opened_rooms
+    : 0;
+  document.querySelector("#room-finished").textContent = integerFormatter.format(estimate.observed_finished_rooms);
+  document.querySelector("#room-deleted").textContent = `~${integerFormatter.format(estimate.estimated_deleted_rooms)}`;
+  document.querySelector("#room-deleted-share").textContent = formatPercent(estimate.estimated_deleted_share);
+  document.querySelector("#room-sensitivity").textContent = `${integerFormatter.format(sensitivity.lower_estimated_deleted_rooms)}-${integerFormatter.format(sensitivity.upper_estimated_deleted_rooms)}`;
+  document.querySelector("#room-baseline").textContent = decimalFormatter.format(estimate.baseline_rooms_per_hour);
+  document.querySelector("#room-observed-bar").style.width = `${observedShare * 100}%`;
+  document.querySelector("#room-deleted-bar").style.width = `${estimate.estimated_deleted_share * 100}%`;
+}
+
+function renderCommunityOrbit(container, tableContainer, coverageContainer, summary) {
+  const mobile = window.matchMedia("(max-width: 620px)").matches;
+  const layout = mobile
+    ? {
+      width: 360,
+      height: 540,
+      center: [180, 82],
+      nodes: [[85, 240], [275, 240], [85, 430], [275, 430]],
+    }
+    : {
+      width: 820,
+      height: 460,
+      center: [410, 210],
+      nodes: [[410, 67], [690, 210], [410, 353], [130, 210]],
+    };
+  const svg = svgElement("svg", {
+    class: "orbit-svg",
+    viewBox: `0 0 ${layout.width} ${layout.height}`,
+    role: "img",
+    "aria-labelledby": "community-orbit-title community-orbit-description",
+  });
+  const hasFullCoverage = summary.identity_coverage === 1;
+  const racerLabel = hasFullCoverage ? "unique racers" : "identified racers";
+  svg.append(
+    svgElement("title", { id: "community-orbit-title" }, `Community orbit of ${racerLabel}`),
+    svgElement(
+      "desc",
+      { id: "community-orbit-description" },
+      "Four cohorts surround the identified racer total. Node area represents player share and connector weight represents entry share.",
+    ),
+  );
+
+  const [centerX, centerY] = layout.center;
+  summary.cohorts.forEach((cohort, index) => {
+    const [nodeX, nodeY] = layout.nodes[index];
+    svg.append(svgElement("line", {
+      class: "orbit-connector",
+      x1: centerX,
+      y1: centerY,
+      x2: nodeX,
+      y2: nodeY,
+      "stroke-width": 2 + cohort.entry_share * 12,
+    }));
+  });
+
+  const center = svgElement("g", { class: "orbit-center" });
+  center.append(
+    svgElement("circle", { cx: centerX, cy: centerY, r: mobile ? 61 : 70 }),
+    svgElement(
+      "text",
+      { class: "orbit-center__value", x: centerX, y: centerY - 3, "text-anchor": "middle" },
+      integerFormatter.format(summary.identified_player_count),
+    ),
+    svgElement(
+      "text",
+      { class: "orbit-center__label", x: centerX, y: centerY + 21, "text-anchor": "middle" },
+      racerLabel.toUpperCase(),
+    ),
+  );
+  svg.append(center);
+
+  summary.cohorts.forEach((cohort, index) => {
+    const metadata = COHORTS[cohort.id];
+    const [nodeX, nodeY] = layout.nodes[index];
+    const radius = 28 + Math.sqrt(cohort.player_share) * 29;
+    const label = `${metadata.label}, ${metadata.range}: ${integerFormatter.format(cohort.player_count)} players (${formatPercent(cohort.player_share)}); ${integerFormatter.format(cohort.entry_count)} entries (${formatPercent(cohort.entry_share)})`;
+    const group = svgElement("g", {
+      class: "orbit-mark",
+      tabindex: "0",
+      role: "img",
+      "aria-label": label,
+    });
+    group.append(
+      svgElement("circle", {
+        class: `orbit-node ${metadata.colorClass}`,
+        cx: nodeX,
+        cy: nodeY,
+        r: radius,
+      }),
+      svgElement("circle", {
+        class: "orbit-focus-ring",
+        cx: nodeX,
+        cy: nodeY,
+        r: radius + 4,
+      }),
+      svgElement(
+        "text",
+        { class: "orbit-node__value", x: nodeX, y: nodeY - 4, "text-anchor": "middle" },
+        integerFormatter.format(cohort.player_count),
+      ),
+      svgElement(
+        "text",
+        { class: "orbit-node__share", x: nodeX, y: nodeY + 15, "text-anchor": "middle" },
+        `${decimalFormatter.format(cohort.player_share * 100)}%`,
+      ),
+      svgElement(
+        "text",
+        { class: "orbit-node__label", x: nodeX, y: nodeY + radius + 19, "text-anchor": "middle" },
+        metadata.label.toUpperCase(),
+      ),
+      svgElement(
+        "text",
+        { class: "orbit-node__range", x: nodeX, y: nodeY + radius + 35, "text-anchor": "middle" },
+        `${metadata.range.toUpperCase()} · ${formatPercent(cohort.entry_share)} OF ENTRIES`,
+      ),
+      svgElement("title", {}, label),
+    );
+    bindTooltip(group, label);
+    svg.append(group);
+  });
+
+  container.replaceChildren(svg);
+  renderTable(
+    tableContainer,
+    ["Cohort", "Races per player", "Players", "Player share", "Entries", "Entry share"],
+    summary.cohorts.map((cohort) => [
+      COHORTS[cohort.id].label,
+      COHORTS[cohort.id].range,
+      integerFormatter.format(cohort.player_count),
+      formatPercent(cohort.player_share),
+      integerFormatter.format(cohort.entry_count),
+      formatPercent(cohort.entry_share),
+    ]),
+  );
+  coverageContainer.textContent = `${formatPercent(summary.identity_coverage)} identity coverage across archived finished-race entries. Aggregate counts only; identities are not stored in this dataset.`;
+}
+
+function hasValidAggregate(aggregate) {
+  const cohortIds = aggregate?.unique_players?.cohorts?.map((cohort) => cohort.id);
+  const estimate = aggregate?.room_cancellation_estimate;
+  return (
+    Array.isArray(aggregate?.hourly)
+    && aggregate.hourly.length === 24
+    && aggregate.hourly.every((item, hour) => (
+      item.hour === hour
+      && Number.isFinite(item.race_count)
+      && Number.isFinite(item.entrant_total)
+    ))
+    && Array.isArray(aggregate.weekdays)
+    && aggregate.weekdays.length === 7
+    && Array.isArray(aggregate.weekday_hourly)
+    && aggregate.weekday_hourly.length === 168
+    && Array.isArray(aggregate.modes)
+    && JSON.stringify(cohortIds) === JSON.stringify(Object.keys(COHORTS))
+    && Number.isFinite(aggregate.unique_players.identified_player_count)
+    && Number.isFinite(aggregate.unique_players.identified_entry_count)
+    && Number.isFinite(aggregate.unique_players.unidentified_entry_count)
+    && aggregate.unique_players.identity_coverage >= 0
+    && aggregate.unique_players.identity_coverage <= 1
+    && aggregate.unique_players.cohorts.every((cohort) => (
+      Number.isFinite(cohort.player_count)
+      && Number.isFinite(cohort.player_share)
+      && Number.isFinite(cohort.entry_count)
+      && Number.isFinite(cohort.entry_share)
+    ))
+    && estimate?.method === "top_6_median_clamped_hourly_deficit"
+    && Number.isFinite(estimate.observed_finished_rooms)
+    && Number.isFinite(estimate.estimated_deleted_rooms)
+    && estimate.estimated_opened_rooms === (
+      estimate.observed_finished_rooms + estimate.estimated_deleted_rooms
+    )
+    && Number.isFinite(estimate.sensitivity?.lower_estimated_deleted_rooms)
+    && Number.isFinite(estimate.sensitivity?.upper_estimated_deleted_rooms)
+  );
+}
+
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 3
-    || !Array.isArray(data.hourly)
-    || data.hourly.length !== 24
-    || !Array.isArray(data.weekdays)
-    || data.weekdays.length !== 7
-    || !Array.isArray(data.weekday_hourly)
-    || data.weekday_hourly.length !== 168
-    || !Array.isArray(data.modes)
+    || data.schema_version !== 4
+    || !hasValidAggregate(data)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
     || data.periods.some((period) => (
       typeof period.id !== "string"
       || typeof period.start !== "string"
+      || period.start < "2026-01-01"
       || !period.observed_local_date_range
       || typeof period.observed_local_date_range.start !== "string"
       || typeof period.observed_local_date_range.end !== "string"
-      || !Array.isArray(period.hourly)
-      || period.hourly.length !== 24
-      || period.hourly.some((item, hour) => (
-        item.hour !== hour
-        || !Number.isFinite(item.race_count)
-        || !Number.isFinite(item.entrant_total)
-      ))
-      || !Array.isArray(period.weekdays)
-      || period.weekdays.length !== 7
-      || !Array.isArray(period.weekday_hourly)
-      || period.weekday_hourly.length !== 168
-      || !Array.isArray(period.modes)
+      || !hasValidAggregate(period)
     ))
-    || !data.periods.some((period) => period.start >= TOTAL_ENTRANTS_START_DATE)
     || !data.source
+    || data.source.data_start_local !== "2026-01-01"
+    || !Number.isFinite(data.source.fetched_page_count)
+    || !Number.isFinite(data.source.included_race_count)
   ) {
     throw new Error("The generated race dataset has an unsupported shape.");
   }
@@ -655,6 +798,8 @@ function allDataSelection(data) {
     weekdays: data.weekdays,
     weekday_hourly: data.weekday_hourly,
     modes: data.modes,
+    unique_players: data.unique_players,
+    room_cancellation_estimate: data.room_cancellation_estimate,
   };
 }
 
@@ -666,6 +811,11 @@ function renderSummary(data, selection) {
   document.querySelector("#generated-at").textContent = utcTimestamp(data.generated_at);
   document.querySelector("#race-total").textContent = integerFormatter.format(selection.race_count);
   document.querySelector("#mode-total").textContent = integerFormatter.format(selection.modes.length);
+  document.querySelector("#unique-player-label").textContent = selection.unique_players.identity_coverage === 1
+    ? "Unique racers"
+    : "Identified racers";
+  document.querySelector("#unique-player-total").textContent = integerFormatter.format(selection.unique_players.identified_player_count);
+  document.querySelector("#deleted-room-total").textContent = `~${integerFormatter.format(selection.room_cancellation_estimate.estimated_deleted_rooms)}`;
   document.querySelector("#peak-hour").textContent = hourRange(peakHour.hour);
   document.querySelector("#date-range").textContent = dateRange
     ? `${scheduleDate(dateRange.start, data.timezone.name)} to ${scheduleDate(dateRange.end, data.timezone.name)}`
@@ -679,6 +829,12 @@ function renderSelection(data, selection) {
   renderOpportunityHeatmap(
     document.querySelector("#opportunity-heatmap"),
     selection.weekday_hourly,
+  );
+  renderCommunityOrbit(
+    document.querySelector("#community-orbit"),
+    document.querySelector("#community-table"),
+    document.querySelector("#community-coverage"),
+    selection.unique_players,
   );
   renderParticipationChart(
     document.querySelector("#participation-chart"),
@@ -704,6 +860,8 @@ function renderSelection(data, selection) {
     tooltip: (item) => `${hourRange(item.hour)}: ${formatAverage(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`,
   });
   renderModeChart(document.querySelector("#mode-average-chart"), selection.modes);
+  renderRoomSurvival(selection);
+  renderTotalEntrants(selection);
 
   const hourlyRows = selection.hourly.map((item) => [
     hourRange(item.hour),
@@ -765,7 +923,6 @@ function renderPeriodControls(data) {
 
 function renderDashboard(data) {
   renderPeriodControls(data);
-  renderTotalEntrants(data);
   renderSelection(data, allDataSelection(data));
 }
 

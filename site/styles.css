@@ -136,7 +136,7 @@ a:hover {
 
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(130px, 0.7fr)) minmax(220px, 1.5fr);
+  grid-template-columns: repeat(5, minmax(115px, 0.72fr)) minmax(220px, 1.4fr);
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
   animation: arrive 500ms 80ms ease-out both;
@@ -300,7 +300,8 @@ a:hover {
   margin-bottom: 24px;
 }
 
-.chart-panel--decision {
+.chart-panel--decision,
+.chart-panel--community {
   margin-bottom: 24px;
 }
 
@@ -326,6 +327,142 @@ a:hover {
   font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.community-intro {
+  display: flex;
+  gap: 24px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 15px 24px 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.community-intro p {
+  max-width: 850px;
+  margin-bottom: 0;
+}
+
+.community-intro span {
+  flex: 0 0 auto;
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.orbit-host {
+  min-height: 390px;
+  padding: 4px 24px 0;
+}
+
+.orbit-svg {
+  display: block;
+  width: min(100%, 900px);
+  height: auto;
+  margin-inline: auto;
+  overflow: visible;
+  font-family: var(--body);
+}
+
+.orbit-connector {
+  stroke: var(--line);
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.orbit-center circle {
+  fill: var(--panel);
+  stroke: var(--ink);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.orbit-center__value {
+  fill: var(--ink);
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.orbit-center__label,
+.orbit-node__label,
+.orbit-node__range {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.orbit-node__range {
+  font-size: 9px;
+}
+
+.orbit-node {
+  stroke: var(--panel);
+  stroke-width: 4;
+  transition: filter 120ms ease, opacity 120ms ease;
+  vector-effect: non-scaling-stroke;
+}
+
+.orbit-node--blue {
+  fill: var(--blue);
+}
+
+.orbit-node--gold {
+  fill: #916400;
+}
+
+.orbit-node--green {
+  fill: var(--green);
+}
+
+.orbit-node--red {
+  fill: var(--red);
+}
+
+.orbit-node__value,
+.orbit-node__share {
+  fill: #ffffff;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.orbit-node__value {
+  font-family: var(--display);
+  font-size: 23px;
+}
+
+.orbit-node__share {
+  font-size: 10px;
+}
+
+.orbit-focus-ring {
+  fill: none;
+  stroke: transparent;
+}
+
+.orbit-mark:focus {
+  outline: none;
+}
+
+.orbit-mark:hover .orbit-node,
+.orbit-mark:focus .orbit-node {
+  filter: brightness(0.82);
+}
+
+.orbit-mark:focus .orbit-focus-ring {
+  stroke: var(--blue);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.community-coverage {
+  margin: 0;
+  padding: 0 24px 16px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  text-align: center;
 }
 
 .table-wrap.table-wrap--candidates {
@@ -477,10 +614,66 @@ a:hover {
   text-align: right;
 }
 
-.metric-caveat {
-  margin: 0;
-  padding: 12px 24px;
+.room-survival {
+  padding: 15px 24px 12px;
   border-bottom: 1px solid var(--grid);
+}
+
+.room-survival__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.room-survival__metrics > div {
+  min-width: 0;
+  padding: 11px 13px;
+  background: var(--panel);
+}
+
+.room-survival__metrics span,
+.room-survival__metrics strong {
+  display: block;
+}
+
+.room-survival__metrics span {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.room-survival__metrics strong {
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+  font-family: var(--display);
+  font-size: 1.25rem;
+}
+
+.room-survival__track {
+  display: flex;
+  width: 100%;
+  height: 9px;
+  margin-top: 13px;
+  overflow: hidden;
+  background: var(--grid);
+}
+
+.room-survival__observed {
+  background: var(--blue);
+}
+
+.room-survival__deleted {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--red) 0 5px,
+    #a53a31 5px 10px
+  );
+}
+
+.room-survival p {
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 0.76rem;
 }
@@ -710,14 +903,13 @@ footer p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .summary-item:nth-child(3) {
-    padding-left: 0;
+  .summary-item:nth-child(n + 3) {
     border-top: 1px solid var(--line);
-    border-left: 0;
   }
 
-  .summary-item:nth-child(4) {
-    border-top: 1px solid var(--line);
+  .summary-item:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
   }
 
   .hourly-grid {
@@ -836,19 +1028,32 @@ footer p {
     text-align: left;
   }
 
-  .metric-caveat {
-    padding-inline: 16px;
-  }
-
   .decision-summary,
-  .heatmap-heading {
+  .heatmap-heading,
+  .community-intro {
     display: block;
   }
 
   .decision-summary span,
-  .heatmap-heading p {
+  .heatmap-heading p,
+  .community-intro span {
     display: block;
     margin-top: 8px;
+  }
+
+  .community-intro,
+  .community-coverage,
+  .room-survival {
+    padding-inline: 16px;
+  }
+
+  .orbit-host {
+    min-height: 510px;
+    padding: 0;
+  }
+
+  .room-survival__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .table-wrap--candidates,
