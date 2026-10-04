@@ -808,15 +808,17 @@ function renderSummary(data, selection) {
   const peakHour = selection.hourly.reduce((peak, item) => (
     item.race_count > peak.race_count ? item : peak
   ));
+  const quietHour = selection.hourly.reduce((quiet, item) => (
+    item.race_count < quiet.race_count ? item : quiet
+  ));
   document.querySelector("#generated-at").textContent = utcTimestamp(data.generated_at);
   document.querySelector("#race-total").textContent = integerFormatter.format(selection.race_count);
-  document.querySelector("#mode-total").textContent = integerFormatter.format(selection.modes.length);
   document.querySelector("#unique-player-label").textContent = selection.unique_players.identity_coverage === 1
     ? "Unique racers"
     : "Identified racers";
   document.querySelector("#unique-player-total").textContent = integerFormatter.format(selection.unique_players.identified_player_count);
-  document.querySelector("#deleted-room-total").textContent = `~${integerFormatter.format(selection.room_cancellation_estimate.estimated_deleted_rooms)}`;
   document.querySelector("#peak-hour").textContent = hourRange(peakHour.hour);
+  document.querySelector("#quiet-hour").textContent = hourRange(quietHour.hour);
   document.querySelector("#date-range").textContent = dateRange
     ? `${scheduleDate(dateRange.start, data.timezone.name)} to ${scheduleDate(dateRange.end, data.timezone.name)}`
     : "No finished races";

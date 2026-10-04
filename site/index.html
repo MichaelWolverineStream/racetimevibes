@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
-    <meta name="description" content="When ALTTPR Step Ladder races run, who turns up, and who wins.">
-    <meta name="app-version" content="5cbfe17a0021">
+    <meta name="description" content="Stats don't lie - but chickens might.">
+    <meta name="app-version" content="5014abb3c5e1">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
-    <link rel="stylesheet" href="styles.css?v=5cbfe17a0021">
+    <link rel="stylesheet" href="styles.css?v=5014abb3c5e1">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -24,12 +24,14 @@
         <div class="title-block">
           <p class="kicker">Racetime.gg archive</p>
           <h1>ALTTPR Step Ladder</h1>
-          <p class="lede">When races run, who turns up, and who wins.</p>
+          <p class="lede">Stats don't lie.</p>
         </div>
         <div class="source-block">
-          <span>Data snapshot</span>
-          <strong id="generated-at">Loading</strong>
-          <a href="https://racetime.gg/alttpr-ladder" target="_blank" rel="noreferrer">View category</a>
+          <div class="source-block__snapshot">
+            <span>Data snapshot</span>
+            <strong id="generated-at">Loading</strong>
+            <a href="https://racetime.gg/alttpr-ladder" target="_blank" rel="noreferrer">View category</a>
+          </div>
           <div class="hit-counter">
             <span class="summary-label">Visitors</span>
             <div
@@ -58,21 +60,50 @@
           <strong><a href="#leaderboard" id="unique-player-total">--</a></strong>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Est. deleted rooms</span>
-          <strong id="deleted-room-total">--</strong>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Most offered hour</span>
+          <span class="summary-label">Most popular hour</span>
           <strong id="peak-hour">--</strong>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Modes tracked</span>
-          <strong id="mode-total">--</strong>
+          <span class="summary-label">Least popular hour</span>
+          <strong id="quiet-hour">--</strong>
         </div>
         <div class="summary-item summary-item--wide">
           <span class="summary-label">Coverage</span>
           <strong id="date-range">--</strong>
         </div>
+      </section>
+
+      <section id="leaderboard" class="leaderboard-section" aria-labelledby="leaderboard-title">
+        <article class="chart-panel chart-panel--gold chart-panel--leaderboard">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">01 / Racers</p>
+              <h2 id="leaderboard-title" tabindex="-1">Racer leaderboard</h2>
+            </div>
+            <p>Who wins the most</p>
+          </header>
+          <div class="decision-summary">
+            <p>Ranked by podium finishes. <strong>Win %</strong> is the share of races won outright. <strong>H2H win %</strong> counts every racer you finished ahead of. Select a racer for their full matchup breakdown.</p>
+          </div>
+          <div id="leaderboard-controls" class="leaderboard-controls" hidden>
+            <div
+              id="leaderboard-mode-toggle"
+              class="mode-toggle"
+              role="group"
+              aria-label="Choose a race mode"
+            ></div>
+            <div class="mode-toggle" role="group" aria-label="Filter racers">
+              <button id="leaderboard-min-races" class="mode-toggle__button" type="button" aria-pressed="false">5+ races only</button>
+            </div>
+            <div class="leaderboard-filter">
+              <label for="leaderboard-search">Find a racer</label>
+              <input id="leaderboard-search" type="search" autocomplete="off" placeholder="Start typing a name">
+            </div>
+          </div>
+          <p id="leaderboard-announcer" class="visually-hidden" role="status"></p>
+          <div id="leaderboard-status" class="load-status">Loading racer statistics...</div>
+          <div id="leaderboard-table" class="table-wrap table-wrap--leaderboard"></div>
+        </article>
       </section>
 
       <p id="load-status" class="load-status" role="status">Loading race statistics...</p>
@@ -95,7 +126,7 @@
         <article class="chart-panel chart-panel--green chart-panel--decision">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">01 / Schedule</p>
+              <p class="panel-index">02 / Schedule</p>
               <h2>Best times to start a race</h2>
             </div>
             <p>Compared with similar races</p>
@@ -115,7 +146,7 @@
         <article class="chart-panel chart-panel--blue chart-panel--community">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">02 / Community</p>
+              <p class="panel-index">03 / Community</p>
               <h2>Who keeps coming back</h2>
             </div>
             <p>Racers grouped by how often they race</p>
@@ -135,7 +166,7 @@
         <article class="chart-panel chart-panel--blue chart-panel--participation">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">03 / Participation</p>
+              <p class="panel-index">04 / Participation</p>
               <h2>Turnout over time</h2>
             </div>
             <p>Average racers per race</p>
@@ -151,7 +182,7 @@
           <article class="chart-panel chart-panel--red">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">04 / Traffic</p>
+                <p class="panel-index">05 / Traffic</p>
                 <h2>When races start</h2>
               </div>
               <p>Races per hour</p>
@@ -166,7 +197,7 @@
           <article class="chart-panel chart-panel--gold">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">05 / Turnout</p>
+                <p class="panel-index">06 / Turnout</p>
                 <h2>When races draw a crowd</h2>
               </div>
               <p>Average racers per race</p>
@@ -181,7 +212,7 @@
           <article class="chart-panel chart-panel--blue chart-panel--hourly-total">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">06 / Volume</p>
+                <p class="panel-index">07 / Volume</p>
                 <h2>Busiest hours</h2>
               </div>
               <p>Total racers · <span id="hourly-total-range">All data</span></p>
@@ -210,7 +241,7 @@
         <article class="chart-panel chart-panel--green chart-panel--modes">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">07 / Modes</p>
+              <p class="panel-index">08 / Modes</p>
               <h2>Which modes draw a crowd</h2>
             </div>
             <p>Biggest fields first</p>
@@ -220,40 +251,6 @@
             <summary>View mode values</summary>
             <div id="mode-average-table" class="table-wrap"></div>
           </details>
-        </article>
-      </section>
-
-      <section id="leaderboard" class="leaderboard-section" aria-labelledby="leaderboard-title">
-        <article class="chart-panel chart-panel--gold chart-panel--leaderboard">
-          <header class="panel-heading">
-            <div>
-              <p class="panel-index">08 / Racers</p>
-              <h2 id="leaderboard-title" tabindex="-1">Racer leaderboard</h2>
-            </div>
-            <p>Who wins the most</p>
-          </header>
-          <div class="decision-summary">
-            <p>Ranked by podium finishes: golds first, then silvers, then bronzes. Racetime.gg points are ignored entirely. <strong>Win %</strong> is the share of races won outright. <strong>H2H win %</strong> counts every racer you finished ahead of, so third in a field of thirty counts for more than third in a field of three &mdash; select a racer for their full matchup breakdown.</p>
-            <span>All archived races; the time range above does not apply</span>
-          </div>
-          <div id="leaderboard-controls" class="leaderboard-controls" hidden>
-            <div
-              id="leaderboard-mode-toggle"
-              class="mode-toggle"
-              role="group"
-              aria-label="Choose a race mode"
-            ></div>
-            <div class="mode-toggle" role="group" aria-label="Filter racers">
-              <button id="leaderboard-min-races" class="mode-toggle__button" type="button" aria-pressed="false">5+ races only</button>
-            </div>
-            <div class="leaderboard-filter">
-              <label for="leaderboard-search">Find a racer</label>
-              <input id="leaderboard-search" type="search" autocomplete="off" placeholder="Start typing a name">
-            </div>
-          </div>
-          <p id="leaderboard-announcer" class="visually-hidden" role="status"></p>
-          <div id="leaderboard-status" class="load-status">Loading racer statistics...</div>
-          <div id="leaderboard-table" class="table-wrap table-wrap--leaderboard"></div>
         </article>
       </section>
 
@@ -286,17 +283,24 @@
     </main>
 
     <footer>
-      <p>2026 finished races only; ladder tests excluded. Schedule times use America/New_York wall-clock time. Deleted-room values are model estimates, not recorded cancellations.</p>
+      <p>2026 finished races only. Schedule times use America/New_York wall-clock time. Deleted-room values are model estimates, not recorded cancellations.</p>
       <div class="footer-meta">
         <p class="footer-credit">Built by StructuralMike</p>
         <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
+        <a
+          class="easter-egg"
+          href="https://www.youtube.com/watch?v=msSc7Mv0QHY"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Easter egg"
+        ></a>
       </div>
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=5cbfe17a0021" defer></script>
-    <script src="leaderboard.js?v=5cbfe17a0021" defer></script>
-    <script src="version-check.js?v=5cbfe17a0021" defer></script>
-    <script src="visitor-counter.js?v=5cbfe17a0021" defer></script>
+    <script src="app.js?v=5014abb3c5e1" defer></script>
+    <script src="leaderboard.js?v=5014abb3c5e1" defer></script>
+    <script src="version-check.js?v=5014abb3c5e1" defer></script>
+    <script src="visitor-counter.js?v=5014abb3c5e1" defer></script>
   </body>
 </html>

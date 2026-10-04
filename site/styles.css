@@ -106,9 +106,14 @@ h1 {
 }
 
 .source-block {
-  min-width: 210px;
+  display: flex;
+  gap: 22px;
   padding-left: 22px;
   border-left: 1px solid var(--line);
+}
+
+.source-block__snapshot {
+  min-width: 212px;
 }
 
 .source-block strong,
@@ -125,9 +130,14 @@ h1 {
 }
 
 .hit-counter {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+  padding-left: 22px;
+  border-left: 1px solid var(--line);
+}
+
+/* The digit strip is inline-flex, so the label needs to be block to sit above it. */
+.hit-counter .summary-label {
+  display: block;
 }
 
 .hit-counter__digits {
@@ -187,7 +197,7 @@ a:hover {
 
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(5, minmax(115px, 0.72fr)) minmax(220px, 1.4fr);
+  grid-template-columns: repeat(4, minmax(115px, 0.72fr)) minmax(220px, 1.4fr);
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
   animation: arrive 500ms 80ms ease-out both;
@@ -1180,6 +1190,22 @@ footer p {
   white-space: nowrap;
 }
 
+.easter-egg {
+  align-self: center;
+  width: 9px;
+  height: 12px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: var(--line);
+  opacity: 0.5;
+  transition: background 160ms ease, opacity 160ms ease;
+}
+
+.easter-egg:hover,
+.easter-egg:focus-visible {
+  background: var(--gold);
+  opacity: 1;
+}
+
 @keyframes arrive {
   from {
     opacity: 0;
@@ -1198,21 +1224,22 @@ footer p {
 
   .source-block {
     grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 16px;
-    align-items: baseline;
+    justify-content: space-between;
     padding: 14px 0 0;
     border-top: 1px solid var(--line);
     border-left: 0;
   }
 
-  .source-block strong {
-    margin: 0;
+  .source-block__snapshot {
+    display: grid;
+    flex: 1;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: baseline;
   }
 
-  .hit-counter {
-    grid-column: 1 / -1;
+  .source-block strong {
+    margin: 0;
   }
 
   .summary-strip {
@@ -1277,6 +1304,10 @@ footer p {
     display: block;
   }
 
+  .source-block__snapshot {
+    display: block;
+  }
+
   .source-block span {
     display: block;
   }
@@ -1288,6 +1319,13 @@ footer p {
 
   .source-block a {
     margin-top: 8px;
+  }
+
+  .hit-counter {
+    margin-top: 14px;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
   }
 
   .summary-item {
