@@ -14,7 +14,13 @@ from pathlib import Path
 SITE_DIR = Path(__file__).resolve().parents[1] / "site"
 INDEX_NAME = "index.html"
 VERSION_NAME = "version.json"
-VERSIONED_ASSETS = ("styles.css", "app.js", "leaderboard.js", "version-check.js")
+VERSIONED_ASSETS = (
+    "styles.css",
+    "app.js",
+    "leaderboard.js",
+    "version-check.js",
+    "visitor-counter.js",
+)
 VERSION_LENGTH = 12
 VERSION_META_PATTERN = re.compile(r'(<meta name="app-version" content=")([^"]*)(">)')
 
