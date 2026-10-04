@@ -17,7 +17,9 @@ python3 scripts/build_stats.py
 
 The script requests the API's maximum of 100 records per page with entrant details enabled. It validates completion-time ordering and stops after the first complete page that crosses the January 1, 2026 Eastern Time boundary, so older archive pages are not collected. A final page-one check confirms that the source did not change during pagination, and the aggregate is atomically written to `site/data/race-stats.json`. Transient network failures are retried with bounded backoff.
 
-Entrant user IDs are used only as in-memory deduplication keys. The generated file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields.
+The same fetch also writes `site/data/participants.json`, the per-racer leaderboard dataset. No extra API requests are made. Use `--output` and `--participants-output` to redirect either file.
+
+`race-stats.json` is anonymous: entrant user IDs are used only as in-memory deduplication keys, and the file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields. `participants.json` publishes each racer's public display name and stable user ID because a leaderboard requires them; it still omits `full_name`, discriminators, avatars, pronouns, flair, Twitch fields, comments, and racetime.gg score fields.
 
 ## Preview the dashboard
 
@@ -59,6 +61,17 @@ The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. 
 - Adjusted weekday-hour lift subtracts the matching mode-by-calendar-half-year mean from every race, then averages those residuals within each weekday-hour cell. This reduces mode and broad time-period mix effects.
 - Mode is the normalized first token in the `Step Ladder Series - [mode]` prefix of `info`. Later tags such as `[VT]` are ignored. A missing or malformed prefix is grouped as `unknown`.
 
+### Racer leaderboard
+
+- **Racetime.gg points are ignored entirely.** `score` and `score_change` are never read, so ladder rating has no effect on any racer metric.
+- Ranking counts first, second, and third place finishes regardless of field size, sorted by golds, then silvers, then bronzes, then total races, then name. There is no minimum-races cutoff. Because a podium in a field of three is not a podium in a field of thirty, read the rank alongside the head-to-head win rate.
+- A racer counts as finishing a race only when their entrant `status.value` is `done` **and** the API reports a `place`. Everything else counts toward DNF, except `dq`, which is tracked separately on the racer page.
+- Average, best, and worst times cover finished races only and come from `finish_time`, rounded to whole seconds. Racers with no finishes show `--` rather than zero.
+- Head-to-head pairs every racer in a race against every other racer in that same race. The lower `place` wins. Any finisher beats any non-finisher. Two non-finishers draw.
+- Win rate is wins divided by wins plus losses. Draws are reported in their own column and are excluded from the denominator. This normalizes for field size: finishing fifth of ten is five wins and four losses regardless of how the ladder scores it.
+- The trend compares the win rate over the last five decisive meetings against the career rate with that opponent, and appears only after more than five decisive meetings. A move of more than five percentage points shows as up or down; anything smaller shows as steady.
+- The leaderboard always covers the whole archive. The reporting-period toggle applies to the dashboard panels only.
+
 The candidate rankings are observational leads for schedule experiments, not causal estimates. They do not control for announcements, competing events, holidays, organizer effects, or player availability, and sparse windows may look extreme by chance. Use the strongest windows to design prospective schedule tests and compare repeated outcomes before making permanent changes.
 
 Data freshness is manual and build-time. The browser reads the local aggregate file and never crawls racetime.gg.
@@ -74,12 +87,16 @@ Tests use mocked API responses and do not require network access.
 ## Project layout
 
 ```text
-scripts/build_stats.py       Data retrieval, validation, and aggregation
-tests/test_build_stats.py    Pipeline unit tests
-site/data/race-stats.json    Generated aggregate dataset
-site/index.html              Static dashboard document
-site/app.js                  Native SVG chart rendering
-site/styles.css              Responsive visual system
+scripts/build_stats.py            Data retrieval, validation, and aggregation
+scripts/participant_stats.py      Per-racer leaderboard dataset
+tests/test_build_stats.py         Pipeline unit tests
+tests/test_participant_stats.py   Leaderboard unit tests
+site/data/race-stats.json         Generated aggregate dataset
+site/data/participants.json       Generated per-racer dataset
+site/index.html                   Static dashboard document
+site/app.js                       Native SVG chart rendering
+site/leaderboard.js               Racer leaderboard and head-to-head views
+site/styles.css                   Responsive visual system
 ```
 
 API behavior and field definitions are recorded in [Racetime_API.md](Racetime_API.md).

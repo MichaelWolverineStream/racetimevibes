@@ -20,6 +20,12 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
+# Supports both `python3 scripts/build_stats.py` and `from scripts import build_stats`.
+try:
+    from scripts import participant_stats
+except ImportError:
+    import participant_stats
+
 
 SOURCE_URL = "https://racetime.gg/alttpr-ladder/races/data"
 PER_PAGE = 100
@@ -28,7 +34,9 @@ REQUEST_DELAY_SECONDS = 0.2
 NETWORK_ATTEMPTS = 3
 COLLECTION_ATTEMPTS = 2
 USER_AGENT = "racetimevibes/1.0 (+static infographic data builder)"
-OUTPUT_PATH = Path(__file__).resolve().parents[1] / "site" / "data" / "race-stats.json"
+DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
+OUTPUT_PATH = DATA_DIR / "race-stats.json"
+PARTICIPANTS_OUTPUT_PATH = DATA_DIR / "participants.json"
 
 SCHEDULE_TIMEZONE_NAME = "America/New_York"
 SCHEDULE_TIMEZONE = ZoneInfo(SCHEDULE_TIMEZONE_NAME)
@@ -530,6 +538,57 @@ def _period_coverage(
     }
 
 
+def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] | None]:
+    """Return a race's mode and timing context, or the reason it is excluded."""
+    status = race.get("status")
+    status_value = status.get("value") if isinstance(status, dict) else None
+    if status_value != "finished":
+        return None, ("status", str(status_value or "missing"))
+
+    try:
+        started_at = parse_started_at(race.get("started_at"))
+    except (TypeError, ValueError):
+        return None, ("invalid", "invalid_started_at")
+
+    local_started_at = started_at.astimezone(SCHEDULE_TIMEZONE)
+    if local_started_at.date() < DATA_START_LOCAL_DATE:
+        return None, ("before_data_start", "")
+
+    entrants_count = race.get("entrants_count")
+    if (
+        not isinstance(entrants_count, int)
+        or isinstance(entrants_count, bool)
+        or entrants_count < 0
+    ):
+        return None, ("invalid", "invalid_entrants_count")
+
+    info = race.get("info")
+    if not isinstance(info, str):
+        return None, ("invalid", "invalid_info")
+
+    mode = extract_mode(info)
+    if mode in EXCLUDED_MODES:
+        return None, ("mode", mode)
+
+    return {
+        "race": race,
+        "started_at": started_at,
+        "local_started_at": local_started_at,
+        "entrants_count": entrants_count,
+        "mode": mode,
+    }, None
+
+
+def included_race_contexts(races: list[JsonObject]) -> list[JsonObject]:
+    """Return the context for every race that passes the dashboard filters."""
+    contexts = []
+    for race in races:
+        context, _reason = classify_race(race)
+        if context is not None:
+            contexts.append(context)
+    return contexts
+
+
 def aggregate_races(
     races: list[JsonObject],
     api_record_count: int,
@@ -549,50 +608,31 @@ def aggregate_races(
     excluded_before_data_start = 0
 
     for race in races:
-        status = race.get("status")
-        status_value = status.get("value") if isinstance(status, dict) else None
-        if status_value != "finished":
-            excluded_statuses[str(status_value or "missing")] += 1
+        context, reason = classify_race(race)
+        if context is None:
+            kind, detail = reason
+            if kind == "status":
+                excluded_statuses[detail] += 1
+            elif kind == "mode":
+                excluded_modes[detail] += 1
+            elif kind == "before_data_start":
+                excluded_before_data_start += 1
+            else:
+                invalid_records[detail] += 1
             continue
 
-        try:
-            started_at = parse_started_at(race.get("started_at"))
-        except (TypeError, ValueError):
-            invalid_records["invalid_started_at"] += 1
-            continue
-
-        local_started_at = started_at.astimezone(SCHEDULE_TIMEZONE)
-        if local_started_at.date() < DATA_START_LOCAL_DATE:
-            excluded_before_data_start += 1
-            continue
-
-        entrants_count = race.get("entrants_count")
-        if (
-            not isinstance(entrants_count, int)
-            or isinstance(entrants_count, bool)
-            or entrants_count < 0
-        ):
-            invalid_records["invalid_entrants_count"] += 1
-            continue
-
-        info = race.get("info")
-        if not isinstance(info, str):
-            invalid_records["invalid_info"] += 1
-            continue
-
-        mode = extract_mode(info)
-        if mode in EXCLUDED_MODES:
-            excluded_modes[mode] += 1
-            continue
+        mode = context["mode"]
         if mode == "unknown":
             unknown_mode_count += 1
 
+        local_started_at = context["local_started_at"]
+        entrants_count = context["entrants_count"]
         entrant_ids, unidentified_entry_count = _entrant_identity_counts(
             race, entrants_count
         )
         period = six_month_period(local_started_at)
         record = {
-            "started_at": started_at,
+            "started_at": context["started_at"],
             "local_started_at": local_started_at,
             "entrants_count": entrants_count,
             "entrant_ids": entrant_ids,
@@ -684,7 +724,10 @@ def write_json_atomic(payload: JsonObject, output_path: Path) -> None:
     os.replace(temporary_path, output_path)
 
 
-def build(output_path: Path = OUTPUT_PATH) -> JsonObject:
+def build(
+    output_path: Path = OUTPUT_PATH,
+    participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
+) -> tuple[JsonObject, JsonObject]:
     races, api_record_count, api_page_count, fetched_page_count = collect_races()
     stats = aggregate_races(
         races,
@@ -692,8 +735,15 @@ def build(output_path: Path = OUTPUT_PATH) -> JsonObject:
         api_page_count,
         fetched_page_count=fetched_page_count,
     )
+    participants = participant_stats.build_participant_payload(
+        included_race_contexts(races),
+        source_url=SOURCE_URL,
+        timezone_label=stats["timezone"]["label"],
+        timezone_name=SCHEDULE_TIMEZONE_NAME,
+    )
     write_json_atomic(stats, output_path)
-    return stats
+    participant_stats.write_compact_json(participants, participants_output_path)
+    return stats, participants
 
 
 def parse_args() -> argparse.Namespace:
@@ -704,14 +754,20 @@ def parse_args() -> argparse.Namespace:
         default=OUTPUT_PATH,
         help=f"output JSON path (default: {OUTPUT_PATH})",
     )
+    parser.add_argument(
+        "--participants-output",
+        type=Path,
+        default=PARTICIPANTS_OUTPUT_PATH,
+        help=f"racer leaderboard JSON path (default: {PARTICIPANTS_OUTPUT_PATH})",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     try:
-        stats = build(args.output)
-    except DataError as error:
+        stats, participants = build(args.output, args.participants_output)
+    except (DataError, participant_stats.ParticipantDataError) as error:
         print(f"Data build failed: {error}", file=sys.stderr)
         return 1
 
@@ -719,6 +775,12 @@ def main() -> int:
     print(
         f"Wrote {args.output} with {source['included_race_count']} finished races "
         f"from {source['api_record_count']} API records."
+    )
+    participant_diagnostics = participants["diagnostics"]
+    print(
+        f"Wrote {args.participants_output} with "
+        f"{participant_diagnostics['player_count']} racers across "
+        f"{participant_diagnostics['entry_count']} entries."
     )
     return 0
 

@@ -39,7 +39,7 @@
         </div>
         <div class="summary-item">
           <span id="unique-player-label" class="summary-label">Identified racers</span>
-          <strong id="unique-player-total">--</strong>
+          <strong><a href="#leaderboard" id="unique-player-total">--</a></strong>
         </div>
         <div class="summary-item">
           <span class="summary-label">Est. deleted rooms</span>
@@ -206,6 +206,64 @@
           </details>
         </article>
       </section>
+
+      <section id="leaderboard" class="leaderboard-section" aria-labelledby="leaderboard-title">
+        <article class="chart-panel chart-panel--gold chart-panel--leaderboard">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">08 / Racers</p>
+              <h2 id="leaderboard-title" tabindex="-1">Racer leaderboard</h2>
+            </div>
+            <p>All data, every mode</p>
+          </header>
+          <div class="decision-summary">
+            <p>Ranked by podium finishes: golds first, then silvers, then bronzes. Racetime.gg points are ignored entirely. Because third in a field of three is not third in a field of thirty, the head-to-head win rate normalises for field size &mdash; select a racer for their full matchup breakdown.</p>
+            <span>All archived races; the reporting period above does not apply</span>
+          </div>
+          <div id="leaderboard-controls" class="leaderboard-controls" hidden>
+            <div
+              id="leaderboard-mode-toggle"
+              class="mode-toggle"
+              role="group"
+              aria-label="Choose a race mode"
+            ></div>
+            <div class="leaderboard-filter">
+              <label for="leaderboard-search">Find a racer</label>
+              <input id="leaderboard-search" type="search" autocomplete="off" placeholder="Start typing a name">
+            </div>
+          </div>
+          <p id="leaderboard-announcer" class="visually-hidden" role="status"></p>
+          <div id="leaderboard-status" class="load-status">Loading racer statistics...</div>
+          <div id="leaderboard-table" class="table-wrap table-wrap--leaderboard"></div>
+        </article>
+      </section>
+
+      <section id="player-view" class="player-view" hidden aria-labelledby="player-name">
+        <article class="chart-panel chart-panel--gold chart-panel--player">
+          <header class="panel-heading">
+            <div>
+              <a class="back-link" href="#leaderboard">&larr; All racers</a>
+              <h2 id="player-name" tabindex="-1">Racer</h2>
+            </div>
+            <p id="player-subtitle">Head-to-head record</p>
+          </header>
+          <div id="player-summary" class="summary-strip player-summary"></div>
+          <div class="leaderboard-controls">
+            <div
+              id="player-mode-toggle"
+              class="mode-toggle"
+              role="group"
+              aria-label="Choose a race mode"
+            ></div>
+            <div class="leaderboard-filter">
+              <label for="player-search">Find an opponent</label>
+              <input id="player-search" type="search" autocomplete="off" placeholder="Start typing a name">
+            </div>
+          </div>
+          <p id="player-announcer" class="visually-hidden" role="status"></p>
+          <div id="player-h2h-table" class="table-wrap table-wrap--leaderboard"></div>
+        </article>
+      </section>
     </main>
 
     <footer>
@@ -215,5 +273,6 @@
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
     <script src="app.js" defer></script>
+    <script src="leaderboard.js" defer></script>
   </body>
 </html>
