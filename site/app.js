@@ -419,7 +419,7 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
     svgElement(
       "text",
       { class: "axis-label", x: 14, y: margin.top + plotHeight / 2, transform: `rotate(-90 14 ${margin.top + plotHeight / 2})`, "text-anchor": "middle" },
-      "AVERAGE ENTRIES PER RACE",
+      "AVERAGE RACERS PER RACE",
     ),
   );
   container.replaceChildren(svg);
@@ -527,7 +527,7 @@ function renderModeChart(container, items) {
         y: height - 2,
         "text-anchor": "middle",
       },
-      "AVERAGE TOTAL ENTRANTS PER FINISHED RACE",
+      "AVERAGE RACERS PER RACE",
     ),
   );
   container.replaceChildren(svg);

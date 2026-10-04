@@ -29,6 +29,20 @@ python3 -m http.server 8000 -d site
 
 Open <http://localhost:8000>. The page must be served over HTTP because it loads the generated JSON with `fetch`; opening `site/index.html` directly will not work in browsers that restrict local file requests.
 
+## Version the static assets
+
+```bash
+python3 scripts/version_assets.py
+```
+
+Run this after editing `site/index.html`, `site/styles.css`, `site/app.js`, `site/leaderboard.js`, or `site/version-check.js`, then commit the result. It hashes the markup and those assets into a single token, rewrites every reference to `asset?v=<token>`, and writes `site/version.json`.
+
+Two things follow from that. A deploy changes the asset URLs, so returning visitors always fetch the new files instead of a cached copy. And `site/version-check.js` polls `version.json` every five minutes, plus whenever the tab regains focus, and reloads the page once if the published token no longer matches the one embedded in the loaded document.
+
+The reload is guarded by `sessionStorage`: a tab reloads at most once per newly published version. Without that guard a browser still serving a cached `index.html` would report the old token forever and reload in a loop.
+
+`python3 scripts/version_assets.py --check` reports staleness without writing. The test suite runs the same check, so CI fails if an asset changed without a restamp.
+
 ## Publish with GitHub Pages
 
 The workflow in `.github/workflows/pages.yml` runs the test suite and deploys the `site` directory whenever `main` is pushed. It can also be started manually from the repository's **Actions** tab.
@@ -70,6 +84,7 @@ The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. 
 - Head-to-head pairs every racer in a race against every other racer in that same race. The lower `place` wins. Any finisher beats any non-finisher. Two non-finishers draw.
 - Win rate is wins divided by wins plus losses. Draws are reported in their own column and are excluded from the denominator. This normalizes for field size: finishing fifth of ten is five wins and four losses regardless of how the ladder scores it.
 - The trend compares the win rate over the last five decisive meetings against the career rate with that opponent, and appears only after more than five decisive meetings. A move of more than five percentage points shows as up or down; anything smaller shows as steady.
+- The optional **5+ races only** button hides racers with fewer than five races. It counts races in the currently selected mode, so a veteran with only a few races in one mode drops out of that mode's board. Ranks keep their full-board position, so a filtered view shows gaps.
 - The leaderboard always covers the whole archive. The reporting-period toggle applies to the dashboard panels only.
 
 The candidate rankings are observational leads for schedule experiments, not causal estimates. They do not control for announcements, competing events, holidays, organizer effects, or player availability, and sparse windows may look extreme by chance. Use the strongest windows to design prospective schedule tests and compare repeated outcomes before making permanent changes.
@@ -89,13 +104,17 @@ Tests use mocked API responses and do not require network access.
 ```text
 scripts/build_stats.py            Data retrieval, validation, and aggregation
 scripts/participant_stats.py      Per-racer leaderboard dataset
+scripts/version_assets.py         Content versioning for the static assets
 tests/test_build_stats.py         Pipeline unit tests
 tests/test_participant_stats.py   Leaderboard unit tests
+tests/test_version_assets.py      Asset versioning unit tests
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
+site/version.json                 Generated content version manifest
 site/index.html                   Static dashboard document
 site/app.js                       Native SVG chart rendering
 site/leaderboard.js               Racer leaderboard and head-to-head views
+site/version-check.js             Reloads the page when a new version ships
 site/styles.css                   Responsive visual system
 ```
 

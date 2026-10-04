@@ -923,7 +923,7 @@ body.viewing-player #leaderboard {
   flex-wrap: wrap;
   gap: 16px;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 4px 24px 14px;
 }
 
@@ -931,6 +931,7 @@ body.viewing-player #leaderboard {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-left: auto;
 }
 
 .leaderboard-filter label {
@@ -1116,6 +1117,18 @@ footer p {
   margin-bottom: 0;
 }
 
+.footer-meta {
+  display: flex;
+  flex-shrink: 0;
+  gap: 18px;
+  align-items: baseline;
+}
+
+.footer-credit {
+  margin: 0;
+  white-space: nowrap;
+}
+
 @keyframes arrive {
   from {
     opacity: 0;
@@ -1263,6 +1276,10 @@ footer p {
     padding: 4px 18px 14px;
   }
 
+  .leaderboard-filter {
+    margin-left: 0;
+  }
+
   .leaderboard-filter input {
     min-width: 0;
     width: 100%;
@@ -1358,9 +1375,8 @@ footer p {
     display: block;
   }
 
-  footer a {
-    display: inline-block;
-    margin-top: 10px;
+  .footer-meta {
+    margin-top: 12px;
   }
 }
 

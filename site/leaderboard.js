@@ -3,6 +3,7 @@ const ALL_MODES = "all";
 const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
 const TREND_THRESHOLD = 0.05;
+const MIN_RACES_THRESHOLD = 5;
 const RACE_ROOT = "https://racetime.gg/";
 const BASE_TITLE = document.title;
 
@@ -19,7 +20,7 @@ let raceIndexesByPlayer = [];
 let recordCache = new Map();
 let currentView = null;
 
-const leaderboardState = { mode: ALL_MODES, sort: null, query: "" };
+const leaderboardState = { mode: ALL_MODES, sort: null, query: "", minRaces: 0 };
 const playerState = { mode: ALL_MODES, sort: null, query: "" };
 
 function validateParticipants(data) {
@@ -461,7 +462,14 @@ function renderLeaderboard() {
 
   const columns = leaderboardColumns();
   const all = leaderboardRows(leaderboardState.mode);
-  const visible = all.filter((row) => matchesQuery(row.player.name, leaderboardState.query));
+  const visible = all.filter(
+    (row) =>
+      row.races >= leaderboardState.minRaces &&
+      matchesQuery(row.player.name, leaderboardState.query),
+  );
+  document
+    .querySelector("#leaderboard-min-races")
+    .setAttribute("aria-pressed", String(leaderboardState.minRaces > 0));
   renderSortableTable(container, columns, sortRows(visible, columns, leaderboardState.sort), leaderboardState, (column) => {
     leaderboardState.sort = nextSort(leaderboardState, column);
     renderLeaderboard();
@@ -470,7 +478,8 @@ function renderLeaderboard() {
   const sortLabel = leaderboardState.sort
     ? `Sorted by ${columns.find((item) => item.key === leaderboardState.sort.key).sortLabel || ""}, ${leaderboardState.sort.direction === "asc" ? "ascending" : "descending"}. `
     : "";
-  announce("#leaderboard-announcer", `${sortLabel}${visible.length} of ${all.length} racers shown for ${modeLabel(leaderboardState.mode)}.`);
+  const filterLabel = leaderboardState.minRaces > 0 ? `, ${MIN_RACES_THRESHOLD}+ races only` : "";
+  announce("#leaderboard-announcer", `${sortLabel}${visible.length} of ${all.length} racers shown for ${modeLabel(leaderboardState.mode)}${filterLabel}.`);
 }
 
 function playerModes(playerIndex) {
@@ -592,7 +601,7 @@ function renderPlayerView(playerIndex) {
   }
 
   document.querySelector("#player-name").textContent = player.name;
-  document.querySelector("#player-subtitle").textContent = `Head-to-head record · ${modeLabel(playerState.mode)}`;
+  document.querySelector("#player-subtitle").textContent = `How they match up · ${modeLabel(playerState.mode)}`;
 
   renderModeToggle(document.querySelector("#player-mode-toggle"), available, playerState.mode, (mode) => {
     playerState.mode = mode;
@@ -722,6 +731,10 @@ async function loadParticipants() {
       if (currentView && currentView.kind === "player") {
         renderPlayerView(currentView.index);
       }
+    });
+    document.querySelector("#leaderboard-min-races").addEventListener("click", () => {
+      leaderboardState.minRaces = leaderboardState.minRaces > 0 ? 0 : MIN_RACES_THRESHOLD;
+      renderLeaderboard();
     });
 
     renderLeaderboard();
