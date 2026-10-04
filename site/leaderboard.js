@@ -410,9 +410,16 @@ function leaderboardColumns() {
     {
       key: "winRate",
       label: "Win %",
+      sortLabel: "share of races won",
+      sortValue: (row) => row.raceWinRate,
+      render: (cell, row) => appendText(cell, formatRate(row.raceWinRate)),
+    },
+    {
+      key: "headToHead",
+      label: "H2H win %",
       sortLabel: "head-to-head win rate",
-      sortValue: (row) => row.winRate,
-      render: (cell, row) => appendText(cell, formatRate(row.winRate)),
+      sortValue: (row) => row.headToHeadRate,
+      render: (cell, row) => appendText(cell, formatRate(row.headToHeadRate)),
     },
     {
       key: "average",
@@ -442,7 +449,8 @@ function leaderboardRows(modeId) {
       third: row.third,
       unfinished: row.dnf + row.dq,
       averageSeconds: row.average_seconds,
-      winRate: winRate(record.wins, record.losses),
+      raceWinRate: row.first / row.races,
+      headToHeadRate: winRate(record.wins, record.losses),
     };
   });
 }
@@ -518,7 +526,7 @@ function renderPlayerSummary(playerIndex, modeId, matchups) {
     summaryItem("Races", row ? integerFormatter.format(row.races) : "0"),
     summaryItem("Podiums", row ? `${row.first} / ${row.second} / ${row.third}` : "--"),
     summaryItem("Record W-L-D", `${totals.wins}-${totals.losses}-${totals.draws}`),
-    summaryItem("Win rate", formatRate(winRate(totals.wins, totals.losses))),
+    summaryItem("H2H win rate", formatRate(winRate(totals.wins, totals.losses))),
     summaryItem("DNF / DQ", row ? `${row.dnf} / ${row.dq}` : "--"),
     summaryItem("Median place", row && row.median_place !== null ? decimalFormatter.format(row.median_place) : "--"),
     summaryItem("Average", row ? formatDuration(row.average_seconds) : "--"),
