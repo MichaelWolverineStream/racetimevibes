@@ -54,7 +54,13 @@ For the first deployment:
 3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
 4. Open **Actions > Deploy GitHub Pages** and run the workflow, or push another commit to `main`.
 
-The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. The workflow deploys the committed aggregate JSON; refresh it with `python3 scripts/build_stats.py` and commit the result when the data should change.
+The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. The workflow deploys the committed aggregate JSON.
+
+## Scheduled data refresh
+
+The workflow in `.github/workflows/update-data.yml` runs `scripts/build_stats.py` daily at 06:17 UTC. It can also be started manually from **Actions > Update race data**. When anything other than `generated_at` differs from the committed files, it commits `site/data` to `main` as `YYYY-MM-DD data` and then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows. Runs that find no new races commit nothing.
+
+You can still refresh by hand with `python3 scripts/build_stats.py` and commit the result. Pull first, because the scheduled job may have pushed a data commit since your last sync.
 
 ## Metric definitions
 
@@ -90,7 +96,7 @@ The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. 
 
 The candidate rankings are observational leads for schedule experiments, not causal estimates. They do not control for announcements, competing events, holidays, organizer effects, or player availability, and sparse windows may look extreme by chance. Use the strongest windows to design prospective schedule tests and compare repeated outcomes before making permanent changes.
 
-Data freshness is manual and build-time. The browser reads the local aggregate file and never crawls racetime.gg.
+Data freshness is build-time: the dashboard is at most one daily refresh behind racetime.gg. The browser reads the local aggregate file and never crawls racetime.gg.
 
 ## Tests
 
@@ -109,6 +115,8 @@ scripts/version_assets.py         Content versioning for the static assets
 tests/test_build_stats.py         Pipeline unit tests
 tests/test_participant_stats.py   Leaderboard unit tests
 tests/test_version_assets.py      Asset versioning unit tests
+.github/workflows/pages.yml       Test and deploy to GitHub Pages
+.github/workflows/update-data.yml Daily data refresh, commit, and deploy
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
 site/version.json                 Generated content version manifest

@@ -1,0 +1,67 @@
+name: Update race data
+
+"on":
+  schedule:
+    # Daily, off the top of the hour to avoid GitHub's scheduling backlog.
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build data
+        run: python3 scripts/build_stats.py
+      - name: Detect changes
+        id: changes
+        # generated_at differs on every run, so ignore it when deciding whether to commit.
+        run: |
+          python3 - <<'EOF'
+          import json, os, subprocess
+
+          changed = False
+          for path in ("site/data/race-stats.json", "site/data/participants.json"):
+              committed = subprocess.run(
+                  ["git", "show", f"HEAD:{path}"],
+                  check=True, capture_output=True, text=True,
+              ).stdout
+              old = json.loads(committed)
+              with open(path, encoding="utf-8") as current:
+                  new = json.load(current)
+              old.pop("generated_at", None)
+              new.pop("generated_at", None)
+              changed = changed or old != new
+
+          print(f"Data changed: {changed}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"changed={'true' if changed else 'false'}\n")
+          EOF
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data
+          git commit -m "$(date -u +%F) data"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      # Pushes made with GITHUB_TOKEN do not trigger other workflows, so start the deploy explicitly.
+      - name: Deploy
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
