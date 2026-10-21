@@ -4,6 +4,9 @@ const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
 const TREND_THRESHOLD = 0.05;
 const MIN_RACES_THRESHOLD = 5;
+const RECENT_DAYS = 30;
+const DQ_STATUS = 2;
+const DEFAULT_TIMEZONE = "America/New_York";
 const RACE_ROOT = "https://racetime.gg/";
 const BASE_TITLE = document.title;
 
@@ -20,7 +23,14 @@ let raceIndexesByPlayer = [];
 let recordCache = new Map();
 let currentView = null;
 
-const leaderboardState = { mode: ALL_MODES, sort: null, query: "", minRaces: 0 };
+const leaderboardState = {
+  mode: ALL_MODES,
+  sort: null,
+  query: "",
+  minRaces: 0,
+  recentOnly: false,
+  range: { preset: "all", start: null, end: null },
+};
 const playerState = { mode: ALL_MODES, sort: null, query: "" };
 
 function validateParticipants(data) {
@@ -93,14 +103,15 @@ function compareEntries(subject, opponent) {
   return 0;
 }
 
-function recordsForMode(modeId) {
-  if (recordCache.has(modeId)) {
-    return recordCache.get(modeId);
+function recordsForMode(modeId, range) {
+  const cacheKey = `${modeId}|${range.start ?? ""}|${range.end ?? ""}`;
+  if (recordCache.has(cacheKey)) {
+    return recordCache.get(cacheKey);
   }
   const modeIndex = modeIndexFor(modeId);
   const records = participants.players.map(() => ({ wins: 0, losses: 0, draws: 0 }));
   participants.races.forEach((race) => {
-    if (modeIndex !== null && race.m !== modeIndex) {
+    if ((modeIndex !== null && race.m !== modeIndex) || !inRange(race, range)) {
       return;
     }
     const entries = race.e;
@@ -122,8 +133,69 @@ function recordsForMode(modeId) {
       }
     }
   });
-  recordCache.set(modeId, records);
+  recordCache.set(cacheKey, records);
   return records;
+}
+
+// Mirrors _leaderboard() in scripts/participant_stats.py for a date-limited slice of races.
+// Players are stored sorted by casefolded name, so the index is the name tie-break.
+function computeBoardRows(modeIndex, range) {
+  const totals = new Map();
+  participants.races.forEach((race) => {
+    if ((modeIndex !== null && race.m !== modeIndex) || !inRange(race, range)) {
+      return;
+    }
+    race.e.forEach((entry) => {
+      const [playerIndex, place, status, seconds] = entry;
+      let row = totals.get(playerIndex);
+      if (!row) {
+        row = { p: playerIndex, races: 0, first: 0, second: 0, third: 0, dnf: 0, dq: 0, totalSeconds: 0, timed: 0 };
+        totals.set(playerIndex, row);
+      }
+      row.races += 1;
+      if (isFinisher(entry)) {
+        if (seconds !== null) {
+          row.totalSeconds += seconds;
+          row.timed += 1;
+        }
+        if (place === 1) {
+          row.first += 1;
+        } else if (place === 2) {
+          row.second += 1;
+        } else if (place === 3) {
+          row.third += 1;
+        }
+      } else if (status === DQ_STATUS) {
+        row.dq += 1;
+      } else {
+        row.dnf += 1;
+      }
+    });
+  });
+  return [...totals.values()]
+    .map(({ totalSeconds, timed, ...row }) => ({
+      ...row,
+      average_seconds: timed ? totalSeconds / timed : null,
+    }))
+    .sort(
+      (left, right) =>
+        right.first - left.first ||
+        right.second - left.second ||
+        right.third - left.third ||
+        right.races - left.races ||
+        left.p - right.p,
+    );
+}
+
+function lastRaceDate(playerIndex, modeIndex) {
+  const raceIndexes = raceIndexesByPlayer[playerIndex];
+  for (let index = raceIndexes.length - 1; index >= 0; index -= 1) {
+    const race = participants.races[raceIndexes[index]];
+    if (modeIndex === null || race.m === modeIndex) {
+      return race.d;
+    }
+  }
+  return null;
 }
 
 function computeHeadToHead(playerIndex, modeId) {
@@ -211,6 +283,38 @@ function formatRate(value) {
 
 function formatRaceDate(isoDate) {
   return dateFormatter.format(new Date(`${isoDate}T00:00:00Z`));
+}
+
+// Race dates are local to the data's timezone, so "today" must be too.
+function todayInZone() {
+  const timeZone = (participants.timezone && participants.timezone.name) || DEFAULT_TIMEZONE;
+  return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+}
+
+function shiftIsoDate(isoDate, days) {
+  const date = new Date(`${isoDate}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+// The last `days` calendar days, counting today.
+function daysAgoCutoff(days) {
+  return shiftIsoDate(todayInZone(), -(days - 1));
+}
+
+function inRange(race, range) {
+  return (!range.start || race.d >= range.start) && (!range.end || race.d <= range.end);
+}
+
+function isRangeActive(range) {
+  return Boolean(range.start || range.end);
+}
+
+function rangeLabel(range) {
+  if (range.start && range.end) {
+    return `races from ${formatRaceDate(range.start)} to ${formatRaceDate(range.end)}`;
+  }
+  return range.start ? `races from ${formatRaceDate(range.start)}` : `races through ${formatRaceDate(range.end)}`;
 }
 
 function playerHash(playerId, modeId) {
@@ -432,17 +536,25 @@ function leaderboardColumns() {
   ];
 }
 
-function leaderboardRows(modeId) {
-  const board = participants.leaderboards.find((item) => item.mode === modeId);
-  if (!board) {
-    return [];
+function leaderboardRows(modeId, range) {
+  const modeIndex = modeIndexFor(modeId);
+  let rows;
+  if (isRangeActive(range)) {
+    rows = computeBoardRows(modeIndex, range);
+  } else {
+    const board = participants.leaderboards.find((item) => item.mode === modeId);
+    if (!board) {
+      return [];
+    }
+    rows = board.rows;
   }
-  const records = recordsForMode(modeId);
-  return board.rows.map((row, index) => {
+  const records = recordsForMode(modeId, range);
+  return rows.map((row, index) => {
     const record = records[row.p];
     return {
       rank: index + 1,
       player: participants.players[row.p],
+      lastRaceDate: lastRaceDate(row.p, modeIndex),
       races: row.races,
       first: row.first,
       second: row.second,
@@ -468,26 +580,106 @@ function renderLeaderboard() {
     },
   );
 
+  const { range } = leaderboardState;
   const columns = leaderboardColumns();
-  const all = leaderboardRows(leaderboardState.mode);
+  const all = leaderboardRows(leaderboardState.mode, range);
+  const recentCutoff = daysAgoCutoff(RECENT_DAYS);
   const visible = all.filter(
     (row) =>
       row.races >= leaderboardState.minRaces &&
+      (!leaderboardState.recentOnly || row.lastRaceDate >= recentCutoff) &&
       matchesQuery(row.player.name, leaderboardState.query),
   );
   document
     .querySelector("#leaderboard-min-races")
     .setAttribute("aria-pressed", String(leaderboardState.minRaces > 0));
-  renderSortableTable(container, columns, sortRows(visible, columns, leaderboardState.sort), leaderboardState, (column) => {
-    leaderboardState.sort = nextSort(leaderboardState, column);
-    renderLeaderboard();
+  document
+    .querySelector("#leaderboard-recent")
+    .setAttribute("aria-pressed", String(leaderboardState.recentOnly));
+  document.querySelectorAll("#leaderboard-range-presets [data-range]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.range === range.preset));
   });
+  document.querySelector("#leaderboard-from").value = range.start || "";
+  document.querySelector("#leaderboard-to").value = range.end || "";
+
+  if (!visible.length) {
+    const empty = document.createElement("p");
+    empty.className = "table-empty";
+    empty.textContent = all.length ? "No racers match these filters." : "No races in this mode during the selected dates.";
+    container.replaceChildren(empty);
+  } else {
+    renderSortableTable(container, columns, sortRows(visible, columns, leaderboardState.sort), leaderboardState, (column) => {
+      leaderboardState.sort = nextSort(leaderboardState, column);
+      renderLeaderboard();
+    });
+  }
 
   const sortLabel = leaderboardState.sort
     ? `Sorted by ${columns.find((item) => item.key === leaderboardState.sort.key).sortLabel || ""}, ${leaderboardState.sort.direction === "asc" ? "ascending" : "descending"}. `
     : "";
-  const filterLabel = leaderboardState.minRaces > 0 ? `, ${MIN_RACES_THRESHOLD}+ races only` : "";
+  const filterLabels = [];
+  if (isRangeActive(range)) {
+    filterLabels.push(rangeLabel(range));
+  }
+  if (leaderboardState.minRaces > 0) {
+    filterLabels.push(`${MIN_RACES_THRESHOLD}+ races only`);
+  }
+  if (leaderboardState.recentOnly) {
+    filterLabels.push(`raced in the last ${RECENT_DAYS} days`);
+  }
+  const filterLabel = filterLabels.map((label) => `, ${label}`).join("");
   announce("#leaderboard-announcer", `${sortLabel}${visible.length} of ${all.length} racers shown for ${modeLabel(leaderboardState.mode)}${filterLabel}.`);
+}
+
+function clampIsoDate(isoDate, min, max) {
+  if (isoDate < min) {
+    return min;
+  }
+  return isoDate > max ? max : isoDate;
+}
+
+function presetRange(preset, firstDate, lastDate) {
+  if (preset === "all") {
+    return { preset, start: null, end: null };
+  }
+  const today = todayInZone();
+  const start = preset === "year" ? `${today.slice(0, 4)}-01-01` : daysAgoCutoff(Number(preset));
+  return {
+    preset,
+    start: clampIsoDate(start, firstDate, lastDate),
+    end: clampIsoDate(today, firstDate, lastDate),
+  };
+}
+
+function bindRangeControls() {
+  const firstDate = participants.races[0].d;
+  const lastDate = participants.races.at(-1).d;
+  const fromInput = document.querySelector("#leaderboard-from");
+  const toInput = document.querySelector("#leaderboard-to");
+  [fromInput, toInput].forEach((input) => {
+    input.min = firstDate;
+    input.max = lastDate;
+    input.addEventListener("change", () => {
+      let start = fromInput.value || null;
+      let end = toInput.value || null;
+      // Keep the date just picked and move the other bound to meet it.
+      if (start && end && start > end) {
+        if (input === fromInput) {
+          end = start;
+        } else {
+          start = end;
+        }
+      }
+      leaderboardState.range = { preset: start || end ? null : "all", start, end };
+      renderLeaderboard();
+    });
+  });
+  document.querySelectorAll("#leaderboard-range-presets [data-range]").forEach((button) => {
+    button.addEventListener("click", () => {
+      leaderboardState.range = presetRange(button.dataset.range, firstDate, lastDate);
+      renderLeaderboard();
+    });
+  });
 }
 
 function playerModes(playerIndex) {
@@ -744,6 +936,11 @@ async function loadParticipants() {
       leaderboardState.minRaces = leaderboardState.minRaces > 0 ? 0 : MIN_RACES_THRESHOLD;
       renderLeaderboard();
     });
+    document.querySelector("#leaderboard-recent").addEventListener("click", () => {
+      leaderboardState.recentOnly = !leaderboardState.recentOnly;
+      renderLeaderboard();
+    });
+    bindRangeControls();
 
     renderLeaderboard();
     status.hidden = true;

@@ -995,7 +995,9 @@ body.viewing-player #leaderboard {
   margin-left: auto;
 }
 
-.leaderboard-filter label {
+.leaderboard-filter label,
+.leaderboard-range legend,
+.leaderboard-range label {
   color: var(--green);
   font-size: 0.72rem;
   font-weight: 800;
@@ -1003,7 +1005,8 @@ body.viewing-player #leaderboard {
   text-transform: uppercase;
 }
 
-.leaderboard-filter input {
+.leaderboard-filter input,
+.leaderboard-range input {
   min-width: 220px;
   min-height: 36px;
   padding: 7px 11px;
@@ -1014,9 +1017,35 @@ body.viewing-player #leaderboard {
   font: 500 0.82rem/1.2 var(--body);
 }
 
-.leaderboard-filter input:focus-visible {
+.leaderboard-filter input:focus-visible,
+.leaderboard-range input:focus-visible {
   outline: 3px solid rgba(57, 119, 138, 0.45);
   outline-offset: 1px;
+}
+
+.leaderboard-range {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.leaderboard-range legend {
+  margin-bottom: 5px;
+  padding: 0;
+}
+
+.leaderboard-range__dates {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-top: 8px;
+}
+
+.leaderboard-range input {
+  min-width: 0;
+  padding: 6px 9px;
 }
 
 .table-wrap--leaderboard {
@@ -1376,6 +1405,10 @@ footer p {
   .leaderboard-filter input {
     min-width: 0;
     width: 100%;
+  }
+
+  .leaderboard-range input {
+    flex: 1 1 120px;
   }
 
   .table-wrap--leaderboard th:first-child,
