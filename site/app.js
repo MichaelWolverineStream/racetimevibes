@@ -6,12 +6,24 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 const MINIMUM_CANDIDATE_SAMPLE = 20;
+const HIGHLIGHTED_CANDIDATES = 3;
+// Narrowest width that still fits 24 hourly bars with their labels; narrower hosts scroll.
+const MIN_CHART_WIDTH = 480;
+// Each nice axis maximum as a multiple of its power of ten, with a tick count that keeps every tick round.
+const NICE_SCALES = [
+  [1, 5], [1.2, 4], [1.5, 5], [2, 4], [2.5, 5], [3, 3], [4, 4], [5, 5], [6, 6], [8, 4], [10, 5],
+];
 const COHORTS = {
-  one_race: { label: "One race", range: "1 race", colorClass: "orbit-node--blue" },
-  occasional: { label: "Occasional", range: "2-5 races", colorClass: "orbit-node--gold" },
-  regular: { label: "Regular", range: "6-20 races", colorClass: "orbit-node--green" },
-  core: { label: "Core", range: "21+ races", colorClass: "orbit-node--red" },
+  one_race: { label: "One race", range: "1 race", markClass: "orbit-mark--one-race" },
+  occasional: { label: "Occasional", range: "2-5 races", markClass: "orbit-mark--occasional" },
+  regular: { label: "Regular", range: "6-20 races", markClass: "orbit-mark--regular" },
+  core: { label: "Core", range: "21+ races", markClass: "orbit-mark--core" },
 };
+const chartBuilders = new Map();
+const chartWidths = new Map();
+const chartResizeObserver = new ResizeObserver((entries) => {
+  requestAnimationFrame(() => entries.forEach((entry) => drawChart(entry.target)));
+});
 
 function svgElement(name, attributes = {}, text = null) {
   const element = document.createElementNS(SVG_NS, name);
@@ -59,12 +71,34 @@ function utcTimestamp(isoString) {
   }).format(new Date(isoString));
 }
 
-function niceMaximum(value) {
-  if (!Number.isFinite(value) || value <= 0) return 1;
+function niceScale(value) {
+  if (!Number.isFinite(value) || value <= 0) return { maximum: 1, tickCount: 5 };
   const magnitude = 10 ** Math.floor(Math.log10(value));
   const normalized = value / magnitude;
-  const rounded = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
-  return rounded * magnitude;
+  const [step, tickCount] = NICE_SCALES.find(([candidate]) => normalized <= candidate + 1e-9);
+  return { maximum: Number((step * magnitude).toPrecision(6)), tickCount };
+}
+
+function hostWidth(host) {
+  const style = getComputedStyle(host);
+  return host.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+}
+
+// Charts draw at their host's pixel width so SVG text keeps its stated size in every panel.
+function drawChart(host) {
+  const available = hostWidth(host);
+  if (available <= 0) return; // Hidden; the resize observer draws it once it is shown.
+  const width = Math.max(MIN_CHART_WIDTH, Math.floor(available));
+  if (chartWidths.get(host) === width) return;
+  chartWidths.set(host, width);
+  host.replaceChildren(chartBuilders.get(host)(width));
+}
+
+function mountChart(host, build) {
+  chartBuilders.set(host, build);
+  chartWidths.delete(host);
+  chartResizeObserver.observe(host);
+  drawChart(host);
 }
 
 function formatAverage(value) {
@@ -124,8 +158,8 @@ function evidenceLabel(raceCount) {
   return "Minimum sample";
 }
 
-function renderCandidateTable(container, items) {
-  const candidates = items
+function rankCandidates(items) {
+  return items
     .filter((item) => (
       item.race_count >= MINIMUM_CANDIDATE_SAMPLE
       && item.adjusted_average !== null
@@ -135,8 +169,11 @@ function renderCandidateTable(container, items) {
       || right.race_count - left.race_count
       || left.weekday - right.weekday
       || left.hour - right.hour
-    ))
-    .slice(0, 10);
+    ));
+}
+
+function renderCandidateTable(container, items) {
+  const candidates = rankCandidates(items).slice(0, 10);
 
   if (candidates.length === 0) {
     const emptyState = document.createElement("p");
@@ -166,6 +203,11 @@ function renderOpportunityHeatmap(container, items) {
     .map((item) => item.adjusted_average)
     .filter((value) => value !== null);
   const maximumMagnitude = Math.max(1, ...observedValues.map((value) => Math.abs(value)));
+  const candidateRanks = new Map(
+    rankCandidates(items)
+      .slice(0, HIGHLIGHTED_CANDIDATES)
+      .map((item, index) => [item, index + 1]),
+  );
   const grid = document.createElement("div");
   grid.className = "opportunity-heatmap";
   grid.setAttribute("role", "group");
@@ -194,21 +236,22 @@ function renderOpportunityHeatmap(container, items) {
       const isReliable = item.race_count >= MINIMUM_CANDIDATE_SAMPLE;
       const value = item.adjusted_average;
       const strength = value === null ? 0 : Math.abs(value) / maximumMagnitude;
-      const alpha = value === null ? 0 : (0.13 + strength * 0.72) * (isReliable ? 1 : 0.48);
+      // Capped at 75% so the ink cell text keeps its contrast on the strongest fills.
+      const alpha = value === null ? 0 : (0.12 + strength * 0.63) * (isReliable ? 1 : 0.48);
+      const candidateRank = candidateRanks.get(item);
       cell.className = "heatmap-cell";
       if (!isReliable) cell.classList.add("heatmap-cell--limited");
-      if (strength > 0.58 && isReliable) cell.classList.add("heatmap-cell--strong");
+      if (candidateRank) cell.classList.add("heatmap-cell--top");
       cell.tabIndex = 0;
       cell.setAttribute("role", "img");
       cell.style.backgroundColor = value === null
         ? "transparent"
-        : value >= 0
-          ? `rgba(18, 99, 74, ${alpha})`
-          : `rgba(200, 74, 62, ${alpha})`;
+        : `color-mix(in srgb, var(${value >= 0 ? "--positive" : "--negative"}) ${Math.round(alpha * 100)}%, transparent)`;
       cell.textContent = item.race_count === 0 ? "·" : formatSigned(value);
+      const rankNote = candidateRank ? `; top candidate window #${candidateRank}` : "";
       const label = item.race_count === 0
         ? `${item.weekday_label}, ${hourRange(item.hour)}: no observed races`
-        : `${item.weekday_label}, ${hourRange(item.hour)}: ${formatSigned(value)} adjusted entries versus the matching mode-period baseline; ${formatAverage(item.average_racers)} raw average; ${integerFormatter.format(item.race_count)} races; adjusted 95% range ${formatInterval(item.adjusted_ci95_low, item.adjusted_ci95_high)}`;
+        : `${item.weekday_label}, ${hourRange(item.hour)}: ${formatSigned(value)} adjusted entries versus the matching mode-period baseline; ${formatAverage(item.average_racers)} raw average; ${integerFormatter.format(item.race_count)} races; adjusted 95% range ${formatInterval(item.adjusted_ci95_low, item.adjusted_ci95_high)}${rankNote}`;
       cell.setAttribute("aria-label", label);
       bindTooltip(cell, label);
       grid.append(cell);
@@ -218,15 +261,16 @@ function renderOpportunityHeatmap(container, items) {
   container.replaceChildren(grid);
 }
 
-function renderVerticalChart(container, items, options) {
-  const width = 720;
+function verticalChart(items, options, width) {
   const height = 350;
   const margin = { top: 30, right: 14, bottom: 48, left: 50 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const maximum = niceMaximum(Math.max(...items.map((item) => item[options.valueKey] ?? 0)));
+  const { maximum, tickCount } = niceScale(Math.max(...items.map((item) => item[options.valueKey] ?? 0)));
   const svg = svgElement("svg", {
     class: "chart-svg",
+    width,
+    height,
     viewBox: `0 0 ${width} ${height}`,
     role: "img",
     "aria-labelledby": `${options.id}-title ${options.id}-description`,
@@ -236,8 +280,8 @@ function renderVerticalChart(container, items, options) {
     svgElement("desc", { id: `${options.id}-description` }, options.description),
   );
 
-  for (let tick = 0; tick <= 4; tick += 1) {
-    const value = (maximum * tick) / 4;
+  for (let tick = 0; tick <= tickCount; tick += 1) {
+    const value = (maximum * tick) / tickCount;
     const y = margin.top + plotHeight - (value / maximum) * plotHeight;
     svg.append(
       svgElement("line", {
@@ -270,7 +314,7 @@ function renderVerticalChart(container, items, options) {
       "aria-label": label,
     });
     const bar = svgElement("rect", {
-      class: `bar ${options.barClass}`,
+      class: "bar bar--series",
       x,
       y,
       width: barWidth,
@@ -309,19 +353,20 @@ function renderVerticalChart(container, items, options) {
       "START HOUR / EASTERN TIME",
     ),
   );
-  container.replaceChildren(svg);
+  return svg;
 }
 
-function renderParticipationChart(container, periods, selectedPeriodId) {
-  const width = 900;
+function participationChart(periods, selectedPeriodId, width) {
   const height = 360;
   const margin = { top: 38, right: 20, bottom: 68, left: 68 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const periodAverages = periods.map((period) => period.entrant_total / period.race_count);
-  const maximum = niceMaximum(Math.max(...periodAverages));
+  const { maximum, tickCount } = niceScale(Math.max(...periodAverages));
   const svg = svgElement("svg", {
-    class: "chart-svg chart-svg--periods",
+    class: "chart-svg",
+    width,
+    height,
     viewBox: `0 0 ${width} ${height}`,
     role: "img",
     "aria-labelledby": "participation-chart-title participation-chart-description",
@@ -335,8 +380,8 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
     ),
   );
 
-  for (let tick = 0; tick <= 4; tick += 1) {
-    const value = (maximum * tick) / 4;
+  for (let tick = 0; tick <= tickCount; tick += 1) {
+    const value = (maximum * tick) / tickCount;
     const y = margin.top + plotHeight - (value / maximum) * plotHeight;
     svg.append(
       svgElement("line", {
@@ -371,7 +416,7 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
     });
     group.append(
       svgElement("rect", {
-        class: `bar ${isActive ? "bar--blue" : "bar--muted"}`,
+        class: `bar ${isActive ? "bar--series" : "bar--muted"}`,
         x,
         y,
         width: barWidth,
@@ -422,18 +467,19 @@ function renderParticipationChart(container, periods, selectedPeriodId) {
       "AVERAGE RACERS PER RACE",
     ),
   );
-  container.replaceChildren(svg);
+  return svg;
 }
 
-function renderModeChart(container, items) {
-  const width = 900;
+function modeChart(items, width) {
   const rowHeight = 48;
   const margin = { top: 22, right: 74, bottom: 42, left: 175 };
   const height = margin.top + margin.bottom + items.length * rowHeight;
   const plotWidth = width - margin.left - margin.right;
-  const maximum = niceMaximum(Math.max(...items.map((item) => item.average_racers ?? 0)));
+  const { maximum, tickCount } = niceScale(Math.max(...items.map((item) => item.average_racers ?? 0)));
   const svg = svgElement("svg", {
-    class: "chart-svg chart-svg--modes",
+    class: "chart-svg",
+    width,
+    height,
     viewBox: `0 0 ${width} ${height}`,
     role: "img",
     "aria-labelledby": "mode-chart-title mode-chart-description",
@@ -447,8 +493,8 @@ function renderModeChart(container, items) {
     ),
   );
 
-  for (let tick = 0; tick <= 5; tick += 1) {
-    const value = (maximum * tick) / 5;
+  for (let tick = 0; tick <= tickCount; tick += 1) {
+    const value = (maximum * tick) / tickCount;
     const x = margin.left + (value / maximum) * plotWidth;
     svg.append(
       svgElement("line", {
@@ -480,7 +526,7 @@ function renderModeChart(container, items) {
     });
     group.append(
       svgElement("rect", {
-        class: "bar bar--green",
+        class: "bar bar--series",
         x: margin.left,
         y,
         width: barWidth,
@@ -530,7 +576,7 @@ function renderModeChart(container, items) {
       "AVERAGE RACERS PER RACE",
     ),
   );
-  container.replaceChildren(svg);
+  return svg;
 }
 
 function renderTable(container, headers, rows) {
@@ -561,15 +607,14 @@ function renderTable(container, headers, rows) {
 
 function renderTotalEntrants(selection) {
   document.querySelector("#hourly-total-range").textContent = selection.label;
-  renderVerticalChart(document.querySelector("#hourly-total-chart"), selection.hourly, {
+  mountChart(document.querySelector("#hourly-total-chart"), (width) => verticalChart(selection.hourly, {
     id: "hourly-total",
     valueKey: "entrant_total",
     title: `Total entrants per hour for ${selection.label}`,
     description: `Vertical bars show recorded race entries across finished races in each Eastern Time start hour for ${selection.label}.`,
-    barClass: "bar--blue",
     axisFormatter: (value) => integerFormatter.format(value),
     tooltip: (item) => `${hourRange(item.hour)}, ${selection.label}: ${integerFormatter.format(item.entrant_total)} recorded entries across ${integerFormatter.format(item.race_count)} finished races`,
-  });
+  }, width));
   renderTable(
     document.querySelector("#hourly-total-table"),
     ["Hour (ET)", "Total entrants", "Finished races"],
@@ -607,9 +652,9 @@ function renderCommunityOrbit(container, tableContainer, coverageContainer, summ
     }
     : {
       width: 820,
-      height: 460,
-      center: [410, 210],
-      nodes: [[410, 67], [690, 210], [410, 353], [130, 210]],
+      height: 490,
+      center: [410, 240],
+      nodes: [[410, 97], [690, 240], [410, 383], [130, 240]],
     };
   const svg = svgElement("svg", {
     class: "orbit-svg",
@@ -661,16 +706,19 @@ function renderCommunityOrbit(container, tableContainer, coverageContainer, summ
     const metadata = COHORTS[cohort.id];
     const [nodeX, nodeY] = layout.nodes[index];
     const radius = 28 + Math.sqrt(cohort.player_share) * 29;
+    // Labels go on the far side of the node from the centre so connectors never cross them.
+    const labelsAbove = nodeY < centerY;
+    const labelY = labelsAbove ? nodeY - radius - 26 : nodeY + radius + 19;
     const label = `${metadata.label}, ${metadata.range}: ${integerFormatter.format(cohort.player_count)} players (${formatPercent(cohort.player_share)}); ${integerFormatter.format(cohort.entry_count)} entries (${formatPercent(cohort.entry_share)})`;
     const group = svgElement("g", {
-      class: "orbit-mark",
+      class: `orbit-mark ${metadata.markClass}`,
       tabindex: "0",
       role: "img",
       "aria-label": label,
     });
     group.append(
       svgElement("circle", {
-        class: `orbit-node ${metadata.colorClass}`,
+        class: "orbit-node",
         cx: nodeX,
         cy: nodeY,
         r: radius,
@@ -693,12 +741,12 @@ function renderCommunityOrbit(container, tableContainer, coverageContainer, summ
       ),
       svgElement(
         "text",
-        { class: "orbit-node__label", x: nodeX, y: nodeY + radius + 19, "text-anchor": "middle" },
+        { class: "orbit-node__label", x: nodeX, y: labelY, "text-anchor": "middle" },
         metadata.label.toUpperCase(),
       ),
       svgElement(
         "text",
-        { class: "orbit-node__range", x: nodeX, y: nodeY + radius + 35, "text-anchor": "middle" },
+        { class: "orbit-node__range", x: nodeX, y: labelY + 16, "text-anchor": "middle" },
         `${metadata.range.toUpperCase()} · ${formatPercent(cohort.entry_share)} OF ENTRIES`,
       ),
       svgElement("title", {}, label),
@@ -838,30 +886,30 @@ function renderSelection(data, selection) {
     document.querySelector("#community-coverage"),
     selection.unique_players,
   );
-  renderParticipationChart(
+  mountChart(
     document.querySelector("#participation-chart"),
-    data.periods,
-    selection.id,
+    (width) => participationChart(data.periods, selection.id, width),
   );
-  renderVerticalChart(document.querySelector("#race-count-chart"), selection.hourly, {
+  mountChart(document.querySelector("#race-count-chart"), (width) => verticalChart(selection.hourly, {
     id: "race-count",
     valueKey: "race_count",
     title: "Race starts by hour",
     description: "Vertical bars show the number of finished races starting in each Eastern Time hour.",
-    barClass: "bar--red",
     axisFormatter: (value) => integerFormatter.format(value),
     tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.race_count)} races`,
-  });
-  renderVerticalChart(document.querySelector("#hourly-average-chart"), selection.hourly, {
+  }, width));
+  mountChart(document.querySelector("#hourly-average-chart"), (width) => verticalChart(selection.hourly, {
     id: "hourly-average",
     valueKey: "average_racers",
     title: "Average entries by hour",
     description: "Vertical bars show average total entrants per finished race for each Eastern Time start hour.",
-    barClass: "bar--gold",
     axisFormatter: (value) => decimalFormatter.format(value),
     tooltip: (item) => `${hourRange(item.hour)}: ${formatAverage(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`,
-  });
-  renderModeChart(document.querySelector("#mode-average-chart"), selection.modes);
+  }, width));
+  mountChart(
+    document.querySelector("#mode-average-chart"),
+    (width) => modeChart(selection.modes, width),
+  );
   renderRoomSurvival(selection);
   renderTotalEntrants(selection);
 

@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="6b6391238bcd">
+    <meta name="app-version" content="eb9733f9a493">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
-    <link rel="stylesheet" href="styles.css?v=6b6391238bcd">
+    <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="styles.css?v=eb9733f9a493">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -74,7 +76,7 @@
       </section>
 
       <section id="leaderboard" class="leaderboard-section" aria-labelledby="leaderboard-title">
-        <article class="chart-panel chart-panel--gold chart-panel--leaderboard">
+        <article class="chart-panel chart-panel--racers chart-panel--leaderboard">
           <header class="panel-heading">
             <div>
               <p class="panel-index">01 / Racers</p>
@@ -82,38 +84,45 @@
             </div>
             <p>Who wins the most</p>
           </header>
-          <div class="decision-summary">
+          <div class="panel-intro">
             <p>Ranked by podium finishes. <strong>Win %</strong> is the share of races won outright. <strong>H2H win %</strong> counts every racer you finished ahead of. Select a racer for their full matchup breakdown.</p>
           </div>
-          <div id="leaderboard-controls" class="leaderboard-controls" hidden>
+          <div id="leaderboard-controls" class="leaderboard-controls leaderboard-controls--board" hidden>
             <div
               id="leaderboard-mode-toggle"
               class="mode-toggle"
               role="group"
               aria-label="Choose a race mode"
             ></div>
-            <div class="mode-toggle" role="group" aria-label="Filter racers">
-              <button id="leaderboard-min-races" class="mode-toggle__button" type="button" aria-pressed="false">5+ races only</button>
-              <button id="leaderboard-recent" class="mode-toggle__button" type="button" aria-pressed="false">Raced in last 30 days</button>
-            </div>
-            <fieldset class="leaderboard-range">
-              <legend>Count races from</legend>
-              <div id="leaderboard-range-presets" class="mode-toggle" role="group" aria-label="Quick date ranges">
-                <button class="mode-toggle__button" type="button" data-range="all" aria-pressed="true">All time</button>
-                <button class="mode-toggle__button" type="button" data-range="30" aria-pressed="false">Last 30 days</button>
-                <button class="mode-toggle__button" type="button" data-range="90" aria-pressed="false">Last 90 days</button>
-                <button class="mode-toggle__button" type="button" data-range="year" aria-pressed="false">This year</button>
+            <div class="leaderboard-controls__row">
+              <fieldset class="leaderboard-range">
+                <legend>Count races from</legend>
+                <div class="leaderboard-range__body">
+                  <div id="leaderboard-range-presets" class="mode-toggle" role="group" aria-label="Quick date ranges">
+                    <button class="mode-toggle__button" type="button" data-range="all" aria-pressed="true">All time</button>
+                    <button class="mode-toggle__button" type="button" data-range="30" aria-pressed="false">Last 30 days</button>
+                    <button class="mode-toggle__button" type="button" data-range="90" aria-pressed="false">Last 90 days</button>
+                    <button class="mode-toggle__button" type="button" data-range="year" aria-pressed="false">This year</button>
+                  </div>
+                  <div class="leaderboard-range__dates">
+                    <label for="leaderboard-from">From</label>
+                    <input id="leaderboard-from" type="date">
+                    <label for="leaderboard-to">To</label>
+                    <input id="leaderboard-to" type="date">
+                  </div>
+                </div>
+              </fieldset>
+              <div class="leaderboard-control">
+                <span id="leaderboard-filter-label" class="control-label">Filter racers</span>
+                <div class="mode-toggle" role="group" aria-labelledby="leaderboard-filter-label">
+                  <button id="leaderboard-min-races" class="mode-toggle__button" type="button" aria-pressed="false">5+ races only</button>
+                  <button id="leaderboard-recent" class="mode-toggle__button" type="button" aria-pressed="false">Raced in last 30 days</button>
+                </div>
               </div>
-              <div class="leaderboard-range__dates">
-                <label for="leaderboard-from">From</label>
-                <input id="leaderboard-from" type="date">
-                <label for="leaderboard-to">To</label>
-                <input id="leaderboard-to" type="date">
+              <div class="leaderboard-filter">
+                <label for="leaderboard-search">Find a racer</label>
+                <input id="leaderboard-search" type="search" autocomplete="off" placeholder="Start typing a name">
               </div>
-            </fieldset>
-            <div class="leaderboard-filter">
-              <label for="leaderboard-search">Find a racer</label>
-              <input id="leaderboard-search" type="search" autocomplete="off" placeholder="Start typing a name">
             </div>
           </div>
           <p id="leaderboard-announcer" class="visually-hidden" role="status"></p>
@@ -139,7 +148,7 @@
           <p class="period-current">Viewing <strong id="active-period-label">All data</strong></p>
         </section>
 
-        <article class="chart-panel chart-panel--green chart-panel--decision">
+        <article class="chart-panel chart-panel--decision" style="--i: 0">
           <header class="panel-heading">
             <div>
               <p class="panel-index">02 / Schedule</p>
@@ -147,19 +156,19 @@
             </div>
             <p>Compared with similar races</p>
           </header>
-          <div class="decision-summary">
+          <div class="panel-intro">
             <p>Positive lift means races in that window drew more entries than their matching mode-period baseline. Rankings are observational leads, not causal forecasts.</p>
             <span>Minimum ranking sample: 20 races</span>
           </div>
           <div id="candidate-table" class="table-wrap table-wrap--candidates" aria-live="polite"></div>
           <div class="heatmap-heading">
             <h3>Opportunity map</h3>
-            <p><span class="heatmap-key heatmap-key--positive"></span>Above baseline <span class="heatmap-key heatmap-key--negative"></span>Below baseline <span class="heatmap-key heatmap-key--limited"></span>Limited evidence</p>
+            <p><span class="heatmap-key heatmap-key--positive"></span>Above baseline <span class="heatmap-key heatmap-key--negative"></span>Below baseline <span class="heatmap-key heatmap-key--limited"></span>Limited evidence <span class="heatmap-key heatmap-key--top"></span>Top-ranked window</p>
           </div>
           <div id="opportunity-heatmap" class="heatmap-host" aria-live="polite"></div>
         </article>
 
-        <article class="chart-panel chart-panel--blue chart-panel--community">
+        <article class="chart-panel chart-panel--community" style="--i: 1">
           <header class="panel-heading">
             <div>
               <p class="panel-index">03 / Community</p>
@@ -167,7 +176,7 @@
             </div>
             <p>Racers grouped by how often they race</p>
           </header>
-          <div class="community-intro">
+          <div class="panel-intro panel-intro--flush">
             <p>Node area represents the share of identified racers. Connector weight and the annotation beneath each node show the share of identified entries they contributed.</p>
             <span>Finished archived races only</span>
           </div>
@@ -179,7 +188,7 @@
           </details>
         </article>
 
-        <article class="chart-panel chart-panel--blue chart-panel--participation">
+        <article class="chart-panel chart-panel--participation" style="--i: 2">
           <header class="panel-heading">
             <div>
               <p class="panel-index">04 / Participation</p>
@@ -195,7 +204,7 @@
         </article>
 
         <div class="hourly-grid">
-          <article class="chart-panel chart-panel--red">
+          <article class="chart-panel" style="--i: 3">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">05 / Traffic</p>
@@ -210,7 +219,7 @@
             </details>
           </article>
 
-          <article class="chart-panel chart-panel--gold">
+          <article class="chart-panel" style="--i: 4">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">06 / Turnout</p>
@@ -225,7 +234,7 @@
             </details>
           </article>
 
-          <article class="chart-panel chart-panel--blue chart-panel--hourly-total">
+          <article class="chart-panel chart-panel--hourly-total" style="--i: 5">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">07 / Volume</p>
@@ -254,7 +263,7 @@
           </article>
         </div>
 
-        <article class="chart-panel chart-panel--green chart-panel--modes">
+        <article class="chart-panel chart-panel--modes" style="--i: 6">
           <header class="panel-heading">
             <div>
               <p class="panel-index">08 / Modes</p>
@@ -271,7 +280,7 @@
       </section>
 
       <section id="player-view" class="player-view" hidden aria-labelledby="player-name">
-        <article class="chart-panel chart-panel--gold chart-panel--player">
+        <article class="chart-panel chart-panel--racers chart-panel--player">
           <header class="panel-heading">
             <div>
               <a class="back-link" href="#leaderboard">&larr; All racers</a>
@@ -314,9 +323,9 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=6b6391238bcd" defer></script>
-    <script src="leaderboard.js?v=6b6391238bcd" defer></script>
-    <script src="version-check.js?v=6b6391238bcd" defer></script>
-    <script src="visitor-counter.js?v=6b6391238bcd" defer></script>
+    <script src="app.js?v=eb9733f9a493" defer></script>
+    <script src="leaderboard.js?v=eb9733f9a493" defer></script>
+    <script src="version-check.js?v=eb9733f9a493" defer></script>
+    <script src="visitor-counter.js?v=eb9733f9a493" defer></script>
   </body>
 </html>

@@ -43,6 +43,8 @@ The reload is guarded by `sessionStorage`: a tab reloads at most once per newly 
 
 `python3 scripts/version_assets.py --check` reports staleness without writing. The test suite runs the same check, so CI fails if an asset changed without a restamp.
 
+The self-hosted Barlow fonts in `site/assets/fonts/` are referenced from `styles.css`, not stamped. Their filenames carry the family and weight, so replace a font by adding a file under a new name rather than overwriting an existing one.
+
 ## Publish with GitHub Pages
 
 The workflow in `.github/workflows/pages.yml` runs the test suite and deploys the `site` directory whenever `main` is pushed. It can also be started manually from the repository's **Actions** tab.
@@ -127,6 +129,7 @@ site/app.js                       Native SVG chart rendering
 site/leaderboard.js               Racer leaderboard and head-to-head views
 site/version-check.js             Reloads the page when a new version ships
 site/styles.css                   Responsive visual system
+site/assets/fonts/                Self-hosted Barlow fonts (SIL Open Font License)
 ```
 
 API behavior and field definitions are recorded in [Racetime_API.md](Racetime_API.md).

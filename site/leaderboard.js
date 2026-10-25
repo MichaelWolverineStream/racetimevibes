@@ -325,7 +325,7 @@ function playerHash(playerId, modeId) {
 function appendRacerLink(cell, player, modeId, rank) {
   if (rank !== null) {
     const badge = document.createElement("span");
-    badge.className = "rank-badge";
+    badge.className = rank <= 3 ? `rank-badge rank-badge--podium rank-badge--${rank}` : "rank-badge";
     badge.textContent = integerFormatter.format(rank);
     cell.appendChild(badge);
   }
