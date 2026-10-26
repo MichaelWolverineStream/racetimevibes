@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 
-PARTICIPANT_SCHEMA_VERSION = 1
+PARTICIPANT_SCHEMA_VERSION = 2
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -216,6 +216,7 @@ def build_participant_payload(
                 "r": race.get("name"),
                 "mode": context["mode"],
                 "d": context["local_started_at"].date().isoformat(),
+                "h": context["local_started_at"].hour,
                 "n": len(race["entrants"]),
                 "entries": entries,
             }
@@ -236,6 +237,7 @@ def build_participant_payload(
             "r": row["r"],
             "m": mode_index[row["mode"]],
             "d": row["d"],
+            "h": row["h"],
             "n": row["n"],
             "e": [
                 [player_index[user_id], place, status_code, seconds]

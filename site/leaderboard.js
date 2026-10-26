@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 1;
+const PARTICIPANT_SCHEMA_VERSION = 2;
 const ALL_MODES = "all";
 const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
@@ -31,7 +31,7 @@ const leaderboardState = {
   recentOnly: false,
   range: { preset: "all", start: null, end: null },
 };
-const playerState = { mode: ALL_MODES, sort: null, query: "" };
+const playerState = { mode: ALL_MODES, sort: null, query: "", heatmapMetric: "h2h" };
 
 function validateParticipants(data) {
   if (!data || data.schema_version !== PARTICIPANT_SCHEMA_VERSION) {
@@ -49,7 +49,15 @@ function validateParticipants(data) {
     throw new Error("Racer data is empty.");
   }
   data.races.forEach((race) => {
-    if (!Array.isArray(race.e) || !Number.isInteger(race.m) || race.m < 0 || race.m >= data.modes.length) {
+    if (
+      !Array.isArray(race.e) ||
+      !Number.isInteger(race.m) ||
+      race.m < 0 ||
+      race.m >= data.modes.length ||
+      !Number.isInteger(race.h) ||
+      race.h < 0 ||
+      race.h > 23
+    ) {
       throw new Error("Racer data contains an invalid race record.");
     }
     race.e.forEach((entry) => {
@@ -553,6 +561,7 @@ function leaderboardRows(modeId, range) {
     const record = records[row.p];
     return {
       rank: index + 1,
+      p: row.p,
       player: participants.players[row.p],
       lastRaceDate: lastRaceDate(row.p, modeIndex),
       races: row.races,
@@ -567,7 +576,7 @@ function leaderboardRows(modeId, range) {
   });
 }
 
-function renderLeaderboard() {
+function renderLeaderboard({ fromSearch = false } = {}) {
   const container = document.querySelector("#leaderboard-table");
   renderModeToggle(
     document.querySelector("#leaderboard-mode-toggle"),
@@ -601,6 +610,8 @@ function renderLeaderboard() {
   });
   document.querySelector("#leaderboard-from").value = range.start || "";
   document.querySelector("#leaderboard-to").value = range.end || "";
+  const renderFinishTimes = fromSearch ? renderLeaderboardFinishTimesSoon : renderLeaderboardFinishTimes;
+  renderFinishTimes(visible, leaderboardState.mode, range);
 
   if (!visible.length) {
     const empty = document.createElement("p");
@@ -808,6 +819,7 @@ function renderPlayerView(playerIndex) {
     playerState.sort = null;
     history.replaceState(null, "", playerHash(player.id, mode));
     renderPlayerView(playerIndex);
+    renderPlayerCharts(playerIndex);
   });
 
   const matchups = computeHeadToHead(playerIndex, playerState.mode).map((matchup) => ({
@@ -874,6 +886,7 @@ function showPlayer(playerIndex, modeId, isInitial) {
   document.body.classList.add("viewing-player");
   document.querySelector("#player-view").hidden = false;
   renderPlayerView(playerIndex);
+  renderPlayerCharts(playerIndex);
   document.title = `${participants.players[playerIndex].name} · ${BASE_TITLE}`;
   if (!isInitial && (!wasPlayer || currentView.index !== playerIndex)) {
     focusHeading("#player-name");
@@ -926,7 +939,7 @@ async function loadParticipants() {
     buildIndexes(data);
     recordCache = new Map();
 
-    bindFilter("#leaderboard-search", leaderboardState, renderLeaderboard);
+    bindFilter("#leaderboard-search", leaderboardState, () => renderLeaderboard({ fromSearch: true }));
     bindFilter("#player-search", playerState, () => {
       if (currentView && currentView.kind === "player") {
         renderPlayerView(currentView.index);
@@ -941,9 +954,18 @@ async function loadParticipants() {
       renderLeaderboard();
     });
     bindRangeControls();
+    document.querySelectorAll("#player-heatmap-metric [data-metric]").forEach((button) => {
+      button.addEventListener("click", () => {
+        playerState.heatmapMetric = button.dataset.metric;
+        if (currentView && currentView.kind === "player") {
+          renderPlayerHeatmap(currentView.index);
+        }
+      });
+    });
 
     renderLeaderboard();
     status.hidden = true;
+    document.querySelector("#finish-times").hidden = false;
     document.querySelector("#leaderboard-controls").hidden = false;
     route(true);
     window.addEventListener("hashchange", () => route(false));

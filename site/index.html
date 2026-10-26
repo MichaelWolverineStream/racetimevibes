@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="eb9733f9a493">
+    <meta name="app-version" content="4a753a0e4494">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=eb9733f9a493">
+    <link rel="stylesheet" href="styles.css?v=4a753a0e4494">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -84,9 +84,17 @@
             </div>
             <p>Who wins the most</p>
           </header>
-          <div class="panel-intro">
-            <p>Ranked by podium finishes. <strong>Win %</strong> is the share of races won outright. <strong>H2H win %</strong> counts every racer you finished ahead of. Select a racer for their full matchup breakdown.</p>
-          </div>
+          <section id="finish-times" class="finish-times" aria-labelledby="finish-times-title" hidden>
+            <div class="heatmap-heading">
+              <h3 id="finish-times-title">Finish times</h3>
+              <p class="violin-legend"><span class="line-key"></span>Median</p>
+            </div>
+            <div id="finish-violin-chart" class="chart-host chart-host--violin" aria-live="polite"></div>
+            <details class="data-details">
+              <summary>View mode summary</summary>
+              <div id="finish-violin-table" class="table-wrap"></div>
+            </details>
+          </section>
           <div id="leaderboard-controls" class="leaderboard-controls leaderboard-controls--board" hidden>
             <div
               id="leaderboard-mode-toggle"
@@ -296,6 +304,39 @@
               role="group"
               aria-label="Choose a race mode"
             ></div>
+          </div>
+          <section class="player-charts" aria-labelledby="player-finish-title">
+            <div class="heatmap-heading">
+              <h3 id="player-finish-title">Finish times</h3>
+              <p class="podium-legend">Podiums in this mode <span class="podium-key podium-key--0"></span>0 <span class="podium-key podium-key--1"></span>1–2 <span class="podium-key podium-key--2"></span>3–9 <span class="podium-key podium-key--3"></span>10–24 <span class="podium-key podium-key--4"></span>25+ <span id="player-legend-key" class="podium-key podium-key--highlight"></span><span id="player-legend-name">This racer</span></p>
+            </div>
+            <p id="player-scatter-note" class="chart-note" hidden></p>
+            <div class="player-charts__grid">
+              <div id="player-scatter-chart" class="chart-host chart-host--scatter" aria-live="polite"></div>
+              <div id="player-trend-chart" class="chart-host chart-host--scatter" aria-live="polite"></div>
+            </div>
+            <div id="player-violin-chart" class="chart-host chart-host--violin" aria-live="polite"></div>
+            <details class="data-details">
+              <summary>View finish times</summary>
+              <div id="player-finish-table" class="table-wrap"></div>
+            </details>
+            <div class="heatmap-heading">
+              <h3 id="player-start-title">When they race</h3>
+              <p class="heatmap-legend">
+                <span data-legend="h2h"><span class="heatmap-key heatmap-key--positive"></span>H2H above 50% <span class="heatmap-key heatmap-key--negative"></span>Below 50%</span>
+                <span data-legend="podium" hidden><span class="heatmap-key heatmap-key--podium"></span>Podium rate, darker is higher</span>
+                <span class="heatmap-key heatmap-key--limited"></span>Fewer than 3 races
+              </p>
+            </div>
+            <div class="leaderboard-controls">
+              <div id="player-heatmap-metric" class="mode-toggle" role="group" aria-label="Color the heatmap by">
+                <button class="mode-toggle__button" type="button" data-metric="h2h" aria-pressed="true">H2H win %</button>
+                <button class="mode-toggle__button" type="button" data-metric="podium" aria-pressed="false">Podium %</button>
+              </div>
+            </div>
+            <div id="player-start-heatmap" class="heatmap-host" aria-live="polite"></div>
+          </section>
+          <div class="leaderboard-controls">
             <div class="leaderboard-filter">
               <label for="player-search">Find an opponent</label>
               <input id="player-search" type="search" autocomplete="off" placeholder="Start typing a name">
@@ -323,9 +364,10 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=eb9733f9a493" defer></script>
-    <script src="leaderboard.js?v=eb9733f9a493" defer></script>
-    <script src="version-check.js?v=eb9733f9a493" defer></script>
-    <script src="visitor-counter.js?v=eb9733f9a493" defer></script>
+    <script src="app.js?v=4a753a0e4494" defer></script>
+    <script src="racer-charts.js?v=4a753a0e4494" defer></script>
+    <script src="leaderboard.js?v=4a753a0e4494" defer></script>
+    <script src="version-check.js?v=4a753a0e4494" defer></script>
+    <script src="visitor-counter.js?v=4a753a0e4494" defer></script>
   </body>
 </html>

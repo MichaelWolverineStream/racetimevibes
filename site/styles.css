@@ -64,6 +64,15 @@
   --cohort-2: #5d99ad;
   --cohort-3: #39778a;
   --cohort-4: #1d4f5f;
+  /* One fixed hue per race mode; the order is what keeps neighbouring violins colour-blind safe. */
+  --mode-1: #2a78d6;
+  --mode-2: #eb6834;
+  --mode-3: #1baf7a;
+  --mode-4: #eda100;
+  --mode-5: #e87ba4;
+  --mode-6: #008300;
+  --mode-7: #6250d6;
+  --mode-8: #e34948;
   --display: "Barlow Condensed", "Avenir Next Condensed", "DIN Condensed", sans-serif;
   --body: "Barlow", "Avenir Next", Avenir, "Trebuchet MS", sans-serif;
   --text-xs: 0.7rem;
@@ -609,7 +618,10 @@ a:hover {
   text-transform: uppercase;
 }
 
-.heatmap-heading p {
+.heatmap-heading p,
+.podium-legend,
+.violin-legend,
+.heatmap-legend {
   margin: 0;
   color: var(--muted);
   font-size: var(--text-xs);
@@ -642,6 +654,48 @@ a:hover {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
+.heatmap-key--podium {
+  background: var(--gold);
+}
+
+.podium-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px 0 12px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  background: var(--series-muted);
+}
+
+.podium-key--1 {
+  background: var(--cohort-1);
+}
+
+.podium-key--2 {
+  background: var(--cohort-2);
+}
+
+.podium-key--3 {
+  background: var(--cohort-3);
+}
+
+.podium-key--4 {
+  background: var(--cohort-4);
+}
+
+.podium-key--highlight {
+  border: 1px solid var(--ink);
+}
+
+.line-key {
+  display: inline-block;
+  width: 18px;
+  margin: 0 6px 0 12px;
+  border-top: 2px solid var(--ink);
+  vertical-align: middle;
+}
+
 .heatmap-host {
   overflow-x: auto;
   padding: 14px 24px 24px;
@@ -657,9 +711,17 @@ a:hover {
   min-width: 100%;
 }
 
+.start-heatmap {
+  display: grid;
+  grid-template-columns: 110px repeat(4, minmax(110px, 1fr));
+  grid-auto-rows: 38px;
+  gap: 3px;
+}
+
 .heatmap-corner,
 .heatmap-hour,
-.heatmap-weekday {
+.heatmap-weekday,
+.heatmap-row-label {
   display: grid;
   align-items: center;
   color: var(--muted);
@@ -805,6 +867,20 @@ a:hover {
   min-height: 350px;
 }
 
+.chart-host--scatter {
+  min-height: 360px;
+}
+
+.chart-host--violin {
+  min-height: 500px;
+}
+
+.chart-note {
+  margin: 10px 24px 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
 /* app.js draws each chart at its host's pixel width, so SVG units are CSS pixels. */
 .chart-svg {
   display: block;
@@ -856,6 +932,106 @@ a:hover {
 
 .bar--muted {
   fill: var(--series-muted);
+}
+
+.scatter-dot {
+  stroke: none;
+  fill-opacity: 0.75;
+}
+
+.scatter-dot--bin-0 {
+  fill: var(--series-muted);
+}
+
+.scatter-dot--bin-1 {
+  fill: var(--cohort-1);
+}
+
+.scatter-dot--bin-2 {
+  fill: var(--cohort-2);
+}
+
+.scatter-dot--bin-3 {
+  fill: var(--cohort-3);
+}
+
+.scatter-dot--bin-4 {
+  fill: var(--cohort-4);
+}
+
+.chart-svg--faded .scatter-dot {
+  opacity: 0.15;
+}
+
+.scatter-dot--highlight {
+  fill-opacity: 1;
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.chart-svg--faded .scatter-dot--highlight {
+  opacity: 1;
+}
+
+.violin-wash {
+  fill: var(--violin-color);
+  fill-opacity: 0.12;
+  stroke: var(--violin-color);
+  stroke-opacity: 0.4;
+  stroke-width: 1;
+}
+
+.violin-dot {
+  fill: var(--violin-color);
+  fill-opacity: 0.6;
+  stroke: none;
+}
+
+.violin-dot--highlight {
+  fill-opacity: 1;
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.chart-svg--faded .violin-dot {
+  opacity: 0.15;
+}
+
+.chart-svg--faded .violin-dot--highlight {
+  opacity: 1;
+}
+
+.violin-median {
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.violin-swatch {
+  fill: var(--violin-color);
+}
+
+.violin-summary .focus-ring {
+  pointer-events: none;
+}
+
+.violin--muted {
+  opacity: 0.25;
+}
+
+.trend-dot {
+  fill: var(--series);
+}
+
+.trend-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.trend-band {
+  fill: color-mix(in srgb, var(--series) 20%, transparent);
+  stroke: none;
 }
 
 .chart-mark:focus {
@@ -1247,6 +1423,11 @@ th[aria-sort="descending"] .sort-button::after {
   animation: none;
 }
 
+.player-charts__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .player-summary .summary-item {
   padding: 15px 18px 14px 0;
 }
@@ -1310,6 +1491,10 @@ footer p {
 }
 
 @media (max-width: 980px) {
+  .player-charts__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .masthead {
     grid-template-columns: auto minmax(0, 1fr);
   }

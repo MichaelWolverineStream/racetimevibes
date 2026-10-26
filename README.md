@@ -17,7 +17,7 @@ python3 scripts/build_stats.py
 
 The script requests the API's maximum of 100 records per page with entrant details enabled. It validates completion-time ordering and stops after the first complete page that crosses the January 1, 2026 Eastern Time boundary, so older archive pages are not collected. A final page-one check confirms that the source did not change during pagination, and the aggregate is atomically written to `site/data/race-stats.json`. Transient network failures are retried with bounded backoff.
 
-The same fetch also writes `site/data/participants.json`, the per-racer leaderboard dataset. No extra API requests are made. Use `--output` and `--participants-output` to redirect either file.
+The same fetch also writes `site/data/participants.json`, the per-racer leaderboard dataset. Each race record carries its Eastern Time date and start hour. No extra API requests are made. Use `--output` and `--participants-output` to redirect either file.
 
 `race-stats.json` is anonymous: entrant user IDs are used only as in-memory deduplication keys, and the file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields. `participants.json` publishes each racer's public display name and stable user ID because a leaderboard requires them; it still omits `full_name`, discriminators, avatars, pronouns, flair, Twitch fields, comments, and racetime.gg score fields.
 
@@ -35,7 +35,7 @@ Open <http://localhost:8000>. The page must be served over HTTP because it loads
 python3 scripts/version_assets.py
 ```
 
-Run this after editing `site/index.html`, `site/styles.css`, `site/app.js`, `site/leaderboard.js`, or `site/version-check.js`, then commit the result. It hashes the markup and those assets into a single token, rewrites every reference to `asset?v=<token>`, and writes `site/version.json`.
+Run this after editing `site/index.html`, `site/styles.css`, `site/app.js`, `site/racer-charts.js`, `site/leaderboard.js`, or `site/version-check.js`, then commit the result. It hashes the markup and those assets into a single token, rewrites every reference to `asset?v=<token>`, and writes `site/version.json`.
 
 Two things follow from that. A deploy changes the asset URLs, so returning visitors always fetch the new files instead of a cached copy. And `site/version-check.js` polls `version.json` every five minutes, plus whenever the tab regains focus, and reloads the page once if the published token no longer matches the one embedded in the loaded document.
 
@@ -102,6 +102,18 @@ The candidate rankings are observational leads for schedule experiments, not cau
 
 Data freshness is build-time: the dashboard is at most one daily refresh behind racetime.gg. The browser reads the local aggregate file and never crawls racetime.gg.
 
+### Finish times
+
+- Each dot is one timed finish: an entrant whose status is `done` with a `place` and a `finish_time`. DNF, DQ, and untimed entries are not plotted.
+- The leaderboard's finish-time chart draws one violin per mode, side by side, with finish time on the vertical axis. The shape is a Gaussian kernel density estimate with Silverman's bandwidth, $0.9 \cdot \min(s, \mathrm{IQR}/1.34) \cdot n^{-1/5}$, cut at the fastest and slowest observed finish. Each dot is spread sideways within the shape by a fixed pseudo-random offset, so dots keep their place when filters change. A mode whose finishes all share one time shows dots without a shape.
+- The bold line marks each mode's median. Its tooltip and the mode summary table also give the quartiles, using the same median-of-halves definition as the dashboard's other quartiles.
+- The chart plots exactly the racers listed in the table, in every mode, so the mode, **Count races from**, **5+ races only**, **Raced in last 30 days**, and the name search all apply. With a specific mode selected, its violin stays in full color and the other modes fade, still showing those racers' finishes.
+- Each mode keeps one color everywhere. The eight hues come from a palette checked for color-vision deficiency in this fixed left-to-right order, which is why the violins are not sorted by speed.
+- Racer pages cover the whole archive. Their finish-time-over-time field chart follows the racer page's mode toggle; under **All modes** it shows the racer's most-raced mode and says so. Its dots are colored by each racer's podium count in that mode, in fixed bins of 0, 1–2, 3–9, 10–24, and 25+, with everyone else faded and the racer drawn on top. A third chart repeats the leaderboard's violins for every racer and mode, with the racer's finishes highlighted.
+- The racer's trend is an ordinary least-squares line of finish time against race date. The shaded band is a 95% confidence interval for the fitted line, $\hat{y}(x) \pm t \cdot s \sqrt{1/n + (x - \bar{x})^2 / S_{xx}}$, using two-sided Student t critical values with $n - 2$ degrees of freedom, rounded down to the nearest tabulated row. It needs at least three finishes on two or more days, and it describes past races, not a forecast.
+- The **When they race** heatmap places every race the racer entered, in every mode, into four Eastern Time start blocks: midnight to 6 AM, 6 AM to noon, noon to 6 PM, and 6 PM to midnight. The number in each cell is races entered.
+- Cell color shows either **H2H win %** (wins divided by wins plus losses, as on the leaderboard; blue above 50%, red below) or **Podium %** (podium finishes divided by races entered, so DNFs count). Cells with fewer than three races are dashed and faded, because one or two races can swing a rate to 0% or 100%.
+
 ## Tests
 
 ```bash
@@ -126,6 +138,7 @@ site/data/participants.json       Generated per-racer dataset
 site/version.json                 Generated content version manifest
 site/index.html                   Static dashboard document
 site/app.js                       Native SVG chart rendering
+site/racer-charts.js              Finish-time violins, scatter, trend, and start-time heatmap
 site/leaderboard.js               Racer leaderboard and head-to-head views
 site/version-check.js             Reloads the page when a new version ships
 site/styles.css                   Responsive visual system

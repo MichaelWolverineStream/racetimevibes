@@ -17,6 +17,7 @@ INDEX_TEMPLATE = """<!doctype html>
   </head>
   <body>
     <script src="app.js" defer></script>
+    <script src="racer-charts.js" defer></script>
     <script src="leaderboard.js" defer></script>
     <script src="version-check.js" defer></script>
     <script src="visitor-counter.js" defer></script>

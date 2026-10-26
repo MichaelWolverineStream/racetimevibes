@@ -309,6 +309,28 @@ class PayloadShapeTests(unittest.TestCase):
             ["early", "middle", "late"],
         )
 
+    def test_records_eastern_start_hour_on_both_sides_of_dst(self):
+        result = payload(
+            [
+                placed_race(
+                    "winter",
+                    ["ana"],
+                    started_at="2026-01-15T03:30:00.000Z",
+                    ended_at="2026-01-15T05:30:00.000Z",
+                ),
+                placed_race(
+                    "summer",
+                    ["ana"],
+                    started_at="2026-07-15T03:30:00.000Z",
+                    ended_at="2026-07-15T05:30:00.000Z",
+                ),
+            ]
+        )
+        self.assertEqual(
+            [(race_row["r"], race_row["d"], race_row["h"]) for race_row in result["races"]],
+            [("winter", "2026-01-14", 22), ("summer", "2026-07-14", 23)],
+        )
+
     def test_filtering_matches_the_dashboard_aggregate(self):
         races = [
             placed_race("keep-1", ["ana", "ben"]),
@@ -389,7 +411,10 @@ class PayloadShapeTests(unittest.TestCase):
             text = output_path.read_text(encoding="utf-8")
         self.assertNotIn(", ", text)
         self.assertNotIn(": ", text)
-        self.assertEqual(json.loads(text)["schema_version"], 1)
+        self.assertEqual(
+            json.loads(text)["schema_version"],
+            participant_stats.PARTICIPANT_SCHEMA_VERSION,
+        )
         self.assertTrue(text.endswith("\n"))
 
 
@@ -426,6 +451,11 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(len(race_row["e"]), len(set(entry[0] for entry in race_row["e"])))
             for entry in race_row["e"]:
                 self.assertTrue(0 <= entry[0] < player_count)
+
+    def test_every_race_has_an_eastern_start_hour(self):
+        for race_row in self.participants["races"]:
+            self.assertIsInstance(race_row["h"], int)
+            self.assertTrue(0 <= race_row["h"] <= 23)
 
     def test_every_mode_has_a_leaderboard(self):
         modes = [board["mode"] for board in self.participants["leaderboards"]]

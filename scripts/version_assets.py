@@ -17,6 +17,7 @@ VERSION_NAME = "version.json"
 VERSIONED_ASSETS = (
     "styles.css",
     "app.js",
+    "racer-charts.js",
     "leaderboard.js",
     "version-check.js",
     "visitor-counter.js",
