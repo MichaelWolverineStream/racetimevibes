@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/chaotic-blacksmith-8942",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/chaotic-blacksmith-8942",
+    "data_url": "/alttpr-ladder/chaotic-blacksmith-8942/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - MMMM (Not Slow)\nmmmmavid23 - https://alttpr.racing/getseed.php?race=767 - (HashBook/HashBoomerang/HashShield/HashMushroom/HashMagicPowder)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-08-24T00:30:00.146Z",
+    "started_at": "2025-08-24T01:00:00.091Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M21.509257S",
+        "finished_at": "2025-08-24T02:32:21.600Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2963,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZyAWYlM65",
+          "full_name": "Twiga#4290",
+          "name": "Twiga",
+          "discriminator": "4290",
+          "url": "/user/jZ2EGWbZyAWYlM65/twiga",
+          "avatar": "https://racetime.gg/media/Twiga.png",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "twigathegiraffe",
+          "twitch_display_name": "TwigaTheGiraffe",
+          "twitch_channel": "https://www.twitch.tv/twigathegiraffe",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M38.017559S",
+        "finished_at": "2025-08-24T03:00:38.108Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1250,
+        "score_change": 472,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N9rVpW9N7JBjq8Ll",
+          "full_name": "Khaemere#6838",
+          "name": "Khaemere",
+          "discriminator": "6838",
+          "url": "/user/N9rVpW9N7JBjq8Ll/khaemere",
+          "avatar": "https://racetime.gg/media/Cow_-_HeadCrop.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "khaemere",
+          "twitch_display_name": "Khaemere",
+          "twitch_channel": "https://www.twitch.tv/khaemere",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M16.715347S",
+        "finished_at": "2025-08-24T03:01:16.806Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1390,
+        "score_change": 142,
+        "comment": "hammer go cr 589",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M10.599028S",
+        "finished_at": "2025-08-24T03:04:10.690Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 3288,
+        "score_change": -79,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-24T03:04:10.815Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

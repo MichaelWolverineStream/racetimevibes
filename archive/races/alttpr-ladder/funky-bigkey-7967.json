@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/funky-bigkey-7967",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/funky-bigkey-7967",
+    "data_url": "/alttpr-ladder/funky-bigkey-7967/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=494 - (Boomerang/Book/Mirror/Big Key/Heart)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-17T13:30:00.138Z",
+    "started_at": "2025-07-17T14:00:00.218Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M53.047215S",
+        "finished_at": "2025-07-17T15:35:53.265Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2905,
+        "score_change": 68,
+        "comment": "146/216 :noshoes:",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JbJP3qlL0a",
+          "full_name": "magnohato#7620",
+          "name": "magnohato",
+          "discriminator": "7620",
+          "url": "/user/NX5783JbJP3qlL0a/magnohato",
+          "avatar": "https://racetime.gg/media/100x100_magno.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnohato",
+          "twitch_display_name": "Magnohato",
+          "twitch_channel": "https://www.twitch.tv/magnohato",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M47.275444S",
+        "finished_at": "2025-07-17T15:51:47.494Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3036,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g6nYBkyANO",
+          "full_name": "Brogor#2841",
+          "name": "Brogor",
+          "discriminator": "2841",
+          "url": "/user/57ZKD3g6nYBkyANO/brogor",
+          "avatar": "https://racetime.gg/media/57ZKD3g6nYBkyANO.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "br0g0r",
+          "twitch_display_name": "br0g0r",
+          "twitch_channel": "https://www.twitch.tv/br0g0r",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3079,
+        "score_change": -60,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-17T15:51:47.618Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

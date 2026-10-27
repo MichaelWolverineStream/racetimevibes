@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/saucy-southshore-3349",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/saucy-southshore-3349",
+    "data_url": "/alttpr-ladder/saucy-southshore-3349/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=5195 - (HashBombos/HashMushroom/HashGreenPotion/HashTunic/HashBow)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-07T00:30:00.159Z",
+    "started_at": "2026-10-07T01:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M30.746887S",
+        "finished_at": "2026-10-07T02:38:30.830Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2794,
+        "score_change": 9,
+        "comment": "161, go mode falling out of my chair hookshot. assumed ice was hook locked so was stunned it was there. crazy seed",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M44.190621S",
+        "finished_at": "2026-10-07T02:48:44.274Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2667,
+        "score_change": 0,
+        "comment": "190 - Nice flute.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokPaGW5KQyV",
+          "full_name": "ExtremeRando#3999",
+          "name": "ExtremeRando",
+          "discriminator": "3999",
+          "url": "/user/Ek8wpokPaGW5KQyV/extremerando",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "extremerando",
+          "twitch_display_name": "ExtremeRando",
+          "twitch_channel": "https://www.twitch.tv/extremerando",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M02.964013S",
+        "finished_at": "2026-10-07T02:51:03.047Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1328,
+        "score_change": 179,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5zbdeWe8V9oYPK8O",
+          "full_name": "RayZeus#0806",
+          "name": "RayZeus",
+          "discriminator": "0806",
+          "url": "/user/5zbdeWe8V9oYPK8O/rayzeus",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "r4yzeus",
+          "twitch_display_name": "r4yzeus",
+          "twitch_channel": "https://www.twitch.tv/r4yzeus",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M29.679116S",
+        "finished_at": "2026-10-07T02:53:29.762Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1746,
+        "score_change": -63,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7lYZa5B5dAW2Vwv9",
+          "full_name": "taco#7699",
+          "name": "taco",
+          "discriminator": "7699",
+          "url": "/user/7lYZa5B5dAW2Vwv9/taco",
+          "avatar": "https://racetime.gg/media/Screenshot_2024-11-30_184233.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "tacothefox",
+          "twitch_display_name": "tacothefox",
+          "twitch_channel": "https://www.twitch.tv/tacothefox",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M26.625840S",
+        "finished_at": "2026-10-07T02:57:26.709Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1993,
+        "score_change": -56,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-07T02:57:26.804Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

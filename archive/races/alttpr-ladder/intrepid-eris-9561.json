@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/intrepid-eris-9561",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/intrepid-eris-9561",
+    "data_url": "/alttpr-ladder/intrepid-eris-9561/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Open 7/7 Keydrop Logical Enemizer\nmfns./open_keydrop_logenemizer - https://alttpr.racing/getseed.php?race=1085 - (HashSomaria/HashBoomerang/HashFlute/HashBoots/HashBoots)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-02T18:30:00.081Z",
+    "started_at": "2025-10-02T19:00:00.078Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H23M14.667053S",
+        "finished_at": "2025-10-02T21:23:14.745Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2319,
+        "score_change": 11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwpvbB1nEk0",
+          "full_name": "hide on bush#1636",
+          "name": "hide on bush",
+          "discriminator": "1636",
+          "url": "/user/b8GPMWwpvbB1nEk0/hide-on-bush",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "hideonbush1909",
+          "twitch_display_name": "hideonbush1909",
+          "twitch_channel": "https://www.twitch.tv/hideonbush1909",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H25M32.242950S",
+        "finished_at": "2025-10-02T21:25:32.321Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2295,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H32M14.182676S",
+        "finished_at": "2025-10-02T21:32:14.261Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2283,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-02T21:32:14.286Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

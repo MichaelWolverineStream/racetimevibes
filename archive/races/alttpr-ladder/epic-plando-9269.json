@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:27Z",
+  "race": {
+    "name": "alttpr-ladder/epic-plando-9269",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/epic-plando-9269",
+    "data_url": "/alttpr-ladder/epic-plando-9269/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open Boots\nladder/openboots - https://alttpr.racing/getseed.php?race=2313 - (HashMoonPearl/HashHookshot/HashLamp/HashBow/HashMirror)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-31T09:30:00.090Z",
+    "started_at": "2026-01-31T10:00:00.081Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "z56VnBQG9yoK4xrZ",
+          "full_name": "Osora90#4406",
+          "name": "Osora90",
+          "discriminator": "4406",
+          "url": "/user/z56VnBQG9yoK4xrZ/osora90",
+          "avatar": "https://racetime.gg/media/ShinyUmbreon_smug_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "osora90",
+          "twitch_display_name": "Osora90",
+          "twitch_channel": "https://www.twitch.tv/osora90",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M09.625343S",
+        "finished_at": "2026-01-31T11:20:09.706Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2623,
+        "score_change": 57,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB22JvBNgk4V",
+          "full_name": "NTapple#1924",
+          "name": "NTapple",
+          "discriminator": "1924",
+          "url": "/user/8QGZrB22JvBNgk4V/ntapple",
+          "avatar": "https://racetime.gg/media/RacetimeGG.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ntapple",
+          "twitch_display_name": "NTapple",
+          "twitch_channel": "https://www.twitch.tv/ntapple",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M02.965373S",
+        "finished_at": "2026-01-31T11:29:03.047Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1907,
+        "score_change": 30,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M07.988975S",
+        "finished_at": "2026-01-31T11:33:08.070Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2277,
+        "score_change": -8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M08.885179S",
+        "finished_at": "2026-01-31T11:54:08.966Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": -306,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-31T11:54:09.040Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

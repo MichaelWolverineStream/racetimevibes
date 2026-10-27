@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:19Z",
+  "race": {
+    "name": "alttpr-ladder/hyper-tam-7747",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hyper-tam-7747",
+    "data_url": "/alttpr-ladder/hyper-tam-7747/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=2804 - (HashBoomerang/HashMirror/HashBoomerang/HashSomaria/HashMushroom)",
+    "entrants_count": 8,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-03-14T13:30:00.093Z",
+    "started_at": "2026-03-14T14:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M08.694045S",
+        "finished_at": "2026-03-14T15:30:08.774Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2298,
+        "score_change": 20,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3y89OBZVKq1",
+          "full_name": "MalXantholos#6990",
+          "name": "MalXantholos",
+          "discriminator": "6990",
+          "url": "/user/RbOXG3y89OBZVKq1/malxantholos",
+          "avatar": "https://racetime.gg/media/Profil.PNG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "malxantholos",
+          "twitch_display_name": "MalXantholos",
+          "twitch_channel": "https://www.twitch.tv/malxantholos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M50.705341S",
+        "finished_at": "2026-03-14T15:37:50.785Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2997,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M28.334868S",
+        "finished_at": "2026-03-14T15:39:28.415Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2165,
+        "score_change": 6,
+        "comment": "CR 155, go mode flute. was really hoping mire entrance was ether, would have made TR worth it",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M01.390658S",
+        "finished_at": "2026-03-14T15:44:01.470Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2613,
+        "score_change": -11,
+        "comment": "Hard LL flute",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M05.541052S",
+        "finished_at": "2026-03-14T15:46:05.621Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1380,
+        "score_change": 34,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oN5P53lywqX",
+          "full_name": "The25thTim#7138",
+          "name": "The25thTim",
+          "discriminator": "7138",
+          "url": "/user/52QE8oN5P53lywqX/the25thtim",
+          "avatar": "https://racetime.gg/media/ToG.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "the25thtim",
+          "twitch_display_name": "The25thTim",
+          "twitch_channel": "https://www.twitch.tv/the25thtim",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M03.316711S",
+        "finished_at": "2026-03-14T15:48:03.396Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": null,
+        "score_change": 240,
+        "comment": "CR 158 - LL Flute, did TR instead of IP",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlE8J3aOP57",
+          "full_name": "DPMGames#2071",
+          "name": "DPMGames",
+          "discriminator": "2071",
+          "url": "/user/xldAMBlE8J3aOP57/dpmgames",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "dpmgames",
+          "twitch_display_name": "DPMGames",
+          "twitch_channel": "https://www.twitch.tv/dpmgames",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1386,
+        "score_change": -14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7VjEWV4GED",
+          "full_name": "SquishyPanda#2595",
+          "name": "SquishyPanda",
+          "discriminator": "2595",
+          "url": "/user/5JlzyB7VjEWV4GED/squishypanda",
+          "avatar": "https://racetime.gg/media/squishy-panda1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "squishypanda86",
+          "twitch_display_name": "SquishyPanda86",
+          "twitch_channel": "https://www.twitch.tv/squishypanda86",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 509,
+        "score_change": 81,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-14T15:48:03.529Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

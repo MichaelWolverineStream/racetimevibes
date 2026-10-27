@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/gentle-deathmountain-6000",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gentle-deathmountain-6000",
+    "data_url": "/alttpr-ladder/gentle-deathmountain-6000/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=563 - (Compass/Bow/Quake/Bugnet/Pendant)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-26T04:30:00.216Z",
+    "started_at": "2025-07-26T05:00:00.113Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPqj1Be7P5Q",
+          "full_name": "Zenitschwert#5158",
+          "name": "Zenitschwert",
+          "discriminator": "5158",
+          "url": "/user/1jgrbWPqj1Be7P5Q/zenitschwert",
+          "avatar": "https://racetime.gg/media/kleine_Datei.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zenitschwert",
+          "twitch_display_name": "Zenitschwert",
+          "twitch_channel": "https://www.twitch.tv/zenitschwert",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M45.631284S",
+        "finished_at": "2025-07-26T06:49:45.744Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2941,
+        "score_change": 43,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M39.106916S",
+        "finished_at": "2025-07-26T06:56:39.220Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3040,
+        "score_change": 39,
+        "comment": "when you feel good getting an early glove out of ip dip but then its just a distraction and you can easily get the other glove ool first and oneshot ice xdd i love rando",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M22.858163S",
+        "finished_at": "2025-07-26T07:00:22.971Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3793,
+        "score_change": -37,
+        "comment": "I didn't believe in GT climb 177/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M01.611287S",
+        "finished_at": "2025-07-26T07:01:01.724Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 3335,
+        "score_change": -28,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M38.362722S",
+        "finished_at": "2025-07-26T07:02:38.476Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2608,
+        "score_change": 1,
+        "comment": "171/216 dumb mirror",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M51.629501S",
+        "finished_at": "2025-07-26T07:12:51.742Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2256,
+        "score_change": -64,
+        "comment": "how to spend 45 minutes in EP entrance go mode, by me",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-26T07:12:52.503Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

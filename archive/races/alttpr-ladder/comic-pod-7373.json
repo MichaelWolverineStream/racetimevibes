@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/comic-pod-7373",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/comic-pod-7373",
+    "data_url": "/alttpr-ladder/comic-pod-7373/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookeydrop (League)\nleague/cabookeydrop_noct - https://alttpr.racing/getseed.php?race=3370 - (HashPendant/HashGreenPotion/HashHookshot/HashSomaria/HashHeart)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-04-30T18:30:00.118Z",
+    "started_at": "2026-04-30T19:00:00.066Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M30.456748S",
+        "finished_at": "2026-04-30T20:58:30.523Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2379,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M08.422433S",
+        "finished_at": "2026-04-30T21:00:08.489Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2158,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-30T21:00:08.546Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/speedy-southshore-5588",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/speedy-southshore-5588",
+    "data_url": "/alttpr-ladder/speedy-southshore-5588/data",
+    "goal": {
+      "name": "Beat the game (Inverted)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=3887 - (HashBow/HashBook/HashHammer/HashBugnet/HashBow)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-06-15T15:30:00.165Z",
+    "started_at": "2026-06-15T16:00:00.098Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M09.473889S",
+        "finished_at": "2026-06-15T17:55:09.572Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1818,
+        "score_change": 409,
+        "comment": "199, helps to know where the last key is",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M58.854350S",
+        "finished_at": "2026-06-15T18:00:58.952Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2574,
+        "score_change": 29,
+        "comment": "201 - Just utterly ignore Mire keylogic to have a much better time.  KEKW",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M44.270425S",
+        "finished_at": "2026-06-15T18:05:44.368Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2102,
+        "score_change": -37,
+        "comment": "ll cutscene chest",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H13M14.483867S",
+        "finished_at": "2026-06-15T18:13:14.581Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1817,
+        "score_change": 62,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orgd1WqDJX0",
+          "full_name": "Masakuni#2916",
+          "name": "Masakuni",
+          "discriminator": "2916",
+          "url": "/user/rZyM4orgd1WqDJX0/masakuni",
+          "avatar": "https://racetime.gg/media/masa_avi_dragonasis_0524_150.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "masakunidragon",
+          "twitch_display_name": "MasakuniDragon",
+          "twitch_channel": "https://www.twitch.tv/masakunidragon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H25M21.500115S",
+        "finished_at": "2026-06-15T18:25:21.598Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": 121,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 654,
+        "score_change": -181,
+        "comment": "189 cr 2 hour 47 minute, baited by early ice",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-15T18:25:28.678Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

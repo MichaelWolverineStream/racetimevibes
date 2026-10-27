@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:01Z",
+  "race": {
+    "name": "alttpr-ladder/mini-agahnim-9207",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mini-agahnim-9207",
+    "data_url": "/alttpr-ladder/mini-agahnim-9207/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=4018 - (HashIceRod/HashCompass/HashMushroom/HashCape/HashBigKey)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-06-26T12:30:00.195Z",
+    "started_at": "2026-06-26T13:00:00.098Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M35.641485S",
+        "finished_at": "2026-06-26T15:09:35.740Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2492,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 626,
+        "score_change": -26,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-26T15:09:40.887Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

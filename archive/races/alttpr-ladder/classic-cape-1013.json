@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/classic-cape-1013",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/classic-cape-1013",
+    "data_url": "/alttpr-ladder/classic-cape-1013/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=73 - (Map/Bugnet/Green Potion/Gloves/Shield)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-05-25T18:30:04.730Z",
+    "started_at": "2025-05-25T19:00:04.729Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M34.427295S",
+        "finished_at": "2025-05-25T20:40:39.156Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2609,
+        "score_change": 214,
+        "comment": "Mega shambles early on that followed with last locate hammer in ice 169/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M10.008389S",
+        "finished_at": "2025-05-25T20:44:14.737Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2895,
+        "score_change": 203,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jb8GPMWwXbB1nEk0",
+          "full_name": "Ralen Tankir#4377",
+          "name": "Ralen Tankir",
+          "discriminator": "4377",
+          "url": "/user/jb8GPMWwXbB1nEk0/ralen-tankir",
+          "avatar": "https://racetime.gg/media/icon_052_01.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ralen_tankir",
+          "twitch_display_name": "Ralen_Tankir",
+          "twitch_channel": "https://www.twitch.tv/ralen_tankir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M21.069405S",
+        "finished_at": "2025-05-25T20:46:25.798Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 1581,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3ydGOBZVKq1",
+          "full_name": "AverageFrustratedGamer#8364",
+          "name": "AverageFrustratedGamer",
+          "discriminator": "8364",
+          "url": "/user/RbOXG3ydGOBZVKq1/averagefrustratedgamer",
+          "avatar": "https://racetime.gg/media/inside-out-2015-anger-emotion-wallpaper-preview.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "averagefrustratedgamer",
+          "twitch_display_name": "AverageFrustratedGamer",
+          "twitch_channel": "https://www.twitch.tv/averagefrustratedgamer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M17.690029S",
+        "finished_at": "2025-05-25T20:48:22.419Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 1378,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36XmzWq1aOX",
+          "full_name": "Rozalyndis#8208",
+          "name": "Rozalyndis",
+          "discriminator": "8208",
+          "url": "/user/5K9rm36XmzWq1aOX/rozalyndis",
+          "avatar": "https://racetime.gg/media/tedd-roz100.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "rozalyndis",
+          "twitch_display_name": "Rozalyndis",
+          "twitch_channel": "https://www.twitch.tv/rozalyndis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M43.857592S",
+        "finished_at": "2025-05-25T20:48:48.587Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 3022,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXQ55B1y8q0",
+          "full_name": "DrBowser#9571",
+          "name": "DrBowser",
+          "discriminator": "9571",
+          "url": "/user/zM65aWXQ55B1y8q0/drbowser",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "drbowser9571",
+          "twitch_display_name": "DrBowser9571",
+          "twitch_channel": "https://www.twitch.tv/drbowser9571",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M03.026147S",
+        "finished_at": "2025-05-25T20:52:07.755Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2870,
+        "score_change": -105,
+        "comment": "got lost on the way to hammer >D",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M23.800215S",
+        "finished_at": "2025-05-25T20:52:28.529Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 2209,
+        "score_change": -79,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-25T20:52:28.651Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

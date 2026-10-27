@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/graceful-zelda-0757",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/graceful-zelda-0757",
+    "data_url": "/alttpr-ladder/graceful-zelda-0757/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=429 - (Lamp/Hammer/Pendant/Empty Bottle/Compass)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-09T09:30:00.147Z",
+    "started_at": "2025-07-09T10:00:00.072Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H13M54.548304S",
+        "finished_at": "2025-07-09T11:13:54.620Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3408,
+        "score_change": 6,
+        "comment": "sv\u00e4rd",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7QdyoV4GED",
+          "full_name": "Kromb1#1059",
+          "name": "Kromb1",
+          "discriminator": "1059",
+          "url": "/user/5JlzyB7QdyoV4GED/kromb1",
+          "avatar": "https://racetime.gg/media/Profilbild1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kromb4787",
+          "twitch_display_name": "kromb4787",
+          "twitch_channel": "https://www.twitch.tv/kromb4787",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M37.836017S",
+        "finished_at": "2025-07-09T11:19:37.908Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2172,
+        "score_change": 84,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZ7RWYlM65",
+          "full_name": "Sukezss#1184",
+          "name": "Sukezss",
+          "discriminator": "1184",
+          "url": "/user/jZ2EGWbZ7RWYlM65/sukezss",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sukezss",
+          "twitch_display_name": "Sukezss",
+          "twitch_channel": "https://www.twitch.tv/sukezss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M27.112123S",
+        "finished_at": "2025-07-09T11:30:27.184Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1498,
+        "score_change": 142,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB2Ax9WNgk4V",
+          "full_name": "Darpex#5779",
+          "name": "Darpex",
+          "discriminator": "5779",
+          "url": "/user/8QGZrB2Ax9WNgk4V/darpex",
+          "avatar": "https://racetime.gg/media/IMG_7442.jpeg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "darpex3",
+          "twitch_display_name": "Darpex3",
+          "twitch_channel": "https://www.twitch.tv/darpex3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M09.878583S",
+        "finished_at": "2025-07-09T11:39:09.950Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1795,
+        "score_change": -22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnDNoLKPnz",
+          "full_name": "phoenix_tyrol#0220",
+          "name": "phoenix_tyrol",
+          "discriminator": "0220",
+          "url": "/user/XY0eABdnDNoLKPnz/phoenix_tyrol",
+          "avatar": "https://racetime.gg/media/XY0eABdnDNoLKPnz.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "phoenix_tyrol",
+          "twitch_display_name": "phoenix_tyrol",
+          "twitch_channel": "https://www.twitch.tv/phoenix_tyrol",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 706,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-09T11:39:10.256Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

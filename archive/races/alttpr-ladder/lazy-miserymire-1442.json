@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/lazy-miserymire-1442",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lazy-miserymire-1442",
+    "data_url": "/alttpr-ladder/lazy-miserymire-1442/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=3955 - (HashHookshot/HashEther/HashIceRod/HashEther/HashBow)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-06-21T06:30:00.157Z",
+    "started_at": "2026-06-21T07:00:00.153Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M45.131135S",
+        "finished_at": "2026-06-21T09:12:45.284Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2328,
+        "score_change": 26,
+        "comment": "195/216 friggin' TR & GT bigs got me good",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1570,
+        "score_change": -8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-21T09:12:45.387Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

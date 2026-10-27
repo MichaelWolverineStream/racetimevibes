@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/messy-flippers-5564",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/messy-flippers-5564",
+    "data_url": "/alttpr-ladder/messy-flippers-5564/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4642 - (HashEmptyBottle/HashMap/HashBigKey/HashBombs/HashBoots)",
+    "entrants_count": 5,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-08-18T12:30:00.154Z",
+    "started_at": "2026-08-18T13:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "8QGZrB22JvBNgk4V",
+          "full_name": "NTapple#1924",
+          "name": "NTapple",
+          "discriminator": "1924",
+          "url": "/user/8QGZrB22JvBNgk4V/ntapple",
+          "avatar": "https://racetime.gg/media/RacetimeGG.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ntapple",
+          "twitch_display_name": "NTapple",
+          "twitch_channel": "https://www.twitch.tv/ntapple",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H24M15.156148S",
+        "finished_at": "2026-08-18T14:24:15.249Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2042,
+        "score_change": 206,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwpvbB1nEk0",
+          "full_name": "hide on bush#1636",
+          "name": "hide on bush",
+          "discriminator": "1636",
+          "url": "/user/b8GPMWwpvbB1nEk0/hide-on-bush",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "hideonbush1909",
+          "twitch_display_name": "hideonbush1909",
+          "twitch_channel": "https://www.twitch.tv/hideonbush1909",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M46.893303S",
+        "finished_at": "2026-08-18T14:27:46.986Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2498,
+        "score_change": 23,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M18.535780S",
+        "finished_at": "2026-08-18T14:40:18.628Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2778,
+        "score_change": -11,
+        "comment": "not a good seed for go mode flippers. shambles were had",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2292,
+        "score_change": -45,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7kRxBV4GED",
+          "full_name": "Yankster113#9393",
+          "name": "Yankster113",
+          "discriminator": "9393",
+          "url": "/user/5JlzyB7kRxBV4GED/yankster113",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "yankster114",
+          "twitch_display_name": "yankster114",
+          "twitch_channel": "https://www.twitch.tv/yankster114",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 925,
+        "score_change": 190,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-18T14:40:18.685Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

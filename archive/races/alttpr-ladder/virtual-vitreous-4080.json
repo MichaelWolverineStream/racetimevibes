@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:32Z",
+  "race": {
+    "name": "alttpr-ladder/virtual-vitreous-4080",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/virtual-vitreous-4080",
+    "data_url": "/alttpr-ladder/virtual-vitreous-4080/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - XDHunt Plus\njem041/xdhuntplus - https://alttpr.racing/getseed.php?race=1989 - (HashMoonPearl/HashMagicPowder/HashFlippers/HashMoonPearl/HashBoots)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-30T23:30:00.069Z",
+    "started_at": "2025-12-31T00:00:00.073Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBOMOvo4qAyj",
+          "full_name": "Deign#3244",
+          "name": "Deign",
+          "discriminator": "3244",
+          "url": "/user/NZ1KRBOMOvo4qAyj/deign",
+          "avatar": "https://racetime.gg/media/96x96.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "deign",
+          "twitch_display_name": "Deign",
+          "twitch_channel": "https://www.twitch.tv/deign",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M51.797456S",
+        "finished_at": "2025-12-31T02:03:51.871Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2960,
+        "score_change": 6,
+        "comment": "CR: 186 -- Lamp woulda been nice -- Didn't want to gamble on DP with 1 key, so did CT instead",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m2npoPd1Xr",
+          "full_name": "aurabot#9087",
+          "name": "aurabot",
+          "discriminator": "9087",
+          "url": "/user/R6ym83m2npoPd1Xr/aurabot",
+          "avatar": "https://racetime.gg/media/R6ym83m2npoPd1Xr.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "aurabot",
+          "twitch_display_name": "aurabot",
+          "twitch_channel": "https://www.twitch.tv/aurabot",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M24.501047S",
+        "finished_at": "2025-12-31T02:08:24.574Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2450,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M54.951543S",
+        "finished_at": "2025-12-31T02:10:55.025Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2500,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-31T02:10:55.152Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

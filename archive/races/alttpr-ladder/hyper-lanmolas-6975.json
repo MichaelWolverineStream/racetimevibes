@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/hyper-lanmolas-6975",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hyper-lanmolas-6975",
+    "data_url": "/alttpr-ladder/hyper-lanmolas-6975/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - XD Hunt\njem041/xkeydrophunt - https://alttpr.racing/getseed.php?race=247 - (Gloves/Mushroom/Gloves/Compass/Magic Powder)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-16T12:30:02.342Z",
+    "started_at": "2025-06-16T13:00:02.321Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "rVwLN8B8nEoPa52R",
+          "full_name": "breve#1524",
+          "name": "breve",
+          "discriminator": "1524",
+          "url": "/user/rVwLN8B8nEoPa52R/breve",
+          "avatar": "https://racetime.gg/media/thedream_2_CzqQP4u.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "breve_",
+          "twitch_display_name": "breve_",
+          "twitch_channel": "https://www.twitch.tv/breve_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M35.850585S",
+        "finished_at": "2025-06-16T15:00:38.171Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2823,
+        "score_change": 43,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M03.005050S",
+        "finished_at": "2025-06-16T15:01:05.326Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2565,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "nxMQeox2xNBapX0A",
+          "full_name": "Soyhr#7143",
+          "name": "Soyhr",
+          "discriminator": "7143",
+          "url": "/user/nxMQeox2xNBapX0A/soyhr",
+          "avatar": "https://racetime.gg/media/Mog_US.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "soyhr",
+          "twitch_display_name": "Soyhr",
+          "twitch_channel": "https://www.twitch.tv/soyhr",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M04.943502S",
+        "finished_at": "2025-06-16T15:09:07.264Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2137,
+        "score_change": -28,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-16T15:09:07.297Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

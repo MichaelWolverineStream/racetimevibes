@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/overpowered-miserymire-0434",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/overpowered-miserymire-0434",
+    "data_url": "/alttpr-ladder/overpowered-miserymire-0434/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=3814 - (HashBow/HashTunic/HashMushroom/HashBugnet/HashFlute)",
+    "entrants_count": 5,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-06-09T13:30:00.210Z",
+    "started_at": "2026-06-09T14:00:00.120Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M03.304616S",
+        "finished_at": "2026-06-09T15:46:03.424Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1837,
+        "score_change": 448,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M59.008113S",
+        "finished_at": "2026-06-09T15:54:59.128Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2763,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M15.375655S",
+        "finished_at": "2026-06-09T15:55:15.496Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2443,
+        "score_change": -24,
+        "comment": "183 - Just don't prematurely go mode 4Head, I guess.  Still not sure how I route PF before dungeons here, though.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2347,
+        "score_change": -74,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 936,
+        "score_change": 226,
+        "comment": "not feeling this one",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-09T15:55:15.568Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

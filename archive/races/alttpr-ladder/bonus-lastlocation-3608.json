@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/bonus-lastlocation-3608",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/bonus-lastlocation-3608",
+    "data_url": "/alttpr-ladder/bonus-lastlocation-3608/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=2119 - (HashQuake/HashCape/HashBigKey/HashPendant/HashHammer)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-15T05:30:00.086Z",
+    "started_at": "2026-01-15T06:00:00.087Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M56.960014S",
+        "finished_at": "2026-01-15T07:29:57.047Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3231,
+        "score_change": 4,
+        "comment": "bootslocked boots",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M26.499895S",
+        "finished_at": "2026-01-15T07:53:26.587Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2621,
+        "score_change": 1,
+        "comment": "181 dodged the obvious plot, send help",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M14.222611S",
+        "finished_at": "2026-01-15T08:10:14.309Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2014,
+        "score_change": -8,
+        "comment": "Delete pseudo-boots plz",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-15T08:10:14.387Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

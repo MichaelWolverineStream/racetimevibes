@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:17Z",
+  "race": {
+    "name": "alttpr-ladder/magnificent-lostwoods-1144",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/magnificent-lostwoods-1144",
+    "data_url": "/alttpr-ladder/magnificent-lostwoods-1144/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=2968 - (HashPendant/HashMirror/HashEther/HashQuake/HashTunic)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-03-28T06:30:00.091Z",
+    "started_at": "2026-03-28T07:00:00.064Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H11M39.968642S",
+        "finished_at": "2026-03-28T08:11:40.033Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2299,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N9rVpW9N7JBjq8Ll",
+          "full_name": "Khaemere#6838",
+          "name": "Khaemere",
+          "discriminator": "6838",
+          "url": "/user/N9rVpW9N7JBjq8Ll/khaemere",
+          "avatar": "https://racetime.gg/media/Cow_-_HeadCrop.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "khaemere",
+          "twitch_display_name": "Khaemere",
+          "twitch_channel": "https://www.twitch.tv/khaemere",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M44.665613S",
+        "finished_at": "2026-03-28T08:27:44.730Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1670,
+        "score_change": 31,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1naPBKalP1",
+          "full_name": "Homewrecker#4033",
+          "name": "Homewrecker",
+          "discriminator": "4033",
+          "url": "/user/NY0OkW1naPBKalP1/homewrecker",
+          "avatar": "https://racetime.gg/media/Home_Clown_2_112x112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "home_wrecker",
+          "twitch_display_name": "home_wrecker",
+          "twitch_channel": "https://www.twitch.tv/home_wrecker",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2233,
+        "score_change": -44,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-28T08:31:12.029Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

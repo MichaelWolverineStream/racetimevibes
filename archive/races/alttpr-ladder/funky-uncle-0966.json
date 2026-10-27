@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:13Z",
+  "race": {
+    "name": "alttpr-ladder/funky-uncle-0966",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/funky-uncle-0966",
+    "data_url": "/alttpr-ladder/funky-uncle-0966/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Crisscross\nladder/crisscross_zw - https://alttpr.racing/getseed.php?race=3220 - (HashBigKey/HashCape/HashCape/HashBugnet/HashHookshot)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-04-18T07:30:00.122Z",
+    "started_at": "2026-04-18T08:00:00.071Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H31M07.982285S",
+        "finished_at": "2026-04-18T10:31:08.053Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3403,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H56M08.080621S",
+        "finished_at": "2026-04-18T10:56:08.152Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2960,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H00M44.365101S",
+        "finished_at": "2026-04-18T11:00:44.436Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2994,
+        "score_change": -8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXQlgB1y8q0",
+          "full_name": "derdasch#5543",
+          "name": "derdasch",
+          "discriminator": "5543",
+          "url": "/user/zM65aWXQlgB1y8q0/derdasch",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "derdasch",
+          "twitch_display_name": "derdasch",
+          "twitch_channel": "https://www.twitch.tv/derdasch",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2083,
+        "score_change": -67,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-18T11:00:44.541Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

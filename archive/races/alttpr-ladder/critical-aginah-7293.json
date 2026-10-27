@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/critical-aginah-7293",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/critical-aginah-7293",
+    "data_url": "/alttpr-ladder/critical-aginah-7293/data",
+    "goal": {
+      "name": "Beat the game (Glitched)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG [VT]\nhmg - https://alttpr.racing/getseed.php?race=5324 - (HashHammer/HashTunic/HashMoonPearl/HashBugnet/HashHammer)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-10-17T19:30:00.181Z",
+    "started_at": "2026-10-17T20:00:00.096Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M51.022129S",
+        "finished_at": "2026-10-17T21:29:51.118Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2203,
+        "score_change": 81,
+        "comment": "hope the qualifier isn't like this",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M04.737777S",
+        "finished_at": "2026-10-17T21:36:04.833Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2608,
+        "score_change": -13,
+        "comment": "LL flippers except trinexx",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B86lyoPa52R",
+          "full_name": "MrByer#7307",
+          "name": "MrByer",
+          "discriminator": "7307",
+          "url": "/user/VwLN8B86lyoPa52R/mrbyer",
+          "avatar": "https://racetime.gg/media/2019112008471100-3C66B776DB1AA06323037049FACD96D3.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mrbyer",
+          "twitch_display_name": "MrByer",
+          "twitch_channel": "https://www.twitch.tv/mrbyer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M08.994187S",
+        "finished_at": "2026-10-17T21:47:09.090Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2218,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEy9lWak64R",
+          "full_name": "secretlyasliver#1225",
+          "name": "secretlyasliver",
+          "discriminator": "1225",
+          "url": "/user/17DexWEy9lWak64R/secretlyasliver",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "secretlyasliver",
+          "twitch_display_name": "secretlyasliver",
+          "twitch_channel": "https://www.twitch.tv/secretlyasliver",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1615,
+        "score_change": -26,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-17T21:47:09.880Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

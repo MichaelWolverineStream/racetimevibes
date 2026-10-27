@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:19Z",
+  "race": {
+    "name": "alttpr-ladder/eager-pieceofheart-1664",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/eager-pieceofheart-1664",
+    "data_url": "/alttpr-ladder/eager-pieceofheart-1664/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=2723 - (HashShield/HashIceRod/HashBombs/HashGloves/HashGreenPotion)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-03-07T19:30:00.085Z",
+    "started_at": "2026-03-07T20:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "DMLq1oZAr43OeQG8",
+          "full_name": "Titos#7297",
+          "name": "Titos",
+          "discriminator": "7297",
+          "url": "/user/DMLq1oZAr43OeQG8/titos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "titos288",
+          "twitch_display_name": "titos288",
+          "twitch_channel": "https://www.twitch.tv/titos288",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H00M56.680192S",
+        "finished_at": "2026-03-07T21:00:56.760Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3111,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H05M18.322864S",
+        "finished_at": "2026-03-07T21:05:18.403Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2446,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H14M35.923391S",
+        "finished_at": "2026-03-07T21:14:36.004Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2321,
+        "score_change": 7,
+        "comment": "Charged mountain to see GT open, then the goal saw i could clear 5 and just rushed. Really happy with this one",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yZ2Dv30p753ewXma",
+          "full_name": "DirtBubblE#9477",
+          "name": "DirtBubblE",
+          "discriminator": "9477",
+          "url": "/user/yZ2Dv30p753ewXma/dirtbubble",
+          "avatar": "https://racetime.gg/media/DirtBubblE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dirtbubble",
+          "twitch_display_name": "DirtBubblE",
+          "twitch_channel": "https://www.twitch.tv/dirtbubble",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M47.227515S",
+        "finished_at": "2026-03-07T21:26:47.308Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1849,
+        "score_change": 17,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1naPBKalP1",
+          "full_name": "Homewrecker#4033",
+          "name": "Homewrecker",
+          "discriminator": "4033",
+          "url": "/user/NY0OkW1naPBKalP1/homewrecker",
+          "avatar": "https://racetime.gg/media/Home_Clown_2_112x112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "home_wrecker",
+          "twitch_display_name": "home_wrecker",
+          "twitch_channel": "https://www.twitch.tv/home_wrecker",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M21.918289S",
+        "finished_at": "2026-03-07T21:28:21.998Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2276,
+        "score_change": -33,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M45.160109S",
+        "finished_at": "2026-03-07T21:30:45.240Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2305,
+        "score_change": -16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-07T21:30:45.378Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

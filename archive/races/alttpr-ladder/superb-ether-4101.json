@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/superb-ether-4101",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/superb-ether-4101",
+    "data_url": "/alttpr-ladder/superb-ether-4101/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Standard\nstandard - https://alttpr.racing/getseed.php?race=71 - (Mirror/Boots/Shield/Tunic/Green Potion)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-05-25T12:30:02.985Z",
+    "started_at": "2025-05-25T13:00:03.017Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M24.772203S",
+        "finished_at": "2025-05-25T14:30:27.789Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2945,
+        "score_change": 149,
+        "comment": "late mitts/flippers so i already beat pod and SW - hook saved me",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M01.047359S",
+        "finished_at": "2025-05-25T14:33:04.065Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2743,
+        "score_change": -31,
+        "comment": "pod was def the play. but then it wasn't. but then...it was",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1YZVWKalP1",
+          "full_name": "kefffka#6024",
+          "name": "kefffka",
+          "discriminator": "6024",
+          "url": "/user/NY0OkW1YZVWKalP1/kefffka",
+          "avatar": "https://racetime.gg/media/930.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kefffka",
+          "twitch_display_name": "kefffka",
+          "twitch_channel": "https://www.twitch.tv/kefffka",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M23.780531S",
+        "finished_at": "2025-05-25T14:35:26.798Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 528,
+        "score_change": 652,
+        "comment": "superb ether indeed... wish I could hover consistently",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "MqzQPW4lvQW1L2R5",
+          "full_name": "Wolle#1675",
+          "name": "Wolle",
+          "discriminator": "1675",
+          "url": "/user/MqzQPW4lvQW1L2R5/wolle",
+          "avatar": "https://racetime.gg/media/MqzQPW4lvQW1L2R5.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wolle_91",
+          "twitch_display_name": "wolle_91",
+          "twitch_channel": "https://www.twitch.tv/wolle_91",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M30.051516S",
+        "finished_at": "2025-05-25T14:38:33.069Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 548,
+        "score_change": 362,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBl4mdBaOP57",
+          "full_name": "Yok#8247",
+          "name": "Yok",
+          "discriminator": "8247",
+          "url": "/user/xldAMBl4mdBaOP57/yok",
+          "avatar": "https://racetime.gg/media/froge.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "yok2dgod",
+          "twitch_display_name": "Yok2DGod",
+          "twitch_channel": "https://www.twitch.tv/yok2dgod",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2848,
+        "score_change": -502,
+        "comment": "feels like it's the same seed every time",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-25T14:38:33.127Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

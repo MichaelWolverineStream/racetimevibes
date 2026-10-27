@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/outrageous-ganon-3447",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/outrageous-ganon-3447",
+    "data_url": "/alttpr-ladder/outrageous-ganon-3447/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=1049 - (HashBombs/HashEmptyBottle/HashHammer/HashBow/HashQuake)",
+    "entrants_count": 4,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-09-28T07:30:00.084Z",
+    "started_at": "2025-09-28T08:00:00.066Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M46.373574S",
+        "finished_at": "2025-09-28T10:09:46.439Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2985,
+        "score_change": 10,
+        "comment": "191 Ice rod Go",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H23M16.002547S",
+        "finished_at": "2025-09-28T10:23:16.068Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2770,
+        "score_change": -13,
+        "comment": "LL Mirror - IR GoMode - CR 198",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2319,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1615,
+        "score_change": 11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-28T10:23:16.130Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

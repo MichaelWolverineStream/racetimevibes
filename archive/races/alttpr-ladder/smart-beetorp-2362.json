@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/smart-beetorp-2362",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/smart-beetorp-2362",
+    "data_url": "/alttpr-ladder/smart-beetorp-2362/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=1073 - (HashBigKey/HashSomaria/HashBombs/HashBow/HashBow)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-01T06:30:00.101Z",
+    "started_at": "2025-10-01T07:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M06.016265S",
+        "finished_at": "2025-10-01T08:53:06.104Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2318,
+        "score_change": 11,
+        "comment": "hookless swamp upsie",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M32.623431S",
+        "finished_at": "2025-10-01T08:57:32.711Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2389,
+        "score_change": -8,
+        "comment": "you have to go out of your way to seed in THAT many pointers to absolute junk",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M38.386267S",
+        "finished_at": "2025-10-01T09:02:38.474Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1774,
+        "score_change": -8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-01T09:02:38.565Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

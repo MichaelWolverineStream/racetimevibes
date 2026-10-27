@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/critical-brogor-1226",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/critical-brogor-1226",
+    "data_url": "/alttpr-ladder/critical-brogor-1226/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods (DR)\nladder/nologic_rods - https://alttpr.racing/getseed.php?race=3322 - (HashMagicPowder/HashShovel/HashEmptyBottle/HashBoomerang/HashFlippers)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-04-26T18:30:00.146Z",
+    "started_at": "2026-04-26T19:00:00.078Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M47.007827S",
+        "finished_at": "2026-04-26T20:40:47.086Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2861,
+        "score_change": 27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M40.337267S",
+        "finished_at": "2026-04-26T20:41:40.415Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3136,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-26T20:41:40.522Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

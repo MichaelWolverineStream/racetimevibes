@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/travelling-fireshield-0159",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/travelling-fireshield-0159",
+    "data_url": "/alttpr-ladder/travelling-fireshield-0159/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=3711 - (HashLamp/HashShield/HashBoomerang/HashShovel/HashHammer)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-31T22:30:00.106Z",
+    "started_at": "2026-05-31T23:00:00.070Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M46.330120S",
+        "finished_at": "2026-06-01T00:50:46.400Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2367,
+        "score_change": 23,
+        "comment": "160 - I'm not sure I've ever seen a POD that dead in keysanity.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLGxA39QEya",
+          "full_name": "crazdgamer#4360",
+          "name": "crazdgamer",
+          "discriminator": "4360",
+          "url": "/user/NqO2YoLGxA39QEya/crazdgamer",
+          "avatar": "https://racetime.gg/media/17.JPG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crazdgamer",
+          "twitch_display_name": "crazdgamer",
+          "twitch_channel": "https://www.twitch.tv/crazdgamer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M25.338454S",
+        "finished_at": "2026-06-01T01:08:25.409Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 825,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-01T01:08:25.450Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

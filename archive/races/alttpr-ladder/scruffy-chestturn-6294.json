@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:19Z",
+  "race": {
+    "name": "alttpr-ladder/scruffy-chestturn-6294",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/scruffy-chestturn-6294",
+    "data_url": "/alttpr-ladder/scruffy-chestturn-6294/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Open 7/7 Enemizer (Starting Maps & Compasses)\nladder/open_enemizer_starting_mc - https://alttpr.racing/getseed.php?race=2894 - (HashShovel/HashBombs/HashBoots/HashTunic/HashHammer)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-03-22T00:30:00.104Z",
+    "started_at": "2026-03-22T01:00:00.112Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "GklxjWzPLb3LPdye",
+          "full_name": "jmasha#6476",
+          "name": "jmasha",
+          "discriminator": "6476",
+          "url": "/user/GklxjWzPLb3LPdye/jmasha",
+          "avatar": "https://racetime.gg/media/GklxjWzPLb3LPdye.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "j_masha",
+          "twitch_display_name": "j_masha",
+          "twitch_channel": "https://www.twitch.tv/j_masha",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M02.657155S",
+        "finished_at": "2026-03-22T03:15:02.769Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1954,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g68jBkyANO",
+          "full_name": "Noob Scooter#0645",
+          "name": "Noob Scooter",
+          "discriminator": "0645",
+          "url": "/user/57ZKD3g68jBkyANO/noob-scooter",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "noob_g_scooter",
+          "twitch_display_name": "Noob_G_Scooter",
+          "twitch_channel": "https://www.twitch.tv/noob_g_scooter",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H51M06.234421S",
+        "finished_at": "2026-03-22T03:51:06.346Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1670,
+        "score_change": -2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1265,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-22T03:51:06.810Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

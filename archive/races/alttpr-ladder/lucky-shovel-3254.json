@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/lucky-shovel-3254",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lucky-shovel-3254",
+    "data_url": "/alttpr-ladder/lucky-shovel-3254/data",
+    "goal": {
+      "name": "Beat the game (Inverted)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=3445 - (HashMagicPowder/HashCape/HashCape/HashBombos/HashCape)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-09T18:30:00.421Z",
+    "started_at": "2026-05-09T19:00:00.194Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M44.862949S",
+        "finished_at": "2026-05-09T20:58:45.057Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1836,
+        "score_change": 295,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1naPBKalP1",
+          "full_name": "Homewrecker#4033",
+          "name": "Homewrecker",
+          "discriminator": "4033",
+          "url": "/user/NY0OkW1naPBKalP1/homewrecker",
+          "avatar": "https://racetime.gg/media/Home_Clown_2_112x112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "home_wrecker",
+          "twitch_display_name": "home_wrecker",
+          "twitch_channel": "https://www.twitch.tv/home_wrecker",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M16.866050S",
+        "finished_at": "2026-05-09T21:05:17.060Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -78,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-09T21:05:17.116Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

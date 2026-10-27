@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-titos-2620",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-titos-2620",
+    "data_url": "/alttpr-ladder/trusty-titos-2620/data",
+    "goal": {
+      "name": "Beat the game (Fun)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Open 7/7 Swordless\nladder/open_swordless - https://alttpr.racing/getseed.php?race=3433 - (HashBoomerang/HashHammer/HashGloves/HashCape/HashBombs)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-05-08T19:30:00.104Z",
+    "started_at": "2026-05-08T20:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M44.527955S",
+        "finished_at": "2026-05-08T21:37:44.604Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1291,
+        "score_change": 720,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M51.978162S",
+        "finished_at": "2026-05-08T21:37:52.054Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 828,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M24.834641S",
+        "finished_at": "2026-05-08T21:55:24.911Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 467,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -639,
+        "comment": "enough last locations for today",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-08T21:55:25.002Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

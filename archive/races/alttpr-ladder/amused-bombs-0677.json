@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:32Z",
+  "race": {
+    "name": "alttpr-ladder/amused-bombs-0677",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/amused-bombs-0677",
+    "data_url": "/alttpr-ladder/amused-bombs-0677/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=2020 - (HashLamp/HashSomaria/HashGreenPotion/HashMagicPowder/HashBook)",
+    "entrants_count": 6,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-01-02T14:30:00.114Z",
+    "started_at": "2026-01-02T15:00:00.090Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBM82WkqgyE",
+          "full_name": "Rayvis#1601",
+          "name": "Rayvis",
+          "discriminator": "1601",
+          "url": "/user/XGzr7pBM82WkqgyE/rayvis",
+          "avatar": "https://racetime.gg/media/Cloud_Portrait.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "rayvis10",
+          "twitch_display_name": "Rayvis10",
+          "twitch_channel": "https://www.twitch.tv/rayvis10",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M22.111263S",
+        "finished_at": "2026-01-02T16:38:22.201Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2981,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWjQxeoEnVx6",
+          "full_name": "iron_gamer4565#4339",
+          "name": "iron_gamer4565",
+          "discriminator": "4339",
+          "url": "/user/dm1LPWjQxeoEnVx6/iron_gamer4565",
+          "avatar": "https://racetime.gg/media/IG_Hey.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iron_gamer4565",
+          "twitch_display_name": "Iron_Gamer4565",
+          "twitch_channel": "https://www.twitch.tv/iron_gamer4565",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M12.634700S",
+        "finished_at": "2026-01-02T16:52:12.725Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1581,
+        "score_change": 149,
+        "comment": "hookshot got me good",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7Lkx3V4GED",
+          "full_name": "Zorimyll#7692",
+          "name": "Zorimyll",
+          "discriminator": "7692",
+          "url": "/user/5JlzyB7Lkx3V4GED/zorimyll",
+          "avatar": "https://racetime.gg/media/Zehir.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zorimyll",
+          "twitch_display_name": "Zorimyll",
+          "twitch_channel": "https://www.twitch.tv/zorimyll",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M41.547228S",
+        "finished_at": "2026-01-02T17:00:41.637Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1974,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbP6O3YlM65",
+          "full_name": "Wasteland Outlaw#8452",
+          "name": "Wasteland Outlaw",
+          "discriminator": "8452",
+          "url": "/user/jZ2EGWbP6O3YlM65/wasteland-outlaw",
+          "avatar": "https://racetime.gg/media/jZ2EGWbP6O3YlM65.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wasteland_outlaw",
+          "twitch_display_name": "Wasteland_Outlaw",
+          "twitch_channel": "https://www.twitch.tv/wasteland_outlaw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H56M39.445763S",
+        "finished_at": "2026-01-02T17:56:39.536Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 747,
+        "score_change": 152,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB2Ax9WNgk4V",
+          "full_name": "Darpex#5779",
+          "name": "Darpex",
+          "discriminator": "5779",
+          "url": "/user/8QGZrB2Ax9WNgk4V/darpex",
+          "avatar": "https://racetime.gg/media/IMG_7442.jpeg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "darpex3",
+          "twitch_display_name": "Darpex3",
+          "twitch_channel": "https://www.twitch.tv/darpex3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2061,
+        "score_change": -20,
+        "comment": "open is cursed",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mQeL3Pd1Xr",
+          "full_name": "rdsdb#3726",
+          "name": "rdsdb",
+          "discriminator": "3726",
+          "url": "/user/R6ym83mQeL3Pd1Xr/rdsdb",
+          "avatar": "https://racetime.gg/media/R6ym83mQeL3Pd1Xr_NamgYZE.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "rdsdb",
+          "twitch_display_name": "rdsdb",
+          "twitch_channel": "https://www.twitch.tv/rdsdb",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1411,
+        "score_change": -3,
+        "comment": "thought me to have already 2 items in Pod\u00b4s front ... :o",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-02T17:56:39.619Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

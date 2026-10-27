@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/quick-thievestown-9054",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/quick-thievestown-9054",
+    "data_url": "/alttpr-ladder/quick-thievestown-9054/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=159 - (Ether/Flippers/Ice Rod/Bugnet/Bow)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-05T13:30:01.312Z",
+    "started_at": "2025-06-05T14:00:01.363Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRN5OWmqXen",
+          "full_name": "Muffins#9229",
+          "name": "Muffins",
+          "discriminator": "9229",
+          "url": "/user/497NdWRN5OWmqXen/muffins",
+          "avatar": "https://racetime.gg/media/rsz_1binary_pipette.jpg",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "neo_muffins",
+          "twitch_display_name": "Neo_Muffins",
+          "twitch_channel": "https://www.twitch.tv/neo_muffins",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M04.150885S",
+        "finished_at": "2025-06-05T15:20:05.514Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2198,
+        "score_change": 248,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M13.038089S",
+        "finished_at": "2025-06-05T15:20:14.401Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2465,
+        "score_change": 20,
+        "comment": "unfortunately lost 5mins duping mire crystal, nice bebi seed otherwise",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M29.002695S",
+        "finished_at": "2025-06-05T15:27:30.366Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1908,
+        "score_change": 85,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPdvqWe7P5Q",
+          "full_name": "Victotem#1469",
+          "name": "Victotem",
+          "discriminator": "1469",
+          "url": "/user/1jgrbWPdvqWe7P5Q/victotem",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "victotem",
+          "twitch_display_name": "Victotem",
+          "twitch_channel": "https://www.twitch.tv/victotem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M18.268714S",
+        "finished_at": "2025-06-05T15:36:19.632Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1712,
+        "score_change": 33,
+        "comment": "108/216 Did a lot of big mistakes like crashing with the yba to arghus.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M33.785021S",
+        "finished_at": "2025-06-05T15:54:35.148Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2007,
+        "score_change": -48,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-05T15:54:35.194Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/intrepid-osora-2433",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/intrepid-osora-2433",
+    "data_url": "/alttpr-ladder/intrepid-osora-2433/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=4374 - (HashHammer/HashEmptyBottle/HashGreenPotion/HashShovel/HashGloves)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-27T05:30:00.124Z",
+    "started_at": "2026-07-27T06:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M58.571791S",
+        "finished_at": "2026-07-27T07:55:58.659Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1772,
+        "score_change": 52,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M17.999206S",
+        "finished_at": "2026-07-27T07:57:18.087Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2343,
+        "score_change": -92,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": true,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-27T07:57:18.985Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

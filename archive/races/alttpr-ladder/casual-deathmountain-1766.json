@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:17Z",
+  "race": {
+    "name": "alttpr-ladder/casual-deathmountain-1766",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/casual-deathmountain-1766",
+    "data_url": "/alttpr-ladder/casual-deathmountain-1766/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=3070 - (HashIceRod/HashBook/HashFlute/HashBook/HashBow)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-04-05T19:30:00.079Z",
+    "started_at": "2026-04-05T20:00:00.073Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M18.382452S",
+        "finished_at": "2026-04-05T22:05:18.455Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2263,
+        "score_change": 15,
+        "comment": ">174 - I feel baited by all of those GT keys.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M32.024286S",
+        "finished_at": "2026-04-05T22:11:32.097Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2324,
+        "score_change": 0,
+        "comment": "Where is my damn half magic game?!",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2339,
+        "score_change": -10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-05T22:11:32.156Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

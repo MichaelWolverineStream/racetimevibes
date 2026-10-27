@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/dazzling-jem-1394",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dazzling-jem-1394",
+    "data_url": "/alttpr-ladder/dazzling-jem-1394/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1182 - (HashEmptyBottle/HashShovel/HashHeart/HashIceRod/HashBombos)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-15T18:30:00.101Z",
+    "started_at": "2025-10-15T19:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "07QXz83KXLoeZDjr",
+          "full_name": "WillardJBradley#2538",
+          "name": "WillardJBradley",
+          "discriminator": "2538",
+          "url": "/user/07QXz83KXLoeZDjr/willardjbradley",
+          "avatar": "https://racetime.gg/media/will-boy.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "willardjbradley",
+          "twitch_display_name": "WillardJBradley",
+          "twitch_channel": "https://www.twitch.tv/willardjbradley",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M14.706906S",
+        "finished_at": "2025-10-15T20:51:14.783Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2788,
+        "score_change": 0,
+        "comment": "183 - dodged the bait... mostly",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB22YeBNgk4V",
+          "full_name": "idcchilly#2749",
+          "name": "idcchilly",
+          "discriminator": "2749",
+          "url": "/user/8QGZrB22YeBNgk4V/idcchilly",
+          "avatar": "https://racetime.gg/media/c8c822d28340c4ea9cf3fc6fb1490f07.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "idcchilly",
+          "twitch_display_name": "idcchilly",
+          "twitch_channel": "https://www.twitch.tv/idcchilly",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H27M09.856249S",
+        "finished_at": "2025-10-15T21:27:09.933Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 363,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-15T21:27:09.962Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

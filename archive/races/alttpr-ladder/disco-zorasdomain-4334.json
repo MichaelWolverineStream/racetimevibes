@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:17Z",
+  "race": {
+    "name": "alttpr-ladder/disco-zorasdomain-4334",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/disco-zorasdomain-4334",
+    "data_url": "/alttpr-ladder/disco-zorasdomain-4334/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=2957 - (HashCape/HashEther/HashBook/HashQuake/HashGreenPotion)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-03-27T09:30:00.128Z",
+    "started_at": "2026-03-27T10:00:00.069Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M38.554897S",
+        "finished_at": "2026-03-27T11:46:38.624Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2377,
+        "score_change": 14,
+        "comment": "very disappointed in you, shovel",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M43.050771S",
+        "finished_at": "2026-03-27T11:51:43.120Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2424,
+        "score_change": 3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8M6V3Pa52R",
+          "full_name": "Mahony#1032",
+          "name": "Mahony",
+          "discriminator": "1032",
+          "url": "/user/VwLN8B8M6V3Pa52R/mahony",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mahony19888",
+          "twitch_display_name": "mahony19888",
+          "twitch_channel": "https://www.twitch.tv/mahony19888",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M52.960414S",
+        "finished_at": "2026-03-27T11:53:53.030Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1958,
+        "score_change": 9,
+        "comment": "This game is fun!!! Bio break ~ 90 sec. Actual time 1:52:39ish",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783J8XXWqlL0a",
+          "full_name": "Papaschland#4532",
+          "name": "Papaschland",
+          "discriminator": "4532",
+          "url": "/user/NX5783J8XXWqlL0a/papaschland",
+          "avatar": "https://racetime.gg/media/999d5851469f16536a4081eb5e2a67ca.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "papaschland",
+          "twitch_display_name": "Papaschland",
+          "twitch_channel": "https://www.twitch.tv/papaschland",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M51.008421S",
+        "finished_at": "2026-03-27T12:01:51.078Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 463,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M05.050596S",
+        "finished_at": "2026-03-27T12:03:05.120Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1436,
+        "score_change": 10,
+        "comment": "r\u00e4udiger seed",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnDNoLKPnz",
+          "full_name": "phoenix_tyrol#0220",
+          "name": "phoenix_tyrol",
+          "discriminator": "0220",
+          "url": "/user/XY0eABdnDNoLKPnz/phoenix_tyrol",
+          "avatar": "https://racetime.gg/media/XY0eABdnDNoLKPnz.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "phoenix_tyrol",
+          "twitch_display_name": "phoenix_tyrol",
+          "twitch_channel": "https://www.twitch.tv/phoenix_tyrol",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M31.610530S",
+        "finished_at": "2026-03-27T12:06:31.680Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1442,
+        "score_change": -5,
+        "comment": "Funny...",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5zbdeWea8XWYPK8O",
+          "full_name": "Dekar112#3024",
+          "name": "Dekar112",
+          "discriminator": "3024",
+          "url": "/user/5zbdeWea8XWYPK8O/dekar112",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "dekar_112",
+          "twitch_display_name": "dekar_112",
+          "twitch_channel": "https://www.twitch.tv/dekar_112",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M48.630181S",
+        "finished_at": "2026-03-27T12:09:48.699Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1466,
+        "score_change": -30,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-27T12:09:48.748Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

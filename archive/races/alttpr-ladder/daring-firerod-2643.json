@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/daring-firerod-2643",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/daring-firerod-2643",
+    "data_url": "/alttpr-ladder/daring-firerod-2643/data",
+    "goal": {
+      "name": "Beat the game (1v1)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [ladder_test] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=575 - (Ice Rod/Lamp/Green Potion/Mushroom/Green Potion)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-27T16:58:00.637Z",
+    "started_at": "2025-07-27T17:00:00.186Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M07.596915S",
+        "finished_at": "2025-07-27T18:35:07.783Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1903,
+        "score_change": 192,
+        "comment": "I should have rushed GT sooner 157/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzqNWYlM65",
+          "full_name": "Shinmaru#3292",
+          "name": "Shinmaru",
+          "discriminator": "3292",
+          "url": "/user/jZ2EGWbzqNWYlM65/shinmaru",
+          "avatar": "https://racetime.gg/media/popee.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "shinmaru007",
+          "twitch_display_name": "Shinmaru007",
+          "twitch_channel": "https://www.twitch.tv/shinmaru007",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M55.724397S",
+        "finished_at": "2025-07-27T18:53:55.910Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -41,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-27T18:53:55.967Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

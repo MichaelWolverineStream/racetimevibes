@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:13Z",
+  "race": {
+    "name": "alttpr-ladder/hot-tempered-4119",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hot-tempered-4119",
+    "data_url": "/alttpr-ladder/hot-tempered-4119/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\nladder/crosskeys - https://alttpr.racing/getseed.php?race=3100 - (HashMoonPearl/HashIceRod/HashShield/HashHeart/HashBoomerang)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-04-08T07:30:00.072Z",
+    "started_at": "2026-04-08T08:00:00.087Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M22.087606S",
+        "finished_at": "2026-04-08T09:57:22.175Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3179,
+        "score_change": 5,
+        "comment": "trinexx hover DENIED D:D:D:D:D:D:D:",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoYZlAWRdm5v",
+          "full_name": "Magnit Handz#9960",
+          "name": "Magnit Handz",
+          "discriminator": "9960",
+          "url": "/user/JrM6PoYZlAWRdm5v/magnit-handz",
+          "avatar": "https://racetime.gg/media/Magnit_Hands_Profile_Crop.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnithandz",
+          "twitch_display_name": "MagnitHandz",
+          "twitch_channel": "https://www.twitch.tv/magnithandz",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M41.890161S",
+        "finished_at": "2026-04-08T10:07:41.978Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3031,
+        "score_change": -8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-08T10:07:42.039Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

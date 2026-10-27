@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:24Z",
+  "race": {
+    "name": "alttpr-ladder/perfect-mudora-8515",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/perfect-mudora-8515",
+    "data_url": "/alttpr-ladder/perfect-mudora-8515/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys (VT)\ncrosskeys - https://alttpr.racing/getseed.php?race=2456 - (HashMap/HashShovel/HashEther/HashCompass/HashBoots)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-02-12T07:30:00.087Z",
+    "started_at": "2026-02-12T08:00:00.068Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H24M18.841681S",
+        "finished_at": "2026-02-12T10:24:18.909Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2401,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H36M46.152070S",
+        "finished_at": "2026-02-12T10:36:46.220Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2069,
+        "score_change": -10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-12T10:36:46.329Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

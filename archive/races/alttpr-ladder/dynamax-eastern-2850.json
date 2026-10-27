@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/dynamax-eastern-2850",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dynamax-eastern-2850",
+    "data_url": "/alttpr-ladder/dynamax-eastern-2850/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - OWG (Assured Sword)\nowg_assured - https://alttpr.racing/getseed.php?race=208 - (Lamp/Boots/Lamp/Heart/Flute)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-11T16:30:03.901Z",
+    "started_at": "2025-06-11T17:00:03.892Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "VwLN8B86lyoPa52R",
+          "full_name": "MrByer#7307",
+          "name": "MrByer",
+          "discriminator": "7307",
+          "url": "/user/VwLN8B86lyoPa52R/mrbyer",
+          "avatar": "https://racetime.gg/media/2019112008471100-3C66B776DB1AA06323037049FACD96D3.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mrbyer",
+          "twitch_display_name": "MrByer",
+          "twitch_channel": "https://www.twitch.tv/mrbyer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M24.235233S",
+        "finished_at": "2025-06-11T18:27:28.127Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2292,
+        "score_change": 202,
+        "comment": "169/216 good thing I just finished timing fastest paths to ganon hole",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlG8JWaOP57",
+          "full_name": "Duden2#7537",
+          "name": "Duden2",
+          "discriminator": "7537",
+          "url": "/user/xldAMBlG8JWaOP57/duden2",
+          "avatar": "https://racetime.gg/media/0c2edfb9-8860-4267-828b-497e73d15132.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "duden2",
+          "twitch_display_name": "Duden2",
+          "twitch_channel": "https://www.twitch.tv/duden2",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M28.049071S",
+        "finished_at": "2025-06-11T18:27:31.941Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2417,
+        "score_change": -5,
+        "comment": "174",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzm0WYlM65",
+          "full_name": "BDI1701#8625",
+          "name": "BDI1701",
+          "discriminator": "8625",
+          "url": "/user/jZ2EGWbzm0WYlM65/bdi1701",
+          "avatar": "https://racetime.gg/media/pfp_E8Wa9bf.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bdi1701",
+          "twitch_display_name": "bdi1701",
+          "twitch_channel": "https://www.twitch.tv/bdi1701",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M51.660505S",
+        "finished_at": "2025-06-11T18:30:55.553Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1782,
+        "score_change": 76,
+        "comment": "no arrows for gt climb then died and had to mimic clip again",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1YJjWKalP1",
+          "full_name": "DarkenedSky#5987",
+          "name": "DarkenedSky",
+          "discriminator": "5987",
+          "url": "/user/NY0OkW1YJjWKalP1/darkenedsky",
+          "avatar": "https://racetime.gg/media/newdarklinksub.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "darkened5ky",
+          "twitch_display_name": "Darkened5ky",
+          "twitch_channel": "https://www.twitch.tv/darkened5ky",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M35.812600S",
+        "finished_at": "2025-06-11T18:32:39.705Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2115,
+        "score_change": -124,
+        "comment": "When your gut tells you it's in swamp, just go there",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPdvqWe7P5Q",
+          "full_name": "Victotem#1469",
+          "name": "Victotem",
+          "discriminator": "1469",
+          "url": "/user/1jgrbWPdvqWe7P5Q/victotem",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "victotem",
+          "twitch_display_name": "Victotem",
+          "twitch_channel": "https://www.twitch.tv/victotem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M31.861069S",
+        "finished_at": "2025-06-11T18:48:35.753Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1725,
+        "score_change": -30,
+        "comment": "186/216 Ovbiously almost last located somaria",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-11T18:48:35.846Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

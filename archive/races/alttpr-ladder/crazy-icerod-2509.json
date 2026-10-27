@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/crazy-icerod-2509",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/crazy-icerod-2509",
+    "data_url": "/alttpr-ladder/crazy-icerod-2509/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=3566 - (HashBombs/HashLamp/HashBombs/HashQuake/HashFlute)",
+    "entrants_count": 3,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-05-19T20:30:00.103Z",
+    "started_at": "2026-05-19T21:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M26.619289S",
+        "finished_at": "2026-05-19T22:57:26.697Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 669,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 501,
+        "score_change": 313,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": 24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-19T22:57:31.778Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

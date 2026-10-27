@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:52Z",
+  "race": {
+    "name": "alttpr-ladder/elegant-agahnim-2557",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/elegant-agahnim-2557",
+    "data_url": "/alttpr-ladder/elegant-agahnim-2557/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=4821 - (HashBombos/HashHeart/HashBoomerang/HashTunic/HashCompass)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-09-02T10:30:00.158Z",
+    "started_at": "2026-09-02T11:00:00.087Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzqNWYlM65",
+          "full_name": "Shinmaru#3292",
+          "name": "Shinmaru",
+          "discriminator": "3292",
+          "url": "/user/jZ2EGWbzqNWYlM65/shinmaru",
+          "avatar": "https://racetime.gg/media/popee.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "shinmaru007",
+          "twitch_display_name": "Shinmaru007",
+          "twitch_channel": "https://www.twitch.tv/shinmaru007",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M00.397036S",
+        "finished_at": "2026-09-02T12:50:00.484Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2515,
+        "score_change": 25,
+        "comment": "164 nice boots",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNb5wolywqX",
+          "full_name": "TiMobile1990#6340",
+          "name": "TiMobile1990",
+          "discriminator": "6340",
+          "url": "/user/52QE8oNb5wolywqX/timobile1990",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "timobile1990",
+          "twitch_display_name": "TiMobile1990",
+          "twitch_channel": "https://www.twitch.tv/timobile1990",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M23.591364S",
+        "finished_at": "2026-09-02T12:59:23.678Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1018,
+        "score_change": 367,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M53.049903S",
+        "finished_at": "2026-09-02T12:59:53.136Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1601,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB2Ax9WNgk4V",
+          "full_name": "Darpex#5779",
+          "name": "Darpex",
+          "discriminator": "5779",
+          "url": "/user/8QGZrB2Ax9WNgk4V/darpex",
+          "avatar": "https://racetime.gg/media/IMG_7442.jpeg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "darpex3",
+          "twitch_display_name": "Darpex3",
+          "twitch_channel": "https://www.twitch.tv/darpex3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M31.030836S",
+        "finished_at": "2026-09-02T13:00:31.117Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 14,
+        "comment": "obviously boots have to be my go mode at the trash ,,cabookey'' mode",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ85yWK4xrZ",
+          "full_name": "Skatzman#8917",
+          "name": "Skatzman",
+          "discriminator": "8917",
+          "url": "/user/z56VnBQ85yWK4xrZ/skatzman",
+          "avatar": "https://racetime.gg/media/z56VnBQ85yWK4xrZ.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "skatzman",
+          "twitch_display_name": "skatzman",
+          "twitch_channel": "https://www.twitch.tv/skatzman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 626,
+        "score_change": -62,
+        "comment": "brain not brain, tracker not tracker GL HF",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-02T13:00:31.207Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

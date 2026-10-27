@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/travelling-hypecave-8139",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/travelling-hypecave-8139",
+    "data_url": "/alttpr-ladder/travelling-hypecave-8139/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=453 - (Hammer/Bombs/Moon Pearl/Shovel/Ice Rod)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-12T10:30:00.156Z",
+    "started_at": "2025-07-12T11:00:00.070Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRNvRWmqXen",
+          "full_name": "crackerito#3618",
+          "name": "crackerito",
+          "discriminator": "3618",
+          "url": "/user/497NdWRNvRWmqXen/crackerito",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crackerito88",
+          "twitch_display_name": "crackerito88",
+          "twitch_channel": "https://www.twitch.tv/crackerito88",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M42.734554S",
+        "finished_at": "2025-07-12T13:02:42.805Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3406,
+        "score_change": 29,
+        "comment": "ncie mirror",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M10.397749S",
+        "finished_at": "2025-07-12T13:04:10.468Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2963,
+        "score_change": 15,
+        "comment": "execution loss - death in front of mitts/4cycle lanmo2/moldorm2 fall - dp and tt double dip at start  could be skipped",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwpvbB1nEk0",
+          "full_name": "hide on bush#1636",
+          "name": "hide on bush",
+          "discriminator": "1636",
+          "url": "/user/b8GPMWwpvbB1nEk0/hide-on-bush",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "hideonbush1909",
+          "twitch_display_name": "hideonbush1909",
+          "twitch_channel": "https://www.twitch.tv/hideonbush1909",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M28.270142S",
+        "finished_at": "2025-07-12T13:12:28.340Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2313,
+        "score_change": 23,
+        "comment": "no caslte enjoyer",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZ7RWYlM65",
+          "full_name": "Sukezss#1184",
+          "name": "Sukezss",
+          "discriminator": "1184",
+          "url": "/user/jZ2EGWbZ7RWYlM65/sukezss",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sukezss",
+          "twitch_display_name": "Sukezss",
+          "twitch_channel": "https://www.twitch.tv/sukezss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H26M03.620714S",
+        "finished_at": "2025-07-12T13:26:03.691Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1479,
+        "score_change": 185,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7QdyoV4GED",
+          "full_name": "Kromb1#1059",
+          "name": "Kromb1",
+          "discriminator": "1059",
+          "url": "/user/5JlzyB7QdyoV4GED/kromb1",
+          "avatar": "https://racetime.gg/media/Profilbild1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kromb4787",
+          "twitch_display_name": "kromb4787",
+          "twitch_channel": "https://www.twitch.tv/kromb4787",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H27M51.192863S",
+        "finished_at": "2025-07-12T13:27:51.263Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2161,
+        "score_change": -33,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2317,
+        "score_change": -24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-12T13:27:51.354Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

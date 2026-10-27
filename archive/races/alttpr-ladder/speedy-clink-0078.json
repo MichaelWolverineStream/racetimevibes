@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/speedy-clink-0078",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/speedy-clink-0078",
+    "data_url": "/alttpr-ladder/speedy-clink-0078/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=1022 - (HashCompass/HashShovel/HashCompass/HashHammer/HashHammer)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-24T21:30:00.200Z",
+    "started_at": "2025-09-24T22:00:00.082Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M49.819748S",
+        "finished_at": "2025-09-24T23:34:49.901Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2864,
+        "score_change": 15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "nxMQeox2xNBapX0A",
+          "full_name": "Soyhr#7143",
+          "name": "Soyhr",
+          "discriminator": "7143",
+          "url": "/user/nxMQeox2xNBapX0A/soyhr",
+          "avatar": "https://racetime.gg/media/Mog_US.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "soyhr",
+          "twitch_display_name": "Soyhr",
+          "twitch_channel": "https://www.twitch.tv/soyhr",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M06.717487S",
+        "finished_at": "2025-09-24T23:40:06.799Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2399,
+        "score_change": 38,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7nxMQeoxlQoapX0A",
+          "full_name": "tylersalt#0124",
+          "name": "tylersalt",
+          "discriminator": "0124",
+          "url": "/user/7nxMQeoxlQoapX0A/tylersalt",
+          "avatar": "https://racetime.gg/media/tsalt.png",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "tylersalt",
+          "twitch_display_name": "tylersalt",
+          "twitch_channel": "https://www.twitch.tv/tylersalt",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M20.998053S",
+        "finished_at": "2025-09-24T23:40:21.080Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2842,
+        "score_change": -1,
+        "comment": "91cph, go mode swamp small",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M17.008903S",
+        "finished_at": "2025-09-24T23:42:17.091Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2982,
+        "score_change": -21,
+        "comment": "142 Flippers for Go, LL'd Mitts",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M16.308014S",
+        "finished_at": "2025-09-24T23:52:16.390Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2233,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRAlxomqXen",
+          "full_name": "Cen7ipede#7860",
+          "name": "Cen7ipede",
+          "discriminator": "7860",
+          "url": "/user/497NdWRAlxomqXen/cen7ipede",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "cen7ipede",
+          "twitch_display_name": "Cen7ipede",
+          "twitch_channel": "https://www.twitch.tv/cen7ipede",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H13M24.349950S",
+        "finished_at": "2025-09-25T00:13:24.432Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1190,
+        "score_change": -14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-25T00:13:24.508Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

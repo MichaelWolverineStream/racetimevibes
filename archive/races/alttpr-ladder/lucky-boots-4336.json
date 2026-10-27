@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/lucky-boots-4336",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lucky-boots-4336",
+    "data_url": "/alttpr-ladder/lucky-boots-4336/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=1894 - (HashLamp/HashSomaria/HashEmptyBottle/HashHeart/HashGreenPotion)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-23T01:30:00.106Z",
+    "started_at": "2025-12-23T02:00:00.105Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M14.487811S",
+        "finished_at": "2025-12-23T04:09:14.593Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2193,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLGxA39QEya",
+          "full_name": "crazdgamer#4360",
+          "name": "crazdgamer",
+          "discriminator": "4360",
+          "url": "/user/NqO2YoLGxA39QEya/crazdgamer",
+          "avatar": "https://racetime.gg/media/17.JPG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crazdgamer",
+          "twitch_display_name": "crazdgamer",
+          "twitch_channel": "https://www.twitch.tv/crazdgamer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M03.839678S",
+        "finished_at": "2025-12-23T04:10:03.945Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1662,
+        "score_change": 0,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yZ2Dv30yO4oewXma",
+          "full_name": "KwehstopherWarken#0536",
+          "name": "KwehstopherWarken",
+          "discriminator": "0536",
+          "url": "/user/yZ2Dv30yO4oewXma/kwehstopherwarken",
+          "avatar": "https://racetime.gg/media/yZ2Dv30yO4oewXma.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kwehstopherwarken",
+          "twitch_display_name": "KwehstopherWarken",
+          "twitch_channel": "https://www.twitch.tv/kwehstopherwarken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M53.589126S",
+        "finished_at": "2025-12-23T04:18:53.694Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 699,
+        "score_change": -30,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-23T04:18:53.783Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

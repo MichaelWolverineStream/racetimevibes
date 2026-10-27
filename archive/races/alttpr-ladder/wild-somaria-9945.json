@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/wild-somaria-9945",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/wild-somaria-9945",
+    "data_url": "/alttpr-ladder/wild-somaria-9945/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Logical Enemizer w/ Random Boss Shuffle\nkaesden/open_logicalenemizer - https://alttpr.racing/getseed.php?race=1817 - (HashFlute/HashMap/HashQuake/HashQuake/HashTunic)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-16T15:30:00.125Z",
+    "started_at": "2025-12-16T16:00:00.082Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWjQxeoEnVx6",
+          "full_name": "iron_gamer4565#4339",
+          "name": "iron_gamer4565",
+          "discriminator": "4339",
+          "url": "/user/dm1LPWjQxeoEnVx6/iron_gamer4565",
+          "avatar": "https://racetime.gg/media/IG_Hey.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iron_gamer4565",
+          "twitch_display_name": "Iron_Gamer4565",
+          "twitch_channel": "https://www.twitch.tv/iron_gamer4565",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M53.444525S",
+        "finished_at": "2025-12-16T17:45:53.526Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1418,
+        "score_change": 163,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M21.953970S",
+        "finished_at": "2025-12-16T17:55:22.036Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1881,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-16T17:55:22.071Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

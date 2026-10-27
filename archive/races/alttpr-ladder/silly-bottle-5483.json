@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/silly-bottle-5483",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/silly-bottle-5483",
+    "data_url": "/alttpr-ladder/silly-bottle-5483/data",
+    "goal": {
+      "name": "Beat the game (Inverted)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=3400 - (HashBombos/HashHookshot/HashFlute/HashBombs/HashBombos)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-05-06T00:30:00.092Z",
+    "started_at": "2026-05-06T01:00:00.101Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M27.277950S",
+        "finished_at": "2026-05-06T02:37:27.379Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 640,
+        "comment": "150 - It really wanted to be AD.  Just needed DPBK and ctsk2.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M31.375488S",
+        "finished_at": "2026-05-06T02:46:31.477Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1258,
+        "score_change": 138,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAQ7bomq6db",
+          "full_name": "T.J Joll#8327",
+          "name": "T.J Joll",
+          "discriminator": "8327",
+          "url": "/user/wezlNoAQ7bomq6db/tj-joll",
+          "avatar": "https://racetime.gg/media/my_character.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjjoll",
+          "twitch_display_name": "TJjoll",
+          "twitch_channel": "https://www.twitch.tv/tjjoll",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -338,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-06T02:46:36.967Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

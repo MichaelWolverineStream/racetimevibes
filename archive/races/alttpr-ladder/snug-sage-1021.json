@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/snug-sage-1021",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/snug-sage-1021",
+    "data_url": "/alttpr-ladder/snug-sage-1021/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - MMMM (Not Slow)\nmmmmavid23 - https://alttpr.racing/getseed.php?race=837 - (HashMushroom/HashBigKey/HashBoomerang/HashGloves/HashMap)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-01T19:30:00.141Z",
+    "started_at": "2025-09-01T20:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M59.570999S",
+        "finished_at": "2025-09-01T22:10:59.668Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2470,
+        "score_change": 22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M55.221023S",
+        "finished_at": "2025-09-01T22:12:55.318Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2306,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-01T22:12:55.395Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

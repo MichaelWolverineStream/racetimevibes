@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/hot-quake-7469",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hot-quake-7469",
+    "data_url": "/alttpr-ladder/hot-quake-7469/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=1416 - (HashQuake/HashBoomerang/HashShovel/HashGloves/HashCape)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-13T03:30:00.082Z",
+    "started_at": "2025-11-13T04:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M48.914864S",
+        "finished_at": "2025-11-13T05:49:48.991Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2665,
+        "score_change": 16,
+        "comment": "193/216 - I rate this seed a NICE FRIGGIN' LAMP/10 KEKW",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M50.875303S",
+        "finished_at": "2025-11-13T05:51:50.951Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2790,
+        "score_change": 13,
+        "comment": "193 a good runner would have checked shovel before going to GT",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orGOEWqDJX0",
+          "full_name": "doctorearworm",
+          "name": "doctorearworm",
+          "discriminator": null,
+          "url": "/user/doctorearworm",
+          "avatar": "https://racetime.gg/media/drworm_LdyUZ6x.png",
+          "pronouns": "he/they",
+          "flair": "supporter moderator",
+          "twitch_name": "doctorearworm",
+          "twitch_display_name": "doctorearworm",
+          "twitch_channel": "https://www.twitch.tv/doctorearworm",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M12.936170S",
+        "finished_at": "2025-11-13T05:57:13.012Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2237,
+        "score_change": 47,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M17.868594S",
+        "finished_at": "2025-11-13T06:02:17.945Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2642,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "AEk8wpoknG35KQyV",
+          "full_name": "Eykir#2885",
+          "name": "Eykir",
+          "discriminator": "2885",
+          "url": "/user/AEk8wpoknG35KQyV/eykir",
+          "avatar": "https://racetime.gg/media/Brian.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "eykir",
+          "twitch_display_name": "Eykir",
+          "twitch_channel": "https://www.twitch.tv/eykir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M22.340784S",
+        "finished_at": "2025-11-13T06:05:22.417Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2804,
+        "score_change": -29,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-13T06:05:22.532Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

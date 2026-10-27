@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/daring-mothlua-3780",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/daring-mothlua-3780",
+    "data_url": "/alttpr-ladder/daring-mothlua-3780/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4563 - (HashGreenPotion/HashSomaria/HashHammer/HashFlippers/HashBow)",
+    "entrants_count": 4,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-08-11T23:30:00.172Z",
+    "started_at": "2026-08-12T00:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7nxMQeoxlQoapX0A",
+          "full_name": "tylersalt#0124",
+          "name": "tylersalt",
+          "discriminator": "0124",
+          "url": "/user/7nxMQeoxlQoapX0A/tylersalt",
+          "avatar": "https://racetime.gg/media/tsalt.png",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "tylersalt",
+          "twitch_display_name": "tylersalt",
+          "twitch_channel": "https://www.twitch.tv/tylersalt",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H16M37.531808S",
+        "finished_at": "2026-08-12T01:16:37.629Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1030,
+        "comment": "hook go, 128 CR, 100cph on the nose !chuu",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KAQaWeZDjr",
+          "full_name": "death_taxes_n64#4985",
+          "name": "death_taxes_n64",
+          "discriminator": "4985",
+          "url": "/user/7QXz83KAQaWeZDjr/death_taxes_n64",
+          "avatar": "https://racetime.gg/media/LC1-Large.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "death_taxes_n64",
+          "twitch_display_name": "death_taxes_n64",
+          "twitch_channel": "https://www.twitch.tv/death_taxes_n64",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M59.717880S",
+        "finished_at": "2026-08-12T01:19:59.815Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1917,
+        "score_change": 23,
+        "comment": "129, eastern clear cost me, never found lamp for logic",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JdGXWqlL0a",
+          "full_name": "TheBenJammin#7468",
+          "name": "TheBenJammin",
+          "discriminator": "7468",
+          "url": "/user/NX5783JdGXWqlL0a/thebenjammin",
+          "avatar": "https://racetime.gg/media/a-for-racegg_o-1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thebenjammin",
+          "twitch_display_name": "TheBenJammin",
+          "twitch_channel": "https://www.twitch.tv/thebenjammin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1824,
+        "score_change": -82,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7kRxBV4GED",
+          "full_name": "Yankster113#9393",
+          "name": "Yankster113",
+          "discriminator": "9393",
+          "url": "/user/5JlzyB7kRxBV4GED/yankster113",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "yankster114",
+          "twitch_display_name": "yankster114",
+          "twitch_channel": "https://www.twitch.tv/yankster114",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 737,
+        "score_change": 188,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-12T01:21:25.232Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

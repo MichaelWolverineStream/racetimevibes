@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:01Z",
+  "race": {
+    "name": "alttpr-ladder/helpful-quake-9858",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/helpful-quake-9858",
+    "data_url": "/alttpr-ladder/helpful-quake-9858/data",
+    "goal": {
+      "name": "Beat the game (Fun)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Open 7/7 Swordless\nladder/open_swordless - https://alttpr.racing/getseed.php?race=4090 - (HashQuake/HashBigKey/HashBook/HashHookshot/HashBigKey)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-02T12:30:00.188Z",
+    "started_at": "2026-07-02T13:00:00.117Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWjQxeoEnVx6",
+          "full_name": "iron_gamer4565#4339",
+          "name": "iron_gamer4565",
+          "discriminator": "4339",
+          "url": "/user/dm1LPWjQxeoEnVx6/iron_gamer4565",
+          "avatar": "https://racetime.gg/media/IG_Hey.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iron_gamer4565",
+          "twitch_display_name": "Iron_Gamer4565",
+          "twitch_channel": "https://www.twitch.tv/iron_gamer4565",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M20.821445S",
+        "finished_at": "2026-07-02T14:35:20.938Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1306,
+        "comment": "pendant pod  ofc",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M23.084089S",
+        "finished_at": "2026-07-02T14:41:23.201Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1844,
+        "score_change": 190,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M39.645342S",
+        "finished_at": "2026-07-02T14:46:39.762Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1688,
+        "score_change": -131,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-02T14:46:40.728Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

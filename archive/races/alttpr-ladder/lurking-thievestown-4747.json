@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:21Z",
+  "race": {
+    "name": "alttpr-ladder/lurking-thievestown-4747",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lurking-thievestown-4747",
+    "data_url": "/alttpr-ladder/lurking-thievestown-4747/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=2670 - (HashTunic/HashEmptyBottle/HashMushroom/HashBombs/HashBombos)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-03-03T10:30:00.095Z",
+    "started_at": "2026-03-03T11:00:00.078Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPQA8Be7P5Q",
+          "full_name": "Xall#2021",
+          "name": "Xall",
+          "discriminator": "2021",
+          "url": "/user/1jgrbWPQA8Be7P5Q/xall",
+          "avatar": "https://racetime.gg/media/1_chQvSpU.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "xallgg",
+          "twitch_display_name": "XallGG",
+          "twitch_channel": "https://www.twitch.tv/xallgg",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H17M14.064089S",
+        "finished_at": "2026-03-03T12:17:14.142Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2091,
+        "score_change": 72,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wdm1LPWj7ABEnVx6",
+          "full_name": "skipfrosch#5987",
+          "name": "skipfrosch",
+          "discriminator": "5987",
+          "url": "/user/wdm1LPWj7ABEnVx6/skipfrosch",
+          "avatar": "https://racetime.gg/media/tumblr_7abc93c9b58760ec67bee0fee8bbe3e0_94214413_640.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "skipfrosch",
+          "twitch_display_name": "skipfrosch",
+          "twitch_channel": "https://www.twitch.tv/skipfrosch",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H22M16.139326S",
+        "finished_at": "2026-03-03T12:22:16.217Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1914,
+        "score_change": 47,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M31.870659S",
+        "finished_at": "2026-03-03T12:34:31.948Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2217,
+        "score_change": -7,
+        "comment": "Cr 147, go mode flippers. hard hard LL mitts. i'm just never checking pendant hera basement early, ever",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1427,
+        "score_change": -22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-03T12:38:29.606Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

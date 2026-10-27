@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/superb-validation-5077",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/superb-validation-5077",
+    "data_url": "/alttpr-ladder/superb-validation-5077/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=1522 - (HashIceRod/HashEmptyBottle/HashPendant/HashPendant/HashFlute)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-11-22T02:30:00.076Z",
+    "started_at": "2025-11-22T03:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M14.093075S",
+        "finished_at": "2025-11-22T04:48:14.172Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2495,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZyAWYlM65",
+          "full_name": "Twiga#4290",
+          "name": "Twiga",
+          "discriminator": "4290",
+          "url": "/user/jZ2EGWbZyAWYlM65/twiga",
+          "avatar": "https://racetime.gg/media/Twiga.png",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "twigathegiraffe",
+          "twitch_display_name": "TwigaTheGiraffe",
+          "twitch_channel": "https://www.twitch.tv/twigathegiraffe",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1806,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-22T04:49:40.206Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/lurking-smallkey-0531",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lurking-smallkey-0531",
+    "data_url": "/alttpr-ladder/lurking-smallkey-0531/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1601 - (HashTunic/HashFlippers/HashBoomerang/HashGloves/HashEmptyBottle)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-28T15:30:00.118Z",
+    "started_at": "2025-11-28T16:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M02.251259S",
+        "finished_at": "2025-11-28T17:55:02.334Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3022,
+        "score_change": 1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M22.748093S",
+        "finished_at": "2025-11-28T18:09:22.831Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1746,
+        "score_change": 6,
+        "comment": "crappy seed",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oN625olywqX",
+          "full_name": "Druu_Bragi#8605",
+          "name": "Druu_Bragi",
+          "discriminator": "8605",
+          "url": "/user/52QE8oN625olywqX/druu_bragi",
+          "avatar": "https://racetime.gg/media/52QE8oN625olywqX.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "druu_bragi",
+          "twitch_display_name": "Druu_Bragi",
+          "twitch_channel": "https://www.twitch.tv/druu_bragi",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H38M01.914707S",
+        "finished_at": "2025-11-28T18:38:01.997Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1006,
+        "score_change": -25,
+        "comment": "painful last locate on icerod",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-28T18:38:02.133Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

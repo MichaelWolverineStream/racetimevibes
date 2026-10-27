@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:19Z",
+  "race": {
+    "name": "alttpr-ladder/magic-tam-0025",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/magic-tam-0025",
+    "data_url": "/alttpr-ladder/magic-tam-0025/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=2795 - (HashMap/HashCompass/HashLamp/HashBoots/HashHeart)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-03-13T18:30:00.096Z",
+    "started_at": "2026-03-13T19:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "MqzQPW4jbD31L2R5",
+          "full_name": "Koval#6866",
+          "name": "Koval",
+          "discriminator": "6866",
+          "url": "/user/MqzQPW4jbD31L2R5/koval",
+          "avatar": "https://racetime.gg/media/Logo-Koval_72ppi.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kovalwhite",
+          "twitch_display_name": "KovalWhite",
+          "twitch_channel": "https://www.twitch.tv/kovalwhite",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M53.934920S",
+        "finished_at": "2026-03-13T20:30:54.027Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2302,
+        "score_change": 100,
+        "comment": "All on my way",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M35.669884S",
+        "finished_at": "2026-03-13T20:36:35.762Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2298,
+        "score_change": 9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M22.363893S",
+        "finished_at": "2026-03-13T20:37:22.456Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2631,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mZAxoPd1Xr",
+          "full_name": "TreySpyre#7679",
+          "name": "TreySpyre",
+          "discriminator": "7679",
+          "url": "/user/R6ym83mZAxoPd1Xr/treyspyre",
+          "avatar": "https://racetime.gg/media/TreySip.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "treyspyre",
+          "twitch_display_name": "TreySpyre",
+          "twitch_channel": "https://www.twitch.tv/treyspyre",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2373,
+        "score_change": -35,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-13T20:37:49.120Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

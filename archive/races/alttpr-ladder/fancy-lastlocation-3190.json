@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/fancy-lastlocation-3190",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fancy-lastlocation-3190",
+    "data_url": "/alttpr-ladder/fancy-lastlocation-3190/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - MMMM (Not Slow)\nmmmmavid23 - https://alttpr.racing/getseed.php?race=944 - (HashMap/HashBoots/HashGreenPotion/HashBigKey/HashSomaria)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-15T03:30:00.112Z",
+    "started_at": "2025-09-15T04:00:00.090Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M05.561708S",
+        "finished_at": "2025-09-15T05:31:05.652Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3174,
+        "score_change": 3,
+        "comment": "If I keep throwing my boomerang it'll have to stun something right?",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M31.082361S",
+        "finished_at": "2025-09-15T05:35:31.172Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2439,
+        "score_change": -5,
+        "comment": "how much we wanna bet the couple skips i made were doritos",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-15T05:35:31.233Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

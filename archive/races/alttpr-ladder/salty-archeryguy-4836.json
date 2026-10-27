@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/salty-archeryguy-4836",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/salty-archeryguy-4836",
+    "data_url": "/alttpr-ladder/salty-archeryguy-4836/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=791 - (HashHeart/HashQuake/HashFlute/HashTunic/HashEther)",
+    "entrants_count": 8,
+    "entrants_count_finished": 8,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-08-27T01:30:00.146Z",
+    "started_at": "2025-08-27T02:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VwLN8B8QlP3Pa52R",
+          "full_name": "Jamo#6380",
+          "name": "Jamo",
+          "discriminator": "6380",
+          "url": "/user/VwLN8B8QlP3Pa52R/jamo",
+          "avatar": "https://racetime.gg/media/58738f3a8302b12913b2b5458170346ec894517e_full.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jamo6",
+          "twitch_display_name": "Jamo6",
+          "twitch_channel": "https://www.twitch.tv/jamo6",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M10.802184S",
+        "finished_at": "2025-08-27T03:58:10.890Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3284,
+        "score_change": 74,
+        "comment": "tracked 4 pendants the whole seed oops",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M42.133329S",
+        "finished_at": "2025-08-27T04:03:42.221Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2497,
+        "score_change": 38,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M30.873152S",
+        "finished_at": "2025-08-27T04:08:30.961Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2388,
+        "score_change": 79,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAyYzomq6db",
+          "full_name": "Clink#8743",
+          "name": "Clink",
+          "discriminator": "8743",
+          "url": "/user/wezlNoAyYzomq6db/clink",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "clink413",
+          "twitch_display_name": "clink413",
+          "twitch_channel": "https://www.twitch.tv/clink413",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M21.296258S",
+        "finished_at": "2025-08-27T04:10:21.384Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2967,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M40.935596S",
+        "finished_at": "2025-08-27T04:14:41.023Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2723,
+        "score_change": -2,
+        "comment": "194/216 - I rate this seed a whoops, shoud have done the well sooner as well as TT/10",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XGzr7pBMM1BkqgyE",
+          "full_name": "derity#9873",
+          "name": "derity",
+          "discriminator": "9873",
+          "url": "/user/XGzr7pBMM1BkqgyE/derity",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "derity__",
+          "twitch_display_name": "derity__",
+          "twitch_channel": "https://www.twitch.tv/derity__",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H16M44.676458S",
+        "finished_at": "2025-08-27T04:16:44.764Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2652,
+        "score_change": -12,
+        "comment": "192",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "OR6ym83mxYBPd1Xr",
+          "full_name": "Coy#4033",
+          "name": "Coy",
+          "discriminator": "4033",
+          "url": "/user/OR6ym83mxYBPd1Xr/coy",
+          "avatar": "https://racetime.gg/media/coystrAYAYA112.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "coy_stream",
+          "twitch_display_name": "Coy_Stream",
+          "twitch_channel": "https://www.twitch.tv/coy_stream",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M07.216479S",
+        "finished_at": "2025-08-27T04:17:07.304Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 2769,
+        "score_change": -79,
+        "comment": "19.75 hearts",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "LNqO2YoL8bo9QEya",
+          "full_name": "Yoinkerswife#4156",
+          "name": "Yoinkerswife",
+          "discriminator": "4156",
+          "url": "/user/LNqO2YoL8bo9QEya/yoinkerswife",
+          "avatar": "https://racetime.gg/media/karrieavatar2.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "yoinkerswife",
+          "twitch_display_name": "Yoinkerswife",
+          "twitch_channel": "https://www.twitch.tv/yoinkerswife",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H55M00.156382S",
+        "finished_at": "2025-08-27T04:55:00.244Z",
+        "place": 8,
+        "place_ordinal": "8th",
+        "score": 1732,
+        "score_change": -15,
+        "comment": "under three hours, I win.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-27T04:55:00.379Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

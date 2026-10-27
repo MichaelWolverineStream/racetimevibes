@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:13Z",
+  "race": {
+    "name": "alttpr-ladder/superb-brogor-5619",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/superb-brogor-5619",
+    "data_url": "/alttpr-ladder/superb-brogor-5619/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=3183 - (HashCape/HashPendant/HashBoots/HashBigKey/HashHammer)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-04-15T04:30:00.158Z",
+    "started_at": "2026-04-15T05:00:00.064Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H22M27.816182S",
+        "finished_at": "2026-04-15T06:22:27.880Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2215,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1642,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-15T06:26:10.008Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

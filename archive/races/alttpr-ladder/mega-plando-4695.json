@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/mega-plando-4695",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mega-plando-4695",
+    "data_url": "/alttpr-ladder/mega-plando-4695/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=295 - (Ether/Empty Bottle/Flute/Magic Powder/Boots)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-22T12:30:09.927Z",
+    "started_at": "2025-06-22T13:00:09.893Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H23M31.640470S",
+        "finished_at": "2025-06-22T14:23:41.533Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2118,
+        "score_change": 29,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "MqzQPW4lvQW1L2R5",
+          "full_name": "Wolle#1675",
+          "name": "Wolle",
+          "discriminator": "1675",
+          "url": "/user/MqzQPW4lvQW1L2R5/wolle",
+          "avatar": "https://racetime.gg/media/MqzQPW4lvQW1L2R5.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wolle_91",
+          "twitch_display_name": "wolle_91",
+          "twitch_channel": "https://www.twitch.tv/wolle_91",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M18.976190S",
+        "finished_at": "2025-06-22T14:32:28.869Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1449,
+        "score_change": 70,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXajgB1y8q0",
+          "full_name": "emock81#6412",
+          "name": "emock81",
+          "discriminator": "6412",
+          "url": "/user/zM65aWXajgB1y8q0/emock81",
+          "avatar": "https://racetime.gg/media/zM65aWXajgB1y8q0.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "emock81",
+          "twitch_display_name": "emock81",
+          "twitch_channel": "https://www.twitch.tv/emock81",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M50.159877S",
+        "finished_at": "2025-06-22T14:40:00.053Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1003,
+        "score_change": 239,
+        "comment": "gg everyone",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8M6V3Pa52R",
+          "full_name": "Mahony#1032",
+          "name": "Mahony",
+          "discriminator": "1032",
+          "url": "/user/VwLN8B8M6V3Pa52R/mahony",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mahony19888",
+          "twitch_display_name": "mahony19888",
+          "twitch_channel": "https://www.twitch.tv/mahony19888",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M10.299339S",
+        "finished_at": "2025-06-22T14:42:20.192Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 286,
+        "comment": "Skipped FR in DP. CR 166",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M53.974051S",
+        "finished_at": "2025-06-22T14:43:03.867Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1995,
+        "score_change": -84,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M50.490667S",
+        "finished_at": "2025-06-22T14:46:00.383Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1187,
+        "score_change": -21,
+        "comment": "fell to gannon lol",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-22T14:46:00.440Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

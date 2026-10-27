@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/reliable-desert-3549",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/reliable-desert-3549",
+    "data_url": "/alttpr-ladder/reliable-desert-3549/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=1013 - (HashCompass/HashPendant/HashTunic/HashEmptyBottle/HashHeart)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-09-23T19:30:00.171Z",
+    "started_at": "2025-09-23T20:00:00.098Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M37.914244S",
+        "finished_at": "2025-09-23T21:47:38.012Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2398,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M19.028645S",
+        "finished_at": "2025-09-23T22:00:19.127Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2233,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orgd1WqDJX0",
+          "full_name": "Masakuni#2916",
+          "name": "Masakuni",
+          "discriminator": "2916",
+          "url": "/user/rZyM4orgd1WqDJX0/masakuni",
+          "avatar": "https://racetime.gg/media/masa_avi_dragonasis_0524_150.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "masakunidragon",
+          "twitch_display_name": "MasakuniDragon",
+          "twitch_channel": "https://www.twitch.tv/masakunidragon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H37M32.661432S",
+        "finished_at": "2025-09-23T22:37:32.760Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1512,
+        "score_change": 49,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2864,
+        "score_change": -31,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-23T22:37:32.793Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

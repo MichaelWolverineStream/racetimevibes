@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/banzai-icepalace-8473",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/banzai-icepalace-8473",
+    "data_url": "/alttpr-ladder/banzai-icepalace-8473/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=1018 - (HashShield/HashMirror/HashEmptyBottle/HashQuake/HashMushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-09-24T10:30:00.138Z",
+    "started_at": "2025-09-24T11:00:00.164Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "DMLq1oZAr43OeQG8",
+          "full_name": "Titos#7297",
+          "name": "Titos",
+          "discriminator": "7297",
+          "url": "/user/DMLq1oZAr43OeQG8/titos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "titos288",
+          "twitch_display_name": "titos288",
+          "twitch_channel": "https://www.twitch.tv/titos288",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M38.082825S",
+        "finished_at": "2025-09-24T13:04:38.247Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3147,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M29.850968S",
+        "finished_at": "2025-09-24T13:15:30.015Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2364,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB2Ax9WNgk4V",
+          "full_name": "Darpex#5779",
+          "name": "Darpex",
+          "discriminator": "5779",
+          "url": "/user/8QGZrB2Ax9WNgk4V/darpex",
+          "avatar": "https://racetime.gg/media/IMG_7442.jpeg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "darpex3",
+          "twitch_display_name": "Darpex3",
+          "twitch_channel": "https://www.twitch.tv/darpex3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1979,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-24T13:16:44.514Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

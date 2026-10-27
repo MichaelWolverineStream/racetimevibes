@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:17Z",
+  "race": {
+    "name": "alttpr-ladder/dynamic-hypecave-2083",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dynamic-hypecave-2083",
+    "data_url": "/alttpr-ladder/dynamic-hypecave-2083/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Open 7/7 Enemizer (Starting Maps & Compasses)\nladder/open_enemizer_starting_mc - https://alttpr.racing/getseed.php?race=3077 - (HashEmptyBottle/HashMirror/HashMoonPearl/HashFlippers/HashSomaria)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-04-06T09:30:00.098Z",
+    "started_at": "2026-04-06T10:00:00.072Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPqj1Be7P5Q",
+          "full_name": "Zenitschwert#5158",
+          "name": "Zenitschwert",
+          "discriminator": "5158",
+          "url": "/user/1jgrbWPqj1Be7P5Q/zenitschwert",
+          "avatar": "https://racetime.gg/media/kleine_Datei.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zenitschwert",
+          "twitch_display_name": "Zenitschwert",
+          "twitch_channel": "https://www.twitch.tv/zenitschwert",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M40.742933S",
+        "finished_at": "2026-04-06T11:40:40.815Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3021,
+        "score_change": 1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2179,
+        "score_change": -2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-06T11:40:51.000Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

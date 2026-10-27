@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:51Z",
+  "race": {
+    "name": "alttpr-ladder/graceful-desert-4386",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/graceful-desert-4386",
+    "data_url": "/alttpr-ladder/graceful-desert-4386/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=646 - (HashEmptyBottle/HashMushroom/HashFlippers/HashCompass/HashFlippers)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-08-08T22:30:00.148Z",
+    "started_at": "2025-08-08T23:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DQpno9blOy",
+          "full_name": "Specks#1514",
+          "name": "Specks",
+          "discriminator": "1514",
+          "url": "/user/5rNGD3DQpno9blOy/specks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "speckyspecks",
+          "twitch_display_name": "SpeckySpecks",
+          "twitch_channel": "https://www.twitch.tv/speckyspecks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M07.931865S",
+        "finished_at": "2025-08-09T00:29:08.012Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2564,
+        "score_change": 89,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XGzr7pBM82WkqgyE",
+          "full_name": "Rayvis#1601",
+          "name": "Rayvis",
+          "discriminator": "1601",
+          "url": "/user/XGzr7pBM82WkqgyE/rayvis",
+          "avatar": "https://racetime.gg/media/Cloud_Portrait.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "rayvis10",
+          "twitch_display_name": "Rayvis10",
+          "twitch_channel": "https://www.twitch.tv/rayvis10",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M43.130024S",
+        "finished_at": "2025-08-09T00:37:43.210Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3049,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M53.665513S",
+        "finished_at": "2025-08-09T00:38:53.745Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2291,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orgzaWqDJX0",
+          "full_name": "AstroFelipe#0115",
+          "name": "AstroFelipe",
+          "discriminator": "0115",
+          "url": "/user/rZyM4orgzaWqDJX0/astrofelipe",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "astrofelipe",
+          "twitch_display_name": "AstroFelipe",
+          "twitch_channel": "https://www.twitch.tv/astrofelipe",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M54.368126S",
+        "finished_at": "2025-08-09T00:43:54.448Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 811,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWE8E1oak64R",
+          "full_name": "Captain_1977#2001",
+          "name": "Captain_1977",
+          "discriminator": "2001",
+          "url": "/user/17DexWE8E1oak64R/captain_1977",
+          "avatar": "https://racetime.gg/media/17DexWE8E1oak64R.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "captain_1977",
+          "twitch_display_name": "Captain_1977",
+          "twitch_channel": "https://www.twitch.tv/captain_1977",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M24.434138S",
+        "finished_at": "2025-08-09T00:45:24.514Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1809,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M34.136334S",
+        "finished_at": "2025-08-09T00:52:34.216Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2302,
+        "score_change": -22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JdGXWqlL0a",
+          "full_name": "TheBenJammin#7468",
+          "name": "TheBenJammin",
+          "discriminator": "7468",
+          "url": "/user/NX5783JdGXWqlL0a/thebenjammin",
+          "avatar": "https://racetime.gg/media/a-for-racegg_o-1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thebenjammin",
+          "twitch_display_name": "TheBenJammin",
+          "twitch_channel": "https://www.twitch.tv/thebenjammin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M41.118654S",
+        "finished_at": "2025-08-09T00:57:41.198Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1602,
+        "score_change": -39,
+        "comment": "didnt check hammer pegs or PoD quick enough",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-09T00:57:41.294Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

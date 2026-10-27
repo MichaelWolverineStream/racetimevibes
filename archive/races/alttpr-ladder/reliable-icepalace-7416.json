@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/reliable-icepalace-7416",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/reliable-icepalace-7416",
+    "data_url": "/alttpr-ladder/reliable-icepalace-7416/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=1648 - (HashPendant/HashIceRod/HashMirror/HashCape/HashSomaria)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-12-02T13:30:00.159Z",
+    "started_at": "2025-12-02T14:00:00.180Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "57ZKD3g6nYBkyANO",
+          "full_name": "Brogor#2841",
+          "name": "Brogor",
+          "discriminator": "2841",
+          "url": "/user/57ZKD3g6nYBkyANO/brogor",
+          "avatar": "https://racetime.gg/media/57ZKD3g6nYBkyANO.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "br0g0r",
+          "twitch_display_name": "br0g0r",
+          "twitch_channel": "https://www.twitch.tv/br0g0r",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M56.683791S",
+        "finished_at": "2025-12-02T15:54:56.863Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3182,
+        "score_change": 18,
+        "comment": "refused to dip tr without at least 1 sk- cost me a lot of time and a flute 175cr",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M07.170141S",
+        "finished_at": "2025-12-02T16:00:07.350Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3236,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XGzr7pBMM1BkqgyE",
+          "full_name": "derity#9873",
+          "name": "derity",
+          "discriminator": "9873",
+          "url": "/user/XGzr7pBMM1BkqgyE/derity",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "derity__",
+          "twitch_display_name": "derity__",
+          "twitch_channel": "https://www.twitch.tv/derity__",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H21M07.196176S",
+        "finished_at": "2025-12-02T16:21:07.376Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2760,
+        "score_change": -4,
+        "comment": "197. shambles from the very beginning",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoYpJ93Rdm5v",
+          "full_name": "Baku#3629",
+          "name": "Baku",
+          "discriminator": "3629",
+          "url": "/user/JrM6PoYpJ93Rdm5v/baku",
+          "avatar": "https://racetime.gg/media/JrM6PoYpJ93Rdm5v.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bakuzento",
+          "twitch_display_name": "Bakuzento",
+          "twitch_channel": "https://www.twitch.tv/bakuzento",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2030,
+        "score_change": -16,
+        "comment": "Forgot I had something else booked , ggwp to y'all I had fun playing it",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-02T16:21:07.428Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

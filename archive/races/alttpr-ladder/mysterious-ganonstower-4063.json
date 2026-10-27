@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/mysterious-ganonstower-4063",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mysterious-ganonstower-4063",
+    "data_url": "/alttpr-ladder/mysterious-ganonstower-4063/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Invrosia\ninvrosia - https://alttpr.racing/getseed.php?race=297 - (Heart/Lamp/Tunic/Bombs/Ice Rod)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-22T18:30:01.315Z",
+    "started_at": "2025-06-22T19:00:01.343Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M05.324737S",
+        "finished_at": "2025-06-22T20:28:06.667Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2426,
+        "score_change": 22,
+        "comment": "134/216 imagine bombos go in this one",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M04.147496S",
+        "finished_at": "2025-06-22T20:34:05.490Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2414,
+        "score_change": -22,
+        "comment": "Just find bombos 4head. 155CR",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-22T20:34:05.525Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

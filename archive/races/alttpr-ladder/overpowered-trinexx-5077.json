@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/overpowered-trinexx-5077",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/overpowered-trinexx-5077",
+    "data_url": "/alttpr-ladder/overpowered-trinexx-5077/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Crisscross\njem041/crisscross_zw - https://alttpr.racing/getseed.php?race=1525 - (HashCompass/HashBigKey/HashShield/HashCompass/HashBombs)",
+    "entrants_count": 4,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-11-22T08:30:00.087Z",
+    "started_at": "2025-11-22T09:00:00.085Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H24M26.023435S",
+        "finished_at": "2025-11-22T11:24:26.108Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3044,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPqj1Be7P5Q",
+          "full_name": "Zenitschwert#5158",
+          "name": "Zenitschwert",
+          "discriminator": "5158",
+          "url": "/user/1jgrbWPqj1Be7P5Q/zenitschwert",
+          "avatar": "https://racetime.gg/media/kleine_Datei.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zenitschwert",
+          "twitch_display_name": "Zenitschwert",
+          "twitch_channel": "https://www.twitch.tv/zenitschwert",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H30M29.734033S",
+        "finished_at": "2025-11-22T11:30:29.819Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3052,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRNvRWmqXen",
+          "full_name": "crackerito#3618",
+          "name": "crackerito",
+          "discriminator": "3618",
+          "url": "/user/497NdWRNvRWmqXen/crackerito",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crackerito88",
+          "twitch_display_name": "crackerito88",
+          "twitch_channel": "https://www.twitch.tv/crackerito88",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3111,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoYZlAWRdm5v",
+          "full_name": "Magnit Handz#9960",
+          "name": "Magnit Handz",
+          "discriminator": "9960",
+          "url": "/user/JrM6PoYZlAWRdm5v/magnit-handz",
+          "avatar": "https://racetime.gg/media/Magnit_Hands_Profile_Crop.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnithandz",
+          "twitch_display_name": "MagnitHandz",
+          "twitch_channel": "https://www.twitch.tv/magnithandz",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3082,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-22T11:36:53.518Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

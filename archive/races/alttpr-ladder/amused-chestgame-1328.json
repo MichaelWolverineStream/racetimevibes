@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/amused-chestgame-1328",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/amused-chestgame-1328",
+    "data_url": "/alttpr-ladder/amused-chestgame-1328/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=220 - (Bugnet/Somaria/Ether/Lamp/Bombs)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-13T03:30:03.877Z",
+    "started_at": "2025-06-13T04:00:03.875Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "OR6ym83mxYBPd1Xr",
+          "full_name": "Coy#4033",
+          "name": "Coy",
+          "discriminator": "4033",
+          "url": "/user/OR6ym83mxYBPd1Xr/coy",
+          "avatar": "https://racetime.gg/media/coystrAYAYA112.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "coy_stream",
+          "twitch_display_name": "Coy_Stream",
+          "twitch_channel": "https://www.twitch.tv/coy_stream",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M36.010439S",
+        "finished_at": "2025-06-13T05:55:39.886Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2413,
+        "score_change": 63,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M17.967932S",
+        "finished_at": "2025-06-13T05:59:21.843Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1769,
+        "score_change": 55,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1496,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-13T05:59:21.875Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/kind-lostwoods-3558",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/kind-lostwoods-3558",
+    "data_url": "/alttpr-ladder/kind-lostwoods-3558/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - OWG (Assured Sword)\nowg_assured - https://alttpr.racing/getseed.php?race=271 - (Boots/Heart/Lamp/Ice Rod/Heart)",
+    "entrants_count": 5,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-06-19T13:30:09.483Z",
+    "started_at": "2025-06-19T14:00:09.509Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M46.942932S",
+        "finished_at": "2025-06-19T15:35:56.452Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2565,
+        "score_change": 24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlG8JWaOP57",
+          "full_name": "Duden2#7537",
+          "name": "Duden2",
+          "discriminator": "7537",
+          "url": "/user/xldAMBlG8JWaOP57/duden2",
+          "avatar": "https://racetime.gg/media/0c2edfb9-8860-4267-828b-497e73d15132.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "duden2",
+          "twitch_display_name": "Duden2",
+          "twitch_channel": "https://www.twitch.tv/duden2",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M59.411795S",
+        "finished_at": "2025-06-19T15:41:08.921Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2482,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoalLO3lV4zN",
+          "full_name": "Nightcl4w#7835",
+          "name": "Nightcl4w",
+          "discriminator": "7835",
+          "url": "/user/raP6yoalLO3lV4zN/nightcl4w",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "nightcl4w",
+          "twitch_display_name": "Nightcl4w",
+          "twitch_channel": "https://www.twitch.tv/nightcl4w",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M10.404616S",
+        "finished_at": "2025-06-19T15:47:19.914Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 661,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzm0WYlM65",
+          "full_name": "BDI1701#8625",
+          "name": "BDI1701",
+          "discriminator": "8625",
+          "url": "/user/jZ2EGWbzm0WYlM65/bdi1701",
+          "avatar": "https://racetime.gg/media/pfp_E8Wa9bf.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bdi1701",
+          "twitch_display_name": "bdi1701",
+          "twitch_channel": "https://www.twitch.tv/bdi1701",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1969,
+        "score_change": -37,
+        "comment": "ran out of time to finish the seed. was glove go mode",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPdvqWe7P5Q",
+          "full_name": "Victotem#1469",
+          "name": "Victotem",
+          "discriminator": "1469",
+          "url": "/user/1jgrbWPdvqWe7P5Q/victotem",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "victotem",
+          "twitch_display_name": "Victotem",
+          "twitch_channel": "https://www.twitch.tv/victotem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1629,
+        "score_change": 14,
+        "comment": "lost like 25 minutos of progression because of a hardlock",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-19T15:47:20.000Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

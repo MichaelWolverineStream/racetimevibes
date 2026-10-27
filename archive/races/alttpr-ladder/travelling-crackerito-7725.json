@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:24Z",
+  "race": {
+    "name": "alttpr-ladder/travelling-crackerito-7725",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/travelling-crackerito-7725",
+    "data_url": "/alttpr-ladder/travelling-crackerito-7725/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted w/ Starting Flute\nladder/inverted_startflute - https://alttpr.racing/getseed.php?race=2425 - (HashMoonPearl/HashIceRod/HashSomaria/HashBook/HashCape)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-02-09T17:30:00.082Z",
+    "started_at": "2026-02-09T18:00:00.096Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DQpno9blOy",
+          "full_name": "Specks#1514",
+          "name": "Specks",
+          "discriminator": "1514",
+          "url": "/user/5rNGD3DQpno9blOy/specks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "speckyspecks",
+          "twitch_display_name": "SpeckySpecks",
+          "twitch_channel": "https://www.twitch.tv/speckyspecks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M49.398441S",
+        "finished_at": "2026-02-09T19:33:49.495Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2964,
+        "score_change": 19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3y89OBZVKq1",
+          "full_name": "MalXantholos#6990",
+          "name": "MalXantholos",
+          "discriminator": "6990",
+          "url": "/user/RbOXG3y89OBZVKq1/malxantholos",
+          "avatar": "https://racetime.gg/media/Profil.PNG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "malxantholos",
+          "twitch_display_name": "MalXantholos",
+          "twitch_channel": "https://www.twitch.tv/malxantholos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M11.893022S",
+        "finished_at": "2026-02-09T19:36:11.989Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2858,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M21.469318S",
+        "finished_at": "2026-02-09T19:38:21.566Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2625,
+        "score_change": 4,
+        "comment": "147 trash swords lol",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M37.368414S",
+        "finished_at": "2026-02-09T19:43:37.465Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2992,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-09T19:43:37.572Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

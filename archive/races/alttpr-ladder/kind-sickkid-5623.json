@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/kind-sickkid-5623",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/kind-sickkid-5623",
+    "data_url": "/alttpr-ladder/kind-sickkid-5623/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=4397 - (HashEther/HashMushroom/HashBow/HashPendant/HashHeart)",
+    "entrants_count": 8,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-07-29T03:30:00.080Z",
+    "started_at": "2026-07-29T04:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "AEk8wpoknG35KQyV",
+          "full_name": "Eykir#2885",
+          "name": "Eykir",
+          "discriminator": "2885",
+          "url": "/user/AEk8wpoknG35KQyV/eykir",
+          "avatar": "https://racetime.gg/media/Brian.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "eykir",
+          "twitch_display_name": "Eykir",
+          "twitch_channel": "https://www.twitch.tv/eykir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M18.828896S",
+        "finished_at": "2026-07-29T05:57:18.926Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2546,
+        "score_change": 74,
+        "comment": "Boots go mode - Why can't I do this in the tournament?!",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpok4YkW5KQyV",
+          "full_name": "Telethar#1077",
+          "name": "Telethar",
+          "discriminator": "1077",
+          "url": "/user/Ek8wpok4YkW5KQyV/telethar",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "telethar",
+          "twitch_display_name": "telethar",
+          "twitch_channel": "https://www.twitch.tv/telethar",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M30.513261S",
+        "finished_at": "2026-07-29T06:01:30.611Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3174,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M33.583783S",
+        "finished_at": "2026-07-29T06:06:33.681Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2686,
+        "score_change": 28,
+        "comment": "thought i was in go mode before 1:30 but lost the 50/50 between mire/desert :(",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M04.956109S",
+        "finished_at": "2026-07-29T06:08:05.053Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2641,
+        "score_change": 5,
+        "comment": "172/216 - Skull & DP north go KEK.... I had a lot of entrances to check...",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M04.733097S",
+        "finished_at": "2026-07-29T06:18:04.830Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2467,
+        "score_change": 3,
+        "comment": "1:47 Flute",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jb8GPMWwmy31nEk0",
+          "full_name": "latebit#1301",
+          "name": "latebit",
+          "discriminator": "1301",
+          "url": "/user/jb8GPMWwmy31nEk0/latebit",
+          "avatar": "https://racetime.gg/media/fatyoshi320.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "latebit",
+          "twitch_display_name": "latebit",
+          "twitch_channel": "https://www.twitch.tv/latebit",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M49.315810S",
+        "finished_at": "2026-07-29T06:18:49.413Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2558,
+        "score_change": -19,
+        "comment": "I HATE IT HERE",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9LGojq8Ll",
+          "full_name": "Falcon#0815",
+          "name": "Falcon",
+          "discriminator": "0815",
+          "url": "/user/JN9rVpW9LGojq8Ll/falcon",
+          "avatar": "https://racetime.gg/media/Falcon_Quebec.gif",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "falconcan",
+          "twitch_display_name": "FalconCan",
+          "twitch_channel": "https://www.twitch.tv/falconcan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H22M53.959995S",
+        "finished_at": "2026-07-29T06:22:54.057Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1932,
+        "score_change": 3,
+        "comment": "Last loc that Desert Big. 201 checks.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2218,
+        "score_change": -33,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-29T06:22:54.135Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

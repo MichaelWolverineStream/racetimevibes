@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/disco-birdtoss-0728",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/disco-birdtoss-0728",
+    "data_url": "/alttpr-ladder/disco-birdtoss-0728/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4707 - (HashMoonPearl/HashFlippers/HashBow/HashHeart/HashCape)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-08-23T23:30:00.199Z",
+    "started_at": "2026-08-24T00:00:00.101Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M29.456905S",
+        "finished_at": "2026-08-24T01:28:29.558Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2882,
+        "score_change": 43,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAGr2Bmq6db",
+          "full_name": "Akuheish#5435",
+          "name": "Akuheish",
+          "discriminator": "5435",
+          "url": "/user/wezlNoAGr2Bmq6db/akuheish",
+          "avatar": "https://racetime.gg/media/Untitled_design_2.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akuheish",
+          "twitch_display_name": "AkuHeish",
+          "twitch_channel": "https://www.twitch.tv/akuheish",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M39.332999S",
+        "finished_at": "2026-08-24T01:29:39.434Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2322,
+        "score_change": 39,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gKj3kyANO",
+          "full_name": "Scaryolive#5959",
+          "name": "Scaryolive",
+          "discriminator": "5959",
+          "url": "/user/457ZKD3gKj3kyANO/scaryolive",
+          "avatar": "https://racetime.gg/media/scaryolive-profile_image-2e6751c2b48efca6-300x3001.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scaryolive",
+          "twitch_display_name": "Scaryolive",
+          "twitch_channel": "https://www.twitch.tv/scaryolive",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M55.665314S",
+        "finished_at": "2026-08-24T01:32:55.767Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2282,
+        "score_change": -46,
+        "comment": "1h boots at the dam XD",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7kRxBV4GED",
+          "full_name": "Yankster113#9393",
+          "name": "Yankster113",
+          "discriminator": "9393",
+          "url": "/user/5JlzyB7kRxBV4GED/yankster113",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "yankster114",
+          "twitch_display_name": "yankster114",
+          "twitch_channel": "https://www.twitch.tv/yankster114",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1171,
+        "score_change": -10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-24T01:40:35.874Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

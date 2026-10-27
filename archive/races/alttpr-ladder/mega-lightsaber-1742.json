@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/mega-lightsaber-1742",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mega-lightsaber-1742",
+    "data_url": "/alttpr-ladder/mega-lightsaber-1742/data",
+    "goal": {
+      "name": "Beat the game (Glitched)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods [DR]\nladder/nologic_rods - https://alttpr.racing/getseed.php?race=3527 - (HashSomaria/HashPendant/HashCape/HashBugnet/HashBoots)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-16T15:30:00.081Z",
+    "started_at": "2026-05-16T16:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M53.624345S",
+        "finished_at": "2026-05-16T17:31:53.703Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 501,
+        "score_change": 602,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83Kj4yBeZDjr",
+          "full_name": "nessa_nekochan#3950",
+          "name": "nessa_nekochan",
+          "discriminator": "3950",
+          "url": "/user/7QXz83Kj4yBeZDjr/nessa_nekochan",
+          "avatar": "https://racetime.gg/media/7QXz83Kj4yBeZDjr.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "nessa_nekochan",
+          "twitch_display_name": "nessa_nekochan",
+          "twitch_channel": "https://www.twitch.tv/nessa_nekochan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H44M38.401930S",
+        "finished_at": "2026-05-16T18:44:38.481Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -373,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-16T18:44:38.575Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/shiny-gammachuu-9732",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/shiny-gammachuu-9732",
+    "data_url": "/alttpr-ladder/shiny-gammachuu-9732/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\njem041/crosskeys2024 - https://alttpr.racing/getseed.php?race=1181 - (HashBow/HashIceRod/HashBook/HashGreenPotion/HashBoomerang)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-15T15:30:00.092Z",
+    "started_at": "2025-10-15T16:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzqNWYlM65",
+          "full_name": "Shinmaru#3292",
+          "name": "Shinmaru",
+          "discriminator": "3292",
+          "url": "/user/jZ2EGWbzqNWYlM65/shinmaru",
+          "avatar": "https://racetime.gg/media/popee.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "shinmaru007",
+          "twitch_display_name": "Shinmaru007",
+          "twitch_channel": "https://www.twitch.tv/shinmaru007",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M59.474673S",
+        "finished_at": "2025-10-15T17:31:59.554Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2664,
+        "score_change": 32,
+        "comment": "131 the literal opposite of yesterday's xkeys runs",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dMqzQPW4PmW1L2R5",
+          "full_name": "Andy#6728",
+          "name": "Andy",
+          "discriminator": "6728",
+          "url": "/user/dMqzQPW4PmW1L2R5/andy",
+          "avatar": "https://racetime.gg/media/andy_nerd.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "andy",
+          "twitch_display_name": "Andy",
+          "twitch_channel": "https://www.twitch.tv/andy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M50.609025S",
+        "finished_at": "2025-10-15T17:41:50.688Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 1217,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M14.033796S",
+        "finished_at": "2025-10-15T18:03:14.113Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2788,
+        "score_change": -34,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M13.705059S",
+        "finished_at": "2025-10-15T18:05:13.784Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2455,
+        "score_change": -16,
+        "comment": "last located bow and tt big",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-15T18:05:13.910Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

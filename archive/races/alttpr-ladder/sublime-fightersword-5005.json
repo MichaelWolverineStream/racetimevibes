@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/sublime-fightersword-5005",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sublime-fightersword-5005",
+    "data_url": "/alttpr-ladder/sublime-fightersword-5005/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=961 - (HashShovel/HashBombos/HashGloves/HashFlippers/HashQuake)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-17T06:30:00.157Z",
+    "started_at": "2025-09-17T07:00:00.086Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M42.899737S",
+        "finished_at": "2025-09-17T09:15:42.986Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2676,
+        "score_change": 35,
+        "comment": "lol",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB2Ax9WNgk4V",
+          "full_name": "Darpex#5779",
+          "name": "Darpex",
+          "discriminator": "5779",
+          "url": "/user/8QGZrB2Ax9WNgk4V/darpex",
+          "avatar": "https://racetime.gg/media/IMG_7442.jpeg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "darpex3",
+          "twitch_display_name": "Darpex3",
+          "twitch_channel": "https://www.twitch.tv/darpex3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H36M32.006317S",
+        "finished_at": "2025-09-17T09:36:32.093Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1952,
+        "score_change": 40,
+        "comment": "nevermind, i dont want a glove anyway",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRNvRWmqXen",
+          "full_name": "crackerito#3618",
+          "name": "crackerito",
+          "discriminator": "3618",
+          "url": "/user/497NdWRNvRWmqXen/crackerito",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crackerito88",
+          "twitch_display_name": "crackerito88",
+          "twitch_channel": "https://www.twitch.tv/crackerito88",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H36M49.787213S",
+        "finished_at": "2025-09-17T09:36:49.873Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3188,
+        "score_change": -63,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-17T09:36:49.940Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

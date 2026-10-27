@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:21Z",
+  "race": {
+    "name": "alttpr-ladder/witty-hoverseed-9780",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/witty-hoverseed-9780",
+    "data_url": "/alttpr-ladder/witty-hoverseed-9780/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=2604 - (HashEmptyBottle/HashIceRod/HashBigKey/HashHookshot/HashMoonPearl)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-02-24T16:30:00.146Z",
+    "started_at": "2026-02-24T17:00:00.126Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPqj1Be7P5Q",
+          "full_name": "Zenitschwert#5158",
+          "name": "Zenitschwert",
+          "discriminator": "5158",
+          "url": "/user/1jgrbWPqj1Be7P5Q/zenitschwert",
+          "avatar": "https://racetime.gg/media/kleine_Datei.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zenitschwert",
+          "twitch_display_name": "Zenitschwert",
+          "twitch_channel": "https://www.twitch.tv/zenitschwert",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M49.188220S",
+        "finished_at": "2026-02-24T18:19:49.314Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2958,
+        "score_change": 9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M24.817988S",
+        "finished_at": "2026-02-24T18:30:24.944Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2680,
+        "score_change": 3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M19.609247S",
+        "finished_at": "2026-02-24T18:37:19.735Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2314,
+        "score_change": 1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwpvbB1nEk0",
+          "full_name": "hide on bush#1636",
+          "name": "hide on bush",
+          "discriminator": "1636",
+          "url": "/user/b8GPMWwpvbB1nEk0/hide-on-bush",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "hideonbush1909",
+          "twitch_display_name": "hideonbush1909",
+          "twitch_channel": "https://www.twitch.tv/hideonbush1909",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M24.104149S",
+        "finished_at": "2026-02-24T18:40:24.230Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2363,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-24T18:40:24.297Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

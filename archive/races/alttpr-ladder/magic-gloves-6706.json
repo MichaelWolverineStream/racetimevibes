@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/magic-gloves-6706",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/magic-gloves-6706",
+    "data_url": "/alttpr-ladder/magic-gloves-6706/data",
+    "goal": {
+      "name": "Beat the game (1v1)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [ladder_test] - Crosskeys_KD_MS_PB_ZW\nmfns./crosskeys_kd_ms_pb_zw - https://alttpr.racing/getseed.php?race=428 - (Flute/Boomerang/Empty Bottle/Map/Bugnet)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-09T06:58:00.291Z",
+    "started_at": "2025-07-09T07:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvR8dBJkg04",
+          "full_name": "StructuralMike#1449",
+          "name": "StructuralMike",
+          "discriminator": "1449",
+          "url": "/user/bpNAaBvR8dBJkg04/structuralmike",
+          "avatar": "https://racetime.gg/media/dontyouworryaboutblank_.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "structuralmike",
+          "twitch_display_name": "Structuralmike",
+          "twitch_channel": "https://www.twitch.tv/structuralmike",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M10.422335S",
+        "finished_at": "2025-07-09T09:18:10.502Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 672,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "d17DexWEXgoak64R",
+          "full_name": "tam#8418",
+          "name": "tam",
+          "discriminator": "8418",
+          "url": "/user/d17DexWEXgoak64R/tam",
+          "avatar": "https://racetime.gg/media/Mikan_Tsumiki_Halfbody_Sprite_281329.webp",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "tammiki",
+          "twitch_display_name": "tammiki",
+          "twitch_channel": "https://www.twitch.tv/tammiki",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M57.564175S",
+        "finished_at": "2025-07-09T09:20:57.644Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -207,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-09T09:20:57.781Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

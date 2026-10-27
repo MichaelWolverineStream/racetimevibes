@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:50Z",
+  "race": {
+    "name": "alttpr-ladder/perfect-quake-1461",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/perfect-quake-1461",
+    "data_url": "/alttpr-ladder/perfect-quake-1461/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\nladder/crosskeys - https://alttpr.racing/getseed.php?race=5018 - (HashIceRod/HashBombos/HashEther/HashEther/HashCompass)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-09-22T07:30:00.155Z",
+    "started_at": "2026-09-22T08:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M10.685093S",
+        "finished_at": "2026-09-22T09:42:10.782Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3240,
+        "score_change": 19,
+        "comment": "dumbest pod of all time",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JbJP3qlL0a",
+          "full_name": "magnohato#7620",
+          "name": "magnohato",
+          "discriminator": "7620",
+          "url": "/user/NX5783JbJP3qlL0a/magnohato",
+          "avatar": "https://racetime.gg/media/100x100_magno.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnohato",
+          "twitch_display_name": "Magnohato",
+          "twitch_channel": "https://www.twitch.tv/magnohato",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M41.931018S",
+        "finished_at": "2026-09-22T09:44:42.028Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3132,
+        "score_change": 2,
+        "comment": "boots 47   hammer 1:38 flipps go 1:41",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M42.715069S",
+        "finished_at": "2026-09-22T10:18:42.812Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 802,
+        "score_change": 1098,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g6nYBkyANO",
+          "full_name": "Brogor#2841",
+          "name": "Brogor",
+          "discriminator": "2841",
+          "url": "/user/57ZKD3g6nYBkyANO/brogor",
+          "avatar": "https://racetime.gg/media/57ZKD3g6nYBkyANO.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "br0g0r",
+          "twitch_display_name": "br0g0r",
+          "twitch_channel": "https://www.twitch.tv/br0g0r",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3096,
+        "score_change": -23,
+        "comment": "windows folder blocked my screen - +90min somaria LL XD",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-22T10:18:42.848Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:50Z",
+  "race": {
+    "name": "alttpr-ladder/daring-icerod-0422",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/daring-icerod-0422",
+    "data_url": "/alttpr-ladder/daring-icerod-0422/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4941 - (HashTunic/HashMap/HashBigKey/HashEther/HashIceRod)",
+    "entrants_count": 8,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 4,
+    "opened_at": "2026-09-15T21:30:00.127Z",
+    "started_at": "2026-09-15T22:00:00.105Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "17DexWEKz13ak64R",
+          "full_name": "AnimusUnited#6600",
+          "name": "AnimusUnited",
+          "discriminator": "6600",
+          "url": "/user/17DexWEKz13ak64R/animusunited",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "animusunited",
+          "twitch_display_name": "animusunited",
+          "twitch_channel": "https://www.twitch.tv/animusunited",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M36.853662S",
+        "finished_at": "2026-09-15T23:32:36.959Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2618,
+        "score_change": 94,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M48.971779S",
+        "finished_at": "2026-09-15T23:33:49.077Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3056,
+        "score_change": -6,
+        "comment": "pulled ped for my last hope",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orwQdWqDJX0",
+          "full_name": "0nly_Jeff#1506",
+          "name": "0nly_Jeff",
+          "discriminator": "1506",
+          "url": "/user/rZyM4orwQdWqDJX0/0nly_jeff",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "0nly_jeff",
+          "twitch_display_name": "0nly_Jeff",
+          "twitch_channel": "https://www.twitch.tv/0nly_jeff",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M14.055495S",
+        "finished_at": "2026-09-15T23:34:14.160Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1700,
+        "score_change": 166,
+        "comment": "Died at gannon like dummy so got 3rd instead of second",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M12.729187S",
+        "finished_at": "2026-09-15T23:45:12.834Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2395,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2269,
+        "score_change": -21,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPjAk3e7P5Q",
+          "full_name": "elusuario101#2065",
+          "name": "elusuario101",
+          "discriminator": "2065",
+          "url": "/user/1jgrbWPjAk3e7P5Q/elusuario101",
+          "avatar": "https://racetime.gg/media/1jgrbWPjAk3e7P5Q.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "elusuario101",
+          "twitch_display_name": "elusuario101",
+          "twitch_channel": "https://www.twitch.tv/elusuario101",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1834,
+        "score_change": 1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokPaGW5KQyV",
+          "full_name": "ExtremeRando#3999",
+          "name": "ExtremeRando",
+          "discriminator": "3999",
+          "url": "/user/Ek8wpokPaGW5KQyV/extremerando",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "extremerando",
+          "twitch_display_name": "ExtremeRando",
+          "twitch_channel": "https://www.twitch.tv/extremerando",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1250,
+        "score_change": 150,
+        "comment": "Power Outage",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlE8J3aOP57",
+          "full_name": "DPMGames#2071",
+          "name": "DPMGames",
+          "discriminator": "2071",
+          "url": "/user/xldAMBlE8J3aOP57/dpmgames",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "dpmgames",
+          "twitch_display_name": "DPMGames",
+          "twitch_channel": "https://www.twitch.tv/dpmgames",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 959,
+        "score_change": 346,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-15T23:48:25.013Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/fearless-crystal-9904",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fearless-crystal-9904",
+    "data_url": "/alttpr-ladder/fearless-crystal-9904/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=1388 - (HashMushroom/HashGloves/HashBigKey/HashMirror/HashShield)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-10T19:30:00.090Z",
+    "started_at": "2025-11-10T20:00:00.144Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBOQv4o4qAyj",
+          "full_name": "fernap#8638",
+          "name": "fernap",
+          "discriminator": "8638",
+          "url": "/user/NZ1KRBOQv4o4qAyj/fernap",
+          "avatar": "https://racetime.gg/media/NZ1KRBOQv4o4qAyj.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "fernap",
+          "twitch_display_name": "fernap",
+          "twitch_channel": "https://www.twitch.tv/fernap",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M10.495693S",
+        "finished_at": "2025-11-10T21:33:10.640Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1646,
+        "score_change": 74,
+        "comment": "go mode sword, gotta love that",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLGxA39QEya",
+          "full_name": "crazdgamer#4360",
+          "name": "crazdgamer",
+          "discriminator": "4360",
+          "url": "/user/NqO2YoLGxA39QEya/crazdgamer",
+          "avatar": "https://racetime.gg/media/17.JPG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crazdgamer",
+          "twitch_display_name": "crazdgamer",
+          "twitch_channel": "https://www.twitch.tv/crazdgamer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M58.898822S",
+        "finished_at": "2025-11-10T21:33:59.043Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1706,
+        "score_change": 24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEKz13ak64R",
+          "full_name": "AnimusUnited#6600",
+          "name": "AnimusUnited",
+          "discriminator": "6600",
+          "url": "/user/17DexWEKz13ak64R/animusunited",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "animusunited",
+          "twitch_display_name": "animusunited",
+          "twitch_channel": "https://www.twitch.tv/animusunited",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M34.153655S",
+        "finished_at": "2025-11-10T21:39:34.298Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2379,
+        "score_change": -22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orgd1WqDJX0",
+          "full_name": "Masakuni#2916",
+          "name": "Masakuni",
+          "discriminator": "2916",
+          "url": "/user/rZyM4orgd1WqDJX0/masakuni",
+          "avatar": "https://racetime.gg/media/masa_avi_dragonasis_0524_150.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "masakunidragon",
+          "twitch_display_name": "MasakuniDragon",
+          "twitch_channel": "https://www.twitch.tv/masakunidragon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M10.518727S",
+        "finished_at": "2025-11-10T21:40:10.663Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1484,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-10T21:40:10.720Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

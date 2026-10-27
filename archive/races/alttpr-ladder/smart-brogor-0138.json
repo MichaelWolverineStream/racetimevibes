@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/smart-brogor-0138",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/smart-brogor-0138",
+    "data_url": "/alttpr-ladder/smart-brogor-0138/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=4757 - (HashCape/HashBow/HashBoots/HashBoomerang/HashHookshot)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-08-28T03:30:00.112Z",
+    "started_at": "2026-08-28T04:00:00.169Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M47.325689S",
+        "finished_at": "2026-08-28T05:37:47.495Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2536,
+        "score_change": 77,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M28.326086S",
+        "finished_at": "2026-08-28T05:38:28.495Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3436,
+        "score_change": -151,
+        "comment": "Well shit, I opened the middle door lol 164/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M09.695501S",
+        "finished_at": "2026-08-28T05:44:09.865Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2110,
+        "score_change": 58,
+        "comment": "less than 174. :( Praise be to 1/2 magic in hookshot cave. Also, Mr. Chuu misled us all about the supposed value in TT.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mQeL3Pd1Xr",
+          "full_name": "rdsdb#3726",
+          "name": "rdsdb",
+          "discriminator": "3726",
+          "url": "/user/R6ym83mQeL3Pd1Xr/rdsdb",
+          "avatar": "https://racetime.gg/media/R6ym83mQeL3Pd1Xr_NamgYZE.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "rdsdb",
+          "twitch_display_name": "rdsdb",
+          "twitch_channel": "https://www.twitch.tv/rdsdb",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M06.644511S",
+        "finished_at": "2026-08-28T05:56:06.814Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1452,
+        "score_change": 88,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7lYZa5B5dAW2Vwv9",
+          "full_name": "taco#7699",
+          "name": "taco",
+          "discriminator": "7699",
+          "url": "/user/7lYZa5B5dAW2Vwv9/taco",
+          "avatar": "https://racetime.gg/media/Screenshot_2024-11-30_184233.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "tacothefox",
+          "twitch_display_name": "tacothefox",
+          "twitch_channel": "https://www.twitch.tv/tacothefox",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M10.664573S",
+        "finished_at": "2026-08-28T06:00:10.834Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": -117,
+        "comment": "159/216 last located the mitts in swamp, got lucky finding a third sword on some quick checks afterwards.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7kRxBV4GED",
+          "full_name": "Yankster113#9393",
+          "name": "Yankster113",
+          "discriminator": "9393",
+          "url": "/user/5JlzyB7kRxBV4GED/yankster113",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "yankster114",
+          "twitch_display_name": "yankster114",
+          "twitch_channel": "https://www.twitch.tv/yankster114",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 0,
+        "score_change": 0,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-28T06:00:10.900Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/magic-osora-7302",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/magic-osora-7302",
+    "data_url": "/alttpr-ladder/magic-osora-7302/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open Boots\nladder/openboots - https://alttpr.racing/getseed.php?race=2076 - (HashMirror/HashFlute/HashEther/HashBigKey/HashEther)",
+    "entrants_count": 8,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 3,
+    "opened_at": "2026-01-11T16:30:00.105Z",
+    "started_at": "2026-01-11T17:00:00.112Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M28.051437S",
+        "finished_at": "2026-01-11T18:36:28.164Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2443,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M38.361751S",
+        "finished_at": "2026-01-11T18:40:38.474Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2727,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXbPk31y8q0",
+          "full_name": "WhiskeyBill25#0457",
+          "name": "WhiskeyBill25",
+          "discriminator": "0457",
+          "url": "/user/zM65aWXbPk31y8q0/whiskeybill25",
+          "avatar": "https://racetime.gg/media/zM65aWXbPk31y8q0_5AdHM2p.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "whiskeybill25",
+          "twitch_display_name": "whiskeybill25",
+          "twitch_channel": "https://www.twitch.tv/whiskeybill25",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M37.216158S",
+        "finished_at": "2026-01-11T19:09:37.328Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 674,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz97poLPdye",
+          "full_name": "oldmanhaiku#9934",
+          "name": "oldmanhaiku",
+          "discriminator": "9934",
+          "url": "/user/GklxjWz97poLPdye/oldmanhaiku",
+          "avatar": "https://racetime.gg/media/GklxjWz97poLPdye.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oldmanhaiku",
+          "twitch_display_name": "OldManHaiku",
+          "twitch_channel": "https://www.twitch.tv/oldmanhaiku",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H21M03.221181S",
+        "finished_at": "2026-01-11T19:21:03.333Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1220,
+        "score_change": 69,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbP6O3YlM65",
+          "full_name": "Wasteland Outlaw#8452",
+          "name": "Wasteland Outlaw",
+          "discriminator": "8452",
+          "url": "/user/jZ2EGWbP6O3YlM65/wasteland-outlaw",
+          "avatar": "https://racetime.gg/media/jZ2EGWbP6O3YlM65.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wasteland_outlaw",
+          "twitch_display_name": "Wasteland_Outlaw",
+          "twitch_channel": "https://www.twitch.tv/wasteland_outlaw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H28M21.928012S",
+        "finished_at": "2026-01-11T19:28:22.040Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 747,
+        "score_change": 63,
+        "comment": "nothing like 100 percent to start the day",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2358,
+        "score_change": -27,
+        "comment": "Its to cold here cant play",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1191,
+        "score_change": 5,
+        "comment": "no ty  game  go to hell",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB25yDWNgk4V",
+          "full_name": "LexaEnVie#8034",
+          "name": "LexaEnVie",
+          "discriminator": "8034",
+          "url": "/user/8QGZrB25yDWNgk4V/lexaenvie",
+          "avatar": "https://racetime.gg/media/8QGZrB25yDWNgk4V_UIEomC2.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "mrslexy",
+          "twitch_display_name": "LexaEnVie",
+          "twitch_channel": "https://www.twitch.tv/mrslexy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 526,
+        "score_change": 31,
+        "comment": "Technical issues with OBS, cannot stream :-/",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-11T19:28:22.156Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

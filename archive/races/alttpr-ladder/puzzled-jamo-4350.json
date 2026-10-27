@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/puzzled-jamo-4350",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/puzzled-jamo-4350",
+    "data_url": "/alttpr-ladder/puzzled-jamo-4350/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Logical Enemizer w/ Random Boss Shuffle\nkaesden/open_logicalenemizer - https://alttpr.racing/getseed.php?race=1241 - (HashShovel/HashQuake/HashIceRod/HashQuake/HashTunic)",
+    "entrants_count": 3,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-10-23T04:30:00.114Z",
+    "started_at": "2025-10-23T05:00:00.078Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M55.361194S",
+        "finished_at": "2025-10-23T07:02:55.439Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2455,
+        "score_change": 0,
+        "comment": "what a seed",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1155,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQwE0oK4xrZ",
+          "full_name": "HabSim85#6496",
+          "name": "HabSim85",
+          "discriminator": "6496",
+          "url": "/user/z56VnBQwE0oK4xrZ/habsim85",
+          "avatar": "https://racetime.gg/media/z56VnBQwE0oK4xrZ.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "habsim85",
+          "twitch_display_name": "HabSim85",
+          "twitch_channel": "https://www.twitch.tv/habsim85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1101,
+        "score_change": 4,
+        "comment": "lttpken was right lol, yucky!!!! GG's to IBKarma!",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-23T07:04:20.150Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

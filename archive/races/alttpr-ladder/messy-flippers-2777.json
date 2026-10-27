@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/messy-flippers-2777",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/messy-flippers-2777",
+    "data_url": "/alttpr-ladder/messy-flippers-2777/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=1422 - (HashMagicPowder/HashLamp/HashBow/HashHammer/HashMushroom)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-11-13T16:30:00.115Z",
+    "started_at": "2025-11-13T17:00:00.192Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M02.310486S",
+        "finished_at": "2025-11-13T18:26:02.502Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2747,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlp14BaOP57",
+          "full_name": "Neo-Sanji#5833",
+          "name": "Neo-Sanji",
+          "discriminator": "5833",
+          "url": "/user/xldAMBlp14BaOP57/neo-sanji",
+          "avatar": "https://racetime.gg/media/xldAMBlp14BaOP57_ccoyCsW.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "neo_sanji",
+          "twitch_display_name": "Neo_Sanji",
+          "twitch_channel": "https://www.twitch.tv/neo_sanji",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M16.989055S",
+        "finished_at": "2025-11-13T18:31:17.181Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1471,
+        "score_change": 52,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M41.094517S",
+        "finished_at": "2025-11-13T18:38:41.286Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2052,
+        "score_change": -2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoG9vVBMVr6Z",
+          "full_name": "LinkQ87#2626",
+          "name": "LinkQ87",
+          "discriminator": "2626",
+          "url": "/user/Aa5veoG9vVBMVr6Z/linkq87",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linkq87",
+          "twitch_display_name": "LinkQ87",
+          "twitch_channel": "https://www.twitch.tv/linkq87",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M07.792507S",
+        "finished_at": "2025-11-13T18:41:07.984Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1762,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oN625olywqX",
+          "full_name": "Druu_Bragi#8605",
+          "name": "Druu_Bragi",
+          "discriminator": "8605",
+          "url": "/user/52QE8oN625olywqX/druu_bragi",
+          "avatar": "https://racetime.gg/media/52QE8oN625olywqX.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "druu_bragi",
+          "twitch_display_name": "Druu_Bragi",
+          "twitch_channel": "https://www.twitch.tv/druu_bragi",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M57.208317S",
+        "finished_at": "2025-11-13T19:00:57.400Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 858,
+        "score_change": 127,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1697,
+        "score_change": -43,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-13T19:00:57.527Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

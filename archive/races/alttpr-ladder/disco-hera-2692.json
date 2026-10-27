@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/disco-hera-2692",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/disco-hera-2692",
+    "data_url": "/alttpr-ladder/disco-hera-2692/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=1512 - (HashMushroom/HashIceRod/HashEmptyBottle/HashHammer/HashCompass)",
+    "entrants_count": 6,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-11-21T05:30:00.084Z",
+    "started_at": "2025-11-21T06:00:00.095Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "JrM6PoYZlAWRdm5v",
+          "full_name": "Magnit Handz#9960",
+          "name": "Magnit Handz",
+          "discriminator": "9960",
+          "url": "/user/JrM6PoYZlAWRdm5v/magnit-handz",
+          "avatar": "https://racetime.gg/media/Magnit_Hands_Profile_Crop.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnithandz",
+          "twitch_display_name": "MagnitHandz",
+          "twitch_channel": "https://www.twitch.tv/magnithandz",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M42.739280S",
+        "finished_at": "2025-11-21T07:52:42.834Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3082,
+        "score_change": 27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M03.260235S",
+        "finished_at": "2025-11-21T07:54:03.355Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2824,
+        "score_change": 18,
+        "comment": "tfw your go mode item locks 2 1/2 dungeons",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g6nYBkyANO",
+          "full_name": "Brogor#2841",
+          "name": "Brogor",
+          "discriminator": "2841",
+          "url": "/user/57ZKD3g6nYBkyANO/brogor",
+          "avatar": "https://racetime.gg/media/57ZKD3g6nYBkyANO.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "br0g0r",
+          "twitch_display_name": "br0g0r",
+          "twitch_channel": "https://www.twitch.tv/br0g0r",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M21.046088S",
+        "finished_at": "2025-11-21T08:03:21.141Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3212,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orRL1oqDJX0",
+          "full_name": "Leaf#1740",
+          "name": "Leaf",
+          "discriminator": "1740",
+          "url": "/user/rZyM4orRL1oqDJX0/leaf",
+          "avatar": "https://racetime.gg/media/rZyM4orRL1oqDJX0_zmhNzp5.jpg",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "windblown_leaf",
+          "twitch_display_name": "windblown_leaf",
+          "twitch_channel": "https://www.twitch.tv/windblown_leaf",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M27.111344S",
+        "finished_at": "2025-11-21T08:11:27.206Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2304,
+        "score_change": 30,
+        "comment": "yay go hook",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2654,
+        "score_change": -16,
+        "comment": "Just an utter travesty. Go mode hook should feel GOOD.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2641,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-21T08:11:35.545Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

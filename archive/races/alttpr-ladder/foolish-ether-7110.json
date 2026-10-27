@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:24Z",
+  "race": {
+    "name": "alttpr-ladder/foolish-ether-7110",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/foolish-ether-7110",
+    "data_url": "/alttpr-ladder/foolish-ether-7110/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open Boots\nladder/openboots - https://alttpr.racing/getseed.php?race=2430 - (HashMagicPowder/HashQuake/HashMushroom/HashHookshot/HashPendant)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-02-10T03:30:00.079Z",
+    "started_at": "2026-02-10T04:00:00.074Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83mQeL3Pd1Xr",
+          "full_name": "rdsdb#3726",
+          "name": "rdsdb",
+          "discriminator": "3726",
+          "url": "/user/R6ym83mQeL3Pd1Xr/rdsdb",
+          "avatar": "https://racetime.gg/media/R6ym83mQeL3Pd1Xr_NamgYZE.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "rdsdb",
+          "twitch_display_name": "rdsdb",
+          "twitch_channel": "https://www.twitch.tv/rdsdb",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H18M03.749434S",
+        "finished_at": "2026-02-10T05:18:03.823Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1471,
+        "score_change": 34,
+        "comment": "geiler seed!",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H23M47.061077S",
+        "finished_at": "2026-02-10T05:23:47.135Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2025,
+        "score_change": -7,
+        "comment": "<174, but the worthless clears of swamp and desert did me in.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXbPk31y8q0",
+          "full_name": "WhiskeyBill25#0457",
+          "name": "WhiskeyBill25",
+          "discriminator": "0457",
+          "url": "/user/zM65aWXbPk31y8q0/whiskeybill25",
+          "avatar": "https://racetime.gg/media/zM65aWXbPk31y8q0_5AdHM2p.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "whiskeybill25",
+          "twitch_display_name": "whiskeybill25",
+          "twitch_channel": "https://www.twitch.tv/whiskeybill25",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M44.088937S",
+        "finished_at": "2026-02-10T05:32:44.162Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1370,
+        "score_change": 29,
+        "comment": "new high score whats that lol",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M22.227457S",
+        "finished_at": "2026-02-10T06:01:22.301Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1203,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAGr2Bmq6db",
+          "full_name": "Akuheish#5435",
+          "name": "Akuheish",
+          "discriminator": "5435",
+          "url": "/user/wezlNoAGr2Bmq6db/akuheish",
+          "avatar": "https://racetime.gg/media/Untitled_design_2.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akuheish",
+          "twitch_display_name": "AkuHeish",
+          "twitch_channel": "https://www.twitch.tv/akuheish",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2632,
+        "score_change": -65,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-10T06:01:22.354Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

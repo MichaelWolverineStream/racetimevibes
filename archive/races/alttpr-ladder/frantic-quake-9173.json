@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/frantic-quake-9173",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/frantic-quake-9173",
+    "data_url": "/alttpr-ladder/frantic-quake-9173/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Standard\nstandard - https://alttpr.racing/getseed.php?race=134 - (Somaria/Ether/Boomerang/Bombs/Ice Rod)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-02T10:30:01.327Z",
+    "started_at": "2025-06-02T11:00:01.349Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M59.193209S",
+        "finished_at": "2025-06-02T12:36:00.542Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1986,
+        "score_change": 50,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBl4mdBaOP57",
+          "full_name": "Yok#8247",
+          "name": "Yok",
+          "discriminator": "8247",
+          "url": "/user/xldAMBl4mdBaOP57/yok",
+          "avatar": "https://racetime.gg/media/froge.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "yok2dgod",
+          "twitch_display_name": "Yok2DGod",
+          "twitch_channel": "https://www.twitch.tv/yok2dgod",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M13.268400S",
+        "finished_at": "2025-06-02T12:38:14.618Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2346,
+        "score_change": -131,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-02T12:38:14.736Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

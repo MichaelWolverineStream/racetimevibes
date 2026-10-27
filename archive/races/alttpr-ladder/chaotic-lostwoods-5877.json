@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/chaotic-lostwoods-5877",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/chaotic-lostwoods-5877",
+    "data_url": "/alttpr-ladder/chaotic-lostwoods-5877/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Pots and Bones\npab - https://alttpr.racing/getseed.php?race=146 - (Somaria/Ether/Hookshot/Boots/Boomerang)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-03T22:30:02.113Z",
+    "started_at": "2025-06-03T23:00:02.137Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "zM65aWXQ55B1y8q0",
+          "full_name": "DrBowser#9571",
+          "name": "DrBowser",
+          "discriminator": "9571",
+          "url": "/user/zM65aWXQ55B1y8q0/drbowser",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "drbowser9571",
+          "twitch_display_name": "DrBowser9571",
+          "twitch_channel": "https://www.twitch.tv/drbowser9571",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M36.956958S",
+        "finished_at": "2025-06-04T00:30:39.094Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2561,
+        "score_change": 11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWzPLb3LPdye",
+          "full_name": "jmasha#6476",
+          "name": "jmasha",
+          "discriminator": "6476",
+          "url": "/user/GklxjWzPLb3LPdye/jmasha",
+          "avatar": "https://racetime.gg/media/GklxjWzPLb3LPdye.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "j_masha",
+          "twitch_display_name": "j_masha",
+          "twitch_channel": "https://www.twitch.tv/j_masha",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1742,
+        "score_change": -7,
+        "comment": "Work emergency... ended at 191/216 :/",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-04T00:30:39.200Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

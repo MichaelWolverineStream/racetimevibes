@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/dapper-moldorm-8598",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dapper-moldorm-8598",
+    "data_url": "/alttpr-ladder/dapper-moldorm-8598/data",
+    "goal": {
+      "name": "Beat the game (1v1)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [ladder_test] - Crosskeys_Flute_MS_PB\nmfns./crosskeys_flute_ms_pb - https://alttpr.racing/getseed.php?race=582 - (Shovel/Shovel/Quake/Magic Powder/Hammer)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-28T12:58:00.162Z",
+    "started_at": "2025-07-28T13:00:00.069Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M44.961040S",
+        "finished_at": "2025-07-28T15:00:45.030Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1395,
+        "score_change": 341,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "AEk8wpoknG35KQyV",
+          "full_name": "Eykir#2885",
+          "name": "Eykir",
+          "discriminator": "2885",
+          "url": "/user/AEk8wpoknG35KQyV/eykir",
+          "avatar": "https://racetime.gg/media/Brian.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "eykir",
+          "twitch_display_name": "Eykir",
+          "twitch_channel": "https://www.twitch.tv/eykir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1481,
+        "score_change": -119,
+        "comment": "Did not finish in time before work, still missing TT BK",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-28T15:00:45.111Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

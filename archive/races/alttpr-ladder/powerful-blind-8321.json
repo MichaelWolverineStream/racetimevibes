@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/powerful-blind-8321",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/powerful-blind-8321",
+    "data_url": "/alttpr-ladder/powerful-blind-8321/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4354 - (HashEmptyBottle/HashMirror/HashMoonPearl/HashBoomerang/HashHeart)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-25T12:30:00.091Z",
+    "started_at": "2026-07-25T13:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPQA8Be7P5Q",
+          "full_name": "Xall#2021",
+          "name": "Xall",
+          "discriminator": "2021",
+          "url": "/user/1jgrbWPQA8Be7P5Q/xall",
+          "avatar": "https://racetime.gg/media/1_chQvSpU.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "xallgg",
+          "twitch_display_name": "XallGG",
+          "twitch_channel": "https://www.twitch.tv/xallgg",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H10M23.928832S",
+        "finished_at": "2026-07-25T14:10:24.021Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2359,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M37.428370S",
+        "finished_at": "2026-07-25T14:15:37.521Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3153,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNb5wolywqX",
+          "full_name": "TiMobile1990#6340",
+          "name": "TiMobile1990",
+          "discriminator": "6340",
+          "url": "/user/52QE8oNb5wolywqX/timobile1990",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "timobile1990",
+          "twitch_display_name": "TiMobile1990",
+          "twitch_channel": "https://www.twitch.tv/timobile1990",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H22M17.259618S",
+        "finished_at": "2026-07-25T14:22:17.352Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5zbdeWeRwjBYPK8O",
+          "full_name": "skunkner#0974",
+          "name": "skunkner",
+          "discriminator": "0974",
+          "url": "/user/5zbdeWeRwjBYPK8O/skunkner",
+          "avatar": "https://racetime.gg/media/256_SirYoshi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "skunkner",
+          "twitch_display_name": "skunkner",
+          "twitch_channel": "https://www.twitch.tv/skunkner",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M30.915859S",
+        "finished_at": "2026-07-25T14:27:31.008Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1819,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M36.336322S",
+        "finished_at": "2026-07-25T14:27:36.429Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2204,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-25T14:27:36.538Z",
+    "cancelled_at": null,
+    "recordable": false,
+    "recorded": false
+  }
+}

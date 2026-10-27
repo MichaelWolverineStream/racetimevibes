@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/smart-kholdstare-6884",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/smart-kholdstare-6884",
+    "data_url": "/alttpr-ladder/smart-kholdstare-6884/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=1048 - (HashBombos/HashGreenPotion/HashMushroom/HashShield/HashGreenPotion)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-09-28T04:30:00.089Z",
+    "started_at": "2025-09-28T05:00:00.075Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRNvRWmqXen",
+          "full_name": "crackerito#3618",
+          "name": "crackerito",
+          "discriminator": "3618",
+          "url": "/user/497NdWRNvRWmqXen/crackerito",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crackerito88",
+          "twitch_display_name": "crackerito88",
+          "twitch_channel": "https://www.twitch.tv/crackerito88",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M56.061650S",
+        "finished_at": "2025-09-28T06:33:56.137Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3115,
+        "score_change": 25,
+        "comment": "very strange seed...",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M19.300308S",
+        "finished_at": "2025-09-28T06:34:19.375Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2788,
+        "score_change": 26,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M01.597570S",
+        "finished_at": "2025-09-28T06:38:01.673Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2389,
+        "score_change": 11,
+        "comment": "seed could not possibly fragment tasks any gotdamn WORSE. everything felt just disgusting",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM55GBkqgyE",
+          "full_name": "Reynox#6303",
+          "name": "Reynox",
+          "discriminator": "6303",
+          "url": "/user/Gzr7pBM55GBkqgyE/reynox",
+          "avatar": "https://racetime.gg/media/Em_mini.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "reynox_lame",
+          "twitch_display_name": "Reynox_Lame",
+          "twitch_channel": "https://www.twitch.tv/reynox_lame",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M39.540277S",
+        "finished_at": "2025-09-28T06:42:39.615Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2528,
+        "score_change": -42,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4or27aoqDJX0",
+          "full_name": "Beth#1108",
+          "name": "Beth",
+          "discriminator": "1108",
+          "url": "/user/rZyM4or27aoqDJX0/beth",
+          "avatar": "https://racetime.gg/media/rZyM4or27aoqDJX0_JR6JUg1.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lamebeth",
+          "twitch_display_name": "LameBeth",
+          "twitch_channel": "https://www.twitch.tv/lamebeth",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1250,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-28T06:42:39.735Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

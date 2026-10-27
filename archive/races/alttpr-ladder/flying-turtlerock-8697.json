@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/flying-turtlerock-8697",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/flying-turtlerock-8697",
+    "data_url": "/alttpr-ladder/flying-turtlerock-8697/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\nladder/crosskeys - https://alttpr.racing/getseed.php?race=3555 - (HashEmptyBottle/HashTunic/HashBombos/HashMushroom/HashBigKey)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-05-18T23:30:00.121Z",
+    "started_at": "2026-05-19T00:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "57ZKD3g6nYBkyANO",
+          "full_name": "Brogor#2841",
+          "name": "Brogor",
+          "discriminator": "2841",
+          "url": "/user/57ZKD3g6nYBkyANO/brogor",
+          "avatar": "https://racetime.gg/media/57ZKD3g6nYBkyANO.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "br0g0r",
+          "twitch_display_name": "br0g0r",
+          "twitch_channel": "https://www.twitch.tv/br0g0r",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M27.877111S",
+        "finished_at": "2026-05-19T01:46:27.953Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2003,
+        "score_change": 210,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "AEk8wpokDmW5KQyV",
+          "full_name": "zelgadissan#0529",
+          "name": "zelgadissan",
+          "discriminator": "0529",
+          "url": "/user/AEk8wpokDmW5KQyV/zelgadissan",
+          "avatar": "https://racetime.gg/media/Fsjal_phoenix_wright.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zelgadissan",
+          "twitch_display_name": "zelgadissan",
+          "twitch_channel": "https://www.twitch.tv/zelgadissan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M42.022093S",
+        "finished_at": "2026-05-19T01:59:42.098Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2504,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KAQaWeZDjr",
+          "full_name": "death_taxes_n64#4985",
+          "name": "death_taxes_n64",
+          "discriminator": "4985",
+          "url": "/user/7QXz83KAQaWeZDjr/death_taxes_n64",
+          "avatar": "https://racetime.gg/media/LC1-Large.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "death_taxes_n64",
+          "twitch_display_name": "death_taxes_n64",
+          "twitch_channel": "https://www.twitch.tv/death_taxes_n64",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H27M12.583140S",
+        "finished_at": "2026-05-19T02:27:12.659Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 159,
+        "score_change": 1006,
+        "comment": "200 Desert big go, severely punished for LL climb, also 1:47 1st sword OOL",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JdGXWqlL0a",
+          "full_name": "TheBenJammin#7468",
+          "name": "TheBenJammin",
+          "discriminator": "7468",
+          "url": "/user/NX5783JdGXWqlL0a/thebenjammin",
+          "avatar": "https://racetime.gg/media/a-for-racegg_o-1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thebenjammin",
+          "twitch_display_name": "TheBenJammin",
+          "twitch_channel": "https://www.twitch.tv/thebenjammin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H32M39.190816S",
+        "finished_at": "2026-05-19T02:32:39.266Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 798,
+        "score_change": 344,
+        "comment": "avoided the climb for too long, 195cr",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLGxA39QEya",
+          "full_name": "crazdgamer#4360",
+          "name": "crazdgamer",
+          "discriminator": "4360",
+          "url": "/user/NqO2YoLGxA39QEya/crazdgamer",
+          "avatar": "https://racetime.gg/media/17.JPG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crazdgamer",
+          "twitch_display_name": "crazdgamer",
+          "twitch_channel": "https://www.twitch.tv/crazdgamer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H48M58.471815S",
+        "finished_at": "2026-05-19T02:48:58.547Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": 191,
+        "comment": "207, LL the climb",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXQ55B1y8q0",
+          "full_name": "DrBowser#9571",
+          "name": "DrBowser",
+          "discriminator": "9571",
+          "url": "/user/zM65aWXQ55B1y8q0/drbowser",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "drbowser9571",
+          "twitch_display_name": "DrBowser9571",
+          "twitch_channel": "https://www.twitch.tv/drbowser9571",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2403,
+        "score_change": -686,
+        "comment": "down to climbing gt or aga and I do not care anymore",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-19T02:48:58.624Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

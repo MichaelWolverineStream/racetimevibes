@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-swampofevil-4445",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-swampofevil-4445",
+    "data_url": "/alttpr-ladder/trusty-swampofevil-4445/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=4537 - (HashShovel/HashTunic/HashHammer/HashShovel/HashMushroom)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-08-09T19:30:00.220Z",
+    "started_at": "2026-08-09T20:00:00.101Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M49.131767S",
+        "finished_at": "2026-08-09T21:56:49.233Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2202,
+        "score_change": 35,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1YZVWKalP1",
+          "full_name": "kefffka#6024",
+          "name": "kefffka",
+          "discriminator": "6024",
+          "url": "/user/NY0OkW1YZVWKalP1/kefffka",
+          "avatar": "https://racetime.gg/media/930.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kefffka",
+          "twitch_display_name": "kefffka",
+          "twitch_channel": "https://www.twitch.tv/kefffka",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2125,
+        "score_change": -196,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-09T21:57:20.671Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

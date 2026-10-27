@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/disco-hera-7730",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/disco-hera-7730",
+    "data_url": "/alttpr-ladder/disco-hera-7730/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=1299 - (HashFlute/HashFlute/HashEmptyBottle/HashLamp/HashFlute)",
+    "entrants_count": 7,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 3,
+    "opened_at": "2025-10-30T09:30:00.083Z",
+    "started_at": "2025-10-30T10:00:00.095Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H18M54.273995S",
+        "finished_at": "2025-10-30T11:18:54.369Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3454,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbp193YlM65",
+          "full_name": "thalane#0908",
+          "name": "thalane",
+          "discriminator": "0908",
+          "url": "/user/jZ2EGWbp193YlM65/thalane",
+          "avatar": "https://racetime.gg/media/thalane.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "thalanee",
+          "twitch_display_name": "thalanee",
+          "twitch_channel": "https://www.twitch.tv/thalanee",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M21.937819S",
+        "finished_at": "2025-10-30T11:19:22.033Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 72,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB22JvBNgk4V",
+          "full_name": "NTapple#1924",
+          "name": "NTapple",
+          "discriminator": "1924",
+          "url": "/user/8QGZrB22JvBNgk4V/ntapple",
+          "avatar": "https://racetime.gg/media/RacetimeGG.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ntapple",
+          "twitch_display_name": "NTapple",
+          "twitch_channel": "https://www.twitch.tv/ntapple",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M24.144803S",
+        "finished_at": "2025-10-30T11:42:24.240Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1641,
+        "score_change": 78,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ85yWK4xrZ",
+          "full_name": "Skatzman#8917",
+          "name": "Skatzman",
+          "discriminator": "8917",
+          "url": "/user/z56VnBQ85yWK4xrZ/skatzman",
+          "avatar": "https://racetime.gg/media/z56VnBQ85yWK4xrZ.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "skatzman",
+          "twitch_display_name": "skatzman",
+          "twitch_channel": "https://www.twitch.tv/skatzman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M21.566267S",
+        "finished_at": "2025-10-30T11:59:21.662Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1289,
+        "score_change": 181,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2345,
+        "score_change": -13,
+        "comment": "i knew i shpuld skip that open = boring as fuck",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2124,
+        "score_change": -16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY82O3Rdm5v",
+          "full_name": "Benni#3920",
+          "name": "Benni",
+          "discriminator": "3920",
+          "url": "/user/JrM6PoY82O3Rdm5v/benni",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "obennio",
+          "twitch_display_name": "OBenniO",
+          "twitch_channel": "https://www.twitch.tv/obennio",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1648,
+        "score_change": 5,
+        "comment": "Too late in PoD and not enough skill with no/fighter sword. Barely did blind and FFed after Vity",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-30T11:59:21.721Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

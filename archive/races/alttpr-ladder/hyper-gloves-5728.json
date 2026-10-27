@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/hyper-gloves-5728",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hyper-gloves-5728",
+    "data_url": "/alttpr-ladder/hyper-gloves-5728/data",
+    "goal": {
+      "name": "Beat the game (1v1)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [ladder_test] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=491 - (Map/Green Potion/Big Key/Flute/Map)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-17T03:58:00.673Z",
+    "started_at": "2025-07-17T04:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H29M34.536767S",
+        "finished_at": "2025-07-17T06:29:34.628Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 672,
+        "comment": "191 Look, Honey! An Abomination!",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orRL1oqDJX0",
+          "full_name": "Leaf#1740",
+          "name": "Leaf",
+          "discriminator": "1740",
+          "url": "/user/rZyM4orRL1oqDJX0/leaf",
+          "avatar": "https://racetime.gg/media/rZyM4orRL1oqDJX0_zmhNzp5.jpg",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "windblown_leaf",
+          "twitch_display_name": "windblown_leaf",
+          "twitch_channel": "https://www.twitch.tv/windblown_leaf",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -207,
+        "comment": "Stop dying to goddamn kholdstare",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-17T06:33:08.765Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

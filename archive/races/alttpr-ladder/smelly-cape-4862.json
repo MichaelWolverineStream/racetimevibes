@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/smelly-cape-4862",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/smelly-cape-4862",
+    "data_url": "/alttpr-ladder/smelly-cape-4862/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=781 - (HashBugnet/HashGreenPotion/HashEmptyBottle/HashSomaria/HashFlippers)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-08-25T18:30:00.108Z",
+    "started_at": "2025-08-25T19:00:00.084Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "457ZKD3gKj3kyANO",
+          "full_name": "Scaryolive#5959",
+          "name": "Scaryolive",
+          "discriminator": "5959",
+          "url": "/user/457ZKD3gKj3kyANO/scaryolive",
+          "avatar": "https://racetime.gg/media/scaryolive-profile_image-2e6751c2b48efca6-300x3001.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scaryolive",
+          "twitch_display_name": "Scaryolive",
+          "twitch_channel": "https://www.twitch.tv/scaryolive",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M43.449119S",
+        "finished_at": "2025-08-25T20:34:43.533Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2211,
+        "score_change": 52,
+        "comment": "mini moldorm death, 2 moldom falls, ganon fall on 4th phase. Terrible execution",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M52.701156S",
+        "finished_at": "2025-08-25T20:40:52.785Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2208,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlgvJWaOP57",
+          "full_name": "Oeptown#6801",
+          "name": "Oeptown",
+          "discriminator": "6801",
+          "url": "/user/xldAMBlgvJWaOP57/oeptown",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oeptown",
+          "twitch_display_name": "oeptown",
+          "twitch_channel": "https://www.twitch.tv/oeptown",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M35.910087S",
+        "finished_at": "2025-08-25T20:44:35.994Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1197,
+        "score_change": 172,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g2PxBkyANO",
+          "full_name": "LimpBagel#5075",
+          "name": "LimpBagel",
+          "discriminator": "5075",
+          "url": "/user/57ZKD3g2PxBkyANO/limpbagel",
+          "avatar": "https://racetime.gg/media/4efdf89d430f3f5ffec85b1c2716586258998839e79e5b56f13212dd43b751b8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "limp_bagel",
+          "twitch_display_name": "Limp_Bagel",
+          "twitch_channel": "https://www.twitch.tv/limp_bagel",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M19.762998S",
+        "finished_at": "2025-08-25T20:47:19.847Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2135,
+        "score_change": -64,
+        "comment": "where were the boots?",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2318,
+        "score_change": -25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-25T20:47:19.924Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

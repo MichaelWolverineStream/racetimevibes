@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/banzai-bigtwenty-7736",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/banzai-bigtwenty-7736",
+    "data_url": "/alttpr-ladder/banzai-bigtwenty-7736/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - True Pot Hunt\ntph2023 - https://alttpr.racing/getseed.php?race=342 - (Ice Rod/Pendant/Moon Pearl/Lamp/Empty Bottle)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-28T10:30:01.165Z",
+    "started_at": "2025-06-28T11:00:01.190Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "Mewn83VyMjB405Jv",
+          "full_name": "Blackirave#1438",
+          "name": "Blackirave",
+          "discriminator": "1438",
+          "url": "/user/Mewn83VyMjB405Jv/blackirave",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "blackirave",
+          "twitch_display_name": "blackirave",
+          "twitch_channel": "https://www.twitch.tv/blackirave",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M25.362531S",
+        "finished_at": "2025-06-28T12:32:26.552Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2550,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KyJpWeZDjr",
+          "full_name": "Nitro6003#8701",
+          "name": "Nitro6003",
+          "discriminator": "8701",
+          "url": "/user/7QXz83KyJpWeZDjr/nitro6003",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "nitro6003",
+          "twitch_display_name": "Nitro6003",
+          "twitch_channel": "https://www.twitch.tv/nitro6003",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -99,
+        "comment": "had a real life thing so had to quit ggs",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-28T12:32:26.662Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

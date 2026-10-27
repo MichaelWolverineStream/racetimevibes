@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:50Z",
+  "race": {
+    "name": "alttpr-ladder/wild-byrna-9858",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/wild-byrna-9858",
+    "data_url": "/alttpr-ladder/wild-byrna-9858/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=5009 - (HashHeart/HashQuake/HashBow/HashMoonPearl/HashBoots)",
+    "entrants_count": 4,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-09-21T13:30:00.126Z",
+    "started_at": "2026-09-21T14:00:00.101Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M38.453381S",
+        "finished_at": "2026-09-21T15:47:38.554Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2422,
+        "score_change": 12,
+        "comment": "169 - Believe in skipping PoD.  KEKW",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M19.219842S",
+        "finished_at": "2026-09-21T15:57:19.321Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2393,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwpvbB1nEk0",
+          "full_name": "hide on bush#1636",
+          "name": "hide on bush",
+          "discriminator": "1636",
+          "url": "/user/b8GPMWwpvbB1nEk0/hide-on-bush",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "hideonbush1909",
+          "twitch_display_name": "hideonbush1909",
+          "twitch_channel": "https://www.twitch.tv/hideonbush1909",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2398,
+        "score_change": -125,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ85yWK4xrZ",
+          "full_name": "Skatzman#8917",
+          "name": "Skatzman",
+          "discriminator": "8917",
+          "url": "/user/z56VnBQ85yWK4xrZ/skatzman",
+          "avatar": "https://racetime.gg/media/z56VnBQ85yWK4xrZ.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "skatzman",
+          "twitch_display_name": "skatzman",
+          "twitch_channel": "https://www.twitch.tv/skatzman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1023,
+        "score_change": 121,
+        "comment": "tech issue",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": true,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-21T15:57:19.420Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

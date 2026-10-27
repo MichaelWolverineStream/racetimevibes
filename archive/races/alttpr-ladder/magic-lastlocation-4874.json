@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/magic-lastlocation-4874",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/magic-lastlocation-4874",
+    "data_url": "/alttpr-ladder/magic-lastlocation-4874/data",
+    "goal": {
+      "name": "Beat the game (Fun)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Open 7/7 Swordless\nladder/open_swordless - https://alttpr.racing/getseed.php?race=3653 - (HashBugnet/HashHeart/HashMirror/HashShovel/HashCape)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-27T03:30:00.082Z",
+    "started_at": "2026-05-27T04:00:00.072Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRmk5omqXen",
+          "full_name": "ppchan#6201",
+          "name": "ppchan",
+          "discriminator": "6201",
+          "url": "/user/497NdWRmk5omqXen/ppchan",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ppchan",
+          "twitch_display_name": "ppchan",
+          "twitch_channel": "https://www.twitch.tv/ppchan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M26.267205S",
+        "finished_at": "2026-05-27T05:38:26.340Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 672,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H29M06.415568S",
+        "finished_at": "2026-05-27T06:29:06.488Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -207,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-27T06:29:06.513Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

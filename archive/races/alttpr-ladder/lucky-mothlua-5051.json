@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/lucky-mothlua-5051",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lucky-mothlua-5051",
+    "data_url": "/alttpr-ladder/lucky-mothlua-5051/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=1804 - (HashFlute/HashShield/HashBook/HashShovel/HashIceRod)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-15T14:30:00.089Z",
+    "started_at": "2025-12-15T15:00:00.085Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPdvqWe7P5Q",
+          "full_name": "Victotem#1469",
+          "name": "Victotem",
+          "discriminator": "1469",
+          "url": "/user/1jgrbWPdvqWe7P5Q/victotem",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "victotem",
+          "twitch_display_name": "Victotem",
+          "twitch_channel": "https://www.twitch.tv/victotem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M45.704693S",
+        "finished_at": "2025-12-15T17:02:45.790Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1936,
+        "score_change": 30,
+        "comment": "68 minutes without a sword, worst seed ever. 136",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M29.990546S",
+        "finished_at": "2025-12-15T17:05:30.076Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2154,
+        "score_change": -31,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-15T17:05:30.174Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

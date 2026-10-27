@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/silly-chestturn-0253",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/silly-chestturn-0253",
+    "data_url": "/alttpr-ladder/silly-chestturn-0253/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=1435 - (HashBombs/HashGloves/HashBugnet/HashBoots/HashFlute)",
+    "entrants_count": 8,
+    "entrants_count_finished": 8,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-14T17:30:00.079Z",
+    "started_at": "2025-11-14T18:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H06M38.730691S",
+        "finished_at": "2025-11-14T19:06:38.807Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2052,
+        "score_change": 41,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvJwmBJkg04",
+          "full_name": "Dominik0688#7163",
+          "name": "Dominik0688",
+          "discriminator": "7163",
+          "url": "/user/bpNAaBvJwmBJkg04/dominik0688",
+          "avatar": "https://racetime.gg/media/Absol3.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dominik0688",
+          "twitch_display_name": "dominik0688",
+          "twitch_channel": "https://www.twitch.tv/dominik0688",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H07M01.416173S",
+        "finished_at": "2025-11-14T19:07:01.493Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2622,
+        "score_change": 7,
+        "comment": "Forgot to open chest from Stalfos Basement (PoD Big Key)",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H08M48.880932S",
+        "finished_at": "2025-11-14T19:08:48.957Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2309,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWb4253YlM65",
+          "full_name": "BreathlessSleep#6416",
+          "name": "BreathlessSleep",
+          "discriminator": "6416",
+          "url": "/user/jZ2EGWb4253YlM65/breathlesssleep",
+          "avatar": "https://racetime.gg/media/miik.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "breathlesssleep",
+          "twitch_display_name": "BreathlessSleep",
+          "twitch_channel": "https://www.twitch.tv/breathlesssleep",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H11M37.481534S",
+        "finished_at": "2025-11-14T19:11:37.558Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1495,
+        "score_change": 306,
+        "comment": "holy jet seed... took a ganon death, RIP",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "MqzQPW4bwD31L2R5",
+          "full_name": "Ryry#1972",
+          "name": "Ryry",
+          "discriminator": "1972",
+          "url": "/user/MqzQPW4bwD31L2R5/ryry",
+          "avatar": "https://racetime.gg/media/snk_shck.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ryddarn",
+          "twitch_display_name": "Ryddarn",
+          "twitch_channel": "https://www.twitch.tv/ryddarn",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H12M17.481002S",
+        "finished_at": "2025-11-14T19:12:17.557Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1662,
+        "score_change": 120,
+        "comment": "lost a min missing bomb ceiling in TT, oof",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M20.262706S",
+        "finished_at": "2025-11-14T19:15:20.339Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2575,
+        "score_change": -18,
+        "comment": "Just do PoD first I guess",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEKz13ak64R",
+          "full_name": "AnimusUnited#6600",
+          "name": "AnimusUnited",
+          "discriminator": "6600",
+          "url": "/user/17DexWEKz13ak64R/animusunited",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "animusunited",
+          "twitch_display_name": "animusunited",
+          "twitch_channel": "https://www.twitch.tv/animusunited",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M34.250995S",
+        "finished_at": "2025-11-14T19:19:34.327Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 2325,
+        "score_change": -20,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqVnxB5k8eb",
+          "full_name": "ggreencola#3293",
+          "name": "ggreencola",
+          "discriminator": "3293",
+          "url": "/user/XzVwZWqVnxB5k8eb/ggreencola",
+          "avatar": "https://racetime.gg/media/Ggreencola_icon_kmiyyNZ.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ggreencola",
+          "twitch_display_name": "ggreencola",
+          "twitch_channel": "https://www.twitch.tv/ggreencola",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H25M12.603821S",
+        "finished_at": "2025-11-14T19:25:12.680Z",
+        "place": 8,
+        "place_ordinal": "8th",
+        "score": 1630,
+        "score_change": -29,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-14T19:25:12.740Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

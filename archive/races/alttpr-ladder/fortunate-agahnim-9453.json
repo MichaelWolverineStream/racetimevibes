@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:27Z",
+  "race": {
+    "name": "alttpr-ladder/fortunate-agahnim-9453",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fortunate-agahnim-9453",
+    "data_url": "/alttpr-ladder/fortunate-agahnim-9453/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG [DR]\nladder/hmg - https://alttpr.racing/getseed.php?race=2297 - (HashMirror/HashHookshot/HashMagicPowder/HashGloves/HashBugnet)",
+    "entrants_count": 3,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-01-30T02:30:00.085Z",
+    "started_at": "2026-01-30T03:00:00.096Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H17M13.360169S",
+        "finished_at": "2026-01-30T04:17:13.456Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2736,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdae3LKPnz",
+          "full_name": "werfjig#9785",
+          "name": "werfjig",
+          "discriminator": "9785",
+          "url": "/user/VXY0eABdae3LKPnz/werfjig",
+          "avatar": "https://racetime.gg/media/dap.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "werfjig",
+          "twitch_display_name": "werfjig",
+          "twitch_channel": "https://www.twitch.tv/werfjig",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2192,
+        "score_change": -147,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEy9lWak64R",
+          "full_name": "secretlyasliver#1225",
+          "name": "secretlyasliver",
+          "discriminator": "1225",
+          "url": "/user/17DexWEy9lWak64R/secretlyasliver",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "secretlyasliver",
+          "twitch_display_name": "secretlyasliver",
+          "twitch_channel": "https://www.twitch.tv/secretlyasliver",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1945,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-30T04:20:16.717Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

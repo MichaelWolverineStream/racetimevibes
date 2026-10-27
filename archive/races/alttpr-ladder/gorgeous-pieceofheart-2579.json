@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/gorgeous-pieceofheart-2579",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gorgeous-pieceofheart-2579",
+    "data_url": "/alttpr-ladder/gorgeous-pieceofheart-2579/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - XD Hunt\njem041/xkeydrophunt - https://alttpr.racing/getseed.php?race=289 - (Bow/Somaria/Boomerang/Green Potion/Flute)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-21T19:30:05.663Z",
+    "started_at": "2025-06-21T20:00:05.747Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M18.098527S",
+        "finished_at": "2025-06-21T21:56:23.845Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3176,
+        "score_change": 40,
+        "comment": "179 floundered about until I hit a decent route I guess",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M12.052451S",
+        "finished_at": "2025-06-21T22:06:17.799Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2010,
+        "score_change": 211,
+        "comment": "nice moon pearl chain",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H16M04.739658S",
+        "finished_at": "2025-06-21T22:16:10.486Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2565,
+        "score_change": -2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36XmzWq1aOX",
+          "full_name": "Rozalyndis#8208",
+          "name": "Rozalyndis",
+          "discriminator": "8208",
+          "url": "/user/5K9rm36XmzWq1aOX/rozalyndis",
+          "avatar": "https://racetime.gg/media/tedd-roz100.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "rozalyndis",
+          "twitch_display_name": "Rozalyndis",
+          "twitch_channel": "https://www.twitch.tv/rozalyndis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H28M49.340493S",
+        "finished_at": "2025-06-21T22:28:55.087Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2501,
+        "score_change": -23,
+        "comment": "skip 2 things, add 30 min",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlYZY3aOP57",
+          "full_name": "ochala#4097",
+          "name": "ochala",
+          "discriminator": "4097",
+          "url": "/user/xldAMBlYZY3aOP57/ochala",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ochalachinga",
+          "twitch_display_name": "ochalachinga",
+          "twitch_channel": "https://www.twitch.tv/ochalachinga",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-21T22:44:35.312Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

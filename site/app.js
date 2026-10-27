@@ -813,7 +813,7 @@ function hasValidAggregate(aggregate) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 4
+    || data.schema_version !== 5
     || !hasValidAggregate(data)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
@@ -828,7 +828,7 @@ function validateData(data) {
     ))
     || !data.source
     || data.source.data_start_local !== "2026-01-01"
-    || !Number.isFinite(data.source.fetched_page_count)
+    || !Number.isFinite(data.source.archived_race_count)
     || !Number.isFinite(data.source.included_race_count)
   ) {
     throw new Error("The generated race dataset has an unsupported shape.");

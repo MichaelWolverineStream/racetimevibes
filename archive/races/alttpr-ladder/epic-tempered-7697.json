@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/epic-tempered-7697",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/epic-tempered-7697",
+    "data_url": "/alttpr-ladder/epic-tempered-7697/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Open AD with OW Tile Swap\nkaesden/open_ad_tileswap - https://alttpr.racing/getseed.php?race=1286 - (HashMushroom/HashCompass/HashIceRod/HashMoonPearl/HashShield)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-28T19:30:00.086Z",
+    "started_at": "2025-10-28T20:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M28.022879S",
+        "finished_at": "2025-10-28T21:42:28.111Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1561,
+        "score_change": 88,
+        "comment": "CR 156, go mode somaria",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M49.418308S",
+        "finished_at": "2025-10-28T21:47:49.506Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2371,
+        "score_change": 1,
+        "comment": "What a horrible, no good, awful hammer",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz0Mb3LPdye",
+          "full_name": "INDIO#0175",
+          "name": "INDIO",
+          "discriminator": "0175",
+          "url": "/user/GklxjWz0Mb3LPdye/indio",
+          "avatar": "https://racetime.gg/media/GklxjWz0Mb3LPdye.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "grease_d",
+          "twitch_display_name": "grease_d",
+          "twitch_channel": "https://www.twitch.tv/grease_d",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M04.693155S",
+        "finished_at": "2025-10-28T21:49:04.781Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1724,
+        "score_change": 80,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMG8PokqgyE",
+          "full_name": "Tyrant242#0288",
+          "name": "Tyrant242",
+          "discriminator": "0288",
+          "url": "/user/Gzr7pBMG8PokqgyE/tyrant242",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tyrant242",
+          "twitch_display_name": "Tyrant242",
+          "twitch_channel": "https://www.twitch.tv/tyrant242",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M43.767989S",
+        "finished_at": "2025-10-28T21:49:43.856Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1805,
+        "score_change": 18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M58.209566S",
+        "finished_at": "2025-10-28T21:52:58.297Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2287,
+        "score_change": -14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M56.581979S",
+        "finished_at": "2025-10-28T21:59:56.670Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2190,
+        "score_change": -21,
+        "comment": "Hard LL cane AND totally forgot it was AD somehow",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-28T21:59:56.771Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

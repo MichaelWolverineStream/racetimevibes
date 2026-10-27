@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/fried-tam-7882",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fried-tam-7882",
+    "data_url": "/alttpr-ladder/fried-tam-7882/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - XD Hunt\njem041/xkeydrophunt - https://alttpr.racing/getseed.php?race=577 - (Shovel/Pendant/Mirror/Boomerang/Compass)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-27T22:30:00.138Z",
+    "started_at": "2025-07-27T23:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M15.769651S",
+        "finished_at": "2025-07-28T00:57:15.853Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3295,
+        "score_change": 27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m2npoPd1Xr",
+          "full_name": "aurabot#9087",
+          "name": "aurabot",
+          "discriminator": "9087",
+          "url": "/user/R6ym83m2npoPd1Xr/aurabot",
+          "avatar": "https://racetime.gg/media/R6ym83m2npoPd1Xr.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "aurabot",
+          "twitch_display_name": "aurabot",
+          "twitch_channel": "https://www.twitch.tv/aurabot",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M06.621167S",
+        "finished_at": "2025-07-28T01:00:06.704Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2082,
+        "score_change": 195,
+        "comment": "Those boots on the cliff will taunt me forever. 178 CR, EP BK go mode.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8QlP3Pa52R",
+          "full_name": "Jamo#6380",
+          "name": "Jamo",
+          "discriminator": "6380",
+          "url": "/user/VwLN8B8QlP3Pa52R/jamo",
+          "avatar": "https://racetime.gg/media/58738f3a8302b12913b2b5458170346ec894517e_full.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jamo6",
+          "twitch_display_name": "Jamo6",
+          "twitch_channel": "https://www.twitch.tv/jamo6",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M10.175074S",
+        "finished_at": "2025-07-28T01:00:10.258Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3183,
+        "score_change": -103,
+        "comment": "1:52 catfish hammer yikes",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36XmzWq1aOX",
+          "full_name": "Rozalyndis#8208",
+          "name": "Rozalyndis",
+          "discriminator": "8208",
+          "url": "/user/5K9rm36XmzWq1aOX/rozalyndis",
+          "avatar": "https://racetime.gg/media/tedd-roz100.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "rozalyndis",
+          "twitch_display_name": "Rozalyndis",
+          "twitch_channel": "https://www.twitch.tv/rozalyndis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H16M50.288433S",
+        "finished_at": "2025-07-28T01:16:50.371Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2607,
+        "score_change": 1,
+        "comment": "all but LL'd catfish. had the ability to do it so much sooner but am stupid",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM55GBkqgyE",
+          "full_name": "Reynox#6303",
+          "name": "Reynox",
+          "discriminator": "6303",
+          "url": "/user/Gzr7pBM55GBkqgyE/reynox",
+          "avatar": "https://racetime.gg/media/Em_mini.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "reynox_lame",
+          "twitch_display_name": "Reynox_Lame",
+          "twitch_channel": "https://www.twitch.tv/reynox_lame",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M34.872802S",
+        "finished_at": "2025-07-28T01:18:34.956Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2542,
+        "score_change": -69,
+        "comment": "205 So many bk so little items",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H41M22.312395S",
+        "finished_at": "2025-07-28T01:41:22.395Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1534,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-28T01:41:22.456Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

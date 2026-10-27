@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/mecha-goldsword-2887",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mecha-goldsword-2887",
+    "data_url": "/alttpr-ladder/mecha-goldsword-2887/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=1497 - (HashBoomerang/HashHookshot/HashHammer/HashMushroom/HashMushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-20T00:30:00.097Z",
+    "started_at": "2025-11-20T01:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M56.056739S",
+        "finished_at": "2025-11-20T03:05:56.133Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2557,
+        "score_change": 11,
+        "comment": "Funny mearl/hook. 170CR",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M59.905970S",
+        "finished_at": "2025-11-20T03:08:59.982Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2736,
+        "score_change": -16,
+        "comment": "another day alttp ruins my mood",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M04.868263S",
+        "finished_at": "2025-11-20T03:14:04.944Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1834,
+        "score_change": -4,
+        "comment": "Terrible begining. Great toxic boots :D",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-20T03:14:04.988Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

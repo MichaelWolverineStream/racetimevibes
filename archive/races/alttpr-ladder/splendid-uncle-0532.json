@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/splendid-uncle-0532",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/splendid-uncle-0532",
+    "data_url": "/alttpr-ladder/splendid-uncle-0532/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=309 - (Flippers/Flute/Mushroom/Magic Powder/Flute)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-24T07:30:09.982Z",
+    "started_at": "2025-06-24T08:00:09.990Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBl4mdBaOP57",
+          "full_name": "Yok#8247",
+          "name": "Yok",
+          "discriminator": "8247",
+          "url": "/user/xldAMBl4mdBaOP57/yok",
+          "avatar": "https://racetime.gg/media/froge.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "yok2dgod",
+          "twitch_display_name": "Yok2DGod",
+          "twitch_channel": "https://www.twitch.tv/yok2dgod",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M37.981555S",
+        "finished_at": "2025-06-24T09:31:47.972Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2216,
+        "score_change": 100,
+        "comment": "This time everyone last locates, not only me KEKW",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Va0eMonENK3l9pyJ",
+          "full_name": "Schieva96#7027",
+          "name": "Schieva96",
+          "discriminator": "7027",
+          "url": "/user/Va0eMonENK3l9pyJ/schieva96",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "schieva96",
+          "twitch_display_name": "Schieva96",
+          "twitch_channel": "https://www.twitch.tv/schieva96",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M39.311862S",
+        "finished_at": "2025-06-24T09:32:49.302Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1509,
+        "score_change": 256,
+        "comment": "stupid TT..",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M55.530219S",
+        "finished_at": "2025-06-24T09:34:05.520Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2384,
+        "score_change": -38,
+        "comment": "yeah no one did it",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlgvJWaOP57",
+          "full_name": "Oeptown#6801",
+          "name": "Oeptown",
+          "discriminator": "6801",
+          "url": "/user/xldAMBlgvJWaOP57/oeptown",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oeptown",
+          "twitch_display_name": "oeptown",
+          "twitch_channel": "https://www.twitch.tv/oeptown",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M52.455644S",
+        "finished_at": "2025-06-24T09:36:02.446Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1065,
+        "score_change": 189,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M59.670869S",
+        "finished_at": "2025-06-24T09:40:09.661Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1522,
+        "score_change": -5,
+        "comment": "156 cr",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8M6V3Pa52R",
+          "full_name": "Mahony#1032",
+          "name": "Mahony",
+          "discriminator": "1032",
+          "url": "/user/VwLN8B8M6V3Pa52R/mahony",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mahony19888",
+          "twitch_display_name": "mahony19888",
+          "twitch_channel": "https://www.twitch.tv/mahony19888",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1119,
+        "score_change": -249,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-24T09:40:09.741Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

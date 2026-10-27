@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/clever-bugnet-9256",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clever-bugnet-9256",
+    "data_url": "/alttpr-ladder/clever-bugnet-9256/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=921 - (HashBook/HashPendant/HashShovel/HashTunic/HashQuake)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-12T07:30:00.130Z",
+    "started_at": "2025-09-12T08:00:00.107Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VwLN8B8M6V3Pa52R",
+          "full_name": "Mahony#1032",
+          "name": "Mahony",
+          "discriminator": "1032",
+          "url": "/user/VwLN8B8M6V3Pa52R/mahony",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mahony19888",
+          "twitch_display_name": "mahony19888",
+          "twitch_channel": "https://www.twitch.tv/mahony19888",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H23M51.634184S",
+        "finished_at": "2025-09-12T09:23:51.741Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1926,
+        "score_change": 31,
+        "comment": "CR 123",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlgvJWaOP57",
+          "full_name": "Oeptown#6801",
+          "name": "Oeptown",
+          "discriminator": "6801",
+          "url": "/user/xldAMBlgvJWaOP57/oeptown",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oeptown",
+          "twitch_display_name": "oeptown",
+          "twitch_channel": "https://www.twitch.tv/oeptown",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M01.551115S",
+        "finished_at": "2025-09-12T09:32:01.658Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1604,
+        "score_change": 52,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M54.111364S",
+        "finished_at": "2025-09-12T09:35:54.218Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2366,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-12T09:35:54.300Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

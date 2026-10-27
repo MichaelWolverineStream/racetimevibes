@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/clumsy-ether-2180",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clumsy-ether-2180",
+    "data_url": "/alttpr-ladder/clumsy-ether-2180/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Retrance (No Rupee Bow)\nretrance_bow - https://alttpr.racing/getseed.php?race=282 - (Cape/Empty Bottle/Boomerang/Moon Pearl/Ice Rod)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-20T21:30:07.070Z",
+    "started_at": "2025-06-20T22:00:07.140Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36XmzWq1aOX",
+          "full_name": "Rozalyndis#8208",
+          "name": "Rozalyndis",
+          "discriminator": "8208",
+          "url": "/user/5K9rm36XmzWq1aOX/rozalyndis",
+          "avatar": "https://racetime.gg/media/tedd-roz100.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "rozalyndis",
+          "twitch_display_name": "Rozalyndis",
+          "twitch_channel": "https://www.twitch.tv/rozalyndis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M58.028964S",
+        "finished_at": "2025-06-21T00:08:05.169Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2501,
+        "score_change": 35,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H23M15.155329S",
+        "finished_at": "2025-06-21T00:23:22.295Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2565,
+        "score_change": 3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H31M43.092023S",
+        "finished_at": "2025-06-21T00:31:50.232Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2010,
+        "score_change": 8,
+        "comment": "expert antirouter checking in",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JdGXWqlL0a",
+          "full_name": "TheBenJammin#7468",
+          "name": "TheBenJammin",
+          "discriminator": "7468",
+          "url": "/user/NX5783JdGXWqlL0a/thebenjammin",
+          "avatar": "https://racetime.gg/media/a-for-racegg_o-1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thebenjammin",
+          "twitch_display_name": "TheBenJammin",
+          "twitch_channel": "https://www.twitch.tv/thebenjammin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H35M31.877673S",
+        "finished_at": "2025-06-21T00:35:39.017Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1572,
+        "score_change": 6,
+        "comment": "TR BK go mode",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlYZY3aOP57",
+          "full_name": "ochala#4097",
+          "name": "ochala",
+          "discriminator": "4097",
+          "url": "/user/xldAMBlYZY3aOP57/ochala",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ochalachinga",
+          "twitch_display_name": "ochalachinga",
+          "twitch_channel": "https://www.twitch.tv/ochalachinga",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -141,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-21T02:01:36.505Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

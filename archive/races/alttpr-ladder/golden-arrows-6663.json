@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/golden-arrows-6663",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/golden-arrows-6663",
+    "data_url": "/alttpr-ladder/golden-arrows-6663/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\njem041/crosskeys2024 - https://alttpr.racing/getseed.php?race=1131 - (HashIceRod/HashBoots/HashMap/HashShovel/HashBoomerang)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-09T10:30:00.115Z",
+    "started_at": "2025-10-09T11:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M01.715131S",
+        "finished_at": "2025-10-09T12:53:01.791Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2987,
+        "score_change": 12,
+        "comment": "177 - Mire Bigkey for go. Never stepped foot in Link's House in this one",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAQNbomq6db",
+          "full_name": "mm2nescartridge",
+          "name": "mm2nescartridge",
+          "discriminator": null,
+          "url": "/user/mm2nescartridge",
+          "avatar": "https://racetime.gg/media/mm2_circle.png",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "mm2nescartridge",
+          "twitch_display_name": "mm2nescartridge",
+          "twitch_channel": "https://www.twitch.tv/mm2nescartridge",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M19.065071S",
+        "finished_at": "2025-10-09T12:56:19.141Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2700,
+        "score_change": 15,
+        "comment": "173 humbughhOnetrick",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "AEk8wpokXqW5KQyV",
+          "full_name": "NilssonAlex92#3919",
+          "name": "NilssonAlex92",
+          "discriminator": "3919",
+          "url": "/user/AEk8wpokXqW5KQyV/nilssonalex92",
+          "avatar": "https://racetime.gg/media/Medium.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "nilssonalex92",
+          "twitch_display_name": "NilssonAlex92",
+          "twitch_channel": "https://www.twitch.tv/nilssonalex92",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M50.672674S",
+        "finished_at": "2025-10-09T12:57:50.749Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2833,
+        "score_change": -21,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-09T12:57:50.782Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

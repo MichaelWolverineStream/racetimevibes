@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/bonus-arrows-9186",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/bonus-arrows-9186",
+    "data_url": "/alttpr-ladder/bonus-arrows-9186/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=285 - (Hammer/Quake/Big Key/Big Key/Flute)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-21T06:30:09.104Z",
+    "started_at": "2025-06-21T07:00:09.158Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlG8JWaOP57",
+          "full_name": "Duden2#7537",
+          "name": "Duden2",
+          "discriminator": "7537",
+          "url": "/user/xldAMBlG8JWaOP57/duden2",
+          "avatar": "https://racetime.gg/media/0c2edfb9-8860-4267-828b-497e73d15132.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "duden2",
+          "twitch_display_name": "Duden2",
+          "twitch_channel": "https://www.twitch.tv/duden2",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M54.836116S",
+        "finished_at": "2025-06-21T08:16:03.994Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2482,
+        "score_change": 69,
+        "comment": "129",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N5zbdeWenDBYPK8O",
+          "full_name": "tso15#4732",
+          "name": "tso15",
+          "discriminator": "4732",
+          "url": "/user/N5zbdeWenDBYPK8O/tso15",
+          "avatar": "https://racetime.gg/media/Watermark.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tso15",
+          "twitch_display_name": "Tso15",
+          "twitch_channel": "https://www.twitch.tv/tso15",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M25.279929S",
+        "finished_at": "2025-06-21T08:28:34.438Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2058,
+        "score_change": 3,
+        "comment": "hate hookpush seeds",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwJkbo1nEk0",
+          "full_name": "boothisman#8232",
+          "name": "boothisman",
+          "discriminator": "8232",
+          "url": "/user/b8GPMWwJkbo1nEk0/boothisman",
+          "avatar": "https://racetime.gg/media/7C6820E5-A2AE-4BC9-B5F2-66CEB983EE2A112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "boothisman",
+          "twitch_display_name": "boothisman",
+          "twitch_channel": "https://www.twitch.tv/boothisman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M45.606422S",
+        "finished_at": "2025-06-21T09:01:54.764Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -187,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-21T09:01:54.781Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/perfect-thievestown-4041",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/perfect-thievestown-4041",
+    "data_url": "/alttpr-ladder/perfect-thievestown-4041/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=5132 - (HashMap/HashLamp/HashHookshot/HashBugnet/HashBoots)",
+    "entrants_count": 4,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-10-01T19:30:00.114Z",
+    "started_at": "2026-10-01T20:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "GklxjWz96voLPdye",
+          "full_name": "ShaneSah (Kennen)#5187",
+          "name": "ShaneSah (Kennen)",
+          "discriminator": "5187",
+          "url": "/user/GklxjWz96voLPdye/shanesah-kennen",
+          "avatar": "https://racetime.gg/media/Omega.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "shanesah",
+          "twitch_display_name": "ShaneSah",
+          "twitch_channel": "https://www.twitch.tv/shanesah",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M12.911960S",
+        "finished_at": "2026-10-01T21:40:13.009Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1639,
+        "score_change": 256,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M28.874111S",
+        "finished_at": "2026-10-01T21:45:28.971Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2353,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPjAk3e7P5Q",
+          "full_name": "elusuario101#2065",
+          "name": "elusuario101",
+          "discriminator": "2065",
+          "url": "/user/1jgrbWPjAk3e7P5Q/elusuario101",
+          "avatar": "https://racetime.gg/media/1jgrbWPjAk3e7P5Q.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "elusuario101",
+          "twitch_display_name": "elusuario101",
+          "twitch_channel": "https://www.twitch.tv/elusuario101",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1835,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "g497NdWRX53mqXen",
+          "full_name": "oldmansunshine#3039",
+          "name": "oldmansunshine",
+          "discriminator": "3039",
+          "url": "/user/g497NdWRX53mqXen/oldmansunshine",
+          "avatar": "https://racetime.gg/media/angry_sun1.jpg",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "oldmansunshine20",
+          "twitch_display_name": "OldManSunshine20",
+          "twitch_channel": "https://www.twitch.tv/oldmansunshine20",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1534,
+        "score_change": 9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-01T21:57:35.476Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

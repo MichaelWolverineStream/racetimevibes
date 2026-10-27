@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:24Z",
+  "race": {
+    "name": "alttpr-ladder/amazing-eris-1379",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/amazing-eris-1379",
+    "data_url": "/alttpr-ladder/amazing-eris-1379/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods (DR)\nladder/nologic_rods - https://alttpr.racing/getseed.php?race=2477 - (HashQuake/HashBow/HashBow/HashSomaria/HashHammer)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-02-14T01:30:00.076Z",
+    "started_at": "2026-02-14T02:00:00.066Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H17M18.071066S",
+        "finished_at": "2026-02-14T03:17:18.137Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2833,
+        "score_change": 25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H25M03.072480S",
+        "finished_at": "2026-02-14T03:25:03.139Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2249,
+        "score_change": 22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M00.994707S",
+        "finished_at": "2026-02-14T03:30:01.061Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2709,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-14T03:30:01.149Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

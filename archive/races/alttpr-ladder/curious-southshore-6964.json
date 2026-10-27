@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/curious-southshore-6964",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/curious-southshore-6964",
+    "data_url": "/alttpr-ladder/curious-southshore-6964/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1638 - (HashHammer/HashPendant/HashGloves/HashHeart/HashShield)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-01T18:30:00.118Z",
+    "started_at": "2025-12-01T19:00:00.124Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M37.254924S",
+        "finished_at": "2025-12-01T20:40:37.379Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3423,
+        "score_change": 3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M42.409066S",
+        "finished_at": "2025-12-01T20:59:42.533Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2329,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M30.323686S",
+        "finished_at": "2025-12-01T21:02:30.448Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2587,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZ7RWYlM65",
+          "full_name": "Sukezss#1184",
+          "name": "Sukezss",
+          "discriminator": "1184",
+          "url": "/user/jZ2EGWbZ7RWYlM65/sukezss",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sukezss",
+          "twitch_display_name": "Sukezss",
+          "twitch_channel": "https://www.twitch.tv/sukezss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M21.787043S",
+        "finished_at": "2025-12-01T21:17:21.911Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1877,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4or2RXoqDJX0",
+          "full_name": "Basdingo#2692",
+          "name": "Basdingo",
+          "discriminator": "2692",
+          "url": "/user/rZyM4or2RXoqDJX0/basdingo",
+          "avatar": "https://racetime.gg/media/rZyM4or2RXoqDJX0.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "basdingo",
+          "twitch_display_name": "Basdingo",
+          "twitch_channel": "https://www.twitch.tv/basdingo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H25M02.216837S",
+        "finished_at": "2025-12-01T21:25:02.341Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1335,
+        "score_change": -18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-01T21:25:02.401Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

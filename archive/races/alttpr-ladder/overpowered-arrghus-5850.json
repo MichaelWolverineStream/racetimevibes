@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/overpowered-arrghus-5850",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/overpowered-arrghus-5850",
+    "data_url": "/alttpr-ladder/overpowered-arrghus-5850/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1330 - (HashQuake/HashGloves/HashMirror/HashQuake/HashShovel)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-03T07:30:00.083Z",
+    "started_at": "2025-11-03T08:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "JXzVwZWqnzB5k8eb",
+          "full_name": "Jeddoman#6705",
+          "name": "Jeddoman",
+          "discriminator": "6705",
+          "url": "/user/JXzVwZWqnzB5k8eb/jeddoman",
+          "avatar": "https://racetime.gg/media/7515b457889eeb4b313c80786c31415e.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jeddoman",
+          "twitch_display_name": "jeddoman",
+          "twitch_channel": "https://www.twitch.tv/jeddoman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M17.322951S",
+        "finished_at": "2025-11-03T09:45:17.402Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2195,
+        "score_change": 102,
+        "comment": "Gannon fall in phase 4 had me sweating",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRNvRWmqXen",
+          "full_name": "crackerito#3618",
+          "name": "crackerito",
+          "discriminator": "3618",
+          "url": "/user/497NdWRNvRWmqXen/crackerito",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crackerito88",
+          "twitch_display_name": "crackerito88",
+          "twitch_channel": "https://www.twitch.tv/crackerito88",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M08.039665S",
+        "finished_at": "2025-11-03T09:46:08.119Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3111,
+        "score_change": -12,
+        "comment": "super bad routing",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAyYzomq6db",
+          "full_name": "Clink#8743",
+          "name": "Clink",
+          "discriminator": "8743",
+          "url": "/user/wezlNoAyYzomq6db/clink",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "clink413",
+          "twitch_display_name": "clink413",
+          "twitch_channel": "https://www.twitch.tv/clink413",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M43.732136S",
+        "finished_at": "2025-11-03T09:48:43.811Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2894,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZ7RWYlM65",
+          "full_name": "Sukezss#1184",
+          "name": "Sukezss",
+          "discriminator": "1184",
+          "url": "/user/jZ2EGWbZ7RWYlM65/sukezss",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sukezss",
+          "twitch_display_name": "Sukezss",
+          "twitch_channel": "https://www.twitch.tv/sukezss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M52.913393S",
+        "finished_at": "2025-11-03T09:53:52.992Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1888,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-03T09:53:53.061Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

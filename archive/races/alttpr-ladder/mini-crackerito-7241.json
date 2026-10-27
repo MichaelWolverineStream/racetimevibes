@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/mini-crackerito-7241",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mini-crackerito-7241",
+    "data_url": "/alttpr-ladder/mini-crackerito-7241/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=1712 - (HashShovel/HashIceRod/HashSomaria/HashCompass/HashLamp)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-07T22:30:00.113Z",
+    "started_at": "2025-12-07T23:00:00.082Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "graP6yoadA3lV4zN",
+          "full_name": "JamesFnX#9072",
+          "name": "JamesFnX",
+          "discriminator": "9072",
+          "url": "/user/graP6yoadA3lV4zN/jamesfnx",
+          "avatar": "https://racetime.gg/media/boots_112_working.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jamesfnx",
+          "twitch_display_name": "JamesFnX",
+          "twitch_channel": "https://www.twitch.tv/jamesfnx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H12M03.993927S",
+        "finished_at": "2025-12-08T00:12:04.076Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2234,
+        "score_change": 26,
+        "comment": "130 - fun one even while fighting my tracker",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoL6M8B9QEya",
+          "full_name": "Zaxorai#3313",
+          "name": "Zaxorai",
+          "discriminator": "3313",
+          "url": "/user/NqO2YoL6M8B9QEya/zaxorai",
+          "avatar": "https://racetime.gg/media/NqO2YoL6M8B9QEya.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zaxorai",
+          "twitch_display_name": "Zaxorai",
+          "twitch_channel": "https://www.twitch.tv/zaxorai",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H21M25.796920S",
+        "finished_at": "2025-12-08T00:21:25.879Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2345,
+        "score_change": -24,
+        "comment": "CR 141. Quick 1/5 that I routed poorly",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-08T00:21:25.929Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

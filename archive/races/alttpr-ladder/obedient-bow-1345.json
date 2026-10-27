@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/obedient-bow-1345",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/obedient-bow-1345",
+    "data_url": "/alttpr-ladder/obedient-bow-1345/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=565 - (Empty Bottle/Pendant/Mirror/Bombos/Flute)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-26T10:30:00.175Z",
+    "started_at": "2025-07-26T11:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NqO2YoLyeyW9QEya",
+          "full_name": "DrDiabetus#6943",
+          "name": "DrDiabetus",
+          "discriminator": "6943",
+          "url": "/user/NqO2YoLyeyW9QEya/drdiabetus",
+          "avatar": "https://racetime.gg/media/ZSS-min.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dr_diabetus",
+          "twitch_display_name": "dr_diabetus",
+          "twitch_channel": "https://www.twitch.tv/dr_diabetus",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M43.349803S",
+        "finished_at": "2025-07-26T12:44:43.432Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2771,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqpR8o5k8eb",
+          "full_name": "dunks#3030",
+          "name": "dunks",
+          "discriminator": "3030",
+          "url": "/user/XzVwZWqpR8o5k8eb/dunks",
+          "avatar": "https://racetime.gg/media/complete_optimized_100.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ddunkss",
+          "twitch_display_name": "ddunkss",
+          "twitch_channel": "https://www.twitch.tv/ddunkss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1235,
+        "score_change": -1,
+        "comment": "ggs, my controller is busted",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-26T12:44:43.673Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

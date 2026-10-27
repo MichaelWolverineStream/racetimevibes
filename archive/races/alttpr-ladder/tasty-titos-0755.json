@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/tasty-titos-0755",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/tasty-titos-0755",
+    "data_url": "/alttpr-ladder/tasty-titos-0755/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag\nladder/grabbag - https://alttpr.racing/getseed.php?race=4229 - (HashTunic/HashPendant/HashSomaria/HashBugnet/HashHammer)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-15T03:30:00.161Z",
+    "started_at": "2026-07-15T04:00:00.166Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M43.110363S",
+        "finished_at": "2026-07-15T05:42:43.276Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2566,
+        "score_change": 33,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M52.642565S",
+        "finished_at": "2026-07-15T05:42:52.808Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1568,
+        "score_change": -23,
+        "comment": "I can tell you a hundred places I'd like that to be, and that's not it.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-15T05:42:52.852Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

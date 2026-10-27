@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/gnarly-icerod-9571",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gnarly-icerod-9571",
+    "data_url": "/alttpr-ladder/gnarly-icerod-9571/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\njem041/crosskeys2024 - https://alttpr.racing/getseed.php?race=1189 - (HashQuake/HashEther/HashShield/HashBoomerang/HashBugnet)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-16T16:30:00.111Z",
+    "started_at": "2025-10-16T17:00:00.081Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M33.710730S",
+        "finished_at": "2025-10-16T18:49:33.792Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3027,
+        "score_change": 19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPqj1Be7P5Q",
+          "full_name": "Zenitschwert#5158",
+          "name": "Zenitschwert",
+          "discriminator": "5158",
+          "url": "/user/1jgrbWPqj1Be7P5Q/zenitschwert",
+          "avatar": "https://racetime.gg/media/kleine_Datei.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zenitschwert",
+          "twitch_display_name": "Zenitschwert",
+          "twitch_channel": "https://www.twitch.tv/zenitschwert",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M19.353207S",
+        "finished_at": "2025-10-16T18:57:19.435Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3001,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M29.382600S",
+        "finished_at": "2025-10-16T19:06:29.464Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2632,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M42.162911S",
+        "finished_at": "2025-10-16T19:06:42.244Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2788,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H16M16.041629S",
+        "finished_at": "2025-10-16T19:16:16.123Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2356,
+        "score_change": -1,
+        "comment": "30 min ether hunt...thx seed for nothing",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M32.619710S",
+        "finished_at": "2025-10-16T19:17:32.701Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2206,
+        "score_change": -24,
+        "comment": "more than 174. Hard last located SW entrance at Mire. Nice flute, never activated. :p",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "LNqO2YoL8bo9QEya",
+          "full_name": "Yoinkerswife#4156",
+          "name": "Yoinkerswife",
+          "discriminator": "4156",
+          "url": "/user/LNqO2YoL8bo9QEya/yoinkerswife",
+          "avatar": "https://racetime.gg/media/karrieavatar2.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "yoinkerswife",
+          "twitch_display_name": "Yoinkerswife",
+          "twitch_channel": "https://www.twitch.tv/yoinkerswife",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H51M39.711704S",
+        "finished_at": "2025-10-16T19:51:39.793Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1625,
+        "score_change": -9,
+        "comment": "go mode at 2:46, I'll take it.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-16T19:51:39.930Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

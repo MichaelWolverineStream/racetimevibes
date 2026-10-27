@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/chaotic-hera-0036",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/chaotic-hera-0036",
+    "data_url": "/alttpr-ladder/chaotic-hera-0036/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=2134 - (HashMirror/HashEmptyBottle/HashBow/HashBook/HashCompass)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-16T12:30:00.088Z",
+    "started_at": "2026-01-16T13:00:00.095Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "57ZKD3g6nYBkyANO",
+          "full_name": "Brogor#2841",
+          "name": "Brogor",
+          "discriminator": "2841",
+          "url": "/user/57ZKD3g6nYBkyANO/brogor",
+          "avatar": "https://racetime.gg/media/57ZKD3g6nYBkyANO.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "br0g0r",
+          "twitch_display_name": "br0g0r",
+          "twitch_channel": "https://www.twitch.tv/br0g0r",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M10.864039S",
+        "finished_at": "2026-01-16T14:56:10.959Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3307,
+        "score_change": 8,
+        "comment": "giga mimic clip / schr\u00f6dingers hover seed",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M56.322115S",
+        "finished_at": "2026-01-16T15:02:56.417Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3231,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "l5K9rm36Rg3q1aOX",
+          "full_name": "dazedcloud#9097",
+          "name": "dazedcloud",
+          "discriminator": "9097",
+          "url": "/user/l5K9rm36Rg3q1aOX/dazedcloud",
+          "avatar": "https://racetime.gg/media/dazedsmall.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dazedcloud",
+          "twitch_display_name": "dazedcloud",
+          "twitch_channel": "https://www.twitch.tv/dazedcloud",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H18M09.677676S",
+        "finished_at": "2026-01-16T15:18:09.772Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1941,
+        "score_change": -25,
+        "comment": "I got everything",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-16T15:18:09.882Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/clean-swampofevil-6902",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clean-swampofevil-6902",
+    "data_url": "/alttpr-ladder/clean-swampofevil-6902/data",
+    "goal": {
+      "name": "Beat the game (Glitched)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods [DR]\nladder/nologic_rods - https://alttpr.racing/getseed.php?race=3479 - (HashBombos/HashIceRod/HashBook/HashBugnet/HashMushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-12T15:30:00.100Z",
+    "started_at": "2026-05-12T16:00:00.082Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "1jgrbWPqj1Be7P5Q",
+          "full_name": "Zenitschwert#5158",
+          "name": "Zenitschwert",
+          "discriminator": "5158",
+          "url": "/user/1jgrbWPqj1Be7P5Q/zenitschwert",
+          "avatar": "https://racetime.gg/media/kleine_Datei.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zenitschwert",
+          "twitch_display_name": "Zenitschwert",
+          "twitch_channel": "https://www.twitch.tv/zenitschwert",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H01M10.335826S",
+        "finished_at": "2026-05-12T17:01:10.418Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1003,
+        "comment": "finally, a seed with swords and at least a mearl for convienience! omg...",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H10M30.746060S",
+        "finished_at": "2026-05-12T17:10:30.828Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 425,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H12M49.721799S",
+        "finished_at": "2026-05-12T17:12:49.804Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -332,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-12T17:12:49.926Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

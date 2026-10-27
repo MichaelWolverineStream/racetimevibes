@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:01Z",
+  "race": {
+    "name": "alttpr-ladder/silly-arrghus-4578",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/silly-arrghus-4578",
+    "data_url": "/alttpr-ladder/silly-arrghus-4578/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4112 - (HashShield/HashShovel/HashShield/HashBombs/HashBombos)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-07-05T09:30:00.186Z",
+    "started_at": "2026-07-05T10:00:00.107Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M39.300391S",
+        "finished_at": "2026-07-05T11:28:39.407Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2871,
+        "score_change": 102,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M13.079450S",
+        "finished_at": "2026-07-05T11:33:13.186Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2508,
+        "score_change": 15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M09.937924S",
+        "finished_at": "2026-07-05T11:51:10.045Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1443,
+        "score_change": 45,
+        "comment": "go mode fat fairy",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5zbdeWeQpJWYPK8O",
+          "full_name": "RobG",
+          "name": "RobG",
+          "discriminator": null,
+          "url": "/user/RobG",
+          "avatar": "https://racetime.gg/media/IMG_20180615_184116_228.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "robg92",
+          "twitch_display_name": "RobG92",
+          "twitch_channel": "https://www.twitch.tv/robg92",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M39.850370S",
+        "finished_at": "2026-07-05T11:52:39.957Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1107,
+        "score_change": 167,
+        "comment": "CR 154",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2016,
+        "score_change": -130,
+        "comment": "limited time and then played everything in this game",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-05T11:52:40.001Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

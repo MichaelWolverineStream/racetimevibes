@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:27Z",
+  "race": {
+    "name": "alttpr-ladder/helpful-silvers-2173",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/helpful-silvers-2173",
+    "data_url": "/alttpr-ladder/helpful-silvers-2173/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys (VT)\ncrosskeys - https://alttpr.racing/getseed.php?race=2334 - (HashMagicPowder/HashCompass/HashCape/HashLamp/HashCompass)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-02-02T03:30:00.075Z",
+    "started_at": "2026-02-02T04:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M12.430665S",
+        "finished_at": "2026-02-02T06:08:12.508Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3256,
+        "score_change": 10,
+        "comment": "189, it was looking so good...until it didn't anymore",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M53.086312S",
+        "finished_at": "2026-02-02T06:11:53.164Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2810,
+        "score_change": 11,
+        "comment": "6 minute out of logic boots",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M21.817936S",
+        "finished_at": "2026-02-02T06:12:21.895Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2950,
+        "score_change": -3,
+        "comment": "191 Forgot to get the Skull bridge chest, went and pulled PedGE before going back FTL",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNvlvolywqX",
+          "full_name": "It's me, Facebones!#4169",
+          "name": "It's me, Facebones!",
+          "discriminator": "4169",
+          "url": "/user/52QE8oNvlvolywqX/its-me-facebones",
+          "avatar": "https://racetime.gg/media/52QE8oNvlvolywqX_LxMlaHp.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "itsmefacebones",
+          "twitch_display_name": "itsmefacebones",
+          "twitch_channel": "https://www.twitch.tv/itsmefacebones",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M13.195577S",
+        "finished_at": "2026-02-02T06:15:13.273Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2081,
+        "score_change": 11,
+        "comment": "188 giga late to cane",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36rl93q1aOX",
+          "full_name": "Sinned#0398",
+          "name": "Sinned",
+          "discriminator": "0398",
+          "url": "/user/5K9rm36rl93q1aOX/sinned",
+          "avatar": "https://racetime.gg/media/asdfasdfadsf.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sinneddennis",
+          "twitch_display_name": "Sinneddennis",
+          "twitch_channel": "https://www.twitch.tv/sinneddennis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M30.796326S",
+        "finished_at": "2026-02-02T06:15:30.874Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2502,
+        "score_change": -5,
+        "comment": "CR192: - Note to self: Don't take exit to laser bridge @__@",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jb8GPMWwmy31nEk0",
+          "full_name": "latebit#1301",
+          "name": "latebit",
+          "discriminator": "1301",
+          "url": "/user/jb8GPMWwmy31nEk0/latebit",
+          "avatar": "https://racetime.gg/media/fatyoshi320.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "latebit",
+          "twitch_display_name": "latebit",
+          "twitch_channel": "https://www.twitch.tv/latebit",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M58.994389S",
+        "finished_at": "2026-02-02T06:20:59.072Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2678,
+        "score_change": -18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-02T06:20:59.154Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

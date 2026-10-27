@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/crafty-zenitschwert-1348",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/crafty-zenitschwert-1348",
+    "data_url": "/alttpr-ladder/crafty-zenitschwert-1348/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=1623 - (HashHammer/HashMushroom/HashBook/HashMirror/HashMushroom)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-30T12:30:00.102Z",
+    "started_at": "2025-11-30T13:00:00.178Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "wezlNoApOO3mq6db",
+          "full_name": "Wabnik#5918",
+          "name": "Wabnik",
+          "discriminator": "5918",
+          "url": "/user/wezlNoApOO3mq6db/wabnik",
+          "avatar": "https://racetime.gg/media/Smile_rJgtAIA.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "wabnik",
+          "twitch_display_name": "Wabnik",
+          "twitch_channel": "https://www.twitch.tv/wabnik",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M52.677124S",
+        "finished_at": "2025-11-30T14:20:52.856Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2606,
+        "score_change": 52,
+        "comment": "OMG die Snipes bei kromb und skipfrosch sind real xD",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M36.489059S",
+        "finished_at": "2025-11-30T14:26:36.668Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2714,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLyeyW9QEya",
+          "full_name": "DrDiabetus#6943",
+          "name": "DrDiabetus",
+          "discriminator": "6943",
+          "url": "/user/NqO2YoLyeyW9QEya/drdiabetus",
+          "avatar": "https://racetime.gg/media/ZSS-min.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dr_diabetus",
+          "twitch_display_name": "dr_diabetus",
+          "twitch_channel": "https://www.twitch.tv/dr_diabetus",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M37.728835S",
+        "finished_at": "2025-11-30T14:26:37.907Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2593,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7QdyoV4GED",
+          "full_name": "Kromb1#1059",
+          "name": "Kromb1",
+          "discriminator": "1059",
+          "url": "/user/5JlzyB7QdyoV4GED/kromb1",
+          "avatar": "https://racetime.gg/media/Profilbild1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kromb4787",
+          "twitch_display_name": "kromb4787",
+          "twitch_channel": "https://www.twitch.tv/kromb4787",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M38.359559S",
+        "finished_at": "2025-11-30T14:26:38.538Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2315,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wdm1LPWj7ABEnVx6",
+          "full_name": "skipfrosch#5987",
+          "name": "skipfrosch",
+          "discriminator": "5987",
+          "url": "/user/wdm1LPWj7ABEnVx6/skipfrosch",
+          "avatar": "https://racetime.gg/media/tumblr_7abc93c9b58760ec67bee0fee8bbe3e0_94214413_640.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "skipfrosch",
+          "twitch_display_name": "skipfrosch",
+          "twitch_channel": "https://www.twitch.tv/skipfrosch",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M49.295855S",
+        "finished_at": "2025-11-30T14:26:49.474Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1976,
+        "score_change": -24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M57.626212S",
+        "finished_at": "2025-11-30T14:34:57.805Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2038,
+        "score_change": -18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-30T14:34:57.880Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

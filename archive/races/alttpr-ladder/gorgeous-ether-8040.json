@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/gorgeous-ether-8040",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gorgeous-ether-8040",
+    "data_url": "/alttpr-ladder/gorgeous-ether-8040/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=5203 - (HashMap/HashGreenPotion/HashGreenPotion/HashShovel/HashShield)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-07T17:30:00.185Z",
+    "started_at": "2026-10-07T18:00:00.112Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jb8GPMWwXbB1nEk0",
+          "full_name": "Ralen Tankir#4377",
+          "name": "Ralen Tankir",
+          "discriminator": "4377",
+          "url": "/user/jb8GPMWwXbB1nEk0/ralen-tankir",
+          "avatar": "https://racetime.gg/media/icon_052_01.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ralen_tankir",
+          "twitch_display_name": "Ralen_Tankir",
+          "twitch_channel": "https://www.twitch.tv/ralen_tankir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M53.712741S",
+        "finished_at": "2026-10-07T19:50:53.824Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2380,
+        "score_change": 56,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M09.994802S",
+        "finished_at": "2026-10-07T19:51:10.106Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2815,
+        "score_change": -16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZ7RWYlM65",
+          "full_name": "Sukezss#1184",
+          "name": "Sukezss",
+          "discriminator": "1184",
+          "url": "/user/jZ2EGWbZ7RWYlM65/sukezss",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sukezss",
+          "twitch_display_name": "Sukezss",
+          "twitch_channel": "https://www.twitch.tv/sukezss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M38.557843S",
+        "finished_at": "2026-10-07T19:57:38.669Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1599,
+        "score_change": 54,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83Kj4yBeZDjr",
+          "full_name": "nessa_nekochan#3950",
+          "name": "nessa_nekochan",
+          "discriminator": "3950",
+          "url": "/user/7QXz83Kj4yBeZDjr/nessa_nekochan",
+          "avatar": "https://racetime.gg/media/7QXz83Kj4yBeZDjr.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "nessa_nekochan",
+          "twitch_display_name": "nessa_nekochan",
+          "twitch_channel": "https://www.twitch.tv/nessa_nekochan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M09.104048S",
+        "finished_at": "2026-10-07T20:12:09.216Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 149,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oN625olywqX",
+          "full_name": "Druu_Bragi#8605",
+          "name": "Druu_Bragi",
+          "discriminator": "8605",
+          "url": "/user/52QE8oN625olywqX/druu_bragi",
+          "avatar": "https://racetime.gg/media/52QE8oN625olywqX.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "druu_bragi",
+          "twitch_display_name": "Druu_Bragi",
+          "twitch_channel": "https://www.twitch.tv/druu_bragi",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M50.738221S",
+        "finished_at": "2026-10-07T20:14:50.850Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1187,
+        "score_change": -29,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-07T20:14:50.962Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

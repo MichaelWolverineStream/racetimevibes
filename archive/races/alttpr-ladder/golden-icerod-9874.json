@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/golden-icerod-9874",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/golden-icerod-9874",
+    "data_url": "/alttpr-ladder/golden-icerod-9874/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=5411 - (HashGloves/HashMirror/HashSomaria/HashLamp/HashBook)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-25T00:30:00.140Z",
+    "started_at": "2026-10-25T01:00:00.091Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M54.363591S",
+        "finished_at": "2026-10-25T02:50:54.455Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2532,
+        "score_change": 9,
+        "comment": "182, died to moth twice. went to mountain for TR, got flips from ether and left for swamp, the critical decision of the seed. nasty mire big key",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M51.986655S",
+        "finished_at": "2026-10-25T02:56:52.078Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2582,
+        "score_change": -8,
+        "comment": "191/216 - 2 late tile rooms, double dip TR & EP means lots of time lost. :)",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "d17DexWEYRWak64R",
+          "full_name": "Ninban#5207",
+          "name": "Ninban",
+          "discriminator": "5207",
+          "url": "/user/d17DexWEYRWak64R/ninban",
+          "avatar": "https://racetime.gg/media/avatarx100.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "ninban",
+          "twitch_display_name": "Ninban",
+          "twitch_channel": "https://www.twitch.tv/ninban",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M10.774182S",
+        "finished_at": "2026-10-25T03:04:10.865Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 208,
+        "comment": "I love full clearing :) 190",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPG10oe7P5Q",
+          "full_name": "Centroid41#6531",
+          "name": "Centroid41",
+          "discriminator": "6531",
+          "url": "/user/1jgrbWPG10oe7P5Q/centroid41",
+          "avatar": "https://racetime.gg/media/centroid41.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "centroid41",
+          "twitch_display_name": "Centroid41",
+          "twitch_channel": "https://www.twitch.tv/centroid41",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M58.835244S",
+        "finished_at": "2026-10-25T03:08:58.926Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": -513,
+        "comment": "196/216",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-25T03:08:58.970Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

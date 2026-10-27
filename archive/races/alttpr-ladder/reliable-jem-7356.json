@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/reliable-jem-7356",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/reliable-jem-7356",
+    "data_url": "/alttpr-ladder/reliable-jem-7356/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=1787 - (HashMirror/HashSomaria/HashMushroom/HashGloves/HashCompass)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-14T04:30:00.150Z",
+    "started_at": "2025-12-14T05:00:00.074Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DQpno9blOy",
+          "full_name": "Specks#1514",
+          "name": "Specks",
+          "discriminator": "1514",
+          "url": "/user/5rNGD3DQpno9blOy/specks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "speckyspecks",
+          "twitch_display_name": "SpeckySpecks",
+          "twitch_channel": "https://www.twitch.tv/speckyspecks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H21M27.140405S",
+        "finished_at": "2025-12-14T06:21:27.214Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3173,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M49.133612S",
+        "finished_at": "2025-12-14T06:30:49.207Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2163,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mqDx3Pd1Xr",
+          "full_name": "ky24#5207",
+          "name": "ky24",
+          "discriminator": "5207",
+          "url": "/user/R6ym83mqDx3Pd1Xr/ky24",
+          "avatar": "https://racetime.gg/media/R6ym83mqDx3Pd1Xr.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ky__24",
+          "twitch_display_name": "ky__24",
+          "twitch_channel": "https://www.twitch.tv/ky__24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M31.370798S",
+        "finished_at": "2025-12-14T06:36:31.445Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1941,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7lYZa5B5dAW2Vwv9",
+          "full_name": "taco#7699",
+          "name": "taco",
+          "discriminator": "7699",
+          "url": "/user/7lYZa5B5dAW2Vwv9/taco",
+          "avatar": "https://racetime.gg/media/Screenshot_2024-11-30_184233.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "tacothefox",
+          "twitch_display_name": "tacothefox",
+          "twitch_channel": "https://www.twitch.tv/tacothefox",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M00.987478S",
+        "finished_at": "2025-12-14T06:57:01.061Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1511,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbP6O3YlM65",
+          "full_name": "Wasteland Outlaw#8452",
+          "name": "Wasteland Outlaw",
+          "discriminator": "8452",
+          "url": "/user/jZ2EGWbP6O3YlM65/wasteland-outlaw",
+          "avatar": "https://racetime.gg/media/jZ2EGWbP6O3YlM65.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wasteland_outlaw",
+          "twitch_display_name": "Wasteland_Outlaw",
+          "twitch_channel": "https://www.twitch.tv/wasteland_outlaw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H25M11.616416S",
+        "finished_at": "2025-12-14T07:25:11.690Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": -504,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-14T07:25:11.788Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

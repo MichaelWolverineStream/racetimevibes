@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/clumsy-birdtoss-5494",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clumsy-birdtoss-5494",
+    "data_url": "/alttpr-ladder/clumsy-birdtoss-5494/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\njem041/crosskeys2024 - https://alttpr.racing/getseed.php?race=1778 - (HashEmptyBottle/HashShield/HashFlippers/HashBigKey/HashGloves)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-12-13T09:30:00.081Z",
+    "started_at": "2025-12-13T10:00:00.074Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "DMLq1oZAr43OeQG8",
+          "full_name": "Titos#7297",
+          "name": "Titos",
+          "discriminator": "7297",
+          "url": "/user/DMLq1oZAr43OeQG8/titos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "titos288",
+          "twitch_display_name": "titos288",
+          "twitch_channel": "https://www.twitch.tv/titos288",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M42.665807S",
+        "finished_at": "2025-12-13T11:48:42.740Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3096,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M43.244076S",
+        "finished_at": "2025-12-13T11:52:43.318Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2818,
+        "score_change": 5,
+        "comment": "CR 169 - LL Mearl...",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB22JvBNgk4V",
+          "full_name": "NTapple#1924",
+          "name": "NTapple",
+          "discriminator": "1924",
+          "url": "/user/8QGZrB22JvBNgk4V/ntapple",
+          "avatar": "https://racetime.gg/media/RacetimeGG.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ntapple",
+          "twitch_display_name": "NTapple",
+          "twitch_channel": "https://www.twitch.tv/ntapple",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M47.821508S",
+        "finished_at": "2025-12-13T12:09:47.895Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1854,
+        "score_change": 47,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M17.961194S",
+        "finished_at": "2025-12-13T12:20:18.035Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2546,
+        "score_change": -21,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB2Ax9WNgk4V",
+          "full_name": "Darpex#5779",
+          "name": "Darpex",
+          "discriminator": "5779",
+          "url": "/user/8QGZrB2Ax9WNgk4V/darpex",
+          "avatar": "https://racetime.gg/media/IMG_7442.jpeg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "darpex3",
+          "twitch_display_name": "Darpex3",
+          "twitch_channel": "https://www.twitch.tv/darpex3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2072,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-13T12:20:23.732Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

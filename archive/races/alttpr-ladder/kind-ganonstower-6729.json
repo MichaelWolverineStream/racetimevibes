@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/kind-ganonstower-6729",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/kind-ganonstower-6729",
+    "data_url": "/alttpr-ladder/kind-ganonstower-6729/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=775 - (HashMoonPearl/HashBigKey/HashMap/HashMushroom/HashHammer)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-08-25T01:30:00.215Z",
+    "started_at": "2025-08-25T02:00:00.086Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H23M39.474775S",
+        "finished_at": "2025-08-25T03:23:39.561Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2410,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orgd1WqDJX0",
+          "full_name": "Masakuni#2916",
+          "name": "Masakuni",
+          "discriminator": "2916",
+          "url": "/user/rZyM4orgd1WqDJX0/masakuni",
+          "avatar": "https://racetime.gg/media/masa_avi_dragonasis_0524_150.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "masakunidragon",
+          "twitch_display_name": "MasakuniDragon",
+          "twitch_channel": "https://www.twitch.tv/masakunidragon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M20.303148S",
+        "finished_at": "2025-08-25T03:45:20.389Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1348,
+        "score_change": 60,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M14.732237S",
+        "finished_at": "2025-08-25T03:54:14.818Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 974,
+        "score_change": 53,
+        "comment": "not bad  but rude logic",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoL6XmB9QEya",
+          "full_name": "Bobsled#6999",
+          "name": "Bobsled",
+          "discriminator": "6999",
+          "url": "/user/NqO2YoL6XmB9QEya/bobsled",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "bobsled_",
+          "twitch_display_name": "Bobsled_",
+          "twitch_channel": "https://www.twitch.tv/bobsled_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M00.509199S",
+        "finished_at": "2025-08-25T04:00:00.595Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1182,
+        "score_change": -47,
+        "comment": "last locate important item in pod in an aga seed again. when will I learn",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld5YBaOP57",
+          "full_name": "Kyrie_Strombom#7498",
+          "name": "Kyrie_Strombom",
+          "discriminator": "7498",
+          "url": "/user/xldAMBld5YBaOP57/kyrie_strombom",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kyrie_strombom",
+          "twitch_display_name": "Kyrie_Strombom",
+          "twitch_channel": "https://www.twitch.tv/kyrie_strombom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -749,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-25T04:00:00.635Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

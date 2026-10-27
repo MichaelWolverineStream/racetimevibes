@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/curious-hera-1805",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/curious-hera-1805",
+    "data_url": "/alttpr-ladder/curious-hera-1805/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag\nladder/grabbag - https://alttpr.racing/getseed.php?race=4523 - (HashMushroom/HashFlute/HashFlute/HashSomaria/HashGreenPotion)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-08-08T14:30:00.125Z",
+    "started_at": "2026-08-08T15:00:00.171Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M47.532997S",
+        "finished_at": "2026-08-08T16:52:47.704Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2031,
+        "score_change": 307,
+        "comment": "162 - Tame enemizer, garbage item placements.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M34.231538S",
+        "finished_at": "2026-08-08T17:00:34.402Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -46,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M53.820247S",
+        "finished_at": "2026-08-08T17:02:53.991Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1654,
+        "score_change": -20,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g68jBkyANO",
+          "full_name": "Noob Scooter#0645",
+          "name": "Noob Scooter",
+          "discriminator": "0645",
+          "url": "/user/57ZKD3g68jBkyANO/noob-scooter",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "noob_g_scooter",
+          "twitch_display_name": "Noob_G_Scooter",
+          "twitch_channel": "https://www.twitch.tv/noob_g_scooter",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 588,
+        "score_change": -75,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-08T17:02:54.086Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

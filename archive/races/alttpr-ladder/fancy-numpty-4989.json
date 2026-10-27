@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/fancy-numpty-4989",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fancy-numpty-4989",
+    "data_url": "/alttpr-ladder/fancy-numpty-4989/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - True Pot Hunt\ntph2023 - https://alttpr.racing/getseed.php?race=111 - (Pendant/Boomerang/Green Potion/Moon Pearl/Compass)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-05-30T13:30:04.940Z",
+    "started_at": "2025-05-30T14:00:04.975Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzqNWYlM65",
+          "full_name": "Shinmaru#3292",
+          "name": "Shinmaru",
+          "discriminator": "3292",
+          "url": "/user/jZ2EGWbzqNWYlM65/shinmaru",
+          "avatar": "https://racetime.gg/media/popee.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "shinmaru007",
+          "twitch_display_name": "Shinmaru007",
+          "twitch_channel": "https://www.twitch.tv/shinmaru007",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M48.034224S",
+        "finished_at": "2025-05-30T15:31:53.009Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2163,
+        "score_change": 125,
+        "comment": "561 final pieces in mire",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M33.426301S",
+        "finished_at": "2025-05-30T15:36:38.401Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1807,
+        "score_change": 99,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VyMjB405Jv",
+          "full_name": "Blackirave#1438",
+          "name": "Blackirave",
+          "discriminator": "1438",
+          "url": "/user/Mewn83VyMjB405Jv/blackirave",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "blackirave",
+          "twitch_display_name": "blackirave",
+          "twitch_channel": "https://www.twitch.tv/blackirave",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M09.611812S",
+        "finished_at": "2025-05-30T15:37:14.586Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2271,
+        "score_change": -93,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-30T15:37:15.101Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

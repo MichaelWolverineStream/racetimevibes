@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:21Z",
+  "race": {
+    "name": "alttpr-ladder/gentle-desert-6495",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gentle-desert-6495",
+    "data_url": "/alttpr-ladder/gentle-desert-6495/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted w/ Starting Flute\nladder/inverted_startflute - https://alttpr.racing/getseed.php?race=2605 - (HashEmptyBottle/HashEmptyBottle/HashPendant/HashBoots/HashBoomerang)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-02-24T18:30:00.147Z",
+    "started_at": "2026-02-24T19:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M20.072966S",
+        "finished_at": "2026-02-24T20:49:20.161Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2066,
+        "score_change": 51,
+        "comment": "<174 ... by 4.  Nice full-clear.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3yVXdoZVKq1",
+          "full_name": "FlyingPlatipusDimitri#7034",
+          "name": "FlyingPlatipusDimitri",
+          "discriminator": "7034",
+          "url": "/user/RbOXG3yVXdoZVKq1/flyingplatipusdimitri",
+          "avatar": "https://racetime.gg/media/RbOXG3yVXdoZVKq1_lfuGozx.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "flyingplatipusdimitri",
+          "twitch_display_name": "FlyingPlatipusDimitri",
+          "twitch_channel": "https://www.twitch.tv/flyingplatipusdimitri",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M20.295819S",
+        "finished_at": "2026-02-24T20:50:20.384Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2341,
+        "score_change": 12,
+        "comment": "Nice AD",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M47.174348S",
+        "finished_at": "2026-02-24T20:50:47.263Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2374,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M51.310628S",
+        "finished_at": "2026-02-24T21:07:51.399Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2314,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2416,
+        "score_change": -17,
+        "comment": "no energie for this and baby is crying",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-24T21:07:51.543Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

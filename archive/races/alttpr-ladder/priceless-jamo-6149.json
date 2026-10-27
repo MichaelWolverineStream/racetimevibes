@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/priceless-jamo-6149",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/priceless-jamo-6149",
+    "data_url": "/alttpr-ladder/priceless-jamo-6149/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=1323 - (HashCompass/HashBook/HashGreenPotion/HashIceRod/HashQuake)",
+    "entrants_count": 7,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-11-02T11:30:00.089Z",
+    "started_at": "2025-11-02T12:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M13.749872S",
+        "finished_at": "2025-11-02T13:27:13.838Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1738,
+        "score_change": 54,
+        "comment": "Nice flute",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNye53lywqX",
+          "full_name": "Ticknaldo#0359",
+          "name": "Ticknaldo",
+          "discriminator": "0359",
+          "url": "/user/52QE8oNye53lywqX/ticknaldo",
+          "avatar": "https://racetime.gg/media/Ticki_Salutieren_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ticknaldo",
+          "twitch_display_name": "Ticknaldo",
+          "twitch_channel": "https://www.twitch.tv/ticknaldo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M14.184447S",
+        "finished_at": "2025-11-02T13:28:14.273Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2540,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLyeyW9QEya",
+          "full_name": "DrDiabetus#6943",
+          "name": "DrDiabetus",
+          "discriminator": "6943",
+          "url": "/user/NqO2YoLyeyW9QEya/drdiabetus",
+          "avatar": "https://racetime.gg/media/ZSS-min.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dr_diabetus",
+          "twitch_display_name": "dr_diabetus",
+          "twitch_channel": "https://www.twitch.tv/dr_diabetus",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M25.070813S",
+        "finished_at": "2025-11-02T13:30:25.159Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2596,
+        "score_change": -6,
+        "comment": "165 Cr, 2 deaths which cost some time as well as that gt big xd",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Va0eMonENK3l9pyJ",
+          "full_name": "Schieva96#7027",
+          "name": "Schieva96",
+          "discriminator": "7027",
+          "url": "/user/Va0eMonENK3l9pyJ/schieva96",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "schieva96",
+          "twitch_display_name": "Schieva96",
+          "twitch_channel": "https://www.twitch.tv/schieva96",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M04.244788S",
+        "finished_at": "2025-11-02T13:34:04.333Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1765,
+        "score_change": 121,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7QdyoV4GED",
+          "full_name": "Kromb1#1059",
+          "name": "Kromb1",
+          "discriminator": "1059",
+          "url": "/user/5JlzyB7QdyoV4GED/kromb1",
+          "avatar": "https://racetime.gg/media/Profilbild1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kromb4787",
+          "twitch_display_name": "kromb4787",
+          "twitch_channel": "https://www.twitch.tv/kromb4787",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M52.652917S",
+        "finished_at": "2025-11-02T13:34:52.741Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2250,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M55.967753S",
+        "finished_at": "2025-11-02T13:38:56.056Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2415,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2123,
+        "score_change": -28,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-02T13:38:56.130Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

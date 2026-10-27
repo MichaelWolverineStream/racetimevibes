@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:32Z",
+  "race": {
+    "name": "alttpr-ladder/splendid-hera-3283",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/splendid-hera-3283",
+    "data_url": "/alttpr-ladder/splendid-hera-3283/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Ambroz1a Ganonhunt\nladder/ambroz1a - https://alttpr.racing/getseed.php?race=2050 - (HashFlute/HashBook/HashCape/HashFlute/HashHeart)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-09T11:30:00.086Z",
+    "started_at": "2026-01-09T12:00:00.089Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M55.120127S",
+        "finished_at": "2026-01-09T13:15:55.209Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2926,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvJwmBJkg04",
+          "full_name": "Dominik0688#7163",
+          "name": "Dominik0688",
+          "discriminator": "7163",
+          "url": "/user/bpNAaBvJwmBJkg04/dominik0688",
+          "avatar": "https://racetime.gg/media/Absol3.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dominik0688",
+          "twitch_display_name": "dominik0688",
+          "twitch_channel": "https://www.twitch.tv/dominik0688",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H17M40.282400S",
+        "finished_at": "2026-01-09T13:17:40.371Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2589,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-09T13:17:40.433Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:50Z",
+  "race": {
+    "name": "alttpr-ladder/smelly-titos-2185",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/smelly-titos-2185",
+    "data_url": "/alttpr-ladder/smelly-titos-2185/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=4990 - (HashBigKey/HashGloves/HashPendant/HashGloves/HashFlute)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-09-19T23:30:00.159Z",
+    "started_at": "2026-09-20T00:00:00.093Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M51.465611S",
+        "finished_at": "2026-09-20T01:40:51.559Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2449,
+        "score_change": 13,
+        "comment": "169/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Va0eMonzvKol9pyJ",
+          "full_name": "dunbarthemighty#3082",
+          "name": "dunbarthemighty",
+          "discriminator": "3082",
+          "url": "/user/Va0eMonzvKol9pyJ/dunbarthemighty",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "dunbarthemighty",
+          "twitch_display_name": "dunbarthemighty",
+          "twitch_channel": "https://www.twitch.tv/dunbarthemighty",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M01.493747S",
+        "finished_at": "2026-09-20T01:51:01.587Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1425,
+        "score_change": 132,
+        "comment": "Should really learn the fire rod dupe so i dont have to do ip twice, 165cr",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz96voLPdye",
+          "full_name": "ShaneSah (Kennen)#5187",
+          "name": "ShaneSah (Kennen)",
+          "discriminator": "5187",
+          "url": "/user/GklxjWz96voLPdye/shanesah-kennen",
+          "avatar": "https://racetime.gg/media/Omega.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "shanesah",
+          "twitch_display_name": "ShaneSah",
+          "twitch_channel": "https://www.twitch.tv/shanesah",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M24.216147S",
+        "finished_at": "2026-09-20T01:58:24.309Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1114,
+        "score_change": 152,
+        "comment": "Me happy",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnV7oLKPnz",
+          "full_name": "DJCrabhat#0022",
+          "name": "DJCrabhat",
+          "discriminator": "0022",
+          "url": "/user/XY0eABdnV7oLKPnz/djcrabhat",
+          "avatar": "https://racetime.gg/media/crabhat-avatar-small.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "djcrabhat",
+          "twitch_display_name": "djcrabhat",
+          "twitch_channel": "https://www.twitch.tv/djcrabhat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H22M45.255818S",
+        "finished_at": "2026-09-20T02:22:45.349Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1273,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPl7kWe7P5Q",
+          "full_name": "1ganondwarf#0103",
+          "name": "1ganondwarf",
+          "discriminator": "0103",
+          "url": "/user/1jgrbWPl7kWe7P5Q/1ganondwarf",
+          "avatar": "https://racetime.gg/media/images_S0Ate97.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "1ganondwarf",
+          "twitch_display_name": "1ganondwarf",
+          "twitch_channel": "https://www.twitch.tv/1ganondwarf",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -621,
+        "comment": "I checked everything I could think of for power glove",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-20T02:22:45.473Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

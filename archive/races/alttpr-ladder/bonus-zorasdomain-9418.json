@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/bonus-zorasdomain-9418",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/bonus-zorasdomain-9418",
+    "data_url": "/alttpr-ladder/bonus-zorasdomain-9418/data",
+    "goal": {
+      "name": "Beat the game (Inverted)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=3779 - (HashBoomerang/HashTunic/HashMushroom/HashTunic/HashFlute)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-06-06T14:30:00.123Z",
+    "started_at": "2026-06-06T15:00:00.075Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M12.118601S",
+        "finished_at": "2026-06-06T16:51:12.194Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1460,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M58.204164S",
+        "finished_at": "2026-06-06T16:58:58.279Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2515,
+        "score_change": 27,
+        "comment": "178 - So much wrong-ordering, so little time.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXQ55B1y8q0",
+          "full_name": "DrBowser#9571",
+          "name": "DrBowser",
+          "discriminator": "9571",
+          "url": "/user/zM65aWXQ55B1y8q0/drbowser",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "drbowser9571",
+          "twitch_display_name": "DrBowser9571",
+          "twitch_channel": "https://www.twitch.tv/drbowser9571",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M14.083926S",
+        "finished_at": "2026-06-06T17:05:14.159Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1096,
+        "score_change": 544,
+        "comment": "hello spike cave, my old friend",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M05.124328S",
+        "finished_at": "2026-06-06T17:10:05.200Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2094,
+        "score_change": -48,
+        "comment": "ride that spike cave til the wheels fall off huh",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlE8J3aOP57",
+          "full_name": "DPMGames#2071",
+          "name": "DPMGames",
+          "discriminator": "2071",
+          "url": "/user/xldAMBlE8J3aOP57/dpmgames",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "dpmgames",
+          "twitch_display_name": "DPMGames",
+          "twitch_channel": "https://www.twitch.tv/dpmgames",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -310,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-06T17:10:05.255Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

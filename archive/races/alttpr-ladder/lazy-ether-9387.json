@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/lazy-ether-9387",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lazy-ether-9387",
+    "data_url": "/alttpr-ladder/lazy-ether-9387/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=3860 - (HashMirror/HashMagicPowder/HashBigKey/HashEmptyBottle/HashCape)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-06-13T08:30:00.114Z",
+    "started_at": "2026-06-13T09:00:00.098Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "8QGZrB22JvBNgk4V",
+          "full_name": "NTapple#1924",
+          "name": "NTapple",
+          "discriminator": "1924",
+          "url": "/user/8QGZrB22JvBNgk4V/ntapple",
+          "avatar": "https://racetime.gg/media/RacetimeGG.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ntapple",
+          "twitch_display_name": "NTapple",
+          "twitch_channel": "https://www.twitch.tv/ntapple",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M33.119632S",
+        "finished_at": "2026-06-13T10:19:33.218Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2005,
+        "score_change": 482,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M54.437060S",
+        "finished_at": "2026-06-13T10:19:54.536Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2808,
+        "score_change": -23,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB25yDWNgk4V",
+          "full_name": "LexaEnVie#8034",
+          "name": "LexaEnVie",
+          "discriminator": "8034",
+          "url": "/user/8QGZrB25yDWNgk4V/lexaenvie",
+          "avatar": "https://racetime.gg/media/8QGZrB25yDWNgk4V_UIEomC2.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "mrslexy",
+          "twitch_display_name": "LexaEnVie",
+          "twitch_channel": "https://www.twitch.tv/mrslexy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M22.529775S",
+        "finished_at": "2026-06-13T10:44:22.628Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 477,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1331,
+        "score_change": -14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-13T10:44:23.401Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

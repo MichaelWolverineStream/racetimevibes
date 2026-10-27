@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/speedy-tam-8302",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/speedy-tam-8302",
+    "data_url": "/alttpr-ladder/speedy-tam-8302/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=2079 - (HashMagicPowder/HashLamp/HashBombos/HashGloves/HashBombos)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-01-11T22:30:00.093Z",
+    "started_at": "2026-01-11T23:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M12.356732S",
+        "finished_at": "2026-01-12T00:49:12.445Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2652,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oN625olywqX",
+          "full_name": "Druu_Bragi#8605",
+          "name": "Druu_Bragi",
+          "discriminator": "8605",
+          "url": "/user/52QE8oN625olywqX/druu_bragi",
+          "avatar": "https://racetime.gg/media/52QE8oN625olywqX.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "druu_bragi",
+          "twitch_display_name": "Druu_Bragi",
+          "twitch_channel": "https://www.twitch.tv/druu_bragi",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H34M31.049941S",
+        "finished_at": "2026-01-12T01:34:31.138Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1322,
+        "score_change": 31,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlQrb3aOP57",
+          "full_name": "Frankie_Fusion#5465",
+          "name": "Frankie_Fusion",
+          "discriminator": "5465",
+          "url": "/user/xldAMBlQrb3aOP57/frankie_fusion",
+          "avatar": "https://racetime.gg/media/xldAMBlQrb3aOP57.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "frankie_fusion",
+          "twitch_display_name": "Frankie_Fusion",
+          "twitch_channel": "https://www.twitch.tv/frankie_fusion",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1986,
+        "score_change": -21,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-12T01:34:31.171Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

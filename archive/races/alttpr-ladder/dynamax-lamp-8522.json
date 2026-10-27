@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:01Z",
+  "race": {
+    "name": "alttpr-ladder/dynamax-lamp-8522",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dynamax-lamp-8522",
+    "data_url": "/alttpr-ladder/dynamax-lamp-8522/data",
+    "goal": {
+      "name": "Beat the game (Inverted)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=3994 - (HashFlute/HashIceRod/HashHammer/HashGloves/HashBook)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-06-24T12:30:00.153Z",
+    "started_at": "2026-06-24T13:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M05.447905S",
+        "finished_at": "2026-06-24T14:33:05.545Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2672,
+        "score_change": 336,
+        "comment": "oh it's not ad",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Va0eMonyMM3l9pyJ",
+          "full_name": "Pichu10u#1515",
+          "name": "Pichu10u",
+          "discriminator": "1515",
+          "url": "/user/Va0eMonyMM3l9pyJ/pichu10u",
+          "avatar": "https://racetime.gg/media/raichu_x_pika.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "pichu10u",
+          "twitch_display_name": "pichu10u",
+          "twitch_channel": "https://www.twitch.tv/pichu10u",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M14.332107S",
+        "finished_at": "2026-06-24T14:41:14.429Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2150,
+        "score_change": 215,
+        "comment": "163/216 - nice seed",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "MqzQPW4jbD31L2R5",
+          "full_name": "Koval#6866",
+          "name": "Koval",
+          "discriminator": "6866",
+          "url": "/user/MqzQPW4jbD31L2R5/koval",
+          "avatar": "https://racetime.gg/media/Logo-Koval_72ppi.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kovalwhite",
+          "twitch_display_name": "KovalWhite",
+          "twitch_channel": "https://www.twitch.tv/kovalwhite",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M32.516129S",
+        "finished_at": "2026-06-24T14:49:32.613Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 743,
+        "score_change": 895,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2578,
+        "score_change": -351,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-24T14:49:32.717Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

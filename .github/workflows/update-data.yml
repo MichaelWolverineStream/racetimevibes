@@ -24,16 +24,18 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Sync race archive
+        run: python3 scripts/race_archive.py
       - name: Build data
         run: python3 scripts/build_stats.py
       - name: Detect changes
         id: changes
-        # generated_at differs on every run, so ignore it when deciding whether to commit.
+        # generated_at differs on every run, so ignore it when deciding whether the site changed.
         run: |
           python3 - <<'EOF'
           import json, os, subprocess
 
-          changed = False
+          site = False
           for path in ("site/data/race-stats.json", "site/data/participants.json"):
               committed = subprocess.run(
                   ["git", "show", f"HEAD:{path}"],
@@ -44,24 +46,32 @@ jobs:
                   new = json.load(current)
               old.pop("generated_at", None)
               new.pop("generated_at", None)
-              changed = changed or old != new
+              site = site or old != new
 
-          print(f"Data changed: {changed}")
+          archive = bool(subprocess.run(
+              ["git", "status", "--porcelain", "--", "archive"],
+              check=True, capture_output=True, text=True,
+          ).stdout.strip())
+
+          print(f"Site changed: {site}; archive changed: {archive}")
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write(f"changed={'true' if changed else 'false'}\n")
+              output.write(f"site={'true' if site else 'false'}\n")
+              output.write(f"archive={'true' if archive else 'false'}\n")
           EOF
       - name: Commit and push
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.changes.outputs.site == 'true' || steps.changes.outputs.archive == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add site/data
+          # Leave out site files whose only change is generated_at.
+          if [ "${{ steps.changes.outputs.site }}" != "true" ]; then git checkout -- site/data; fi
+          git add archive site/data
           git commit -m "$(date -u +%F) data"
           git pull --rebase origin main
           git push origin HEAD:main
       # Pushes made with GITHUB_TOKEN do not trigger other workflows, so start the deploy explicitly.
       - name: Deploy
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.changes.outputs.site == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref main

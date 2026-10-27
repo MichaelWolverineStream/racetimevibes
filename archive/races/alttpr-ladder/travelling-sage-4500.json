@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/travelling-sage-4500",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/travelling-sage-4500",
+    "data_url": "/alttpr-ladder/travelling-sage-4500/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=4533 - (HashBigKey/HashFlippers/HashMap/HashIceRod/HashBugnet)",
+    "entrants_count": 5,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-08-09T10:30:00.110Z",
+    "started_at": "2026-08-09T11:00:00.094Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M47.593114S",
+        "finished_at": "2026-08-09T12:58:47.688Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1956,
+        "score_change": 103,
+        "comment": "154 CR, swamp sk for go.  nice hammer/FRod",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M15.803977S",
+        "finished_at": "2026-08-09T13:03:15.898Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 965,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M59.060868S",
+        "finished_at": "2026-08-09T13:10:59.155Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2315,
+        "score_change": -7,
+        "comment": "2:01 aginah check, new world record",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQG9yoK4xrZ",
+          "full_name": "Osora90#4406",
+          "name": "Osora90",
+          "discriminator": "4406",
+          "url": "/user/z56VnBQG9yoK4xrZ/osora90",
+          "avatar": "https://racetime.gg/media/ShinyUmbreon_smug_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "osora90",
+          "twitch_display_name": "Osora90",
+          "twitch_channel": "https://www.twitch.tv/osora90",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2219,
+        "score_change": -529,
+        "comment": "Work is calling...",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5zbdeWeRwjBYPK8O",
+          "full_name": "skunkner#0974",
+          "name": "skunkner",
+          "discriminator": "0974",
+          "url": "/user/5zbdeWeRwjBYPK8O/skunkner",
+          "avatar": "https://racetime.gg/media/256_SirYoshi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "skunkner",
+          "twitch_display_name": "skunkner",
+          "twitch_channel": "https://www.twitch.tv/skunkner",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1169,
+        "score_change": 172,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-09T13:10:59.270Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

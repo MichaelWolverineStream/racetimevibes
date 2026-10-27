@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:32Z",
+  "race": {
+    "name": "alttpr-ladder/superb-swamp-1446",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/superb-swamp-1446",
+    "data_url": "/alttpr-ladder/superb-swamp-1446/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - XDHunt Plus\njem041/xdhuntplus - https://alttpr.racing/getseed.php?race=1912 - (HashBook/HashHammer/HashMap/HashLamp/HashEmptyBottle)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-24T13:30:00.132Z",
+    "started_at": "2025-12-24T14:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M03.720137S",
+        "finished_at": "2025-12-24T15:51:03.797Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3288,
+        "score_change": 8,
+        "comment": "180, CTSK go (plus DP/MM entrances), back to bedge",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOMOvo4qAyj",
+          "full_name": "Deign#3244",
+          "name": "Deign",
+          "discriminator": "3244",
+          "url": "/user/NZ1KRBOMOvo4qAyj/deign",
+          "avatar": "https://racetime.gg/media/96x96.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "deign",
+          "twitch_display_name": "Deign",
+          "twitch_channel": "https://www.twitch.tv/deign",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M10.587756S",
+        "finished_at": "2025-12-24T16:07:10.665Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2967,
+        "score_change": 2,
+        "comment": "CR: 201 -- CT2 for go -- swamp glove first glove -- IP Keys screwed me so hard",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "AEk8wpoknG35KQyV",
+          "full_name": "Eykir#2885",
+          "name": "Eykir",
+          "discriminator": "2885",
+          "url": "/user/AEk8wpoknG35KQyV/eykir",
+          "avatar": "https://racetime.gg/media/Brian.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "eykir",
+          "twitch_display_name": "Eykir",
+          "twitch_channel": "https://www.twitch.tv/eykir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H24M33.783368S",
+        "finished_at": "2025-12-24T16:24:33.860Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2767,
+        "score_change": -10,
+        "comment": "CR 204 - Late to Mirror, late to hammer, could have 12/12, CT BK go.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-24T16:24:33.980Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

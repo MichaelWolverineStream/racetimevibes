@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/silly-swampofevil-2944",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/silly-swampofevil-2944",
+    "data_url": "/alttpr-ladder/silly-swampofevil-2944/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=1200 - (HashLamp/HashGloves/HashFlute/HashShovel/HashFlute)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-18T00:30:00.109Z",
+    "started_at": "2025-10-18T01:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "N5zbdeWe64BYPK8O",
+          "full_name": "matt7898#1275",
+          "name": "matt7898",
+          "discriminator": "1275",
+          "url": "/user/N5zbdeWe64BYPK8O/matt7898",
+          "avatar": "https://racetime.gg/media/darklink-min_2.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "matt7898",
+          "twitch_display_name": "matt7898",
+          "twitch_channel": "https://www.twitch.tv/matt7898",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M48.912920S",
+        "finished_at": "2025-10-18T03:15:48.990Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2816,
+        "score_change": 40,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M45.379588S",
+        "finished_at": "2025-10-18T03:20:45.457Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2756,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H26M25.892881S",
+        "finished_at": "2025-10-18T03:26:25.970Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2206,
+        "score_change": -15,
+        "comment": "more than 174. Pedestal was the only thing that I did not check, LOL. Imagine skipping the vanilla big key chest in EP due to logic hunting - it surely won't be vanilla, right?! :p",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-18T03:26:26.014Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/quick-deathmountain-6285",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/quick-deathmountain-6285",
+    "data_url": "/alttpr-ladder/quick-deathmountain-6285/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=1541 - (HashFlute/HashBoots/HashMirror/HashBombs/HashBow)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-23T16:30:00.092Z",
+    "started_at": "2025-11-23T17:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M14.113961S",
+        "finished_at": "2025-11-23T19:03:14.211Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2549,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M25.286928S",
+        "finished_at": "2025-11-23T19:08:25.384Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2719,
+        "score_change": -8,
+        "comment": "193/216",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-23T19:08:25.502Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

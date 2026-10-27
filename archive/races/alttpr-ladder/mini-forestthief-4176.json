@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/mini-forestthief-4176",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mini-forestthief-4176",
+    "data_url": "/alttpr-ladder/mini-forestthief-4176/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Standard\nstandard - https://alttpr.racing/getseed.php?race=422 - (Book/Compass/Flute/Gloves/Cape)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-08T12:30:00.193Z",
+    "started_at": "2025-07-08T13:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "17DexWE8E1oak64R",
+          "full_name": "Captain_1977#2001",
+          "name": "Captain_1977",
+          "discriminator": "2001",
+          "url": "/user/17DexWE8E1oak64R/captain_1977",
+          "avatar": "https://racetime.gg/media/17DexWE8E1oak64R.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "captain_1977",
+          "twitch_display_name": "Captain_1977",
+          "twitch_channel": "https://www.twitch.tv/captain_1977",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H21M36.360389S",
+        "finished_at": "2025-07-08T14:21:36.439Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1709,
+        "score_change": 93,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbZ7RWYlM65",
+          "full_name": "Sukezss#1184",
+          "name": "Sukezss",
+          "discriminator": "1184",
+          "url": "/user/jZ2EGWbZ7RWYlM65/sukezss",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sukezss",
+          "twitch_display_name": "Sukezss",
+          "twitch_channel": "https://www.twitch.tv/sukezss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H23M11.389054S",
+        "finished_at": "2025-07-08T14:23:11.468Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 846,
+        "score_change": 652,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H24M49.919420S",
+        "finished_at": "2025-07-08T14:24:49.998Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1286,
+        "score_change": 175,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M56.555265S",
+        "finished_at": "2025-07-08T14:27:56.634Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2345,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M19.308420S",
+        "finished_at": "2025-07-08T14:40:19.387Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2336,
+        "score_change": -417,
+        "comment": "Did forget about checking Hype Cave, Whooops",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOQv4o4qAyj",
+          "full_name": "fernap#8638",
+          "name": "fernap",
+          "discriminator": "8638",
+          "url": "/user/NZ1KRBOQv4o4qAyj/fernap",
+          "avatar": "https://racetime.gg/media/NZ1KRBOQv4o4qAyj.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "fernap",
+          "twitch_display_name": "fernap",
+          "twitch_channel": "https://www.twitch.tv/fernap",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2023,
+        "score_change": -113,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-08T14:40:19.427Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

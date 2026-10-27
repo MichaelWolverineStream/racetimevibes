@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/gnarly-pod-1668",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gnarly-pod-1668",
+    "data_url": "/alttpr-ladder/gnarly-pod-1668/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=3301 - (HashCape/HashSomaria/HashPendant/HashMoonPearl/HashShield)",
+    "entrants_count": 7,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-04-25T00:30:00.079Z",
+    "started_at": "2026-04-25T01:00:00.061Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "AEk8wpokDmW5KQyV",
+          "full_name": "zelgadissan#0529",
+          "name": "zelgadissan",
+          "discriminator": "0529",
+          "url": "/user/AEk8wpokDmW5KQyV/zelgadissan",
+          "avatar": "https://racetime.gg/media/Fsjal_phoenix_wright.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zelgadissan",
+          "twitch_display_name": "zelgadissan",
+          "twitch_channel": "https://www.twitch.tv/zelgadissan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M09.764388S",
+        "finished_at": "2026-04-25T03:02:09.826Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3251,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M54.973916S",
+        "finished_at": "2026-04-25T03:06:55.035Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2738,
+        "score_change": 10,
+        "comment": "191/216 nice swords & flute",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoYZlAWRdm5v",
+          "full_name": "Magnit Handz#9960",
+          "name": "Magnit Handz",
+          "discriminator": "9960",
+          "url": "/user/JrM6PoYZlAWRdm5v/magnit-handz",
+          "avatar": "https://racetime.gg/media/Magnit_Hands_Profile_Crop.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnithandz",
+          "twitch_display_name": "MagnitHandz",
+          "twitch_channel": "https://www.twitch.tv/magnithandz",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M32.878543S",
+        "finished_at": "2026-04-25T03:12:32.940Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3021,
+        "score_change": -5,
+        "comment": "I hated that Sequence of finding The Mountain into those Two Big Keys before having Actual Boots",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "ZbpNAaBvArWJkg04",
+          "full_name": "wulfy#1470",
+          "name": "wulfy",
+          "discriminator": "1470",
+          "url": "/user/ZbpNAaBvArWJkg04/wulfy",
+          "avatar": "https://racetime.gg/media/icon_100.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "wulfy83",
+          "twitch_display_name": "wulfy83",
+          "twitch_channel": "https://www.twitch.tv/wulfy83",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H13M35.606882S",
+        "finished_at": "2026-04-25T03:13:35.668Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 957,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": true,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "LNqO2YoL8bo9QEya",
+          "full_name": "Yoinkerswife#4156",
+          "name": "Yoinkerswife",
+          "discriminator": "4156",
+          "url": "/user/LNqO2YoL8bo9QEya/yoinkerswife",
+          "avatar": "https://racetime.gg/media/karrieavatar2.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "yoinkerswife",
+          "twitch_display_name": "Yoinkerswife",
+          "twitch_channel": "https://www.twitch.tv/yoinkerswife",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H13M53.781767S",
+        "finished_at": "2026-04-25T04:13:53.843Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1589,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAVndWmq6db",
+          "full_name": "cheffy#3717",
+          "name": "cheffy",
+          "discriminator": "3717",
+          "url": "/user/wezlNoAVndWmq6db/cheffy",
+          "avatar": "https://racetime.gg/media/rcr2.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "cheffy111",
+          "twitch_display_name": "cheffy111",
+          "twitch_channel": "https://www.twitch.tv/cheffy111",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2756,
+        "score_change": -24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orGOEWqDJX0",
+          "full_name": "doctorearworm",
+          "name": "doctorearworm",
+          "discriminator": null,
+          "url": "/user/doctorearworm",
+          "avatar": "https://racetime.gg/media/drworm_LdyUZ6x.png",
+          "pronouns": "he/they",
+          "flair": "supporter moderator",
+          "twitch_name": "doctorearworm",
+          "twitch_display_name": "doctorearworm",
+          "twitch_channel": "https://www.twitch.tv/doctorearworm",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2374,
+        "score_change": -22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-25T04:13:53.873Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

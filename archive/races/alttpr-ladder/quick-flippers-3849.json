@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/quick-flippers-3849",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/quick-flippers-3849",
+    "data_url": "/alttpr-ladder/quick-flippers-3849/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=3864 - (HashPendant/HashShield/HashIceRod/HashHammer/HashBow)",
+    "entrants_count": 10,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 3,
+    "opened_at": "2026-06-13T17:30:00.168Z",
+    "started_at": "2026-06-13T18:00:00.103Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M36.656869S",
+        "finished_at": "2026-06-13T19:28:36.760Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2432,
+        "score_change": 69,
+        "comment": "143 - Just dip your pendant dungeons in casboots.  What could go wrong?",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPQA8Be7P5Q",
+          "full_name": "Xall#2021",
+          "name": "Xall",
+          "discriminator": "2021",
+          "url": "/user/1jgrbWPQA8Be7P5Q/xall",
+          "avatar": "https://racetime.gg/media/1_chQvSpU.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "xallgg",
+          "twitch_display_name": "XallGG",
+          "twitch_channel": "https://www.twitch.tv/xallgg",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M29.504942S",
+        "finished_at": "2026-06-13T19:34:29.608Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 1277,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mqDx3Pd1Xr",
+          "full_name": "ky24#5207",
+          "name": "ky24",
+          "discriminator": "5207",
+          "url": "/user/R6ym83mqDx3Pd1Xr/ky24",
+          "avatar": "https://racetime.gg/media/R6ym83mqDx3Pd1Xr.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ky__24",
+          "twitch_display_name": "ky__24",
+          "twitch_channel": "https://www.twitch.tv/ky__24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M08.485786S",
+        "finished_at": "2026-06-13T19:36:08.589Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1970,
+        "score_change": 130,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz2epWLPdye",
+          "full_name": "Jean-Christophe (J-C)#2162",
+          "name": "Jean-Christophe (J-C)",
+          "discriminator": "2162",
+          "url": "/user/GklxjWz2epWLPdye/jean-christophe-j-c",
+          "avatar": "https://racetime.gg/media/jc_sua_poude.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "divergence1048596",
+          "twitch_display_name": "divergence1048596",
+          "twitch_channel": "https://www.twitch.tv/divergence1048596",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M15.287616S",
+        "finished_at": "2026-06-13T19:46:15.391Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1636,
+        "score_change": 255,
+        "comment": "Took time to check ped, nice",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGadaBMVr6Z",
+          "full_name": "Skullrusha#3122",
+          "name": "Skullrusha",
+          "discriminator": "3122",
+          "url": "/user/Aa5veoGadaBMVr6Z/skullrusha",
+          "avatar": "https://racetime.gg/media/Aa5veoGadaBMVr6Z.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "skullrusha5",
+          "twitch_display_name": "Skullrusha5",
+          "twitch_channel": "https://www.twitch.tv/skullrusha5",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M21.226244S",
+        "finished_at": "2026-06-13T19:46:21.330Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1846,
+        "score_change": 35,
+        "comment": "Bombos go, bad moldorm costs me a place XD",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M49.627497S",
+        "finished_at": "2026-06-13T19:51:49.731Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1331,
+        "score_change": 65,
+        "comment": "pulled ped lol",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M19.528202S",
+        "finished_at": "2026-06-13T20:02:19.631Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1325,
+        "score_change": 38,
+        "comment": "161: go mode Bombos on TR?",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2247,
+        "score_change": -45,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlQrb3aOP57",
+          "full_name": "Frankie_Fusion#5465",
+          "name": "Frankie_Fusion",
+          "discriminator": "5465",
+          "url": "/user/xldAMBlQrb3aOP57/frankie_fusion",
+          "avatar": "https://racetime.gg/media/xldAMBlQrb3aOP57.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "frankie_fusion",
+          "twitch_display_name": "Frankie_Fusion",
+          "twitch_channel": "https://www.twitch.tv/frankie_fusion",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1816,
+        "score_change": -135,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqOmR35k8eb",
+          "full_name": "PeteZaiolo#9821",
+          "name": "PeteZaiolo",
+          "discriminator": "9821",
+          "url": "/user/XzVwZWqOmR35k8eb/petezaiolo",
+          "avatar": "https://racetime.gg/media/XzVwZWqOmR35k8eb.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "petezaiolo",
+          "twitch_display_name": "PeteZaiolo",
+          "twitch_channel": "https://www.twitch.tv/petezaiolo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1567,
+        "score_change": -101,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-13T20:02:19.736Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/swag-eastern-4918",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/swag-eastern-4918",
+    "data_url": "/alttpr-ladder/swag-eastern-4918/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open Boots\nladder/openboots - https://alttpr.racing/getseed.php?race=2152 - (HashBook/HashBombos/HashSomaria/HashQuake/HashTunic)",
+    "entrants_count": 6,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-01-18T00:30:00.095Z",
+    "started_at": "2026-01-18T01:00:00.225Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83mqDx3Pd1Xr",
+          "full_name": "ky24#5207",
+          "name": "ky24",
+          "discriminator": "5207",
+          "url": "/user/R6ym83mqDx3Pd1Xr/ky24",
+          "avatar": "https://racetime.gg/media/R6ym83mqDx3Pd1Xr.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ky__24",
+          "twitch_display_name": "ky__24",
+          "twitch_channel": "https://www.twitch.tv/ky__24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M03.981361S",
+        "finished_at": "2026-01-18T02:32:04.206Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2248,
+        "score_change": 54,
+        "comment": "175 go mode mirror",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M25.719331S",
+        "finished_at": "2026-01-18T02:32:25.944Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2666,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M29.891892S",
+        "finished_at": "2026-01-18T02:44:30.117Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2475,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXbPk31y8q0",
+          "full_name": "WhiskeyBill25#0457",
+          "name": "WhiskeyBill25",
+          "discriminator": "0457",
+          "url": "/user/zM65aWXbPk31y8q0/whiskeybill25",
+          "avatar": "https://racetime.gg/media/zM65aWXbPk31y8q0_5AdHM2p.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "whiskeybill25",
+          "twitch_display_name": "whiskeybill25",
+          "twitch_channel": "https://www.twitch.tv/whiskeybill25",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H29M59.948146S",
+        "finished_at": "2026-01-18T03:30:00.173Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1353,
+        "score_change": 19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1198,
+        "score_change": -31,
+        "comment": "I have an emergency , and have to go... see ya next race",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1188,
+        "score_change": 1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-18T03:30:00.313Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

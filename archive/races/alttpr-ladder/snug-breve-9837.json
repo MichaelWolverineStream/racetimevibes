@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/snug-breve-9837",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/snug-breve-9837",
+    "data_url": "/alttpr-ladder/snug-breve-9837/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Logical Enemizer w/ Random Boss Shuffle\nkaesden/open_logicalenemizer - https://alttpr.racing/getseed.php?race=1365 - (HashBoomerang/HashBoots/HashBugnet/HashBombs/HashGloves)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-07T17:30:00.088Z",
+    "started_at": "2025-11-07T18:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "52QE8oNye53lywqX",
+          "full_name": "Ticknaldo#0359",
+          "name": "Ticknaldo",
+          "discriminator": "0359",
+          "url": "/user/52QE8oNye53lywqX/ticknaldo",
+          "avatar": "https://racetime.gg/media/Ticki_Salutieren_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ticknaldo",
+          "twitch_display_name": "Ticknaldo",
+          "twitch_channel": "https://www.twitch.tv/ticknaldo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M30.531910S",
+        "finished_at": "2025-11-07T19:35:30.609Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2588,
+        "score_change": 25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "q5rNGD3Dla39blOy",
+          "full_name": "IBKarma#5177",
+          "name": "IBKarma",
+          "discriminator": "5177",
+          "url": "/user/q5rNGD3Dla39blOy/ibkarma",
+          "avatar": "https://racetime.gg/media/sith_lord_by_maderrin_d4r8zee-fullview.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ib_karma",
+          "twitch_display_name": "IB_Karma",
+          "twitch_channel": "https://www.twitch.tv/ib_karma",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M22.537436S",
+        "finished_at": "2025-11-07T19:44:22.615Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2433,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M07.579672S",
+        "finished_at": "2025-11-07T19:52:07.657Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2073,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M10.579369S",
+        "finished_at": "2025-11-07T19:58:10.657Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2365,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wdm1LPWj7ABEnVx6",
+          "full_name": "skipfrosch#5987",
+          "name": "skipfrosch",
+          "discriminator": "5987",
+          "url": "/user/wdm1LPWj7ABEnVx6/skipfrosch",
+          "avatar": "https://racetime.gg/media/tumblr_7abc93c9b58760ec67bee0fee8bbe3e0_94214413_640.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "skipfrosch",
+          "twitch_display_name": "skipfrosch",
+          "twitch_channel": "https://www.twitch.tv/skipfrosch",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M33.598291S",
+        "finished_at": "2025-11-07T20:00:33.675Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2000,
+        "score_change": -193,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-07T20:00:33.720Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/saucy-swamp-7998",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/saucy-swamp-7998",
+    "data_url": "/alttpr-ladder/saucy-swamp-7998/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag\nladder/grabbag - https://alttpr.racing/getseed.php?race=4464 - (HashBigKey/HashShield/HashIceRod/HashHookshot/HashLamp)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-03T17:30:00.198Z",
+    "started_at": "2026-08-03T18:00:00.157Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M46.168149S",
+        "finished_at": "2026-08-03T19:53:46.326Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2350,
+        "score_change": 66,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "MqzQPW4jbD31L2R5",
+          "full_name": "Koval#6866",
+          "name": "Koval",
+          "discriminator": "6866",
+          "url": "/user/MqzQPW4jbD31L2R5/koval",
+          "avatar": "https://racetime.gg/media/Logo-Koval_72ppi.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kovalwhite",
+          "twitch_display_name": "KovalWhite",
+          "twitch_channel": "https://www.twitch.tv/kovalwhite",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M03.498440S",
+        "finished_at": "2026-08-03T20:00:03.656Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1228,
+        "score_change": 408,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H00M31.130009S",
+        "finished_at": "2026-08-03T20:00:31.287Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2604,
+        "score_change": -51,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-03T20:00:31.308Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

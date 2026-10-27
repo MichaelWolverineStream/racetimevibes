@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/tactical-mudora-0360",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/tactical-mudora-0360",
+    "data_url": "/alttpr-ladder/tactical-mudora-0360/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=1431 - (HashBoomerang/HashShovel/HashMagicPowder/HashBombos/HashLamp)",
+    "entrants_count": 4,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-11-14T10:30:00.078Z",
+    "started_at": "2025-11-14T11:00:00.072Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "JXzVwZWqnzB5k8eb",
+          "full_name": "Jeddoman#6705",
+          "name": "Jeddoman",
+          "discriminator": "6705",
+          "url": "/user/JXzVwZWqnzB5k8eb/jeddoman",
+          "avatar": "https://racetime.gg/media/7515b457889eeb4b313c80786c31415e.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jeddoman",
+          "twitch_display_name": "jeddoman",
+          "twitch_channel": "https://www.twitch.tv/jeddoman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M52.981991S",
+        "finished_at": "2025-11-14T13:20:53.054Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2297,
+        "score_change": 68,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H24M27.190227S",
+        "finished_at": "2025-11-14T13:24:27.263Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2804,
+        "score_change": -11,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2405,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2362,
+        "score_change": -3,
+        "comment": "times up wife comes early home so must prepare food",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-14T13:24:27.367Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

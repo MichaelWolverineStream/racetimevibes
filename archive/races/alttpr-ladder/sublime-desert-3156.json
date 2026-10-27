@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:13Z",
+  "race": {
+    "name": "alttpr-ladder/sublime-desert-3156",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sublime-desert-3156",
+    "data_url": "/alttpr-ladder/sublime-desert-3156/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=3241 - (HashGreenPotion/HashHammer/HashMirror/HashGloves/HashBow)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-04-20T01:30:00.145Z",
+    "started_at": "2026-04-20T02:00:00.065Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "52QE8oNvlvolywqX",
+          "full_name": "It's me, Facebones!#4169",
+          "name": "It's me, Facebones!",
+          "discriminator": "4169",
+          "url": "/user/52QE8oNvlvolywqX/its-me-facebones",
+          "avatar": "https://racetime.gg/media/52QE8oNvlvolywqX_LxMlaHp.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "itsmefacebones",
+          "twitch_display_name": "itsmefacebones",
+          "twitch_channel": "https://www.twitch.tv/itsmefacebones",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M24.860684S",
+        "finished_at": "2026-04-20T03:49:24.926Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2097,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWE8E1oak64R",
+          "full_name": "Captain_1977#2001",
+          "name": "Captain_1977",
+          "discriminator": "2001",
+          "url": "/user/17DexWE8E1oak64R/captain_1977",
+          "avatar": "https://racetime.gg/media/17DexWE8E1oak64R.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "captain_1977",
+          "twitch_display_name": "Captain_1977",
+          "twitch_channel": "https://www.twitch.tv/captain_1977",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M33.370052S",
+        "finished_at": "2026-04-20T03:58:33.435Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1814,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdbl5oLKPnz",
+          "full_name": "treesapthief#7588",
+          "name": "treesapthief",
+          "discriminator": "7588",
+          "url": "/user/XY0eABdbl5oLKPnz/treesapthief",
+          "avatar": "https://racetime.gg/media/treesapthief_logo_inv.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "treesapthief",
+          "twitch_display_name": "TreeSapThief",
+          "twitch_channel": "https://www.twitch.tv/treesapthief",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M16.835278S",
+        "finished_at": "2026-04-20T04:03:16.901Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1564,
+        "score_change": -20,
+        "comment": "dipped 2 wrong pendant dungeons, TR without IR worked, should've dipped right side POD, Ganon fight was grade F. 10 lost minutes.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1168,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-20T04:03:17.289Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

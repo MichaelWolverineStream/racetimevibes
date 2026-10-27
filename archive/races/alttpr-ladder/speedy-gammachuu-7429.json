@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/speedy-gammachuu-7429",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/speedy-gammachuu-7429",
+    "data_url": "/alttpr-ladder/speedy-gammachuu-7429/data",
+    "goal": {
+      "name": "Beat the game (Spoiler)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [spoiler] - Spoiler - No GT Boots - Open Keysanity 7/7\nladder/nogtboots_keysanity - https://alttpr.racing/getseed.php?race=4334 - (HashEmptyBottle/HashMap/HashCape/HashLamp/HashCompass)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-23T20:30:00.157Z",
+    "started_at": "2026-07-23T21:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "RbOXG3y89OBZVKq1",
+          "full_name": "MalXantholos#6990",
+          "name": "MalXantholos",
+          "discriminator": "6990",
+          "url": "/user/RbOXG3y89OBZVKq1/malxantholos",
+          "avatar": "https://racetime.gg/media/Profil.PNG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "malxantholos",
+          "twitch_display_name": "MalXantholos",
+          "twitch_channel": "https://www.twitch.tv/malxantholos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H14M08.042087S",
+        "finished_at": "2026-07-23T22:14:08.125Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1830,
+        "score_change": 289,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "nxMQeoxwlE3apX0A",
+          "full_name": "Offiziell_Alex2k6#7628",
+          "name": "Offiziell_Alex2k6",
+          "discriminator": "7628",
+          "url": "/user/nxMQeoxwlE3apX0A/offiziell_alex2k6",
+          "avatar": "https://racetime.gg/media/a24c460a714e5e84c14b528ed2f00bd6.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "offiziell_alex2k6",
+          "twitch_display_name": "offiziell_alex2k6",
+          "twitch_channel": "https://www.twitch.tv/offiziell_alex2k6",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H16M32.879545S",
+        "finished_at": "2026-07-23T22:16:32.963Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -81,
+        "comment": "you love the mountain? - here we go",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-23T22:16:33.064Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

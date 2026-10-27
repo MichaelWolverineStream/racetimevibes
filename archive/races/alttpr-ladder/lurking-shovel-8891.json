@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/lurking-shovel-8891",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lurking-shovel-8891",
+    "data_url": "/alttpr-ladder/lurking-shovel-8891/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keydrop Boots\nadkdb - https://alttpr.racing/getseed.php?race=263 - (Hookshot/Green Potion/Flute/Moon Pearl/Flippers)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-18T12:30:03.196Z",
+    "started_at": "2025-06-18T13:00:03.192Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "b52QE8oNRJolywqX",
+          "full_name": "Jem#7684",
+          "name": "Jem",
+          "discriminator": "7684",
+          "url": "/user/b52QE8oNRJolywqX/jem",
+          "avatar": "https://racetime.gg/media/apple-sama.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jem041",
+          "twitch_display_name": "Jem041",
+          "twitch_channel": "https://www.twitch.tv/jem041",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M33.345358S",
+        "finished_at": "2025-06-18T14:36:36.537Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3534,
+        "score_change": 165,
+        "comment": "spoooooooooooooooooky",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRNvRWmqXen",
+          "full_name": "crackerito#3618",
+          "name": "crackerito",
+          "discriminator": "3618",
+          "url": "/user/497NdWRNvRWmqXen/crackerito",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "crackerito88",
+          "twitch_display_name": "crackerito88",
+          "twitch_channel": "https://www.twitch.tv/crackerito88",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M24.636580S",
+        "finished_at": "2025-06-18T14:50:27.828Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3087,
+        "score_change": 75,
+        "comment": "double dipped every dungeon except for IP and SP lol",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M19.143882S",
+        "finished_at": "2025-06-18T14:53:22.336Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3426,
+        "score_change": -6,
+        "comment": "20 hearts yaaaaaaay",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3262,
+        "score_change": -85,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-18T14:53:22.421Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

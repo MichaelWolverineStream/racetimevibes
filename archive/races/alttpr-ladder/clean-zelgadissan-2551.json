@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/clean-zelgadissan-2551",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clean-zelgadissan-2551",
+    "data_url": "/alttpr-ladder/clean-zelgadissan-2551/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag\nladder/grabbag - https://alttpr.racing/getseed.php?race=3403 - (HashBombos/HashHammer/HashIceRod/HashCape/HashEther)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-06T06:30:00.096Z",
+    "started_at": "2026-05-06T07:00:00.165Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H05M53.992438S",
+        "finished_at": "2026-05-06T08:05:54.157Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1505,
+        "score_change": 683,
+        "comment": "pretty much godroutet except of 1 or 2 things",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H09M41.821262S",
+        "finished_at": "2026-05-06T08:09:41.986Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 539,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N9rVpW9b6NBjq8Ll",
+          "full_name": "wallyberto_#1986",
+          "name": "wallyberto_",
+          "discriminator": "1986",
+          "url": "/user/N9rVpW9b6NBjq8Ll/wallyberto",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wallyberto_",
+          "twitch_display_name": "wallyberto_",
+          "twitch_channel": "https://www.twitch.tv/wallyberto_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M16.367989S",
+        "finished_at": "2026-05-06T08:56:16.533Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1332,
+        "score_change": -198,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-06T08:56:16.656Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/clumsy-hookshot-2123",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clumsy-hookshot-2123",
+    "data_url": "/alttpr-ladder/clumsy-hookshot-2123/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=5082 - (HashMagicPowder/HashMirror/HashShield/HashBook/HashCape)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-09-27T15:30:00.158Z",
+    "started_at": "2026-09-27T16:00:00.095Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pXyW2Vwv9",
+          "full_name": "Teto#2797",
+          "name": "Teto",
+          "discriminator": "2797",
+          "url": "/user/lYZa5B5pXyW2Vwv9/teto",
+          "avatar": "https://racetime.gg/media/a_teto-profile_image-c100493dba08a084-300x300.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "teto",
+          "twitch_display_name": "Teto",
+          "twitch_channel": "https://www.twitch.tv/teto",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M59.050353S",
+        "finished_at": "2026-09-27T17:32:59.145Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3048,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "MqzQPW4jbD31L2R5",
+          "full_name": "Koval#6866",
+          "name": "Koval",
+          "discriminator": "6866",
+          "url": "/user/MqzQPW4jbD31L2R5/koval",
+          "avatar": "https://racetime.gg/media/Logo-Koval_72ppi.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kovalwhite",
+          "twitch_display_name": "KovalWhite",
+          "twitch_channel": "https://www.twitch.tv/kovalwhite",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M08.825660S",
+        "finished_at": "2026-09-27T17:34:08.920Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1946,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M58.024993S",
+        "finished_at": "2026-09-27T17:34:58.120Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3174,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLyeyW9QEya",
+          "full_name": "DrDiabetus#6943",
+          "name": "DrDiabetus",
+          "discriminator": "6943",
+          "url": "/user/NqO2YoLyeyW9QEya/drdiabetus",
+          "avatar": "https://racetime.gg/media/ZSS-min.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dr_diabetus",
+          "twitch_display_name": "dr_diabetus",
+          "twitch_channel": "https://www.twitch.tv/dr_diabetus",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M40.671052S",
+        "finished_at": "2026-09-27T17:36:40.766Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2422,
+        "score_change": null,
+        "comment": "quake gomode xd otherwise i owuld be done like 10 minutes earlier",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": null,
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M12.528551S",
+        "finished_at": "2026-09-27T17:40:12.623Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M14.772073S",
+        "finished_at": "2026-09-27T17:40:14.867Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2794,
+        "score_change": null,
+        "comment": "don't leave skull early",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "kzM65aWXkao1y8q0",
+          "full_name": "Illus#6451",
+          "name": "Illus",
+          "discriminator": "6451",
+          "url": "/user/kzM65aWXkao1y8q0/illus",
+          "avatar": "https://racetime.gg/media/Hatsune_Priconne.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "illus24",
+          "twitch_display_name": "Illus24",
+          "twitch_channel": "https://www.twitch.tv/illus24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M17.502840S",
+        "finished_at": "2026-09-27T17:43:17.598Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 2765,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-27T17:43:17.678Z",
+    "cancelled_at": null,
+    "recordable": false,
+    "recorded": false
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/sleepy-pieceofheart-3958",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sleepy-pieceofheart-3958",
+    "data_url": "/alttpr-ladder/sleepy-pieceofheart-3958/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=5173 - (HashQuake/HashCape/HashBombs/HashBow/HashCape)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-05T04:30:00.154Z",
+    "started_at": "2026-10-05T05:00:00.112Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M04.251005S",
+        "finished_at": "2026-10-05T07:02:04.363Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2623,
+        "score_change": 18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M20.786127S",
+        "finished_at": "2026-10-05T07:05:20.898Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2505,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M13.151139S",
+        "finished_at": "2026-10-05T07:09:13.263Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2463,
+        "score_change": -16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orRL1oqDJX0",
+          "full_name": "Leaf#1740",
+          "name": "Leaf",
+          "discriminator": "1740",
+          "url": "/user/rZyM4orRL1oqDJX0/leaf",
+          "avatar": "https://racetime.gg/media/rZyM4orRL1oqDJX0_zmhNzp5.jpg",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "windblown_leaf",
+          "twitch_display_name": "windblown_leaf",
+          "twitch_channel": "https://www.twitch.tv/windblown_leaf",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M57.135227S",
+        "finished_at": "2026-10-05T07:17:57.248Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2127,
+        "score_change": -12,
+        "comment": "send help",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KOvy3eZDjr",
+          "full_name": "paulloween#0938",
+          "name": "paulloween",
+          "discriminator": "0938",
+          "url": "/user/7QXz83KOvy3eZDjr/paulloween",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "paulloween",
+          "twitch_display_name": "paulloween",
+          "twitch_channel": "https://www.twitch.tv/paulloween",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H22M55.490361S",
+        "finished_at": "2026-10-05T07:22:55.603Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": -100,
+        "comment": "forgot well existed for like 30 mins. almost LL somaria",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-05T07:22:55.666Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

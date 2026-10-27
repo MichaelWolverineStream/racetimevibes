@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/magic-zelda-6717",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/magic-zelda-6717",
+    "data_url": "/alttpr-ladder/magic-zelda-6717/data",
+    "goal": {
+      "name": "Beat the game (Spoiler)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [spoiler] - Spoiler - No GT Boots - Open Keysanity 7/7\nladder/nogtboots_keysanity - https://alttpr.racing/getseed.php?race=4685 - (HashMushroom/HashBoots/HashBombos/HashQuake/HashShield)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-22T03:30:00.135Z",
+    "started_at": "2026-08-22T04:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Ek8wpok4YkW5KQyV",
+          "full_name": "Telethar#1077",
+          "name": "Telethar",
+          "discriminator": "1077",
+          "url": "/user/Ek8wpok4YkW5KQyV/telethar",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "telethar",
+          "twitch_display_name": "telethar",
+          "twitch_channel": "https://www.twitch.tv/telethar",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT00H57M02.974887S",
+        "finished_at": "2026-08-22T04:57:03.072Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3303,
+        "score_change": 168,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT00H58M25.953105S",
+        "finished_at": "2026-08-22T04:58:26.051Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3566,
+        "score_change": -155,
+        "comment": "Derp 46/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW198zWKalP1",
+          "full_name": "RadiantSilvergun#8292",
+          "name": "RadiantSilvergun",
+          "discriminator": "8292",
+          "url": "/user/NY0OkW198zWKalP1/radiantsilvergun",
+          "avatar": null,
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "jdsilvergun",
+          "twitch_display_name": "JDSilvergun",
+          "twitch_channel": "https://www.twitch.tv/jdsilvergun",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M04.107001S",
+        "finished_at": "2026-08-22T05:15:04.204Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 33,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-22T05:15:04.237Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

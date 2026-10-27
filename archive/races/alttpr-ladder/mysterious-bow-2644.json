@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/mysterious-bow-2644",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mysterious-bow-2644",
+    "data_url": "/alttpr-ladder/mysterious-bow-2644/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Ambroz1a Ganonhunt\nladder/ambroz1a - https://alttpr.racing/getseed.php?race=2176 - (HashBigKey/HashBow/HashGreenPotion/HashBoomerang/HashFlute)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-20T00:30:00.089Z",
+    "started_at": "2026-01-20T01:00:00.093Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H11M29.648395S",
+        "finished_at": "2026-01-20T02:11:29.741Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2475,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KAQaWeZDjr",
+          "full_name": "death_taxes_n64#4985",
+          "name": "death_taxes_n64",
+          "discriminator": "4985",
+          "url": "/user/7QXz83KAQaWeZDjr/death_taxes_n64",
+          "avatar": "https://racetime.gg/media/LC1-Large.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "death_taxes_n64",
+          "twitch_display_name": "death_taxes_n64",
+          "twitch_channel": "https://www.twitch.tv/death_taxes_n64",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H17M25.018904S",
+        "finished_at": "2026-01-20T02:17:25.112Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1990,
+        "score_change": 4,
+        "comment": "113 flips go, never went to get boots lmao",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JdGXWqlL0a",
+          "full_name": "TheBenJammin#7468",
+          "name": "TheBenJammin",
+          "discriminator": "7468",
+          "url": "/user/NX5783JdGXWqlL0a/thebenjammin",
+          "avatar": "https://racetime.gg/media/a-for-racegg_o-1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thebenjammin",
+          "twitch_display_name": "TheBenJammin",
+          "twitch_channel": "https://www.twitch.tv/thebenjammin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M52.200074S",
+        "finished_at": "2026-01-20T02:29:52.293Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1740,
+        "score_change": -3,
+        "comment": "126, nice seed overall",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M45.271930S",
+        "finished_at": "2026-01-20T02:35:45.365Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1188,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-20T02:35:45.404Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/swag-icepalace-2990",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/swag-icepalace-2990",
+    "data_url": "/alttpr-ladder/swag-icepalace-2990/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=2069 - (HashFlippers/HashIceRod/HashMoonPearl/HashCape/HashBook)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-11T01:30:00.096Z",
+    "started_at": "2026-01-11T02:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M30.441390S",
+        "finished_at": "2026-01-11T03:44:30.522Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2318,
+        "score_change": 22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M57.939915S",
+        "finished_at": "2026-01-11T03:54:58.020Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2662,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g68jBkyANO",
+          "full_name": "Noob Scooter#0645",
+          "name": "Noob Scooter",
+          "discriminator": "0645",
+          "url": "/user/57ZKD3g68jBkyANO/noob-scooter",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "noob_g_scooter",
+          "twitch_display_name": "Noob_G_Scooter",
+          "twitch_channel": "https://www.twitch.tv/noob_g_scooter",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M12.909925S",
+        "finished_at": "2026-01-11T04:12:12.990Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1773,
+        "score_change": -9,
+        "comment": "159/216 I PB this mode, I'm so proud of myself.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-11T04:12:13.079Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

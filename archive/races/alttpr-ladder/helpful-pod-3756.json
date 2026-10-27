@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/helpful-pod-3756",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/helpful-pod-3756",
+    "data_url": "/alttpr-ladder/helpful-pod-3756/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=1324 - (HashPendant/HashIceRod/HashGloves/HashFlute/HashHammer)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-11-02T13:30:00.106Z",
+    "started_at": "2025-11-02T14:00:00.086Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "52QE8oNye53lywqX",
+          "full_name": "Ticknaldo#0359",
+          "name": "Ticknaldo",
+          "discriminator": "0359",
+          "url": "/user/52QE8oNye53lywqX/ticknaldo",
+          "avatar": "https://racetime.gg/media/Ticki_Salutieren_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ticknaldo",
+          "twitch_display_name": "Ticknaldo",
+          "twitch_channel": "https://www.twitch.tv/ticknaldo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M34.977240S",
+        "finished_at": "2025-11-02T15:46:35.063Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2540,
+        "score_change": 18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M52.505438S",
+        "finished_at": "2025-11-02T15:57:52.591Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2415,
+        "score_change": 0,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoG9vVBMVr6Z",
+          "full_name": "LinkQ87#2626",
+          "name": "LinkQ87",
+          "discriminator": "2626",
+          "url": "/user/Aa5veoG9vVBMVr6Z/linkq87",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linkq87",
+          "twitch_display_name": "LinkQ87",
+          "twitch_channel": "https://www.twitch.tv/linkq87",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M28.256207S",
+        "finished_at": "2025-11-02T16:07:28.342Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1752,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1738,
+        "score_change": -15,
+        "comment": "GG TR big",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-02T16:07:28.452Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

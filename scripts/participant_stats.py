@@ -8,6 +8,7 @@ import os
 import re
 import statistics
 from collections import Counter
+from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -193,8 +194,13 @@ def build_participant_payload(
     timezone_label: str,
     timezone_name: str,
     generated_at: datetime | None = None,
+    current_names: Mapping[str, str] | None = None,
 ) -> JsonObject:
-    """Build the racer leaderboard payload from included race contexts."""
+    """Build the racer leaderboard payload from included race contexts.
+
+    A racer is shown under their name in `current_names` when present, otherwise
+    under the name on their most recent race.
+    """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
 
@@ -224,6 +230,9 @@ def build_participant_payload(
 
     if not names:
         raise ParticipantDataError("No identified racers remained after validation")
+    for user_id, name in (current_names or {}).items():
+        if user_id in names:
+            names[user_id] = name
 
     ordered_players = sorted(names.items(), key=lambda item: (item[1].casefold(), item[0]))
     players = [{"id": user_id, "name": name} for user_id, name in ordered_players]

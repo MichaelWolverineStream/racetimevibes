@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/lawful-hoverseed-8948",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lawful-hoverseed-8948",
+    "data_url": "/alttpr-ladder/lawful-hoverseed-8948/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=1153 - (HashBugnet/HashBugnet/HashBow/HashTunic/HashBombos)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-12T03:30:00.101Z",
+    "started_at": "2025-10-12T04:00:00.082Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "AEk8wpoknG35KQyV",
+          "full_name": "Eykir#2885",
+          "name": "Eykir",
+          "discriminator": "2885",
+          "url": "/user/AEk8wpoknG35KQyV/eykir",
+          "avatar": "https://racetime.gg/media/Brian.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "eykir",
+          "twitch_display_name": "Eykir",
+          "twitch_channel": "https://www.twitch.tv/eykir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H16M46.977818S",
+        "finished_at": "2025-10-12T05:16:47.060Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2788,
+        "score_change": 24,
+        "comment": "Revenge is mine, werfjig!",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLyeyW9QEya",
+          "full_name": "DrDiabetus#6943",
+          "name": "DrDiabetus",
+          "discriminator": "6943",
+          "url": "/user/NqO2YoLyeyW9QEya/drdiabetus",
+          "avatar": "https://racetime.gg/media/ZSS-min.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dr_diabetus",
+          "twitch_display_name": "dr_diabetus",
+          "twitch_channel": "https://www.twitch.tv/dr_diabetus",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H23M24.563611S",
+        "finished_at": "2025-10-12T05:23:24.645Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2577,
+        "score_change": 34,
+        "comment": "ll mitts and very late somaria, 138 cr",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdae3LKPnz",
+          "full_name": "werfjig#9785",
+          "name": "werfjig",
+          "discriminator": "9785",
+          "url": "/user/VXY0eABdae3LKPnz/werfjig",
+          "avatar": "https://racetime.gg/media/dap.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "werfjig",
+          "twitch_display_name": "werfjig",
+          "twitch_channel": "https://www.twitch.tv/werfjig",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M03.562606S",
+        "finished_at": "2025-10-12T05:28:03.644Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 50,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAGr2Bmq6db",
+          "full_name": "Akuheish#5435",
+          "name": "Akuheish",
+          "discriminator": "5435",
+          "url": "/user/wezlNoAGr2Bmq6db/akuheish",
+          "avatar": "https://racetime.gg/media/Untitled_design_2.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akuheish",
+          "twitch_display_name": "AkuHeish",
+          "twitch_channel": "https://www.twitch.tv/akuheish",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M09.003497S",
+        "finished_at": "2025-10-12T05:37:09.085Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2563,
+        "score_change": -74,
+        "comment": "skipping purple chest until the end was not the right thing to do",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-12T05:37:09.163Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/sleepy-pendant-7258",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sleepy-pendant-7258",
+    "data_url": "/alttpr-ladder/sleepy-pendant-7258/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=3737 - (HashMoonPearl/HashMap/HashBigKey/HashLamp/HashBugnet)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-06-03T02:30:00.091Z",
+    "started_at": "2026-06-03T03:00:00.071Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jb8GPMWwmy31nEk0",
+          "full_name": "latebit#1301",
+          "name": "latebit",
+          "discriminator": "1301",
+          "url": "/user/jb8GPMWwmy31nEk0/latebit",
+          "avatar": "https://racetime.gg/media/fatyoshi320.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "latebit",
+          "twitch_display_name": "latebit",
+          "twitch_channel": "https://www.twitch.tv/latebit",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M22.168313S",
+        "finished_at": "2026-06-03T05:14:22.239Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2499,
+        "score_change": 39,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbkp5BYlM65",
+          "full_name": "buttergrapes#4335",
+          "name": "buttergrapes",
+          "discriminator": "4335",
+          "url": "/user/jZ2EGWbkp5BYlM65/buttergrapes",
+          "avatar": "https://racetime.gg/media/jZ2EGWbkp5BYlM65.png",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "buttergrapes_",
+          "twitch_display_name": "buttergrapes_",
+          "twitch_channel": "https://www.twitch.tv/buttergrapes_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H25M14.601741S",
+        "finished_at": "2026-06-03T05:25:14.672Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 495,
+        "comment": "2.5 hours of flailing and praying",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQwE0oK4xrZ",
+          "full_name": "HabSim85#6496",
+          "name": "HabSim85",
+          "discriminator": "6496",
+          "url": "/user/z56VnBQwE0oK4xrZ/habsim85",
+          "avatar": "https://racetime.gg/media/z56VnBQwE0oK4xrZ.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "habsim85",
+          "twitch_display_name": "HabSim85",
+          "twitch_channel": "https://www.twitch.tv/habsim85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H58M16.012343S",
+        "finished_at": "2026-06-03T06:58:16.083Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -301,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-03T06:58:16.125Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

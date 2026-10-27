@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/chaotic-powder-4004",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/chaotic-powder-4004",
+    "data_url": "/alttpr-ladder/chaotic-powder-4004/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keydrop Boots\nadkdb - https://alttpr.racing/getseed.php?race=488 - (Empty Bottle/Magic Powder/Moon Pearl/Big Key/Tunic)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-16T18:30:00.139Z",
+    "started_at": "2025-07-16T19:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "rZyM4oryaX3qDJX0",
+          "full_name": "ScottishBrave44#2982",
+          "name": "ScottishBrave44",
+          "discriminator": "2982",
+          "url": "/user/rZyM4oryaX3qDJX0/scottishbrave44",
+          "avatar": "https://racetime.gg/media/Twitch_Avatar.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "scottishbrave44",
+          "twitch_display_name": "ScottishBrave44",
+          "twitch_channel": "https://www.twitch.tv/scottishbrave44",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M08.485267S",
+        "finished_at": "2025-07-16T21:10:08.562Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1920,
+        "score_change": 271,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M39.456282S",
+        "finished_at": "2025-07-16T21:14:39.533Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2326,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvJwmBJkg04",
+          "full_name": "Dominik0688#7163",
+          "name": "Dominik0688",
+          "discriminator": "7163",
+          "url": "/user/bpNAaBvJwmBJkg04/dominik0688",
+          "avatar": "https://racetime.gg/media/Absol3.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dominik0688",
+          "twitch_display_name": "dominik0688",
+          "twitch_channel": "https://www.twitch.tv/dominik0688",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M25.039217S",
+        "finished_at": "2025-07-16T21:15:25.116Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2561,
+        "score_change": -28,
+        "comment": "CT Small LL. CR 238/249",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlYZY3aOP57",
+          "full_name": "ochala#4097",
+          "name": "ochala",
+          "discriminator": "4097",
+          "url": "/user/xldAMBlYZY3aOP57/ochala",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ochalachinga",
+          "twitch_display_name": "ochalachinga",
+          "twitch_channel": "https://www.twitch.tv/ochalachinga",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1140,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-16T21:15:38.316Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

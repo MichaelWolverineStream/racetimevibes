@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/bonus-hoverseed-1752",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/bonus-hoverseed-1752",
+    "data_url": "/alttpr-ladder/bonus-hoverseed-1752/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG\nhmg - https://alttpr.racing/getseed.php?race=895 - (HashQuake/HashGreenPotion/HashIceRod/HashMoonPearl/HashMushroom)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-09T00:30:00.155Z",
+    "started_at": "2025-09-09T01:00:00.094Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VwLN8B86lyoPa52R",
+          "full_name": "MrByer#7307",
+          "name": "MrByer",
+          "discriminator": "7307",
+          "url": "/user/VwLN8B86lyoPa52R/mrbyer",
+          "avatar": "https://racetime.gg/media/2019112008471100-3C66B776DB1AA06323037049FACD96D3.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mrbyer",
+          "twitch_display_name": "MrByer",
+          "twitch_channel": "https://www.twitch.tv/mrbyer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H25M03.848047S",
+        "finished_at": "2025-09-09T02:25:03.942Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2865,
+        "score_change": 30,
+        "comment": "155/216 you'll get hammer and like it",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H29M28.048550S",
+        "finished_at": "2025-09-09T02:29:28.143Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2729,
+        "score_change": -38,
+        "comment": "wasted potential superm209Blockbuster",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-09T02:29:28.172Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

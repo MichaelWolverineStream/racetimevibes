@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/hot-somaria-4189",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hot-somaria-4189",
+    "data_url": "/alttpr-ladder/hot-somaria-4189/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1535 - (HashIceRod/HashHeart/HashMagicPowder/HashGloves/HashCompass)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-11-23T03:30:00.106Z",
+    "started_at": "2025-11-23T04:00:00.084Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "0wezlNoAA5omq6db",
+          "full_name": "SeanRhapsody#5116",
+          "name": "SeanRhapsody",
+          "discriminator": "5116",
+          "url": "/user/0wezlNoAA5omq6db/seanrhapsody",
+          "avatar": "https://racetime.gg/media/received_338403934048267.webp",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "seanrhapsody",
+          "twitch_display_name": "SeanRhapsody",
+          "twitch_channel": "https://www.twitch.tv/seanrhapsody",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M19.083819S",
+        "finished_at": "2025-11-23T05:48:19.167Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2071,
+        "score_change": 80,
+        "comment": "189",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2641,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-23T05:50:15.186Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

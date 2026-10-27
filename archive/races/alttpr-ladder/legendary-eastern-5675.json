@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/legendary-eastern-5675",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/legendary-eastern-5675",
+    "data_url": "/alttpr-ladder/legendary-eastern-5675/data",
+    "goal": {
+      "name": "Beat the game (Spoiler)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [spoiler] - Spoiler - No GT Boots - Open 7/7\nladder/nogtboots_open - https://alttpr.racing/getseed.php?race=3408 - (HashHammer/HashBombos/HashCompass/HashBombos/HashMagicPowder)",
+    "entrants_count": 7,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-05-06T17:30:00.085Z",
+    "started_at": "2026-05-06T18:00:00.073Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H06M47.311565S",
+        "finished_at": "2026-05-06T19:06:47.384Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1703,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpok4YkW5KQyV",
+          "full_name": "Telethar#1077",
+          "name": "Telethar",
+          "discriminator": "1077",
+          "url": "/user/Ek8wpok4YkW5KQyV/telethar",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "telethar",
+          "twitch_display_name": "telethar",
+          "twitch_channel": "https://www.twitch.tv/telethar",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H07M26.979610S",
+        "finished_at": "2026-05-06T19:07:27.052Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 1385,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBl5183aOP57",
+          "full_name": "fakerjr#4663",
+          "name": "fakerjr",
+          "discriminator": "4663",
+          "url": "/user/xldAMBl5183aOP57/fakerjr",
+          "avatar": "https://racetime.gg/media/xldAMBl5183aOP57_qphzyLJ.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "fakerjrr",
+          "twitch_display_name": "fakerjrr",
+          "twitch_channel": "https://www.twitch.tv/fakerjrr",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H12M36.253441S",
+        "finished_at": "2026-05-06T19:12:36.326Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 1118,
+        "comment": "too many oopsies",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3yVXdoZVKq1",
+          "full_name": "FlyingPlatipusDimitri#7034",
+          "name": "FlyingPlatipusDimitri",
+          "discriminator": "7034",
+          "url": "/user/RbOXG3yVXdoZVKq1/flyingplatipusdimitri",
+          "avatar": "https://racetime.gg/media/RbOXG3yVXdoZVKq1_lfuGozx.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "flyingplatipusdimitri",
+          "twitch_display_name": "FlyingPlatipusDimitri",
+          "twitch_channel": "https://www.twitch.tv/flyingplatipusdimitri",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H12M43.744343S",
+        "finished_at": "2026-05-06T19:12:43.817Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2208,
+        "score_change": -5,
+        "comment": "Pro tips: flying skull's heads don't die to ether, I die to them",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H18M10.958653S",
+        "finished_at": "2026-05-06T19:18:11.032Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": 534,
+        "comment": "67. first ever spoiler race, i guess i'll take it",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M31.254835S",
+        "finished_at": "2026-05-06T19:19:31.328Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1356,
+        "score_change": -58,
+        "comment": "lost almost 10 minutes to ganon xdd",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 673,
+        "score_change": -116,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-06T19:19:31.383Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

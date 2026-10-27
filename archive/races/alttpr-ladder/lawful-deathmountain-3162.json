@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:27Z",
+  "race": {
+    "name": "alttpr-ladder/lawful-deathmountain-3162",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lawful-deathmountain-3162",
+    "data_url": "/alttpr-ladder/lawful-deathmountain-3162/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open Boots\nladder/openboots - https://alttpr.racing/getseed.php?race=2354 - (HashShield/HashBigKey/HashBow/HashBoots/HashBow)",
+    "entrants_count": 8,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-02-03T19:30:00.116Z",
+    "started_at": "2026-02-03T20:00:00.124Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "zM65aWXP8xW1y8q0",
+          "full_name": "yasi89#7243",
+          "name": "yasi89",
+          "discriminator": "7243",
+          "url": "/user/zM65aWXP8xW1y8q0/yasi89",
+          "avatar": "https://racetime.gg/media/WhatsApp_Bild_2024-04-06_um_18.58.28_6a8b9fc1.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "yasi89",
+          "twitch_display_name": "yasi89",
+          "twitch_channel": "https://www.twitch.tv/yasi89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M48.485755S",
+        "finished_at": "2026-02-03T21:28:48.610Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1435,
+        "score_change": 90,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M03.544243S",
+        "finished_at": "2026-02-03T21:34:03.668Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2135,
+        "score_change": 4,
+        "comment": "CR 149, go mode hookshot. debated checking bombos tablet before going into swamp but NOPE.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M26.470339S",
+        "finished_at": "2026-02-03T21:35:26.594Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2278,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JXNvWqlL0a",
+          "full_name": "JohnGalt#7236",
+          "name": "JohnGalt",
+          "discriminator": "7236",
+          "url": "/user/NX5783JXNvWqlL0a/johngalt",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "johngalttv",
+          "twitch_display_name": "JohnGaltTV",
+          "twitch_channel": "https://www.twitch.tv/johngalttv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M15.362290S",
+        "finished_at": "2026-02-03T21:41:15.486Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1349,
+        "score_change": 80,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M41.794698S",
+        "finished_at": "2026-02-03T21:47:41.919Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1212,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M16.164064S",
+        "finished_at": "2026-02-03T21:52:16.288Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1135,
+        "score_change": 30,
+        "comment": "wow bombos tablet",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPjAk3e7P5Q",
+          "full_name": "elusuario101#2065",
+          "name": "elusuario101",
+          "discriminator": "2065",
+          "url": "/user/1jgrbWPjAk3e7P5Q/elusuario101",
+          "avatar": "https://racetime.gg/media/1jgrbWPjAk3e7P5Q.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "elusuario101",
+          "twitch_display_name": "elusuario101",
+          "twitch_channel": "https://www.twitch.tv/elusuario101",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M25.320305S",
+        "finished_at": "2026-02-03T21:56:25.444Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1733,
+        "score_change": -97,
+        "comment": "hook worst",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N9rVpW9N7JBjq8Ll",
+          "full_name": "Khaemere#6838",
+          "name": "Khaemere",
+          "discriminator": "6838",
+          "url": "/user/N9rVpW9N7JBjq8Ll/khaemere",
+          "avatar": "https://racetime.gg/media/Cow_-_HeadCrop.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "khaemere",
+          "twitch_display_name": "Khaemere",
+          "twitch_channel": "https://www.twitch.tv/khaemere",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1723,
+        "score_change": -91,
+        "comment": "too sick to play this out. last located somaria into go mode in tr.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-03T21:56:25.575Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

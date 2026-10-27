@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/salty-pod-6936",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/salty-pod-6936",
+    "data_url": "/alttpr-ladder/salty-pod-6936/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=3544 - (HashHammer/HashBow/HashShovel/HashBoots/HashCape)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-18T00:30:00.081Z",
+    "started_at": "2026-05-18T01:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M00.498546S",
+        "finished_at": "2026-05-18T02:34:00.575Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2446,
+        "score_change": 77,
+        "comment": "158, go mode somaria. LL mitts other than hookless swamp but I'm never doing that ever ever ever so it felt like a LL :p",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAyYzomq6db",
+          "full_name": "Clink#8743",
+          "name": "Clink",
+          "discriminator": "8743",
+          "url": "/user/wezlNoAyYzomq6db/clink",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "clink413",
+          "twitch_display_name": "clink413",
+          "twitch_channel": "https://www.twitch.tv/clink413",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M00.887359S",
+        "finished_at": "2026-05-18T02:35:00.964Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 1100,
+        "comment": "last location fire rod",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M15.352022S",
+        "finished_at": "2026-05-18T02:37:15.429Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2177,
+        "score_change": 15,
+        "comment": "164 - Just too many checks for 7/7.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXbPk31y8q0",
+          "full_name": "WhiskeyBill25#0457",
+          "name": "WhiskeyBill25",
+          "discriminator": "0457",
+          "url": "/user/zM65aWXbPk31y8q0/whiskeybill25",
+          "avatar": "https://racetime.gg/media/zM65aWXbPk31y8q0_5AdHM2p.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "whiskeybill25",
+          "twitch_display_name": "whiskeybill25",
+          "twitch_channel": "https://www.twitch.tv/whiskeybill25",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M46.518552S",
+        "finished_at": "2026-05-18T02:45:46.595Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1637,
+        "score_change": 49,
+        "comment": "fun was almost had",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdbl5oLKPnz",
+          "full_name": "treesapthief#7588",
+          "name": "treesapthief",
+          "discriminator": "7588",
+          "url": "/user/XY0eABdbl5oLKPnz/treesapthief",
+          "avatar": "https://racetime.gg/media/treesapthief_logo_inv.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "treesapthief",
+          "twitch_display_name": "TreeSapThief",
+          "twitch_channel": "https://www.twitch.tv/treesapthief",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M30.960998S",
+        "finished_at": "2026-05-18T02:47:31.038Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1526,
+        "score_change": -87,
+        "comment": "died too many times, silvers in gt saved the end game",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGQObBMVr6Z",
+          "full_name": "eclectic#9953",
+          "name": "eclectic",
+          "discriminator": "9953",
+          "url": "/user/Aa5veoGQObBMVr6Z/eclectic",
+          "avatar": "https://racetime.gg/media/Aa5veoGQObBMVr6Z.webp",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "eclectic_sh",
+          "twitch_display_name": "eclectic_sh",
+          "twitch_channel": "https://www.twitch.tv/eclectic_sh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M39.149843S",
+        "finished_at": "2026-05-18T02:56:39.226Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1173,
+        "score_change": -64,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-18T02:56:39.286Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/sleepy-icepalace-0320",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sleepy-icepalace-0320",
+    "data_url": "/alttpr-ladder/sleepy-icepalace-0320/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=5363 - (HashMoonPearl/HashQuake/HashHookshot/HashMagicPowder/HashShield)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-10-21T00:30:00.194Z",
+    "started_at": "2026-10-21T01:00:00.081Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "41jgrbWPz3e7P5QE",
+          "full_name": "Buane#5757",
+          "name": "Buane",
+          "discriminator": "5757",
+          "url": "/user/41jgrbWPz3e7P5QE/buane",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "buane",
+          "twitch_display_name": "Buane",
+          "twitch_channel": "https://www.twitch.tv/buane",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M34.933726S",
+        "finished_at": "2026-10-21T02:33:35.015Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2762,
+        "score_change": 88,
+        "comment": "welcome back ninban",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "d17DexWEYRWak64R",
+          "full_name": "Ninban#5207",
+          "name": "Ninban",
+          "discriminator": "5207",
+          "url": "/user/d17DexWEYRWak64R/ninban",
+          "avatar": "https://racetime.gg/media/avatarx100.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "ninban",
+          "twitch_display_name": "Ninban",
+          "twitch_channel": "https://www.twitch.tv/ninban",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M20.843673S",
+        "finished_at": "2026-10-21T02:50:20.925Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 859,
+        "comment": "1 hour without sword LOL nice return to rando",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz96voLPdye",
+          "full_name": "ShaneSah (Kennen)#5187",
+          "name": "ShaneSah (Kennen)",
+          "discriminator": "5187",
+          "url": "/user/GklxjWz96voLPdye/shanesah-kennen",
+          "avatar": "https://racetime.gg/media/Omega.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "shanesah",
+          "twitch_display_name": "ShaneSah",
+          "twitch_channel": "https://www.twitch.tv/shanesah",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M27.496234S",
+        "finished_at": "2026-10-21T02:55:27.577Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1895,
+        "score_change": -16,
+        "comment": "gross",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1179,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-21T03:12:50.569Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

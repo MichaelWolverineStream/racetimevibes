@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/hungry-hypecave-3662",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hungry-hypecave-3662",
+    "data_url": "/alttpr-ladder/hungry-hypecave-3662/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=5097 - (HashGloves/HashBoots/HashHeart/HashFlute/HashCompass)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-09-28T20:30:00.208Z",
+    "started_at": "2026-09-28T21:00:00.102Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M34.063725S",
+        "finished_at": "2026-09-28T22:44:34.166Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2679,
+        "score_change": 18,
+        "comment": "Screw the CR, I finished with 3554 rupees. Get the money,",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jb8GPMWwXbB1nEk0",
+          "full_name": "Ralen Tankir#4377",
+          "name": "Ralen Tankir",
+          "discriminator": "4377",
+          "url": "/user/jb8GPMWwXbB1nEk0/ralen-tankir",
+          "avatar": "https://racetime.gg/media/icon_052_01.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ralen_tankir",
+          "twitch_display_name": "Ralen_Tankir",
+          "twitch_channel": "https://www.twitch.tv/ralen_tankir",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M04.662690S",
+        "finished_at": "2026-09-28T22:46:04.765Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2343,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KOvy3eZDjr",
+          "full_name": "paulloween#0938",
+          "name": "paulloween",
+          "discriminator": "0938",
+          "url": "/user/7QXz83KOvy3eZDjr/paulloween",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "paulloween",
+          "twitch_display_name": "paulloween",
+          "twitch_channel": "https://www.twitch.tv/paulloween",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M50.595313S",
+        "finished_at": "2026-09-28T22:57:50.697Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -49,
+        "comment": "194. GT basement being empty was crazy",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-28T22:57:50.824Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

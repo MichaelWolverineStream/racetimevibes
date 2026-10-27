@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/powerful-goldsword-2171",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/powerful-goldsword-2171",
+    "data_url": "/alttpr-ladder/powerful-goldsword-2171/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=5423 - (HashBoots/HashMap/HashLamp/HashFlute/HashIceRod)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-10-26T01:30:00.148Z",
+    "started_at": "2026-10-26T02:00:00.084Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWEYRWak64R",
+          "full_name": "Ninban#5207",
+          "name": "Ninban",
+          "discriminator": "5207",
+          "url": "/user/d17DexWEYRWak64R/ninban",
+          "avatar": "https://racetime.gg/media/avatarx100.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "ninban",
+          "twitch_display_name": "Ninban",
+          "twitch_channel": "https://www.twitch.tv/ninban",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H26M11.361567S",
+        "finished_at": "2026-10-26T03:26:11.445Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2111,
+        "score_change": null,
+        "comment": "Early dip of pendants paid off so well also we love aga seeds :))) 144",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M03.219553S",
+        "finished_at": "2026-10-26T03:28:03.303Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2990,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "17DexWEKz13ak64R",
+          "full_name": "AnimusUnited#6600",
+          "name": "AnimusUnited",
+          "discriminator": "6600",
+          "url": "/user/17DexWEKz13ak64R/animusunited",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "animusunited",
+          "twitch_display_name": "animusunited",
+          "twitch_channel": "https://www.twitch.tv/animusunited",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M07.872577S",
+        "finished_at": "2026-10-26T03:34:07.956Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2667,
+        "score_change": null,
+        "comment": "158 ped ded",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1183,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      }
+    ],
+    "ended_at": "2026-10-26T03:34:49.043Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": false
+  }
+}

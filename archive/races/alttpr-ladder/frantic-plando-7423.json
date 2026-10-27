@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:32Z",
+  "race": {
+    "name": "alttpr-ladder/frantic-plando-7423",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/frantic-plando-7423",
+    "data_url": "/alttpr-ladder/frantic-plando-7423/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - XDHunt Plus\njem041/xdhuntplus - https://alttpr.racing/getseed.php?race=1964 - (HashHammer/HashHeart/HashCape/HashBoots/HashEmptyBottle)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-28T21:30:00.141Z",
+    "started_at": "2025-12-28T22:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "rZyM4orGOEWqDJX0",
+          "full_name": "doctorearworm",
+          "name": "doctorearworm",
+          "discriminator": null,
+          "url": "/user/doctorearworm",
+          "avatar": "https://racetime.gg/media/drworm_LdyUZ6x.png",
+          "pronouns": "he/they",
+          "flair": "supporter moderator",
+          "twitch_name": "doctorearworm",
+          "twitch_display_name": "doctorearworm",
+          "twitch_channel": "https://www.twitch.tv/doctorearworm",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H16M28.988239S",
+        "finished_at": "2025-12-29T00:16:29.071Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2384,
+        "score_change": 49,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOMOvo4qAyj",
+          "full_name": "Deign#3244",
+          "name": "Deign",
+          "discriminator": "3244",
+          "url": "/user/NZ1KRBOMOvo4qAyj/deign",
+          "avatar": "https://racetime.gg/media/96x96.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "deign",
+          "twitch_display_name": "Deign",
+          "twitch_channel": "https://www.twitch.tv/deign",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H25M14.298155S",
+        "finished_at": "2025-12-29T00:25:14.381Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2967,
+        "score_change": -7,
+        "comment": "CR: 211 -- Hook for go",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "LNqO2YoLR2B9QEya",
+          "full_name": "codemann8#1940",
+          "name": "codemann8",
+          "discriminator": "1940",
+          "url": "/user/LNqO2YoLR2B9QEya/codemann8",
+          "avatar": "https://racetime.gg/media/bananasandcodyinpajamas-400.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "codeman8_",
+          "twitch_display_name": "codeman8_",
+          "twitch_channel": "https://www.twitch.tv/codeman8_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H54M34.930453S",
+        "finished_at": "2025-12-29T00:54:35.013Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1436,
+        "score_change": 244,
+        "comment": "fuck you mire 235/249",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H13M15.876113S",
+        "finished_at": "2025-12-29T01:13:15.959Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2360,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-29T01:13:16.024Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

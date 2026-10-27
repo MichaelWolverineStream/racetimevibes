@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/salty-pieceofheart-5670",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/salty-pieceofheart-5670",
+    "data_url": "/alttpr-ladder/salty-pieceofheart-5670/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Retrance (No Rupee Bow)\nretrance_bow - https://alttpr.racing/getseed.php?race=423 - (Flippers/Mushroom/Tunic/Mirror/Mushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-08T15:30:00.213Z",
+    "started_at": "2025-07-08T16:00:00.075Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5wAo2Vwv9",
+          "full_name": "Ramond#9520",
+          "name": "Ramond",
+          "discriminator": "9520",
+          "url": "/user/7lYZa5B5wAo2Vwv9/ramond",
+          "avatar": "https://racetime.gg/media/kid_triforce_wide.gif",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "paramondox",
+          "twitch_display_name": "Paramondox",
+          "twitch_channel": "https://www.twitch.tv/paramondox",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M24.530491S",
+        "finished_at": "2025-07-08T17:53:24.605Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3261,
+        "score_change": 15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwpvbB1nEk0",
+          "full_name": "hide on bush#1636",
+          "name": "hide on bush",
+          "discriminator": "1636",
+          "url": "/user/b8GPMWwpvbB1nEk0/hide-on-bush",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "hideonbush1909",
+          "twitch_display_name": "hideonbush1909",
+          "twitch_channel": "https://www.twitch.tv/hideonbush1909",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M13.273396S",
+        "finished_at": "2025-07-08T18:08:13.348Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2294,
+        "score_change": 19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2345,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-08T18:08:13.435Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

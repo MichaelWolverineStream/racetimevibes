@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/hungry-zorasdomain-1368",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hungry-zorasdomain-1368",
+    "data_url": "/alttpr-ladder/hungry-zorasdomain-1368/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1100 - (HashBigKey/HashFlute/HashEmptyBottle/HashShovel/HashShield)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-05T12:30:00.082Z",
+    "started_at": "2025-10-05T13:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "nxMQeox2xNBapX0A",
+          "full_name": "Soyhr#7143",
+          "name": "Soyhr",
+          "discriminator": "7143",
+          "url": "/user/nxMQeox2xNBapX0A/soyhr",
+          "avatar": "https://racetime.gg/media/Mog_US.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "soyhr",
+          "twitch_display_name": "Soyhr",
+          "twitch_channel": "https://www.twitch.tv/soyhr",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M50.014539S",
+        "finished_at": "2025-10-05T14:41:50.093Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2437,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8M6V3Pa52R",
+          "full_name": "Mahony#1032",
+          "name": "Mahony",
+          "discriminator": "1032",
+          "url": "/user/VwLN8B8M6V3Pa52R/mahony",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mahony19888",
+          "twitch_display_name": "mahony19888",
+          "twitch_channel": "https://www.twitch.tv/mahony19888",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M31.762886S",
+        "finished_at": "2025-10-05T14:48:31.842Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1946,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1YZVWKalP1",
+          "full_name": "kefffka#6024",
+          "name": "kefffka",
+          "discriminator": "6024",
+          "url": "/user/NY0OkW1YZVWKalP1/kefffka",
+          "avatar": "https://racetime.gg/media/930.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kefffka",
+          "twitch_display_name": "kefffka",
+          "twitch_channel": "https://www.twitch.tv/kefffka",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M36.505337S",
+        "finished_at": "2025-10-05T14:53:36.584Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2264,
+        "score_change": -73,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-05T14:53:36.631Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

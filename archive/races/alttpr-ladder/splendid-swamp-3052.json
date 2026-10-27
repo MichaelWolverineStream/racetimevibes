@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/splendid-swamp-3052",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/splendid-swamp-3052",
+    "data_url": "/alttpr-ladder/splendid-swamp-3052/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - True Pot Hunt\ntph2023 - https://alttpr.racing/getseed.php?race=574 - (Book/Boomerang/Magic Powder/Gloves/Map)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-27T13:30:00.142Z",
+    "started_at": "2025-07-27T14:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5JlzyB7Lkx3V4GED",
+          "full_name": "Zorimyll#7692",
+          "name": "Zorimyll",
+          "discriminator": "7692",
+          "url": "/user/5JlzyB7Lkx3V4GED/zorimyll",
+          "avatar": "https://racetime.gg/media/Zehir.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zorimyll",
+          "twitch_display_name": "Zorimyll",
+          "twitch_channel": "https://www.twitch.tv/zorimyll",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M33.438430S",
+        "finished_at": "2025-07-27T15:54:33.521Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1366,
+        "score_change": 307,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAQ5zomq6db",
+          "full_name": "Mikenekopi#1225",
+          "name": "Mikenekopi",
+          "discriminator": "1225",
+          "url": "/user/wezlNoAQ5zomq6db/mikenekopi",
+          "avatar": "https://racetime.gg/media/Alt_Pi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mikenekopi",
+          "twitch_display_name": "Mikenekopi",
+          "twitch_channel": "https://www.twitch.tv/mikenekopi",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M43.234253S",
+        "finished_at": "2025-07-27T16:05:43.317Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1067,
+        "score_change": 322,
+        "comment": "Pearl?!?!? Where?",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7MOoV4GED",
+          "full_name": "Grimlegend#7734",
+          "name": "Grimlegend",
+          "discriminator": "7734",
+          "url": "/user/k5JlzyB7MOoV4GED/grimlegend",
+          "avatar": "https://racetime.gg/media/Grim_Bee.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "grimlegend",
+          "twitch_display_name": "Grimlegend",
+          "twitch_channel": "https://www.twitch.tv/grimlegend",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H50M38.592484S",
+        "finished_at": "2025-07-27T16:50:38.675Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 976,
+        "score_change": 149,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g68jBkyANO",
+          "full_name": "Noob Scooter#0645",
+          "name": "Noob Scooter",
+          "discriminator": "0645",
+          "url": "/user/57ZKD3g68jBkyANO/noob-scooter",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "noob_g_scooter",
+          "twitch_display_name": "Noob_G_Scooter",
+          "twitch_channel": "https://www.twitch.tv/noob_g_scooter",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1719,
+        "score_change": -59,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-27T16:50:38.740Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

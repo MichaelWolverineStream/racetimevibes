@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/adequate-hammer-9475",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/adequate-hammer-9475",
+    "data_url": "/alttpr-ladder/adequate-hammer-9475/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Not Slow)\nmmmmavid23 - https://alttpr.racing/getseed.php?race=35 - (Hammer/Flippers/Flippers/Quake/Ice Rod)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-05-21T01:30:04.737Z",
+    "started_at": "2025-05-21T01:59:54.847Z",
+    "time_limit": "P0DT03H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M18.304366S",
+        "finished_at": "2025-05-21T03:59:13.151Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 396,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "0wezlNoAA5omq6db",
+          "full_name": "SeanRhapsody#5116",
+          "name": "SeanRhapsody",
+          "discriminator": "5116",
+          "url": "/user/0wezlNoAA5omq6db/seanrhapsody",
+          "avatar": "https://racetime.gg/media/received_338403934048267.webp",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "seanrhapsody",
+          "twitch_display_name": "SeanRhapsody",
+          "twitch_channel": "https://www.twitch.tv/seanrhapsody",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M21.507489S",
+        "finished_at": "2025-05-21T04:20:16.355Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1439,
+        "score_change": 115,
+        "comment": "One big mistake was made",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 866,
+        "score_change": -85,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-21T04:20:16.415Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

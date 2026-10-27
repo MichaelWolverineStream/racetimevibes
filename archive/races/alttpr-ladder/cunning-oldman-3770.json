@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/cunning-oldman-3770",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/cunning-oldman-3770",
+    "data_url": "/alttpr-ladder/cunning-oldman-3770/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1304 - (HashIceRod/HashShovel/HashGreenPotion/HashBombs/HashMirror)",
+    "entrants_count": 9,
+    "entrants_count_finished": 8,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-10-31T01:30:00.093Z",
+    "started_at": "2025-10-31T02:00:00.081Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M36.908254S",
+        "finished_at": "2025-10-31T03:42:36.989Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3725,
+        "score_change": 12,
+        "comment": "Time to go back to the child table Hitsu 167/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M56.211931S",
+        "finished_at": "2025-10-31T03:48:56.293Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2832,
+        "score_change": 16,
+        "comment": "double pod/tr - ms silverless",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbp193YlM65",
+          "full_name": "thalane#0908",
+          "name": "thalane",
+          "discriminator": "0908",
+          "url": "/user/jZ2EGWbp193YlM65/thalane",
+          "avatar": "https://racetime.gg/media/thalane.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "thalanee",
+          "twitch_display_name": "thalanee",
+          "twitch_channel": "https://www.twitch.tv/thalanee",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M06.862481S",
+        "finished_at": "2025-10-31T03:52:06.943Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2497,
+        "score_change": 135,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gqZWkyANO",
+          "full_name": "HayfieldBay#6247",
+          "name": "HayfieldBay",
+          "discriminator": "6247",
+          "url": "/user/457ZKD3gqZWkyANO/hayfieldbay",
+          "avatar": "https://racetime.gg/media/MMX_yeah_baby.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hayfieldbay",
+          "twitch_display_name": "HayfieldBay",
+          "twitch_channel": "https://www.twitch.tv/hayfieldbay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M26.768607S",
+        "finished_at": "2025-10-31T03:55:26.849Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2697,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M16.957852S",
+        "finished_at": "2025-10-31T03:58:17.039Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2500,
+        "score_change": 9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M11.596390S",
+        "finished_at": "2025-10-31T04:03:11.677Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 2356,
+        "score_change": 10,
+        "comment": "less than 174. A Ganon fight so nice that I did it twice (yay for hand cramps :p ).",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m2npoPd1Xr",
+          "full_name": "aurabot#9087",
+          "name": "aurabot",
+          "discriminator": "9087",
+          "url": "/user/R6ym83m2npoPd1Xr/aurabot",
+          "avatar": "https://racetime.gg/media/R6ym83m2npoPd1Xr.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "aurabot",
+          "twitch_display_name": "aurabot",
+          "twitch_channel": "https://www.twitch.tv/aurabot",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M50.998831S",
+        "finished_at": "2025-10-31T04:04:51.080Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 2384,
+        "score_change": -7,
+        "comment": "167 CR, must LL everything, mirror go mode",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoakVxBlV4zN",
+          "full_name": "childofGod#1160",
+          "name": "childofGod",
+          "discriminator": "1160",
+          "url": "/user/raP6yoakVxBlV4zN/childofgod",
+          "avatar": "https://racetime.gg/media/kakaotalk_20190515_194648911-ezgif.com-loop-count.gif",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "childof__god",
+          "twitch_display_name": "childof__God",
+          "twitch_channel": "https://www.twitch.tv/childof__god",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H48M52.761843S",
+        "finished_at": "2025-10-31T04:48:52.843Z",
+        "place": 8,
+        "place_ordinal": "8th",
+        "score": 718,
+        "score_change": 667,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JbJP3qlL0a",
+          "full_name": "magnohato#7620",
+          "name": "magnohato",
+          "discriminator": "7620",
+          "url": "/user/NX5783JbJP3qlL0a/magnohato",
+          "avatar": "https://racetime.gg/media/100x100_magno.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "magnohato",
+          "twitch_display_name": "Magnohato",
+          "twitch_channel": "https://www.twitch.tv/magnohato",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3069,
+        "score_change": -49,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-31T04:48:52.944Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

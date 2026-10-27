@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:51Z",
+  "race": {
+    "name": "alttpr-ladder/charming-deathmountain-2850",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/charming-deathmountain-2850",
+    "data_url": "/alttpr-ladder/charming-deathmountain-2850/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=700 - (HashIceRod/HashBombs/HashBigKey/HashShield/HashFlute)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-08-15T15:30:00.152Z",
+    "started_at": "2025-08-15T16:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H13M24.279786S",
+        "finished_at": "2025-08-15T17:13:24.360Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2703,
+        "score_change": 12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H14M13.397978S",
+        "finished_at": "2025-08-15T17:14:13.478Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2364,
+        "score_change": 9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7qjZoV4GED",
+          "full_name": "JuBer#2596",
+          "name": "JuBer",
+          "discriminator": "2596",
+          "url": "/user/5JlzyB7qjZoV4GED/juber",
+          "avatar": "https://racetime.gg/media/Unbenannt.JPG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "juber_87",
+          "twitch_display_name": "JuBer_87",
+          "twitch_channel": "https://www.twitch.tv/juber_87",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H25M39.807088S",
+        "finished_at": "2025-08-15T17:25:39.887Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1496,
+        "score_change": 268,
+        "comment": "when you forget that seeds can be jet, you clear the wrong stuff...",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "457ZKD3gKj3kyANO",
+          "full_name": "Scaryolive#5959",
+          "name": "Scaryolive",
+          "discriminator": "5959",
+          "url": "/user/457ZKD3gKj3kyANO/scaryolive",
+          "avatar": "https://racetime.gg/media/scaryolive-profile_image-2e6751c2b48efca6-300x3001.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scaryolive",
+          "twitch_display_name": "Scaryolive",
+          "twitch_channel": "https://www.twitch.tv/scaryolive",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H25M56.017779S",
+        "finished_at": "2025-08-15T17:25:56.098Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2109,
+        "score_change": -27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8M6V3Pa52R",
+          "full_name": "Mahony#1032",
+          "name": "Mahony",
+          "discriminator": "1032",
+          "url": "/user/VwLN8B8M6V3Pa52R/mahony",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mahony19888",
+          "twitch_display_name": "mahony19888",
+          "twitch_channel": "https://www.twitch.tv/mahony19888",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M18.696381S",
+        "finished_at": "2025-08-15T17:31:18.776Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1795,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4or27aoqDJX0",
+          "full_name": "Beth#1108",
+          "name": "Beth",
+          "discriminator": "1108",
+          "url": "/user/rZyM4or27aoqDJX0/beth",
+          "avatar": "https://racetime.gg/media/rZyM4or27aoqDJX0_JR6JUg1.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lamebeth",
+          "twitch_display_name": "LameBeth",
+          "twitch_channel": "https://www.twitch.tv/lamebeth",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M05.607488S",
+        "finished_at": "2025-08-15T17:45:05.688Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1225,
+        "score_change": -4,
+        "comment": "the mountain made sense!",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOlld34qAyj",
+          "full_name": "mc_thomas3#9678",
+          "name": "mc_thomas3",
+          "discriminator": "9678",
+          "url": "/user/NZ1KRBOlld34qAyj/mc_thomas3",
+          "avatar": "https://racetime.gg/media/NZ1KRBOlld34qAyj.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mc_thomas3",
+          "twitch_display_name": "mc_thomas3",
+          "twitch_channel": "https://www.twitch.tv/mc_thomas3",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M18.816926S",
+        "finished_at": "2025-08-15T18:05:18.897Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 599,
+        "score_change": -19,
+        "comment": "Last located the mounain :D",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-15T18:05:18.927Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

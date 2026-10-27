@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/witty-zelda-0706",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/witty-zelda-0706",
+    "data_url": "/alttpr-ladder/witty-zelda-0706/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=75 - (Green Potion/Quake/Compass/Map/Bombos)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-05-26T00:30:06.447Z",
+    "started_at": "2025-05-26T01:00:06.462Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "VXY0eABdXNBLKPnz",
+          "full_name": "Chexhuman#3342",
+          "name": "Chexhuman",
+          "discriminator": "3342",
+          "url": "/user/VXY0eABdXNBLKPnz/chexhuman",
+          "avatar": "https://racetime.gg/media/Kipp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "chexhuman",
+          "twitch_display_name": "Chexhuman",
+          "twitch_channel": "https://www.twitch.tv/chexhuman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M00.585099S",
+        "finished_at": "2025-05-26T02:15:07.047Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1509,
+        "comment": "first stepladder race 87/216",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M35.719984S",
+        "finished_at": "2025-05-26T02:20:42.182Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2450,
+        "score_change": -8,
+        "comment": "121",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H22M50.339538S",
+        "finished_at": "2025-05-26T02:22:56.801Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1699,
+        "score_change": 73,
+        "comment": "All Yuzuhera dodgers are cowards",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N5zbdeWenDBYPK8O",
+          "full_name": "tso15#4732",
+          "name": "tso15",
+          "discriminator": "4732",
+          "url": "/user/N5zbdeWenDBYPK8O/tso15",
+          "avatar": "https://racetime.gg/media/Watermark.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tso15",
+          "twitch_display_name": "Tso15",
+          "twitch_channel": "https://www.twitch.tv/tso15",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M16.345845S",
+        "finished_at": "2025-05-26T02:35:22.808Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1731,
+        "score_change": -199,
+        "comment": "hookless, pearless and flipperless",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M59.054542S",
+        "finished_at": "2025-05-26T02:44:05.516Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 207,
+        "score_change": -11,
+        "comment": "91 - dupped a sword for go mode and skipped everything",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-26T02:44:05.610Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

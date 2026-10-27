@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/perfect-blind-9582",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/perfect-blind-9582",
+    "data_url": "/alttpr-ladder/perfect-blind-9582/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=36 - (Empty Bottle/Heart/Bugnet/Boots/Green Potion)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-05-21T04:30:05.333Z",
+    "started_at": "2025-05-21T04:59:55.409Z",
+    "time_limit": "P0DT03H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H18M18.464714S",
+        "finished_at": "2025-05-21T06:18:13.874Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1164,
+        "comment": "thanks pig, died a lot. rip extra boots",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzm0WYlM65",
+          "full_name": "BDI1701#8625",
+          "name": "BDI1701",
+          "discriminator": "8625",
+          "url": "/user/jZ2EGWbzm0WYlM65/bdi1701",
+          "avatar": "https://racetime.gg/media/pfp_E8Wa9bf.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bdi1701",
+          "twitch_display_name": "bdi1701",
+          "twitch_channel": "https://www.twitch.tv/bdi1701",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M23.369587S",
+        "finished_at": "2025-05-21T06:33:18.778Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1445,
+        "score_change": 289,
+        "comment": "last locationed flute",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1Y2vWKalP1",
+          "full_name": "BrotinderDose",
+          "name": "BrotinderDose",
+          "discriminator": null,
+          "url": "/user/NY0OkW1Y2vWKalP1/brotinderdose",
+          "avatar": "https://racetime.gg/media/Waving112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "brotinderdose",
+          "twitch_display_name": "Brotinderdose",
+          "twitch_channel": "https://www.twitch.tv/brotinderdose",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M06.253597S",
+        "finished_at": "2025-05-21T06:35:01.662Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 402,
+        "comment": "150 CR",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M41.940450S",
+        "finished_at": "2025-05-21T06:40:37.349Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 866,
+        "score_change": 125,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mQeL3Pd1Xr",
+          "full_name": "rdsdb#3726",
+          "name": "rdsdb",
+          "discriminator": "3726",
+          "url": "/user/R6ym83mQeL3Pd1Xr/rdsdb",
+          "avatar": "https://racetime.gg/media/R6ym83mQeL3Pd1Xr_NamgYZE.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "rdsdb",
+          "twitch_display_name": "rdsdb",
+          "twitch_channel": "https://www.twitch.tv/rdsdb",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -613,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-21T06:40:37.469Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

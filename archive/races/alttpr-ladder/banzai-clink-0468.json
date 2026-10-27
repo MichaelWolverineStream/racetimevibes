@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/banzai-clink-0468",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/banzai-clink-0468",
+    "data_url": "/alttpr-ladder/banzai-clink-0468/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=4446 - (HashBow/HashShovel/HashIceRod/HashQuake/HashMoonPearl)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-02T05:30:00.090Z",
+    "started_at": "2026-08-02T06:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M22.442926S",
+        "finished_at": "2026-08-02T07:45:22.520Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2202,
+        "score_change": 34,
+        "comment": "167/216. Nice vanilla smalls. Nicer flute tbh.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnV7oLKPnz",
+          "full_name": "DJCrabhat#0022",
+          "name": "DJCrabhat",
+          "discriminator": "0022",
+          "url": "/user/XY0eABdnV7oLKPnz/djcrabhat",
+          "avatar": "https://racetime.gg/media/crabhat-avatar-small.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "djcrabhat",
+          "twitch_display_name": "djcrabhat",
+          "twitch_channel": "https://www.twitch.tv/djcrabhat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H30M00.958122S",
+        "finished_at": "2026-08-02T08:30:01.035Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 357,
+        "comment": "lazer bridge holding the MM big was kinda funny",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36wzNoq1aOX",
+          "full_name": "Mattcit08#4019",
+          "name": "Mattcit08",
+          "discriminator": "4019",
+          "url": "/user/5K9rm36wzNoq1aOX/mattcit08",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mattcit08",
+          "twitch_display_name": "mattcit08",
+          "twitch_channel": "https://www.twitch.tv/mattcit08",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H42M15.371458S",
+        "finished_at": "2026-08-02T09:42:15.448Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 968,
+        "score_change": -69,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-02T09:42:15.768Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

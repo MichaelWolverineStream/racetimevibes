@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/tactical-beetorp-2256",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/tactical-beetorp-2256",
+    "data_url": "/alttpr-ladder/tactical-beetorp-2256/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=363 - (Bugnet/Shield/Mushroom/Big Key/Book)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-30T18:30:00.164Z",
+    "started_at": "2025-06-30T19:00:00.078Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M33.967075S",
+        "finished_at": "2025-06-30T21:01:34.045Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2199,
+        "score_change": 25,
+        "comment": "205/216 trash fire seed",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoG9vVBMVr6Z",
+          "full_name": "LinkQ87#2626",
+          "name": "LinkQ87",
+          "discriminator": "2626",
+          "url": "/user/Aa5veoG9vVBMVr6Z/linkq87",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linkq87",
+          "twitch_display_name": "LinkQ87",
+          "twitch_channel": "https://www.twitch.tv/linkq87",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M04.718042S",
+        "finished_at": "2025-06-30T21:11:04.796Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1540,
+        "score_change": 69,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY0PA3Rdm5v",
+          "full_name": "thePa1ne#8901",
+          "name": "thePa1ne",
+          "discriminator": "8901",
+          "url": "/user/JrM6PoY0PA3Rdm5v/thepa1ne",
+          "avatar": "https://racetime.gg/media/112LOL.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thepa1ne",
+          "twitch_display_name": "thePa1ne",
+          "twitch_channel": "https://www.twitch.tv/thepa1ne",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M46.489771S",
+        "finished_at": "2025-06-30T21:12:46.568Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1971,
+        "score_change": -199,
+        "comment": "I'm gonna throw up",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-30T21:12:46.667Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

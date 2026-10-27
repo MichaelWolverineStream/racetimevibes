@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/amazing-blacksmith-6307",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/amazing-blacksmith-6307",
+    "data_url": "/alttpr-ladder/amazing-blacksmith-6307/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4191 - (HashEmptyBottle/HashLamp/HashHookshot/HashFlippers/HashBook)",
+    "entrants_count": 7,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-07-11T22:30:00.298Z",
+    "started_at": "2026-07-11T23:00:00.207Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M52.088811S",
+        "finished_at": "2026-07-12T00:36:52.296Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2348,
+        "score_change": 82,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRmk5omqXen",
+          "full_name": "ppchan#6201",
+          "name": "ppchan",
+          "discriminator": "6201",
+          "url": "/user/497NdWRmk5omqXen/ppchan",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ppchan",
+          "twitch_display_name": "ppchan",
+          "twitch_channel": "https://www.twitch.tv/ppchan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M50.049418S",
+        "finished_at": "2026-07-12T00:45:50.257Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2425,
+        "score_change": 21,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M16.141477S",
+        "finished_at": "2026-07-12T00:47:16.349Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2605,
+        "score_change": -8,
+        "comment": "187 - Nice ADKeys CR.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M06.376376S",
+        "finished_at": "2026-07-12T00:49:06.584Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2079,
+        "score_change": -34,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "g497NdWRX53mqXen",
+          "full_name": "oldmansunshine#3039",
+          "name": "oldmansunshine",
+          "discriminator": "3039",
+          "url": "/user/g497NdWRX53mqXen/oldmansunshine",
+          "avatar": "https://racetime.gg/media/angry_sun1.jpg",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "oldmansunshine20",
+          "twitch_display_name": "OldManSunshine20",
+          "twitch_channel": "https://www.twitch.tv/oldmansunshine20",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M53.610946S",
+        "finished_at": "2026-07-12T00:59:53.818Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1341,
+        "score_change": 54,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2179,
+        "score_change": -272,
+        "comment": "LL'd flute, FF to join cabookey race",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdE0L3LKPnz",
+          "full_name": "NinjaDave04#5105",
+          "name": "NinjaDave04",
+          "discriminator": "5105",
+          "url": "/user/XY0eABdE0L3LKPnz/ninjadave04",
+          "avatar": "https://racetime.gg/media/red_ninja.PNG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ninjadave84",
+          "twitch_display_name": "NinjaDave84",
+          "twitch_channel": "https://www.twitch.tv/ninjadave84",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": 575,
+        "comment": "Hard LL on that Hookshot.  I'm going to bed,",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-12T00:59:53.853Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

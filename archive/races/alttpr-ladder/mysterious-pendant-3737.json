@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:13Z",
+  "race": {
+    "name": "alttpr-ladder/mysterious-pendant-3737",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mysterious-pendant-3737",
+    "data_url": "/alttpr-ladder/mysterious-pendant-3737/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookeydrop (League)\nleague/cabookeydrop_noct - https://alttpr.racing/getseed.php?race=3087 - (HashHammer/HashBigKey/HashCompass/HashLamp/HashPendant)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-04-07T04:30:00.088Z",
+    "started_at": "2026-04-07T05:00:00.085Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M50.513933S",
+        "finished_at": "2026-04-07T07:01:50.599Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2752,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbP6O3YlM65",
+          "full_name": "Wasteland Outlaw#8452",
+          "name": "Wasteland Outlaw",
+          "discriminator": "8452",
+          "url": "/user/jZ2EGWbP6O3YlM65/wasteland-outlaw",
+          "avatar": "https://racetime.gg/media/jZ2EGWbP6O3YlM65.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "wasteland_outlaw",
+          "twitch_display_name": "Wasteland_Outlaw",
+          "twitch_channel": "https://www.twitch.tv/wasteland_outlaw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1286,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-07T07:57:55.000Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

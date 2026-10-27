@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/mega-lastlocation-6862",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mega-lastlocation-6862",
+    "data_url": "/alttpr-ladder/mega-lastlocation-6862/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag (Casual Boots)\nladder/grabbag - https://alttpr.racing/getseed.php?race=5372 - (HashMap/HashGloves/HashTunic/HashBigKey/HashFlute)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-21T19:30:00.259Z",
+    "started_at": "2026-10-21T20:00:00.165Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "GklxjWzPLb3LPdye",
+          "full_name": "jmasha#6476",
+          "name": "jmasha",
+          "discriminator": "6476",
+          "url": "/user/GklxjWzPLb3LPdye/jmasha",
+          "avatar": "https://racetime.gg/media/GklxjWzPLb3LPdye.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "j_masha",
+          "twitch_display_name": "j_masha",
+          "twitch_channel": "https://www.twitch.tv/j_masha",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M43.542526S",
+        "finished_at": "2026-10-21T21:32:43.708Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 546,
+        "score_change": 1206,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M52.952193S",
+        "finished_at": "2026-10-21T21:38:53.118Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2657,
+        "score_change": -24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-21T21:38:53.245Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

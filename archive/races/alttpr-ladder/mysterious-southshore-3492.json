@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/mysterious-southshore-3492",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mysterious-southshore-3492",
+    "data_url": "/alttpr-ladder/mysterious-southshore-3492/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=5234 - (HashIceRod/HashCompass/HashBook/HashIceRod/HashHeart)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-10T07:30:00.151Z",
+    "started_at": "2026-10-10T08:00:00.086Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "z56VnBQG9yoK4xrZ",
+          "full_name": "Osora90#4406",
+          "name": "Osora90",
+          "discriminator": "4406",
+          "url": "/user/z56VnBQG9yoK4xrZ/osora90",
+          "avatar": "https://racetime.gg/media/ShinyUmbreon_smug_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "osora90",
+          "twitch_display_name": "Osora90",
+          "twitch_channel": "https://www.twitch.tv/osora90",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M17.480066S",
+        "finished_at": "2026-10-10T09:59:17.566Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2013,
+        "score_change": 260,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M48.065107S",
+        "finished_at": "2026-10-10T10:11:48.151Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2591,
+        "score_change": -10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-10T10:11:48.644Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

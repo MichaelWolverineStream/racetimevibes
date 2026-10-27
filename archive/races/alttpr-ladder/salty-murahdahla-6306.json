@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:36Z",
+  "race": {
+    "name": "alttpr-ladder/salty-murahdahla-6306",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/salty-murahdahla-6306",
+    "data_url": "/alttpr-ladder/salty-murahdahla-6306/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=1666 - (HashBook/HashHeart/HashIceRod/HashMoonPearl/HashGreenPotion)",
+    "entrants_count": 7,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-12-04T02:30:00.088Z",
+    "started_at": "2025-12-04T03:00:00.171Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DQpno9blOy",
+          "full_name": "Specks#1514",
+          "name": "Specks",
+          "discriminator": "1514",
+          "url": "/user/5rNGD3DQpno9blOy/specks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "speckyspecks",
+          "twitch_display_name": "SpeckySpecks",
+          "twitch_channel": "https://www.twitch.tv/speckyspecks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M20.240959S",
+        "finished_at": "2025-12-04T04:40:20.412Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3111,
+        "score_change": 27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOMOvo4qAyj",
+          "full_name": "Deign#3244",
+          "name": "Deign",
+          "discriminator": "3244",
+          "url": "/user/NZ1KRBOMOvo4qAyj/deign",
+          "avatar": "https://racetime.gg/media/96x96.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "deign",
+          "twitch_display_name": "Deign",
+          "twitch_channel": "https://www.twitch.tv/deign",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M44.509860S",
+        "finished_at": "2025-12-04T04:48:44.681Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2907,
+        "score_change": 6,
+        "comment": "CR: 155 -- Smooth ride for the most part, MM BK for go, but ultimately PoD entrance for actual go",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M04.493051S",
+        "finished_at": "2025-12-04T04:59:04.664Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2826,
+        "score_change": -1,
+        "comment": "should have checked pod entrance, apparently",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36rl93q1aOX",
+          "full_name": "Sinned#0398",
+          "name": "Sinned",
+          "discriminator": "0398",
+          "url": "/user/5K9rm36rl93q1aOX/sinned",
+          "avatar": "https://racetime.gg/media/asdfasdfadsf.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sinneddennis",
+          "twitch_display_name": "Sinneddennis",
+          "twitch_channel": "https://www.twitch.tv/sinneddennis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M48.796897S",
+        "finished_at": "2025-12-04T05:05:48.968Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2342,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNvlvolywqX",
+          "full_name": "It's me, Facebones!#4169",
+          "name": "It's me, Facebones!",
+          "discriminator": "4169",
+          "url": "/user/52QE8oNvlvolywqX/its-me-facebones",
+          "avatar": "https://racetime.gg/media/52QE8oNvlvolywqX_LxMlaHp.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "itsmefacebones",
+          "twitch_display_name": "itsmefacebones",
+          "twitch_channel": "https://www.twitch.tv/itsmefacebones",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M56.752434S",
+        "finished_at": "2025-12-04T05:14:56.924Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2034,
+        "score_change": 6,
+        "comment": "always climb, but i never learn.  30 minute penalty, 175",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2264,
+        "score_change": -27,
+        "comment": "Edit: I did mis track something and was able to figure out what to do next. A minor consolation on what started a great run.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JXzVwZWqv8B5k8eb",
+          "full_name": "RooFeeOOOOOOOO#5768",
+          "name": "RooFeeOOOOOOOO",
+          "discriminator": "5768",
+          "url": "/user/JXzVwZWqv8B5k8eb/roofeeoooooooo",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "roofeeoooooooo",
+          "twitch_display_name": "RooFeeOOOOOOOO",
+          "twitch_channel": "https://www.twitch.tv/roofeeoooooooo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 758,
+        "score_change": -61,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-04T05:14:57.036Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

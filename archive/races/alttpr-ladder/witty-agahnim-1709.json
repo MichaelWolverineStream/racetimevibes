@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/witty-agahnim-1709",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/witty-agahnim-1709",
+    "data_url": "/alttpr-ladder/witty-agahnim-1709/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keydrop Boots\nadkdb - https://alttpr.racing/getseed.php?race=349 - (Bow/Hookshot/Bugnet/Compass/Mushroom)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-06-29T00:30:00.150Z",
+    "started_at": "2025-06-29T01:00:00.654Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "N5zbdeWe64BYPK8O",
+          "full_name": "matt7898#1275",
+          "name": "matt7898",
+          "discriminator": "1275",
+          "url": "/user/N5zbdeWe64BYPK8O/matt7898",
+          "avatar": "https://racetime.gg/media/darklink-min_2.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "matt7898",
+          "twitch_display_name": "matt7898",
+          "twitch_channel": "https://www.twitch.tv/matt7898",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M53.593619S",
+        "finished_at": "2025-06-29T03:06:54.248Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2794,
+        "score_change": 172,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36XmzWq1aOX",
+          "full_name": "Rozalyndis#8208",
+          "name": "Rozalyndis",
+          "discriminator": "8208",
+          "url": "/user/5K9rm36XmzWq1aOX/rozalyndis",
+          "avatar": "https://racetime.gg/media/tedd-roz100.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "rozalyndis",
+          "twitch_display_name": "Rozalyndis",
+          "twitch_channel": "https://www.twitch.tv/rozalyndis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M29.748798S",
+        "finished_at": "2025-06-29T03:09:30.403Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2539,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdLGeBLKPnz",
+          "full_name": "paulinhoy#5844",
+          "name": "paulinhoy",
+          "discriminator": "5844",
+          "url": "/user/XY0eABdLGeBLKPnz/paulinhoy",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "paullinhoy",
+          "twitch_display_name": "paullinhoy",
+          "twitch_channel": "https://www.twitch.tv/paullinhoy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H13M32.800744S",
+        "finished_at": "2025-06-29T03:13:33.455Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2346,
+        "score_change": -52,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1490,
+        "score_change": -3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-29T03:19:49.540Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

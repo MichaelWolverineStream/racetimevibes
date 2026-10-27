@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-tempered-8196",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-tempered-8196",
+    "data_url": "/alttpr-ladder/trusty-tempered-8196/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=5387 - (HashBoomerang/HashFlute/HashEmptyBottle/HashLamp/HashShovel)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-23T00:30:00.170Z",
+    "started_at": "2026-10-23T01:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M31.408903S",
+        "finished_at": "2026-10-23T02:43:31.488Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2511,
+        "score_change": 57,
+        "comment": "more than 174. Cat ears won the day.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M54.176385S",
+        "finished_at": "2026-10-23T02:46:54.256Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2532,
+        "score_change": 5,
+        "comment": "opened hammer pegs but left the sk there b/c I thought I only needed two big keys for go. also died to helma. ggs, CR 185",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M05.437842S",
+        "finished_at": "2026-10-23T02:51:05.517Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2335,
+        "score_change": 2,
+        "comment": "yeah ful clear but *clean* aka zzz",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M46.430757S",
+        "finished_at": "2026-10-23T02:54:46.510Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1985,
+        "score_change": 1,
+        "comment": "stupid hook in stupid swamp....186 CR",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNvlvolywqX",
+          "full_name": "It's me, Facebones!#4169",
+          "name": "It's me, Facebones!",
+          "discriminator": "4169",
+          "url": "/user/52QE8oNvlvolywqX/its-me-facebones",
+          "avatar": "https://racetime.gg/media/52QE8oNvlvolywqX_LxMlaHp.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "itsmefacebones",
+          "twitch_display_name": "itsmefacebones",
+          "twitch_channel": "https://www.twitch.tv/itsmefacebones",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M11.068708S",
+        "finished_at": "2026-10-23T02:57:11.148Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": 165,
+        "comment": "french vanilla hookshot. 184",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "d17DexWEYRWak64R",
+          "full_name": "Ninban#5207",
+          "name": "Ninban",
+          "discriminator": "5207",
+          "url": "/user/d17DexWEYRWak64R/ninban",
+          "avatar": "https://racetime.gg/media/avatarx100.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "ninban",
+          "twitch_display_name": "Ninban",
+          "twitch_channel": "https://www.twitch.tv/ninban",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M13.518298S",
+        "finished_at": "2026-10-23T03:06:13.598Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": null,
+        "score_change": -233,
+        "comment": "Am I... washed? 189",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-23T03:06:14.591Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

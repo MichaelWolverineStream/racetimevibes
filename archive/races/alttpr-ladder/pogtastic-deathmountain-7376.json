@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/pogtastic-deathmountain-7376",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/pogtastic-deathmountain-7376",
+    "data_url": "/alttpr-ladder/pogtastic-deathmountain-7376/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Not Slow)\nmmmmavid23 - https://alttpr.racing/getseed.php?race=252 - (Heart/Bombs/Hookshot/Mirror/Hammer)",
+    "entrants_count": 3,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-06-17T03:30:05.625Z",
+    "started_at": "2025-06-17T04:00:05.650Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H41M52.142767S",
+        "finished_at": "2025-06-17T06:41:57.793Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3176,
+        "score_change": 0,
+        "comment": "840/888 silly silly game",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1503,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N9rVpW9N7JBjq8Ll",
+          "full_name": "Khaemere#6838",
+          "name": "Khaemere",
+          "discriminator": "6838",
+          "url": "/user/N9rVpW9N7JBjq8Ll/khaemere",
+          "avatar": "https://racetime.gg/media/Cow_-_HeadCrop.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "khaemere",
+          "twitch_display_name": "Khaemere",
+          "twitch_channel": "https://www.twitch.tv/khaemere",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1130,
+        "score_change": 58,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-17T07:00:30.812Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:51Z",
+  "race": {
+    "name": "alttpr-ladder/dapper-turtlerock-8611",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dapper-turtlerock-8611",
+    "data_url": "/alttpr-ladder/dapper-turtlerock-8611/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Crisscross\njem041/crisscross_zw - https://alttpr.racing/getseed.php?race=613 - (HashEmptyBottle/HashBombs/HashShield/HashBook/HashBombos)",
+    "entrants_count": 6,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 2,
+    "opened_at": "2025-08-04T19:30:00.165Z",
+    "started_at": "2025-08-04T20:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M03.006031S",
+        "finished_at": "2025-08-04T22:12:03.094Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2790,
+        "score_change": 53,
+        "comment": "172",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3y89OBZVKq1",
+          "full_name": "MalXantholos#6990",
+          "name": "MalXantholos",
+          "discriminator": "6990",
+          "url": "/user/RbOXG3y89OBZVKq1/malxantholos",
+          "avatar": "https://racetime.gg/media/Profil.PNG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "malxantholos",
+          "twitch_display_name": "MalXantholos",
+          "twitch_channel": "https://www.twitch.tv/malxantholos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H27M58.252659S",
+        "finished_at": "2025-08-04T22:27:58.340Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 262,
+        "comment": "Internet died after roughly 2 hours, i'll upload my VOD when it is back",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KXLoeZDjr",
+          "full_name": "WillardJBradley#2538",
+          "name": "WillardJBradley",
+          "discriminator": "2538",
+          "url": "/user/07QXz83KXLoeZDjr/willardjbradley",
+          "avatar": "https://racetime.gg/media/will-boy.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "willardjbradley",
+          "twitch_display_name": "WillardJBradley",
+          "twitch_channel": "https://www.twitch.tv/willardjbradley",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H28M31.551037S",
+        "finished_at": "2025-08-04T22:28:31.639Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2408,
+        "score_change": 51,
+        "comment": "172 - stupid waterfall glove",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvJwmBJkg04",
+          "full_name": "Dominik0688#7163",
+          "name": "Dominik0688",
+          "discriminator": "7163",
+          "url": "/user/bpNAaBvJwmBJkg04/dominik0688",
+          "avatar": "https://racetime.gg/media/Absol3.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dominik0688",
+          "twitch_display_name": "dominik0688",
+          "twitch_channel": "https://www.twitch.tv/dominik0688",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H57M42.596340S",
+        "finished_at": "2025-08-04T22:57:42.684Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2608,
+        "score_change": -11,
+        "comment": "CR 199",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2730,
+        "score_change": -24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "N9rVpW9N7JBjq8Ll",
+          "full_name": "Khaemere#6838",
+          "name": "Khaemere",
+          "discriminator": "6838",
+          "url": "/user/N9rVpW9N7JBjq8Ll/khaemere",
+          "avatar": "https://racetime.gg/media/Cow_-_HeadCrop.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "khaemere",
+          "twitch_display_name": "Khaemere",
+          "twitch_channel": "https://www.twitch.tv/khaemere",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1272,
+        "score_change": 127,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-04T22:59:09.025Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

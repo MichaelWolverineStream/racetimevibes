@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/cute-jamo-2316",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/cute-jamo-2316",
+    "data_url": "/alttpr-ladder/cute-jamo-2316/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4313 - (HashBombos/HashMirror/HashBow/HashHeart/HashHookshot)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-22T02:30:00.177Z",
+    "started_at": "2026-07-22T03:00:00.112Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "nxMQeoxPz8oapX0A",
+          "full_name": "Algo_17#6583",
+          "name": "Algo_17",
+          "discriminator": "6583",
+          "url": "/user/nxMQeoxPz8oapX0A/algo_17",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "algo_17",
+          "twitch_display_name": "Algo_17",
+          "twitch_channel": "https://www.twitch.tv/algo_17",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M02.477365S",
+        "finished_at": "2026-07-22T04:38:02.590Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2001,
+        "score_change": 25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orgd1WqDJX0",
+          "full_name": "Masakuni#2916",
+          "name": "Masakuni",
+          "discriminator": "2916",
+          "url": "/user/rZyM4orgd1WqDJX0/masakuni",
+          "avatar": "https://racetime.gg/media/masa_avi_dragonasis_0524_150.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "masakunidragon",
+          "twitch_display_name": "MasakuniDragon",
+          "twitch_channel": "https://www.twitch.tv/masakunidragon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M58.202173S",
+        "finished_at": "2026-07-22T04:45:58.314Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 926,
+        "score_change": 92,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M38.802697S",
+        "finished_at": "2026-07-22T05:05:38.915Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1229,
+        "score_change": -18,
+        "comment": "anyone love  bow on laserrbriige",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-22T05:05:38.945Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

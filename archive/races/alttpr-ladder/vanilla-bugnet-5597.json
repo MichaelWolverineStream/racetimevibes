@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/vanilla-bugnet-5597",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/vanilla-bugnet-5597",
+    "data_url": "/alttpr-ladder/vanilla-bugnet-5597/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=5257 - (HashIceRod/HashGreenPotion/HashMoonPearl/HashMagicPowder/HashFlute)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-12T05:30:00.103Z",
+    "started_at": "2026-10-12T06:00:00.105Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "wezlNoAGr2Bmq6db",
+          "full_name": "Akuheish#5435",
+          "name": "Akuheish",
+          "discriminator": "5435",
+          "url": "/user/wezlNoAGr2Bmq6db/akuheish",
+          "avatar": "https://racetime.gg/media/Untitled_design_2.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akuheish",
+          "twitch_display_name": "AkuHeish",
+          "twitch_channel": "https://www.twitch.tv/akuheish",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M29.807331S",
+        "finished_at": "2026-10-12T07:54:29.912Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2273,
+        "score_change": 49,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M34.187524S",
+        "finished_at": "2026-10-12T07:54:34.292Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2084,
+        "score_change": -12,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-12T07:54:34.383Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:01Z",
+  "race": {
+    "name": "alttpr-ladder/charming-zenitschwert-5134",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/charming-zenitschwert-5134",
+    "data_url": "/alttpr-ladder/charming-zenitschwert-5134/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=4177 - (HashBombos/HashMirror/HashShield/HashBombos/HashBombs)",
+    "entrants_count": 5,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-07-10T19:30:00.180Z",
+    "started_at": "2026-07-10T20:00:00.104Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DK6DB9blOy",
+          "full_name": "Jaejo36#6545",
+          "name": "Jaejo36",
+          "discriminator": "6545",
+          "url": "/user/5rNGD3DK6DB9blOy/jaejo36",
+          "avatar": "https://racetime.gg/media/5rNGD3DK6DB9blOy.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jaejo36",
+          "twitch_display_name": "Jaejo36",
+          "twitch_channel": "https://www.twitch.tv/jaejo36",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M50.717169S",
+        "finished_at": "2026-07-10T21:46:50.822Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1639,
+        "score_change": 213,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M02.333143S",
+        "finished_at": "2026-07-10T21:55:02.438Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1679,
+        "score_change": 254,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4orGOEWqDJX0",
+          "full_name": "doctorearworm",
+          "name": "doctorearworm",
+          "discriminator": null,
+          "url": "/user/doctorearworm",
+          "avatar": "https://racetime.gg/media/drworm_LdyUZ6x.png",
+          "pronouns": "he/they",
+          "flair": "supporter moderator",
+          "twitch_name": "doctorearworm",
+          "twitch_display_name": "doctorearworm",
+          "twitch_channel": "https://www.twitch.tv/doctorearworm",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M37.742518S",
+        "finished_at": "2026-07-10T21:56:37.847Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2509,
+        "score_change": -182,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": true,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2387,
+        "score_change": -20,
+        "comment": "GT open at 1:13, needed 6 things for go mode and found 5 but walked right past the big chest on accident. had not even gone into TR yet. killed Aga1 at 1:27. sub-1:40 opening zero chests in TR but no",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1719,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-10T21:59:02.033Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

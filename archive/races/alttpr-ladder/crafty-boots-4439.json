@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/crafty-boots-4439",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/crafty-boots-4439",
+    "data_url": "/alttpr-ladder/crafty-boots-4439/data",
+    "goal": {
+      "name": "Finish the Race",
+      "custom": true
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=13 - (Empty Bottle/Flute/Empty Bottle/Flippers/Green Potion)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-05-15T23:36:45.089Z",
+    "started_at": "2025-05-15T23:59:55.272Z",
+    "time_limit": "P0DT03H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "wezlNoAQNbomq6db",
+          "full_name": "mm2nescartridge",
+          "name": "mm2nescartridge",
+          "discriminator": null,
+          "url": "/user/mm2nescartridge",
+          "avatar": "https://racetime.gg/media/mm2_circle.png",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "mm2nescartridge",
+          "twitch_display_name": "mm2nescartridge",
+          "twitch_channel": "https://www.twitch.tv/mm2nescartridge",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M05.860777S",
+        "finished_at": "2025-05-16T02:10:01.132Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": null,
+        "comment": "193 nice mirror",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5rNGD3DQpno9blOy",
+          "full_name": "Specks#1514",
+          "name": "Specks",
+          "discriminator": "1514",
+          "url": "/user/5rNGD3DQpno9blOy/specks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "speckyspecks",
+          "twitch_display_name": "SpeckySpecks",
+          "twitch_channel": "https://www.twitch.tv/speckyspecks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M50.992758S",
+        "finished_at": "2025-05-16T02:11:46.264Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmJaBK4xrZ",
+          "full_name": "LPMX#1296",
+          "name": "LPMX",
+          "discriminator": "1296",
+          "url": "/user/z56VnBQmJaBK4xrZ/lpmx",
+          "avatar": "https://racetime.gg/media/Wario.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "l_pmx",
+          "twitch_display_name": "L_PMX",
+          "twitch_channel": "https://www.twitch.tv/l_pmx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M27.149067S",
+        "finished_at": "2025-05-16T02:12:22.421Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "OR6ym83mxYBPd1Xr",
+          "full_name": "Coy#4033",
+          "name": "Coy",
+          "discriminator": "4033",
+          "url": "/user/OR6ym83mxYBPd1Xr/coy",
+          "avatar": "https://racetime.gg/media/coystrAYAYA112.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "coy_stream",
+          "twitch_display_name": "Coy_Stream",
+          "twitch_channel": "https://www.twitch.tv/coy_stream",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M08.073068S",
+        "finished_at": "2025-05-16T02:17:03.345Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36rl93q1aOX",
+          "full_name": "Sinned#0398",
+          "name": "Sinned",
+          "discriminator": "0398",
+          "url": "/user/5K9rm36rl93q1aOX/sinned",
+          "avatar": "https://racetime.gg/media/asdfasdfadsf.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sinneddennis",
+          "twitch_display_name": "Sinneddennis",
+          "twitch_channel": "https://www.twitch.tv/sinneddennis",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H29M09.307328S",
+        "finished_at": "2025-05-16T02:29:04.579Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": null,
+        "comment": "CR198 - MMBK for go",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-16T02:29:04.698Z",
+    "cancelled_at": null,
+    "recordable": false,
+    "recorded": false
+  }
+}

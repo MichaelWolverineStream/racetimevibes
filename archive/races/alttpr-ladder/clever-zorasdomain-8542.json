@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/clever-zorasdomain-8542",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/clever-zorasdomain-8542",
+    "data_url": "/alttpr-ladder/clever-zorasdomain-8542/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG\nhmg - https://alttpr.racing/getseed.php?race=26 - (Bow/Boots/Green Potion/Moon Pearl/Cape)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-05-19T21:30:06.478Z",
+    "started_at": "2025-05-19T21:59:56.444Z",
+    "time_limit": "P0DT03H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "NY0OkW1YJjWKalP1",
+          "full_name": "DarkenedSky#5987",
+          "name": "DarkenedSky",
+          "discriminator": "5987",
+          "url": "/user/NY0OkW1YJjWKalP1/darkenedsky",
+          "avatar": "https://racetime.gg/media/newdarklinksub.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "darkened5ky",
+          "twitch_display_name": "Darkened5ky",
+          "twitch_channel": "https://www.twitch.tv/darkened5ky",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M01.197890S",
+        "finished_at": "2025-05-19T23:36:57.642Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 281,
+        "score_change": 1411,
+        "comment": "Who's rolling these",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEGGw3ak64R",
+          "full_name": "Bread-kun#7332",
+          "name": "Bread-kun",
+          "discriminator": "7332",
+          "url": "/user/17DexWEGGw3ak64R/bread-kun",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bread_kun",
+          "twitch_display_name": "Bread_kun",
+          "twitch_channel": "https://www.twitch.tv/bread_kun",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M29.241722S",
+        "finished_at": "2025-05-19T23:47:25.686Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 1016,
+        "comment": "What a stupid seed lmao",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M31.389986S",
+        "finished_at": "2025-05-19T23:47:27.834Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1320,
+        "score_change": 329,
+        "comment": "Swamp always has a sword",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B86lyoPa52R",
+          "full_name": "MrByer#7307",
+          "name": "MrByer",
+          "discriminator": "7307",
+          "url": "/user/VwLN8B86lyoPa52R/mrbyer",
+          "avatar": "https://racetime.gg/media/2019112008471100-3C66B776DB1AA06323037049FACD96D3.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mrbyer",
+          "twitch_display_name": "MrByer",
+          "twitch_channel": "https://www.twitch.tv/mrbyer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M36.749022S",
+        "finished_at": "2025-05-19T23:49:33.193Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1907,
+        "score_change": -73,
+        "comment": "184/216 That was so close to being a cool pearlless seed, but nooo",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEy9lWak64R",
+          "full_name": "secretlyasliver#1225",
+          "name": "secretlyasliver",
+          "discriminator": "1225",
+          "url": "/user/17DexWEy9lWak64R/secretlyasliver",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "secretlyasliver",
+          "twitch_display_name": "secretlyasliver",
+          "twitch_channel": "https://www.twitch.tv/secretlyasliver",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M23.495450S",
+        "finished_at": "2025-05-19T23:54:19.940Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1301,
+        "score_change": 114,
+        "comment": "8 checks left in the entire game, 53 minute flipper hunt",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAQNbomq6db",
+          "full_name": "mm2nescartridge",
+          "name": "mm2nescartridge",
+          "discriminator": null,
+          "url": "/user/mm2nescartridge",
+          "avatar": "https://racetime.gg/media/mm2_circle.png",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "mm2nescartridge",
+          "twitch_display_name": "mm2nescartridge",
+          "twitch_channel": "https://www.twitch.tv/mm2nescartridge",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M34.573296S",
+        "finished_at": "2025-05-19T23:57:31.017Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1731,
+        "score_change": -194,
+        "comment": "179 the mitts were a lie",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M06.963903S",
+        "finished_at": "2025-05-20T00:03:03.408Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": null,
+        "score_change": -519,
+        "comment": "last located the flippers",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-20T00:03:03.494Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

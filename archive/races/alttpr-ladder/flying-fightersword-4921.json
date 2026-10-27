@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:32Z",
+  "race": {
+    "name": "alttpr-ladder/flying-fightersword-4921",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/flying-fightersword-4921",
+    "data_url": "/alttpr-ladder/flying-fightersword-4921/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\njem041/crosskeys2024 - https://alttpr.racing/getseed.php?race=1945 - (HashQuake/HashGloves/HashHammer/HashShield/HashHookshot)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-27T07:30:00.097Z",
+    "started_at": "2025-12-27T08:00:00.182Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M06.728528S",
+        "finished_at": "2025-12-27T09:38:06.911Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3267,
+        "score_change": 7,
+        "comment": "funny pearl logic",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M43.725830S",
+        "finished_at": "2025-12-27T10:01:43.908Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2897,
+        "score_change": -1,
+        "comment": "CR 160 - LL Hammer / LL Mearl LL Somaria",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8m2K3Pa52R",
+          "full_name": "IConIC22#7299",
+          "name": "IConIC22",
+          "discriminator": "7299",
+          "url": "/user/VwLN8B8m2K3Pa52R/iconic22",
+          "avatar": "https://racetime.gg/media/tqohkwqv.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iconic22",
+          "twitch_display_name": "IConIC22",
+          "twitch_channel": "https://www.twitch.tv/iconic22",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M51.726848S",
+        "finished_at": "2025-12-27T10:07:51.909Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2204,
+        "score_change": -31,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-27T10:07:52.041Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

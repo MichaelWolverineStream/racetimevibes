@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/dazzling-jem-5380",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dazzling-jem-5380",
+    "data_url": "/alttpr-ladder/dazzling-jem-5380/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=3981 - (HashGloves/HashBigKey/HashSomaria/HashPendant/HashQuake)",
+    "entrants_count": 5,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-06-23T10:30:00.204Z",
+    "started_at": "2026-06-23T11:00:00.100Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M30.769525S",
+        "finished_at": "2026-06-23T12:39:30.869Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2574,
+        "score_change": 297,
+        "comment": "178 technically 3 go mode swords in swamp, nice memes",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783J8QPWqlL0a",
+          "full_name": "Muftaay#5896",
+          "name": "Muftaay",
+          "discriminator": "5896",
+          "url": "/user/NX5783J8QPWqlL0a/muftaay",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "muftaay",
+          "twitch_display_name": "Muftaay",
+          "twitch_channel": "https://www.twitch.tv/muftaay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M32.120711S",
+        "finished_at": "2026-06-23T12:43:32.221Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2425,
+        "score_change": 157,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7QdyoV4GED",
+          "full_name": "Kromb1#1059",
+          "name": "Kromb1",
+          "discriminator": "1059",
+          "url": "/user/5JlzyB7QdyoV4GED/kromb1",
+          "avatar": "https://racetime.gg/media/Profilbild1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kromb4787",
+          "twitch_display_name": "kromb4787",
+          "twitch_channel": "https://www.twitch.tv/kromb4787",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M08.764257S",
+        "finished_at": "2026-06-23T12:54:08.864Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2164,
+        "score_change": 67,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB77yyBV4GED",
+          "full_name": "Nezil#1248",
+          "name": "Nezil",
+          "discriminator": "1248",
+          "url": "/user/5JlzyB77yyBV4GED/nezil",
+          "avatar": "https://racetime.gg/media/5JlzyB77yyBV4GED.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "nezil7",
+          "twitch_display_name": "Nezil7",
+          "twitch_channel": "https://www.twitch.tv/nezil7",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2351,
+        "score_change": -76,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqpR8o5k8eb",
+          "full_name": "dunks#3030",
+          "name": "dunks",
+          "discriminator": "3030",
+          "url": "/user/XzVwZWqpR8o5k8eb/dunks",
+          "avatar": "https://racetime.gg/media/complete_optimized_100.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ddunkss",
+          "twitch_display_name": "ddunkss",
+          "twitch_channel": "https://www.twitch.tv/ddunkss",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1630,
+        "score_change": 70,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-23T12:54:08.935Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

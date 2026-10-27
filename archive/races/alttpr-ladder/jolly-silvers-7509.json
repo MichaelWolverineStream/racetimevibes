@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/jolly-silvers-7509",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/jolly-silvers-7509",
+    "data_url": "/alttpr-ladder/jolly-silvers-7509/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4536 - (HashCape/HashCape/HashBombos/HashEther/HashMushroom)",
+    "entrants_count": 9,
+    "entrants_count_finished": 8,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-08-09T17:30:00.173Z",
+    "started_at": "2026-08-09T18:00:00.096Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M49.947113S",
+        "finished_at": "2026-08-09T19:30:50.043Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2204,
+        "score_change": 80,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M04.335486S",
+        "finished_at": "2026-08-09T19:36:04.431Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2713,
+        "score_change": 9,
+        "comment": "get rekt, eastern palace",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M23.052320S",
+        "finished_at": "2026-08-09T19:38:23.148Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2653,
+        "score_change": 6,
+        "comment": "183 - Let me tell you about how i took literally every bait thi sseed had.  The only thing I did right was hookless swamp",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M13.528027S",
+        "finished_at": "2026-08-09T19:39:13.624Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2017,
+        "score_change": 98,
+        "comment": "168 CR, nice mitts",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M07.996264S",
+        "finished_at": "2026-08-09T19:42:08.092Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2505,
+        "score_change": -183,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwZKLo1nEk0",
+          "full_name": "PhillipsKJ#5647",
+          "name": "PhillipsKJ",
+          "discriminator": "5647",
+          "url": "/user/b8GPMWwZKLo1nEk0/phillipskj",
+          "avatar": "https://racetime.gg/media/b8GPMWwZKLo1nEk0.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "phillipskj",
+          "twitch_display_name": "PhillipsKJ",
+          "twitch_channel": "https://www.twitch.tv/phillipskj",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M30.600061S",
+        "finished_at": "2026-08-09T19:42:30.696Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1541,
+        "score_change": 109,
+        "comment": "CR 161 - I finished at 1:42:00 but it gave me an error when i tried to mark finish. Made some lucky early checks. Lucky left side swamp. Ice for go.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGadaBMVr6Z",
+          "full_name": "Skullrusha#3122",
+          "name": "Skullrusha",
+          "discriminator": "3122",
+          "url": "/user/Aa5veoGadaBMVr6Z/skullrusha",
+          "avatar": "https://racetime.gg/media/Aa5veoGadaBMVr6Z.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "skullrusha5",
+          "twitch_display_name": "Skullrusha5",
+          "twitch_channel": "https://www.twitch.tv/skullrusha5",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M37.976316S",
+        "finished_at": "2026-08-09T19:45:38.072Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1995,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Va0eMonzvKol9pyJ",
+          "full_name": "dunbarthemighty#3082",
+          "name": "dunbarthemighty",
+          "discriminator": "3082",
+          "url": "/user/Va0eMonzvKol9pyJ/dunbarthemighty",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "dunbarthemighty",
+          "twitch_display_name": "dunbarthemighty",
+          "twitch_channel": "https://www.twitch.tv/dunbarthemighty",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H47M40.003950S",
+        "finished_at": "2026-08-09T19:47:40.100Z",
+        "place": 8,
+        "place_ordinal": "8th",
+        "score": 1585,
+        "score_change": -73,
+        "comment": "ay carabamba",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1555,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-09T19:47:40.153Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

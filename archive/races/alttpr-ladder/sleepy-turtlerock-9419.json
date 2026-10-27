@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/sleepy-turtlerock-9419",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sleepy-turtlerock-9419",
+    "data_url": "/alttpr-ladder/sleepy-turtlerock-9419/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=4471 - (HashBoots/HashShield/HashMagicPowder/HashIceRod/HashBugnet)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-04T07:30:00.092Z",
+    "started_at": "2026-08-04T08:00:00.079Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvR8dBJkg04",
+          "full_name": "StructuralMike#1449",
+          "name": "StructuralMike",
+          "discriminator": "1449",
+          "url": "/user/bpNAaBvR8dBJkg04/structuralmike",
+          "avatar": "https://racetime.gg/media/dontyouworryaboutblank_.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "structuralmike",
+          "twitch_display_name": "Structuralmike",
+          "twitch_channel": "https://www.twitch.tv/structuralmike",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M21.301361S",
+        "finished_at": "2026-08-04T09:46:21.381Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2700,
+        "score_change": 134,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H16M29.982933S",
+        "finished_at": "2026-08-04T10:16:30.062Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3346,
+        "score_change": -26,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-04T10:16:30.589Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

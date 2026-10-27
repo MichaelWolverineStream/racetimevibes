@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:48Z",
+  "race": {
+    "name": "alttpr-ladder/scrawny-pendant-9522",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/scrawny-pendant-9522",
+    "data_url": "/alttpr-ladder/scrawny-pendant-9522/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=5247 - (HashEther/HashMagicPowder/HashBoomerang/HashMushroom/HashMushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-11T08:30:00.169Z",
+    "started_at": "2026-10-11T09:00:00.108Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H21M01.572574S",
+        "finished_at": "2026-10-11T10:21:01.680Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2322,
+        "score_change": 28,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H24M27.954684S",
+        "finished_at": "2026-10-11T10:24:28.062Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2779,
+        "score_change": -45,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOgKvB4qAyj",
+          "full_name": "Taale#3117",
+          "name": "Taale",
+          "discriminator": "3117",
+          "url": "/user/NZ1KRBOgKvB4qAyj/taale",
+          "avatar": "https://racetime.gg/media/shy_guy_3.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "wundertaale",
+          "twitch_display_name": "WunderTaale",
+          "twitch_channel": "https://www.twitch.tv/wundertaale",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M21.403544S",
+        "finished_at": "2026-10-11T10:38:21.511Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 452,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-11T10:38:21.625Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

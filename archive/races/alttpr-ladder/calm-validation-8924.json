@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/calm-validation-8924",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/calm-validation-8924",
+    "data_url": "/alttpr-ladder/calm-validation-8924/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=4683 - (HashSomaria/HashHeart/HashQuake/HashBugnet/HashFlippers)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-08-21T23:30:00.151Z",
+    "started_at": "2026-08-22T00:00:00.096Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NJrM6PoYDk3Rdm5v",
+          "full_name": "P-Train#3117",
+          "name": "P-Train",
+          "discriminator": "3117",
+          "url": "/user/NJrM6PoYDk3Rdm5v/p-train",
+          "avatar": "https://racetime.gg/media/ptrainOtter_-_sml.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ptrain24",
+          "twitch_display_name": "ptrain24",
+          "twitch_channel": "https://www.twitch.tv/ptrain24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M12.738247S",
+        "finished_at": "2026-08-22T02:04:12.834Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1695,
+        "score_change": 300,
+        "comment": "3 cyc lanmo 2 with silvers and ran out of magic in upstairs GT LUL",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M48.023586S",
+        "finished_at": "2026-08-22T02:06:48.120Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2481,
+        "score_change": 8,
+        "comment": "gg Vinter",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M46.288476S",
+        "finished_at": "2026-08-22T02:07:46.385Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2372,
+        "score_change": -1,
+        "comment": "198 - Fuck that noise, I want my evening back.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M55.663875S",
+        "finished_at": "2026-08-22T02:09:55.760Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2094,
+        "score_change": -7,
+        "comment": "should have sequence broken DM...181 CR",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83KAQaWeZDjr",
+          "full_name": "death_taxes_n64#4985",
+          "name": "death_taxes_n64",
+          "discriminator": "4985",
+          "url": "/user/7QXz83KAQaWeZDjr/death_taxes_n64",
+          "avatar": "https://racetime.gg/media/LC1-Large.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "death_taxes_n64",
+          "twitch_display_name": "death_taxes_n64",
+          "twitch_channel": "https://www.twitch.tv/death_taxes_n64",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M58.089853S",
+        "finished_at": "2026-08-22T02:17:58.186Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1271,
+        "score_change": 23,
+        "comment": "199 CT2, only thing i skipped was hera basement",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4oryQR3qDJX0",
+          "full_name": "KeithMcRocks#8249",
+          "name": "KeithMcRocks",
+          "discriminator": "8249",
+          "url": "/user/rZyM4oryQR3qDJX0/keithmcrocks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "keithmcrocks",
+          "twitch_display_name": "KeithMcRocks",
+          "twitch_channel": "https://www.twitch.tv/keithmcrocks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -138,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-22T02:41:28.293Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/hot-paradox-2442",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hot-paradox-2442",
+    "data_url": "/alttpr-ladder/hot-paradox-2442/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - OnlyADKDF\njem041/onlyadkdf - https://alttpr.racing/getseed.php?race=3457 - (HashHammer/HashFlippers/HashMagicPowder/HashFlute/HashEther)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-10T19:30:00.087Z",
+    "started_at": "2026-05-10T20:00:00.075Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H12M53.430511S",
+        "finished_at": "2026-05-10T21:12:53.506Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 772,
+        "score_change": 561,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M02.196397S",
+        "finished_at": "2026-05-10T21:33:02.272Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 817,
+        "score_change": 185,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGQObBMVr6Z",
+          "full_name": "eclectic#9953",
+          "name": "eclectic",
+          "discriminator": "9953",
+          "url": "/user/Aa5veoGQObBMVr6Z/eclectic",
+          "avatar": "https://racetime.gg/media/Aa5veoGQObBMVr6Z.webp",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "eclectic_sh",
+          "twitch_display_name": "eclectic_sh",
+          "twitch_channel": "https://www.twitch.tv/eclectic_sh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M24.211848S",
+        "finished_at": "2026-05-10T22:10:24.287Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -528,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-10T22:10:24.351Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

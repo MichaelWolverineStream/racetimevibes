@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/superb-southshore-3411",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/superb-southshore-3411",
+    "data_url": "/alttpr-ladder/superb-southshore-3411/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG\nhmg - https://alttpr.racing/getseed.php?race=461 - (Bow/Boomerang/Book/Bugnet/Heart)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-13T09:30:00.201Z",
+    "started_at": "2025-07-13T10:00:00.075Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlG8JWaOP57",
+          "full_name": "Duden2#7537",
+          "name": "Duden2",
+          "discriminator": "7537",
+          "url": "/user/xldAMBlG8JWaOP57/duden2",
+          "avatar": "https://racetime.gg/media/0c2edfb9-8860-4267-828b-497e73d15132.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "duden2",
+          "twitch_display_name": "Duden2",
+          "twitch_channel": "https://www.twitch.tv/duden2",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M20.197759S",
+        "finished_at": "2025-07-13T11:42:20.272Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2311,
+        "score_change": 68,
+        "comment": "CR 183, but did everything but LSS and GT Tileroom, Gamma would have loved this seed",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRN5OWmqXen",
+          "full_name": "Muffins#9229",
+          "name": "Muffins",
+          "discriminator": "9229",
+          "url": "/user/497NdWRN5OWmqXen/muffins",
+          "avatar": "https://racetime.gg/media/rsz_1binary_pipette.jpg",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "neo_muffins",
+          "twitch_display_name": "Neo_Muffins",
+          "twitch_channel": "https://www.twitch.tv/neo_muffins",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M40.867499S",
+        "finished_at": "2025-07-13T11:50:40.942Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2284,
+        "score_change": 0,
+        "comment": "184 - Hard LL IR. IR + Flippers go mode for an hour :SMILERS:",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGpVVWMVr6Z",
+          "full_name": "HolySmoke#7065",
+          "name": "HolySmoke",
+          "discriminator": "7065",
+          "url": "/user/Aa5veoGpVVWMVr6Z/holysmoke",
+          "avatar": "https://racetime.gg/media/nia-100.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "holysmoke",
+          "twitch_display_name": "HolySmoke",
+          "twitch_channel": "https://www.twitch.tv/holysmoke",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M19.374492S",
+        "finished_at": "2025-07-13T11:54:19.449Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1431,
+        "score_change": 15,
+        "comment": "What Muffins said",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "b8GPMWwJkbo1nEk0",
+          "full_name": "boothisman#8232",
+          "name": "boothisman",
+          "discriminator": "8232",
+          "url": "/user/b8GPMWwJkbo1nEk0/boothisman",
+          "avatar": "https://racetime.gg/media/7C6820E5-A2AE-4BC9-B5F2-66CEB983EE2A112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "boothisman",
+          "twitch_display_name": "boothisman",
+          "twitch_channel": "https://www.twitch.tv/boothisman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 492,
+        "score_change": -54,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-13T12:02:37.679Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

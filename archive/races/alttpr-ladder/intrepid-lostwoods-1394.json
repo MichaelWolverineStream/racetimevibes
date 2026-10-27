@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:11Z",
+  "race": {
+    "name": "alttpr-ladder/intrepid-lostwoods-1394",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/intrepid-lostwoods-1394",
+    "data_url": "/alttpr-ladder/intrepid-lostwoods-1394/data",
+    "goal": {
+      "name": "Beat the game (Spoiler)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [spoiler] - Spoiler - No GT Boots - Open 7/7\nladder/nogtboots_open - https://alttpr.racing/getseed.php?race=3393 - (HashLamp/HashMirror/HashMushroom/HashEmptyBottle/HashBombos)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-05T11:30:00.077Z",
+    "started_at": "2026-05-05T12:00:00.087Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT00H57M09.666336S",
+        "finished_at": "2026-05-05T12:57:09.753Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 183,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3yVXdoZVKq1",
+          "full_name": "FlyingPlatipusDimitri#7034",
+          "name": "FlyingPlatipusDimitri",
+          "discriminator": "7034",
+          "url": "/user/RbOXG3yVXdoZVKq1/flyingplatipusdimitri",
+          "avatar": "https://racetime.gg/media/RbOXG3yVXdoZVKq1_lfuGozx.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "flyingplatipusdimitri",
+          "twitch_display_name": "FlyingPlatipusDimitri",
+          "twitch_channel": "https://www.twitch.tv/flyingplatipusdimitri",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H00M46.915563S",
+        "finished_at": "2026-05-05T13:00:47.003Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 169,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VR0E3405Jv",
+          "full_name": "Ascend",
+          "name": "Ascend",
+          "discriminator": null,
+          "url": "/user/Mewn83VR0E3405Jv/ascend",
+          "avatar": "https://racetime.gg/media/778959_small.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "ascend1984",
+          "twitch_display_name": "Ascend1984",
+          "twitch_channel": "https://www.twitch.tv/ascend1984",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H02M04.702422S",
+        "finished_at": "2026-05-05T13:02:04.790Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 435,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H02M51.317163S",
+        "finished_at": "2026-05-05T13:02:51.404Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": -332,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-05T13:02:51.491Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

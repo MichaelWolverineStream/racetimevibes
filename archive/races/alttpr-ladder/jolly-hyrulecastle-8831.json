@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/jolly-hyrulecastle-8831",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/jolly-hyrulecastle-8831",
+    "data_url": "/alttpr-ladder/jolly-hyrulecastle-8831/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Standard\nstandard - https://alttpr.racing/getseed.php?race=485 - (Mushroom/Bombs/Green Potion/Boomerang/Ice Rod)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-16T10:30:00.178Z",
+    "started_at": "2025-07-16T11:00:00.073Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "5JlzyB7QdyoV4GED",
+          "full_name": "Kromb1#1059",
+          "name": "Kromb1",
+          "discriminator": "1059",
+          "url": "/user/5JlzyB7QdyoV4GED/kromb1",
+          "avatar": "https://racetime.gg/media/Profilbild1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "kromb4787",
+          "twitch_display_name": "kromb4787",
+          "twitch_channel": "https://www.twitch.tv/kromb4787",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M48.448618S",
+        "finished_at": "2025-07-16T12:50:48.522Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2128,
+        "score_change": 71,
+        "comment": "LDD absoloutly LL for Flute",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M31.932071S",
+        "finished_at": "2025-07-16T12:52:32.005Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2189,
+        "score_change": 2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoLgVa39QEya",
+          "full_name": "Asharcu#5536",
+          "name": "Asharcu",
+          "discriminator": "5536",
+          "url": "/user/NqO2YoLgVa39QEya/asharcu",
+          "avatar": "https://racetime.gg/media/batman-arkham-origins-joker-art-print-30x40cm.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "asharcu",
+          "twitch_display_name": "Asharcu",
+          "twitch_channel": "https://www.twitch.tv/asharcu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1818,
+        "score_change": -93,
+        "comment": "not my day 4 useless death",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-16T12:52:32.794Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/superb-bombos-2788",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/superb-bombos-2788",
+    "data_url": "/alttpr-ladder/superb-bombos-2788/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - True Pot Hunt\ntph2023 - https://alttpr.racing/getseed.php?race=490 - (Bombs/Quake/Pendant/Boomerang/Flute)",
+    "entrants_count": 5,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-17T00:30:00.202Z",
+    "started_at": "2025-07-17T01:00:00.075Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "z56VnBQmJaBK4xrZ",
+          "full_name": "LPMX#1296",
+          "name": "LPMX",
+          "discriminator": "1296",
+          "url": "/user/z56VnBQmJaBK4xrZ/lpmx",
+          "avatar": "https://racetime.gg/media/Wario.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "l_pmx",
+          "twitch_display_name": "L_PMX",
+          "twitch_channel": "https://www.twitch.tv/l_pmx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M53.477090S",
+        "finished_at": "2025-07-17T02:34:53.552Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2054,
+        "score_change": 44,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3yMDy3ZVKq1",
+          "full_name": "Jerrock13#5326",
+          "name": "Jerrock13",
+          "discriminator": "5326",
+          "url": "/user/RbOXG3yMDy3ZVKq1/jerrock13",
+          "avatar": "https://racetime.gg/media/Mumuluv_1.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "jerrock13",
+          "twitch_display_name": "Jerrock13",
+          "twitch_channel": "https://www.twitch.tv/jerrock13",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M16.604903S",
+        "finished_at": "2025-07-17T02:50:16.680Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 380,
+        "score_change": 956,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoYZb5WRdm5v",
+          "full_name": "poolfloatg#1366",
+          "name": "poolfloatg",
+          "discriminator": "1366",
+          "url": "/user/JrM6PoYZb5WRdm5v/poolfloatg",
+          "avatar": "https://racetime.gg/media/PF_Mikey_Profile_Transparent.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "poolfloatg",
+          "twitch_display_name": "poolfloatg",
+          "twitch_channel": "https://www.twitch.tv/poolfloatg",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M32.497687S",
+        "finished_at": "2025-07-17T02:50:32.572Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": 597,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7MOoV4GED",
+          "full_name": "Grimlegend#7734",
+          "name": "Grimlegend",
+          "discriminator": "7734",
+          "url": "/user/k5JlzyB7MOoV4GED/grimlegend",
+          "avatar": "https://racetime.gg/media/Grim_Bee.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "grimlegend",
+          "twitch_display_name": "Grimlegend",
+          "twitch_channel": "https://www.twitch.tv/grimlegend",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT04H42M51.324388S",
+        "finished_at": "2025-07-17T05:42:51.399Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": null,
+        "score_change": 402,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2466,
+        "score_change": -60,
+        "comment": "Lost power",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-17T05:42:51.437Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

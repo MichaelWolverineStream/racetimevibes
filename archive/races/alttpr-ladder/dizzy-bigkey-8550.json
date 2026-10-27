@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:19Z",
+  "race": {
+    "name": "alttpr-ladder/dizzy-bigkey-8550",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dizzy-bigkey-8550",
+    "data_url": "/alttpr-ladder/dizzy-bigkey-8550/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=2732 - (HashHeart/HashMagicPowder/HashBombos/HashEther/HashShield)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-03-08T13:30:00.113Z",
+    "started_at": "2026-03-08T14:00:00.076Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "RbOXG3yVXdoZVKq1",
+          "full_name": "FlyingPlatipusDimitri#7034",
+          "name": "FlyingPlatipusDimitri",
+          "discriminator": "7034",
+          "url": "/user/RbOXG3yVXdoZVKq1/flyingplatipusdimitri",
+          "avatar": "https://racetime.gg/media/RbOXG3yVXdoZVKq1_lfuGozx.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "flyingplatipusdimitri",
+          "twitch_display_name": "FlyingPlatipusDimitri",
+          "twitch_channel": "https://www.twitch.tv/flyingplatipusdimitri",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H03M39.589582S",
+        "finished_at": "2026-03-08T15:03:39.665Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2473,
+        "score_change": 20,
+        "comment": "CR 115 - Not used to settings so vanilla, many miscalculations",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NqO2YoL6M8B9QEya",
+          "full_name": "Zaxorai#3313",
+          "name": "Zaxorai",
+          "discriminator": "3313",
+          "url": "/user/NqO2YoL6M8B9QEya/zaxorai",
+          "avatar": "https://racetime.gg/media/NqO2YoL6M8B9QEya.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zaxorai",
+          "twitch_display_name": "Zaxorai",
+          "twitch_channel": "https://www.twitch.tv/zaxorai",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H06M17.280446S",
+        "finished_at": "2026-03-08T15:06:17.356Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2304,
+        "score_change": 13,
+        "comment": "CR 117 Nice quick seed",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQ7pwoK4xrZ",
+          "full_name": "TT-Chaos#6183",
+          "name": "TT-Chaos",
+          "discriminator": "6183",
+          "url": "/user/z56VnBQ7pwoK4xrZ/tt-chaos",
+          "avatar": "https://racetime.gg/media/759E3BA1-C531-4A9B-80BE-13EEE51D2FE8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tt_chaos",
+          "twitch_display_name": "TT_Chaos",
+          "twitch_channel": "https://www.twitch.tv/tt_chaos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H08M06.450514S",
+        "finished_at": "2026-03-08T15:08:06.526Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2950,
+        "score_change": -26,
+        "comment": "CR 126 - To Late to CT",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-08T15:08:06.603Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

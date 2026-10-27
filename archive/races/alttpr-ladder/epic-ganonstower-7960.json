@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:13Z",
+  "race": {
+    "name": "alttpr-ladder/epic-ganonstower-7960",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/epic-ganonstower-7960",
+    "data_url": "/alttpr-ladder/epic-ganonstower-7960/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookeydrop (League)\nleague/cabookeydrop_noct - https://alttpr.racing/getseed.php?race=3146 - (HashMap/HashFlute/HashBook/HashMap/HashMagicPowder)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-04-12T03:30:00.095Z",
+    "started_at": "2026-04-12T04:00:00.078Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M45.490040S",
+        "finished_at": "2026-04-12T05:54:45.568Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2752,
+        "score_change": 1,
+        "comment": "207/249 - semi-kinda-go-moded TR except things along the way and laser bridge and mostly go moded GT so that's... neat?",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JXNvWqlL0a",
+          "full_name": "JohnGalt#7236",
+          "name": "JohnGalt",
+          "discriminator": "7236",
+          "url": "/user/NX5783JXNvWqlL0a/johngalt",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "johngalttv",
+          "twitch_display_name": "JohnGaltTV",
+          "twitch_channel": "https://www.twitch.tv/johngalttv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H23M47.904934S",
+        "finished_at": "2026-04-12T06:23:47.983Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1881,
+        "score_change": -3,
+        "comment": "that felt like a plando",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-04-12T06:23:48.052Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

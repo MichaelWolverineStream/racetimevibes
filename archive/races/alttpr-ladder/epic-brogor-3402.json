@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/epic-brogor-3402",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/epic-brogor-3402",
+    "data_url": "/alttpr-ladder/epic-brogor-3402/data",
+    "goal": {
+      "name": "Beat the game (Glitched)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods [DR]\nladder/nologic_rods - https://alttpr.racing/getseed.php?race=3545 - (HashEther/HashQuake/HashSomaria/HashBow/HashBoomerang)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-18T02:30:00.102Z",
+    "started_at": "2026-05-18T03:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VXY0eABdXNBLKPnz",
+          "full_name": "Chexhuman#3342",
+          "name": "Chexhuman",
+          "discriminator": "3342",
+          "url": "/user/VXY0eABdXNBLKPnz/chexhuman",
+          "avatar": "https://racetime.gg/media/Kipp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "chexhuman",
+          "twitch_display_name": "Chexhuman",
+          "twitch_channel": "https://www.twitch.tv/chexhuman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H10M44.399969S",
+        "finished_at": "2026-05-18T04:10:44.480Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 573,
+        "comment": "100/216",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M16.453591S",
+        "finished_at": "2026-05-18T04:15:16.534Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 626,
+        "score_change": -114,
+        "comment": "115",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-18T04:15:16.573Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:46Z",
+  "race": {
+    "name": "alttpr-ladder/fearless-brogor-7890",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fearless-brogor-7890",
+    "data_url": "/alttpr-ladder/fearless-brogor-7890/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=5330 - (HashShovel/HashIceRod/HashMoonPearl/HashMoonPearl/HashIceRod)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-18T07:30:00.148Z",
+    "started_at": "2026-10-18T08:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XzVwZWqVnxB5k8eb",
+          "full_name": "ggreencola#3293",
+          "name": "ggreencola",
+          "discriminator": "3293",
+          "url": "/user/XzVwZWqVnxB5k8eb/ggreencola",
+          "avatar": "https://racetime.gg/media/Ggreencola_icon_kmiyyNZ.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ggreencola",
+          "twitch_display_name": "ggreencola",
+          "twitch_channel": "https://www.twitch.tv/ggreencola",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M42.586016S",
+        "finished_at": "2026-10-18T09:30:42.669Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1915,
+        "score_change": 80,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvR8dBJkg04",
+          "full_name": "StructuralMike#1449",
+          "name": "StructuralMike",
+          "discriminator": "1449",
+          "url": "/user/bpNAaBvR8dBJkg04/structuralmike",
+          "avatar": "https://racetime.gg/media/dontyouworryaboutblank_.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "structuralmike",
+          "twitch_display_name": "Structuralmike",
+          "twitch_channel": "https://www.twitch.tv/structuralmike",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M13.075112S",
+        "finished_at": "2026-10-18T09:35:13.158Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 675,
+        "comment": "AD",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRqeRomqXen",
+          "full_name": "Lanux#8957",
+          "name": "Lanux",
+          "discriminator": "8957",
+          "url": "/user/497NdWRqeRomqXen/lanux",
+          "avatar": "https://racetime.gg/media/72x72.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "lanux",
+          "twitch_display_name": "Lanux",
+          "twitch_channel": "https://www.twitch.tv/lanux",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M36.875894S",
+        "finished_at": "2026-10-18T09:43:36.959Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2359,
+        "score_change": -19,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-10-18T09:43:37.045Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

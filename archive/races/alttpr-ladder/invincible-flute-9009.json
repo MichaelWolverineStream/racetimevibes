@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/invincible-flute-9009",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/invincible-flute-9009",
+    "data_url": "/alttpr-ladder/invincible-flute-9009/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Open AD with OW Tile Swap\nkaesden/open_ad_tileswap - https://alttpr.racing/getseed.php?race=1230 - (HashHammer/HashMagicPowder/HashBoomerang/HashBigKey/HashFlute)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-10-21T18:30:00.118Z",
+    "started_at": "2025-10-21T19:00:00.161Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M44.367736S",
+        "finished_at": "2025-10-21T20:40:44.528Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3002,
+        "score_change": 20,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoadA3lV4zN",
+          "full_name": "JamesFnX#9072",
+          "name": "JamesFnX",
+          "discriminator": "9072",
+          "url": "/user/graP6yoadA3lV4zN/jamesfnx",
+          "avatar": "https://racetime.gg/media/boots_112_working.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jamesfnx",
+          "twitch_display_name": "JamesFnX",
+          "twitch_channel": "https://www.twitch.tv/jamesfnx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M57.525726S",
+        "finished_at": "2025-10-21T20:42:57.686Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2061,
+        "score_change": 69,
+        "comment": "lmao at that silvers hint - 166",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M07.142127S",
+        "finished_at": "2025-10-21T20:43:07.303Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2378,
+        "score_change": 4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KXLoeZDjr",
+          "full_name": "WillardJBradley#2538",
+          "name": "WillardJBradley",
+          "discriminator": "2538",
+          "url": "/user/07QXz83KXLoeZDjr/willardjbradley",
+          "avatar": "https://racetime.gg/media/will-boy.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "willardjbradley",
+          "twitch_display_name": "WillardJBradley",
+          "twitch_channel": "https://www.twitch.tv/willardjbradley",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M56.641612S",
+        "finished_at": "2025-10-21T20:49:56.802Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2788,
+        "score_change": -42,
+        "comment": "160 - couple goofs cost me some time",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M13.002436S",
+        "finished_at": "2025-10-21T20:51:13.163Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1541,
+        "score_change": 25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz0Mb3LPdye",
+          "full_name": "INDIO#0175",
+          "name": "INDIO",
+          "discriminator": "0175",
+          "url": "/user/GklxjWz0Mb3LPdye/indio",
+          "avatar": "https://racetime.gg/media/GklxjWz0Mb3LPdye.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "grease_d",
+          "twitch_display_name": "grease_d",
+          "twitch_channel": "https://www.twitch.tv/grease_d",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1688,
+        "score_change": -119,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-21T20:53:25.029Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

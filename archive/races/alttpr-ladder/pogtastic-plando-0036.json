@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/pogtastic-plando-0036",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/pogtastic-plando-0036",
+    "data_url": "/alttpr-ladder/pogtastic-plando-0036/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\njem041/crosskeys2024 - https://alttpr.racing/getseed.php?race=1321 - (HashLamp/HashIceRod/HashEmptyBottle/HashLamp/HashCompass)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-02T04:30:00.082Z",
+    "started_at": "2025-11-02T05:00:00.073Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VXY0eABdLLBLKPnz",
+          "full_name": "incoherent#6156",
+          "name": "incoherent",
+          "discriminator": "6156",
+          "url": "/user/VXY0eABdLLBLKPnz/incoherent",
+          "avatar": "https://racetime.gg/media/yCowk2w.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "incoherent",
+          "twitch_display_name": "incoherent",
+          "twitch_channel": "https://www.twitch.tv/incoherent",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M48.483220S",
+        "finished_at": "2025-11-02T07:01:48.557Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2710,
+        "score_change": 30,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JN9rVpW9ajWjq8Ll",
+          "full_name": "UnregisteredNickname#2645",
+          "name": "UnregisteredNickname",
+          "discriminator": "2645",
+          "url": "/user/JN9rVpW9ajWjq8Ll/unregisterednickname",
+          "avatar": "https://racetime.gg/media/JN9rVpW9ajWjq8Ll_ffuNyhW.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "unregisterednickname",
+          "twitch_display_name": "UnregisteredNickname",
+          "twitch_channel": "https://www.twitch.tv/unregisterednickname",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M16.126136S",
+        "finished_at": "2025-11-02T07:04:16.200Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2603,
+        "score_change": 24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbp193YlM65",
+          "full_name": "thalane#0908",
+          "name": "thalane",
+          "discriminator": "0908",
+          "url": "/user/jZ2EGWbp193YlM65/thalane",
+          "avatar": "https://racetime.gg/media/thalane.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "thalanee",
+          "twitch_display_name": "thalanee",
+          "twitch_channel": "https://www.twitch.tv/thalanee",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H11M32.043333S",
+        "finished_at": "2025-11-02T07:11:32.117Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2497,
+        "score_change": -50,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Qbq4dBpL0JBvlrG0",
+          "full_name": "Hitman1382#8796",
+          "name": "Hitman1382",
+          "discriminator": "8796",
+          "url": "/user/Qbq4dBpL0JBvlrG0/hitman1382",
+          "avatar": "https://racetime.gg/media/5C6EE3C8-8144-4F30-ABFE-9BC557CC06B5.webp",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitman41382",
+          "twitch_display_name": "hitman41382",
+          "twitch_channel": "https://www.twitch.tv/hitman41382",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M45.831747S",
+        "finished_at": "2025-11-02T07:12:45.905Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2646,
+        "score_change": -10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoakVxBlV4zN",
+          "full_name": "childofGod#1160",
+          "name": "childofGod",
+          "discriminator": "1160",
+          "url": "/user/raP6yoakVxBlV4zN/childofgod",
+          "avatar": "https://racetime.gg/media/kakaotalk_20190515_194648911-ezgif.com-loop-count.gif",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "childof__god",
+          "twitch_display_name": "childof__God",
+          "twitch_channel": "https://www.twitch.tv/childof__god",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H52M06.869964S",
+        "finished_at": "2025-11-02T07:52:06.943Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 718,
+        "score_change": -26,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-02T07:52:06.976Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

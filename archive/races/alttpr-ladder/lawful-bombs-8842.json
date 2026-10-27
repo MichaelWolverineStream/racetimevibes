@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:51Z",
+  "race": {
+    "name": "alttpr-ladder/lawful-bombs-8842",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lawful-bombs-8842",
+    "data_url": "/alttpr-ladder/lawful-bombs-8842/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=615 - (HashShovel/HashBugnet/HashMirror/HashBombos/HashBook)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-08-05T01:30:00.180Z",
+    "started_at": "2025-08-05T02:00:00.069Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M45.761087S",
+        "finished_at": "2025-08-05T03:30:45.831Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2650,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "graP6yoaPy3lV4zN",
+          "full_name": "DarkDiplomat#4047",
+          "name": "DarkDiplomat",
+          "discriminator": "4047",
+          "url": "/user/graP6yoaPy3lV4zN/darkdiplomat",
+          "avatar": "https://racetime.gg/media/graP6yoaPy3lV4zN.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "darkdiplomat",
+          "twitch_display_name": "DarkDiplomat",
+          "twitch_channel": "https://www.twitch.tv/darkdiplomat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M36.832684S",
+        "finished_at": "2025-08-05T04:14:36.902Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": 320,
+        "comment": "Ganon, we talked about this, enough with the thousand warps",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7MOoV4GED",
+          "full_name": "Grimlegend#7734",
+          "name": "Grimlegend",
+          "discriminator": "7734",
+          "url": "/user/k5JlzyB7MOoV4GED/grimlegend",
+          "avatar": "https://racetime.gg/media/Grim_Bee.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "grimlegend",
+          "twitch_display_name": "Grimlegend",
+          "twitch_channel": "https://www.twitch.tv/grimlegend",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H31M33.069356S",
+        "finished_at": "2025-08-05T04:31:33.139Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1105,
+        "score_change": -66,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-05T04:31:33.190Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

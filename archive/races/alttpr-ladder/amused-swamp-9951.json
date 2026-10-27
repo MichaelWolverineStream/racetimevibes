@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/amused-swamp-9951",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/amused-swamp-9951",
+    "data_url": "/alttpr-ladder/amused-swamp-9951/data",
+    "goal": {
+      "name": "Beat the game (Spoiler)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [spoiler] - Spoiler - No GT Boots - Open Keysanity 7/7\nladder/nogtboots_keysanity - https://alttpr.racing/getseed.php?race=3684 - (HashMoonPearl/HashBugnet/HashShield/HashIceRod/HashGreenPotion)",
+    "entrants_count": 3,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 2,
+    "opened_at": "2026-05-29T16:30:00.087Z",
+    "started_at": "2026-05-29T17:00:00.091Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "dm1LPWj2YnWEnVx6",
+          "full_name": "Skele#7459",
+          "name": "Skele",
+          "discriminator": "7459",
+          "url": "/user/dm1LPWj2YnWEnVx6/skele",
+          "avatar": "https://racetime.gg/media/FvClxGaacAIz1ca.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "iamskelebro",
+          "twitch_display_name": "iamSkelebro",
+          "twitch_channel": "https://www.twitch.tv/iamskelebro",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H08M40.994541S",
+        "finished_at": "2026-05-29T18:08:41.085Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2886,
+        "score_change": 28,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3yVXdoZVKq1",
+          "full_name": "FlyingPlatipusDimitri#7034",
+          "name": "FlyingPlatipusDimitri",
+          "discriminator": "7034",
+          "url": "/user/RbOXG3yVXdoZVKq1/flyingplatipusdimitri",
+          "avatar": "https://racetime.gg/media/RbOXG3yVXdoZVKq1_lfuGozx.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "flyingplatipusdimitri",
+          "twitch_display_name": "FlyingPlatipusDimitri",
+          "twitch_channel": "https://www.twitch.tv/flyingplatipusdimitri",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2363,
+        "score_change": -14,
+        "comment": "Played too much 4/7, GT refused to open at my command",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Va0eMonyMM3l9pyJ",
+          "full_name": "Pichu10u#1515",
+          "name": "Pichu10u",
+          "discriminator": "1515",
+          "url": "/user/Va0eMonyMM3l9pyJ/pichu10u",
+          "avatar": "https://racetime.gg/media/raichu_x_pika.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "pichu10u",
+          "twitch_display_name": "pichu10u",
+          "twitch_channel": "https://www.twitch.tv/pichu10u",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": 791,
+        "comment": "do you know this mode isn't 4/7? because I sure didn't and I can't read",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-29T18:08:41.190Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

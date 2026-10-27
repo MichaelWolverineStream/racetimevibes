@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/sleepy-firerod-4780",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sleepy-firerod-4780",
+    "data_url": "/alttpr-ladder/sleepy-firerod-4780/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG\nhmg - https://alttpr.racing/getseed.php?race=278 - (Map/Moon Pearl/Green Potion/Compass/Mushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-20T10:30:04.242Z",
+    "started_at": "2025-06-20T11:00:04.325Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "wezlNoAQNbomq6db",
+          "full_name": "mm2nescartridge",
+          "name": "mm2nescartridge",
+          "discriminator": null,
+          "url": "/user/mm2nescartridge",
+          "avatar": "https://racetime.gg/media/mm2_circle.png",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "mm2nescartridge",
+          "twitch_display_name": "mm2nescartridge",
+          "twitch_channel": "https://www.twitch.tv/mm2nescartridge",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H08M32.117159S",
+        "finished_at": "2025-06-20T12:08:36.442Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2309,
+        "score_change": 69,
+        "comment": "128 i love zelda",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlG8JWaOP57",
+          "full_name": "Duden2#7537",
+          "name": "Duden2",
+          "discriminator": "7537",
+          "url": "/user/xldAMBlG8JWaOP57/duden2",
+          "avatar": "https://racetime.gg/media/0c2edfb9-8860-4267-828b-497e73d15132.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "duden2",
+          "twitch_display_name": "Duden2",
+          "twitch_channel": "https://www.twitch.tv/duden2",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M06.165416S",
+        "finished_at": "2025-06-20T12:20:10.490Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2482,
+        "score_change": -44,
+        "comment": "144",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGpVVWMVr6Z",
+          "full_name": "HolySmoke#7065",
+          "name": "HolySmoke",
+          "discriminator": "7065",
+          "url": "/user/Aa5veoGpVVWMVr6Z/holysmoke",
+          "avatar": "https://racetime.gg/media/nia-100.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "holysmoke",
+          "twitch_display_name": "HolySmoke",
+          "twitch_channel": "https://www.twitch.tv/holysmoke",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H20M11.994661S",
+        "finished_at": "2025-06-20T12:20:16.320Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 559,
+        "score_change": -4,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-20T12:20:16.417Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

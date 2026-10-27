@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/messy-armosknight-1310",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/messy-armosknight-1310",
+    "data_url": "/alttpr-ladder/messy-armosknight-1310/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Not Slow)\nmmmmavid23 - https://alttpr.racing/getseed.php?race=98 - (Hammer/Mushroom/Mirror/Pendant/Bow)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-05-28T22:30:04.356Z",
+    "started_at": "2025-05-28T23:00:04.413Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWElwoak64R",
+          "full_name": "FuriousMagic#0451",
+          "name": "FuriousMagic",
+          "discriminator": "0451",
+          "url": "/user/d17DexWElwoak64R/furiousmagic",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "furiousmagic",
+          "twitch_display_name": "FuriousMagic",
+          "twitch_channel": "https://www.twitch.tv/furiousmagic",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H45M44.311281S",
+        "finished_at": "2025-05-29T01:45:48.724Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2730,
+        "score_change": 13,
+        "comment": "815/1064 :)",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmJaBK4xrZ",
+          "full_name": "LPMX#1296",
+          "name": "LPMX",
+          "discriminator": "1296",
+          "url": "/user/z56VnBQmJaBK4xrZ/lpmx",
+          "avatar": "https://racetime.gg/media/Wario.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "l_pmx",
+          "twitch_display_name": "L_PMX",
+          "twitch_channel": "https://www.twitch.tv/l_pmx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1292,
+        "score_change": -2,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-29T01:45:48.827Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

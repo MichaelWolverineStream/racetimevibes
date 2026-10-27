@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/smelly-powder-2595",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/smelly-powder-2595",
+    "data_url": "/alttpr-ladder/smelly-powder-2595/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=1898 - (HashShield/HashMap/HashLamp/HashFlute/HashSomaria)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-23T09:30:00.094Z",
+    "started_at": "2025-12-23T10:00:00.153Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H18M29.314107S",
+        "finished_at": "2025-12-23T11:18:29.468Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3391,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5rNGD3DKMAB9blOy",
+          "full_name": "Becky Scott Fairley#3273",
+          "name": "Becky Scott Fairley",
+          "discriminator": "3273",
+          "url": "/user/5rNGD3DKMAB9blOy/becky-scott-fairley",
+          "avatar": "https://racetime.gg/media/pictura_avatar.png",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "scotjohntharrison",
+          "twitch_display_name": "scotjohntharrison",
+          "twitch_channel": "https://www.twitch.tv/scotjohntharrison",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H58M00.711056S",
+        "finished_at": "2025-12-23T11:58:00.865Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 601,
+        "score_change": 9,
+        "comment": "New PB - 138 Collection first sub 2 hours in a while.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-23T11:58:01.002Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

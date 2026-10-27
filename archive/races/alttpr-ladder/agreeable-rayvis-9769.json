@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:09Z",
+  "race": {
+    "name": "alttpr-ladder/agreeable-rayvis-9769",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/agreeable-rayvis-9769",
+    "data_url": "/alttpr-ladder/agreeable-rayvis-9769/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - OnlyADKDF\njem041/onlyadkdf - https://alttpr.racing/getseed.php?race=3506 - (HashMap/HashBoots/HashFlippers/HashBigKey/HashBombs)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-14T21:30:00.078Z",
+    "started_at": "2026-05-14T22:00:00.088Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VwLN8B8QlP3Pa52R",
+          "full_name": "Jamo#6380",
+          "name": "Jamo",
+          "discriminator": "6380",
+          "url": "/user/VwLN8B8QlP3Pa52R/jamo",
+          "avatar": "https://racetime.gg/media/58738f3a8302b12913b2b5458170346ec894517e_full.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jamo6",
+          "twitch_display_name": "Jamo6",
+          "twitch_channel": "https://www.twitch.tv/jamo6",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H11M32.932962S",
+        "finished_at": "2026-05-14T23:11:33.021Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 582,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M13.405110S",
+        "finished_at": "2026-05-14T23:39:13.493Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1002,
+        "score_change": -52,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-14T23:39:14.000Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

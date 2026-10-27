@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/classic-tempered-3390",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/classic-tempered-3390",
+    "data_url": "/alttpr-ladder/classic-tempered-3390/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=894 - (HashMagicPowder/HashMushroom/HashMagicPowder/HashCompass/HashBook)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-09-08T21:30:00.128Z",
+    "started_at": "2025-09-08T22:00:00.097Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "AEk8wpokDmW5KQyV",
+          "full_name": "zelgadissan#0529",
+          "name": "zelgadissan",
+          "discriminator": "0529",
+          "url": "/user/AEk8wpokDmW5KQyV/zelgadissan",
+          "avatar": "https://racetime.gg/media/Fsjal_phoenix_wright.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zelgadissan",
+          "twitch_display_name": "zelgadissan",
+          "twitch_channel": "https://www.twitch.tv/zelgadissan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H49M47.007028S",
+        "finished_at": "2025-09-08T23:49:47.104Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2979,
+        "score_change": 22,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOMOvo4qAyj",
+          "full_name": "Deign#3244",
+          "name": "Deign",
+          "discriminator": "3244",
+          "url": "/user/NZ1KRBOMOvo4qAyj/deign",
+          "avatar": "https://racetime.gg/media/96x96.png",
+          "pronouns": "any/all",
+          "flair": "",
+          "twitch_name": "deign",
+          "twitch_display_name": "Deign",
+          "twitch_channel": "https://www.twitch.tv/deign",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M00.366045S",
+        "finished_at": "2025-09-09T00:02:00.463Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2340,
+        "score_change": 34,
+        "comment": "CR: 178 -- Way too much open way too early, swamp small for go",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWzPLb3LPdye",
+          "full_name": "jmasha#6476",
+          "name": "jmasha",
+          "discriminator": "6476",
+          "url": "/user/GklxjWzPLb3LPdye/jmasha",
+          "avatar": "https://racetime.gg/media/GklxjWzPLb3LPdye.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "j_masha",
+          "twitch_display_name": "j_masha",
+          "twitch_channel": "https://www.twitch.tv/j_masha",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M17.827229S",
+        "finished_at": "2025-09-09T00:15:17.924Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1910,
+        "score_change": 14,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NX5783JdGXWqlL0a",
+          "full_name": "TheBenJammin#7468",
+          "name": "TheBenJammin",
+          "discriminator": "7468",
+          "url": "/user/NX5783JdGXWqlL0a/thebenjammin",
+          "avatar": "https://racetime.gg/media/a-for-racegg_o-1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thebenjammin",
+          "twitch_display_name": "TheBenJammin",
+          "twitch_channel": "https://www.twitch.tv/thebenjammin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H46M38.955940S",
+        "finished_at": "2025-09-09T00:46:39.053Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1711,
+        "score_change": -6,
+        "comment": "30 min looking for SP SK....",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4or27aoqDJX0",
+          "full_name": "Beth#1108",
+          "name": "Beth",
+          "discriminator": "1108",
+          "url": "/user/rZyM4or27aoqDJX0/beth",
+          "avatar": "https://racetime.gg/media/rZyM4or27aoqDJX0_JR6JUg1.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lamebeth",
+          "twitch_display_name": "LameBeth",
+          "twitch_channel": "https://www.twitch.tv/lamebeth",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H11M13.887880S",
+        "finished_at": "2025-09-09T01:11:13.985Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1191,
+        "score_change": -21,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-09T01:11:14.078Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

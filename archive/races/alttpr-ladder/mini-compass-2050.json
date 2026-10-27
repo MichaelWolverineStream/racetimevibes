@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/mini-compass-2050",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mini-compass-2050",
+    "data_url": "/alttpr-ladder/mini-compass-2050/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=22 - (Flute/Moon Pearl/Compass/Flute/Bugnet)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-05-19T10:30:02.800Z",
+    "started_at": "2025-05-19T10:59:52.837Z",
+    "time_limit": "P0DT03H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBl4mdBaOP57",
+          "full_name": "Yok#8247",
+          "name": "Yok",
+          "discriminator": "8247",
+          "url": "/user/xldAMBl4mdBaOP57/yok",
+          "avatar": "https://racetime.gg/media/froge.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "yok2dgod",
+          "twitch_display_name": "Yok2DGod",
+          "twitch_channel": "https://www.twitch.tv/yok2dgod",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H04M34.547616S",
+        "finished_at": "2025-05-19T12:04:27.385Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2628,
+        "score_change": 146,
+        "comment": "godroute, 10 mins boots in cave 45",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoY5j9oRdm5v",
+          "full_name": "JAQK#6532",
+          "name": "JAQK",
+          "discriminator": "6532",
+          "url": "/user/JrM6PoY5j9oRdm5v/jaqk",
+          "avatar": "https://racetime.gg/media/images1.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "xjaqkx",
+          "twitch_display_name": "xjaqkx",
+          "twitch_channel": "https://www.twitch.tv/xjaqkx",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H25M51.074312S",
+        "finished_at": "2025-05-19T12:25:43.912Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2249,
+        "score_change": 77,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JXzVwZWqnzB5k8eb",
+          "full_name": "Jeddoman#6705",
+          "name": "Jeddoman",
+          "discriminator": "6705",
+          "url": "/user/JXzVwZWqnzB5k8eb/jeddoman",
+          "avatar": "https://racetime.gg/media/7515b457889eeb4b313c80786c31415e.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "jeddoman",
+          "twitch_display_name": "jeddoman",
+          "twitch_channel": "https://www.twitch.tv/jeddoman",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -167,
+        "comment": "LL'd hammer in LW, bad day to skip race game",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-19T12:25:43.948Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

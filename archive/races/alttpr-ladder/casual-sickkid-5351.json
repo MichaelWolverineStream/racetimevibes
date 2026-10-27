@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/casual-sickkid-5351",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/casual-sickkid-5351",
+    "data_url": "/alttpr-ladder/casual-sickkid-5351/data",
+    "goal": {
+      "name": "Beat the game (1v1)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [ladder_test] - Crosskeys_Flute_MS_PB\nmfns./crosskeys_flute_ms_pb - https://alttpr.racing/getseed.php?race=540 - (Heart/Flute/Heart/Pendant/Big Key)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-23T06:58:00.379Z",
+    "started_at": "2025-07-23T07:00:00.103Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "rVwLN8B8nEoPa52R",
+          "full_name": "breve#1524",
+          "name": "breve",
+          "discriminator": "1524",
+          "url": "/user/rVwLN8B8nEoPa52R/breve",
+          "avatar": "https://racetime.gg/media/thedream_2_CzqQP4u.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "breve_",
+          "twitch_display_name": "breve_",
+          "twitch_channel": "https://www.twitch.tv/breve_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M57.224726S",
+        "finished_at": "2025-07-23T09:10:57.328Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1146,
+        "score_change": 259,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 365,
+        "score_change": -60,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-23T09:12:53.680Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

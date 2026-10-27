@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/sleepy-osora-4088",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/sleepy-osora-4088",
+    "data_url": "/alttpr-ladder/sleepy-osora-4088/data",
+    "goal": {
+      "name": "Beat the game (1v1)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [ladder_test] - Crosskeys\ncrosskeys - https://alttpr.racing/getseed.php?race=407 - (Boots/Boomerang/Shovel/Flippers/Magic Powder)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-06T15:58:00.474Z",
+    "started_at": "2025-07-06T16:00:00.220Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRN5OWmqXen",
+          "full_name": "Muffins#9229",
+          "name": "Muffins",
+          "discriminator": "9229",
+          "url": "/user/497NdWRN5OWmqXen/muffins",
+          "avatar": "https://racetime.gg/media/rsz_1binary_pipette.jpg",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "neo_muffins",
+          "twitch_display_name": "Neo_Muffins",
+          "twitch_channel": "https://www.twitch.tv/neo_muffins",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H36M12.265481S",
+        "finished_at": "2025-07-06T17:36:12.486Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 622,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXQ55B1y8q0",
+          "full_name": "DrBowser#9571",
+          "name": "DrBowser",
+          "discriminator": "9571",
+          "url": "/user/zM65aWXQ55B1y8q0/drbowser",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "drbowser9571",
+          "twitch_display_name": "DrBowser9571",
+          "twitch_channel": "https://www.twitch.tv/drbowser9571",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M45.787807S",
+        "finished_at": "2025-07-06T17:53:46.008Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 761,
+        "score_change": -137,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-06T17:53:46.081Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

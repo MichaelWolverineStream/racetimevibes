@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:49Z",
+  "race": {
+    "name": "alttpr-ladder/wild-titos-7074",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/wild-titos-7074",
+    "data_url": "/alttpr-ladder/wild-titos-7074/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Crisscross\njem041/crisscross_zw - https://alttpr.racing/getseed.php?race=813 - (HashBow/HashMoonPearl/HashFlippers/HashMirror/HashMirror)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-08-29T18:30:00.166Z",
+    "started_at": "2025-08-29T19:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "AEk8wpok1KB5KQyV",
+          "full_name": "Eriror#8787",
+          "name": "Eriror",
+          "discriminator": "8787",
+          "url": "/user/AEk8wpok1KB5KQyV/eriror",
+          "avatar": "https://racetime.gg/media/45444_1408473066.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "erisapothecaries",
+          "twitch_display_name": "erisapothecaries",
+          "twitch_channel": "https://www.twitch.tv/erisapothecaries",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H40M51.912490S",
+        "finished_at": "2025-08-29T20:40:52.005Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2950,
+        "score_change": 258,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KXLoeZDjr",
+          "full_name": "WillardJBradley#2538",
+          "name": "WillardJBradley",
+          "discriminator": "2538",
+          "url": "/user/07QXz83KXLoeZDjr/willardjbradley",
+          "avatar": "https://racetime.gg/media/will-boy.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "willardjbradley",
+          "twitch_display_name": "WillardJBradley",
+          "twitch_channel": "https://www.twitch.tv/willardjbradley",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M57.085494S",
+        "finished_at": "2025-08-29T20:59:57.178Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2654,
+        "score_change": 89,
+        "comment": "192 - 30min hunt for 2 mm smalls",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpok4YkW5KQyV",
+          "full_name": "Telethar#1077",
+          "name": "Telethar",
+          "discriminator": "1077",
+          "url": "/user/Ek8wpok4YkW5KQyV/telethar",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "telethar",
+          "twitch_display_name": "telethar",
+          "twitch_channel": "https://www.twitch.tv/telethar",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M45.458310S",
+        "finished_at": "2025-08-29T21:04:45.551Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 3184,
+        "score_change": -6,
+        "comment": "214 :)",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XGzr7pBMPbWkqgyE",
+          "full_name": "humbugh#0699",
+          "name": "humbugh",
+          "discriminator": "0699",
+          "url": "/user/XGzr7pBMPbWkqgyE/humbugh",
+          "avatar": "https://racetime.gg/media/chestturn.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "humbughh",
+          "twitch_display_name": "humbughh",
+          "twitch_channel": "https://www.twitch.tv/humbughh",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M18.421835S",
+        "finished_at": "2025-08-29T21:12:18.514Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 3490,
+        "score_change": -30,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-29T21:12:18.610Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

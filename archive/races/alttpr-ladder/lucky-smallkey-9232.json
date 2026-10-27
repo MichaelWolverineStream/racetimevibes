@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/lucky-smallkey-9232",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lucky-smallkey-9232",
+    "data_url": "/alttpr-ladder/lucky-smallkey-9232/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4681 - (HashBugnet/HashSomaria/HashBigKey/HashHeart/HashMushroom)",
+    "entrants_count": 9,
+    "entrants_count_finished": 9,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-21T19:30:00.125Z",
+    "started_at": "2026-08-21T20:00:00.162Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRZqYWmqXen",
+          "full_name": "Vinter#4810",
+          "name": "Vinter",
+          "discriminator": "4810",
+          "url": "/user/497NdWRZqYWmqXen/vinter",
+          "avatar": "https://racetime.gg/media/goldi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "vintertv",
+          "twitch_display_name": "VINTERtv",
+          "twitch_channel": "https://www.twitch.tv/vintertv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H22M26.396360S",
+        "finished_at": "2026-08-21T21:22:26.558Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2876,
+        "score_change": 98,
+        "comment": "GG Dr Jon",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "kzM65aWXkao1y8q0",
+          "full_name": "Illus#6451",
+          "name": "Illus",
+          "discriminator": "6451",
+          "url": "/user/kzM65aWXkao1y8q0/illus",
+          "avatar": "https://racetime.gg/media/Hatsune_Priconne.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "illus24",
+          "twitch_display_name": "Illus24",
+          "twitch_channel": "https://www.twitch.tv/illus24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M59.470021S",
+        "finished_at": "2026-08-21T21:34:59.632Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2643,
+        "score_change": 122,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRmk5omqXen",
+          "full_name": "ppchan#6201",
+          "name": "ppchan",
+          "discriminator": "6201",
+          "url": "/user/497NdWRmk5omqXen/ppchan",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ppchan",
+          "twitch_display_name": "ppchan",
+          "twitch_channel": "https://www.twitch.tv/ppchan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M50.595575S",
+        "finished_at": "2026-08-21T21:37:50.758Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2594,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M01.745444S",
+        "finished_at": "2026-08-21T21:38:01.907Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2371,
+        "score_change": 24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXajgB1y8q0",
+          "full_name": "emock81#6412",
+          "name": "emock81",
+          "discriminator": "6412",
+          "url": "/user/zM65aWXajgB1y8q0/emock81",
+          "avatar": "https://racetime.gg/media/zM65aWXajgB1y8q0.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "emock81",
+          "twitch_display_name": "emock81",
+          "twitch_channel": "https://www.twitch.tv/emock81",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M14.190672S",
+        "finished_at": "2026-08-21T21:38:14.353Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2075,
+        "score_change": 27,
+        "comment": "cr 146 oh if I would have dipped SW sooner - ether was go",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlgvJWaOP57",
+          "full_name": "Oeptown#6801",
+          "name": "Oeptown",
+          "discriminator": "6801",
+          "url": "/user/xldAMBlgvJWaOP57/oeptown",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oeptown",
+          "twitch_display_name": "oeptown",
+          "twitch_channel": "https://www.twitch.tv/oeptown",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M41.795497S",
+        "finished_at": "2026-08-21T21:48:41.957Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1951,
+        "score_change": 100,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oN625olywqX",
+          "full_name": "Druu_Bragi#8605",
+          "name": "Druu_Bragi",
+          "discriminator": "8605",
+          "url": "/user/52QE8oN625olywqX/druu_bragi",
+          "avatar": "https://racetime.gg/media/52QE8oN625olywqX.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "druu_bragi",
+          "twitch_display_name": "Druu_Bragi",
+          "twitch_channel": "https://www.twitch.tv/druu_bragi",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M45.361412S",
+        "finished_at": "2026-08-21T22:06:45.523Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 1640,
+        "score_change": 7,
+        "comment": "40 minutes to find ether, woof",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H08M51.718005S",
+        "finished_at": "2026-08-21T22:08:51.880Z",
+        "place": 8,
+        "place_ordinal": "8th",
+        "score": 1556,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnV7oLKPnz",
+          "full_name": "DJCrabhat#0022",
+          "name": "DJCrabhat",
+          "discriminator": "0022",
+          "url": "/user/XY0eABdnV7oLKPnz/djcrabhat",
+          "avatar": "https://racetime.gg/media/crabhat-avatar-small.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "djcrabhat",
+          "twitch_display_name": "djcrabhat",
+          "twitch_channel": "https://www.twitch.tv/djcrabhat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H09M31.404495S",
+        "finished_at": "2026-08-21T22:09:31.566Z",
+        "place": 9,
+        "place_ordinal": "9th",
+        "score": 1091,
+        "score_change": -118,
+        "comment": "died on trinex 3x, vitty, khold...",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-21T22:09:31.654Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

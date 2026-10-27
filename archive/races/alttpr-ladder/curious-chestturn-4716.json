@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:27Z",
+  "race": {
+    "name": "alttpr-ladder/curious-chestturn-4716",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/curious-chestturn-4716",
+    "data_url": "/alttpr-ladder/curious-chestturn-4716/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=2296 - (HashHammer/HashTunic/HashQuake/HashBoomerang/HashBombos)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-30T00:30:00.083Z",
+    "started_at": "2026-01-30T01:00:00.103Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M07.525774S",
+        "finished_at": "2026-01-30T03:01:07.629Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2317,
+        "score_change": 2,
+        "comment": "no mirrors, not beautiful. no one's gonna get that.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPG10oe7P5Q",
+          "full_name": "Centroid41#6531",
+          "name": "Centroid41",
+          "discriminator": "6531",
+          "url": "/user/1jgrbWPG10oe7P5Q/centroid41",
+          "avatar": "https://racetime.gg/media/centroid41.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "centroid41",
+          "twitch_display_name": "Centroid41",
+          "twitch_channel": "https://www.twitch.tv/centroid41",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H14M45.999519S",
+        "finished_at": "2026-01-30T03:14:46.102Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1497,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-30T03:14:46.870Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

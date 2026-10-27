@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/jolly-gloves-5857",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/jolly-gloves-5857",
+    "data_url": "/alttpr-ladder/jolly-gloves-5857/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Retrance (No Rupee Bow)\nretrance_bow - https://alttpr.racing/getseed.php?race=591 - (Mirror/Shield/Lamp/Boots/Hookshot)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-29T16:30:00.149Z",
+    "started_at": "2025-07-29T17:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "graP6yoaxP3lV4zN",
+          "full_name": "bsj#6516",
+          "name": "bsj",
+          "discriminator": "6516",
+          "url": "/user/graP6yoaxP3lV4zN/bsj",
+          "avatar": "https://racetime.gg/media/20359d17-85b6-473f-96c6-74d1a93dac64-profile_image-70x70.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "beesjay",
+          "twitch_display_name": "beesjay",
+          "twitch_channel": "https://www.twitch.tv/beesjay",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M35.915317S",
+        "finished_at": "2025-07-29T18:46:35.993Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2317,
+        "score_change": 16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H17M03.651847S",
+        "finished_at": "2025-07-29T19:17:03.729Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2291,
+        "score_change": -4,
+        "comment": "What a ez Seed, if you had just played TT directly without a hammer",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g68jBkyANO",
+          "full_name": "Noob Scooter#0645",
+          "name": "Noob Scooter",
+          "discriminator": "0645",
+          "url": "/user/57ZKD3g68jBkyANO/noob-scooter",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "noob_g_scooter",
+          "twitch_display_name": "Noob_G_Scooter",
+          "twitch_channel": "https://www.twitch.tv/noob_g_scooter",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H28M34.722538S",
+        "finished_at": "2025-07-29T19:28:34.800Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1660,
+        "score_change": -18,
+        "comment": "166/221",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-29T19:28:34.843Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:52Z",
+  "race": {
+    "name": "alttpr-ladder/witty-beetorp-5790",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/witty-beetorp-5790",
+    "data_url": "/alttpr-ladder/witty-beetorp-5790/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag (Open)\nladder/grabbag - https://alttpr.racing/getseed.php?race=4902 - (HashGreenPotion/HashBoomerang/HashMap/HashBugnet/HashFlute)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-09-12T14:30:00.172Z",
+    "started_at": "2026-09-12T15:00:00.180Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "RbOXG3yVXdoZVKq1",
+          "full_name": "FlyingPlatipusDimitri#7034",
+          "name": "FlyingPlatipusDimitri",
+          "discriminator": "7034",
+          "url": "/user/RbOXG3yVXdoZVKq1/flyingplatipusdimitri",
+          "avatar": "https://racetime.gg/media/RbOXG3yVXdoZVKq1_lfuGozx.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "flyingplatipusdimitri",
+          "twitch_display_name": "FlyingPlatipusDimitri",
+          "twitch_channel": "https://www.twitch.tv/flyingplatipusdimitri",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H39M00.692224S",
+        "finished_at": "2026-09-12T16:39:00.872Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 748,
+        "score_change": 529,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7QXz83Kj4yBeZDjr",
+          "full_name": "nessa_nekochan#3950",
+          "name": "nessa_nekochan",
+          "discriminator": "3950",
+          "url": "/user/7QXz83Kj4yBeZDjr/nessa_nekochan",
+          "avatar": "https://racetime.gg/media/7QXz83Kj4yBeZDjr.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "nessa_nekochan",
+          "twitch_display_name": "nessa_nekochan",
+          "twitch_channel": "https://www.twitch.tv/nessa_nekochan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -311,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-12T16:48:20.584Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:50Z",
+  "race": {
+    "name": "alttpr-ladder/wild-link-4905",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/wild-link-4905",
+    "data_url": "/alttpr-ladder/wild-link-4905/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag (Open AD with OW Tile Swap)\nladder/grabbag - https://alttpr.racing/getseed.php?race=5076 - (HashFlippers/HashHeart/HashHookshot/HashBook/HashMoonPearl)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-09-27T02:30:00.190Z",
+    "started_at": "2026-09-27T03:00:00.161Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "aGklxjWza0oLPdye",
+          "full_name": "coolpapabell2282#8872",
+          "name": "coolpapabell2282",
+          "discriminator": "8872",
+          "url": "/user/aGklxjWza0oLPdye/coolpapabell2282",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "coolpapabell2282",
+          "twitch_display_name": "coolpapabell2282",
+          "twitch_channel": "https://www.twitch.tv/coolpapabell2282",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M59.860431S",
+        "finished_at": "2026-09-27T05:00:00.022Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 672,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokPaGW5KQyV",
+          "full_name": "ExtremeRando#3999",
+          "name": "ExtremeRando",
+          "discriminator": "3999",
+          "url": "/user/Ek8wpokPaGW5KQyV/extremerando",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "extremerando",
+          "twitch_display_name": "ExtremeRando",
+          "twitch_channel": "https://www.twitch.tv/extremerando",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H29M58.264211S",
+        "finished_at": "2026-09-27T05:29:58.426Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -207,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-27T05:29:58.457Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

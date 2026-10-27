@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/travelling-goldsword-8726",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/travelling-goldsword-8726",
+    "data_url": "/alttpr-ladder/travelling-goldsword-8726/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=1094 - (HashLamp/HashBoomerang/HashBombs/HashMap/HashFlippers)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-10-04T19:30:00.087Z",
+    "started_at": "2025-10-04T20:00:00.053Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M02.711871S",
+        "finished_at": "2025-10-04T21:43:02.764Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2794,
+        "score_change": 1,
+        "comment": "Go mode TR & GT, otherwise didn't do pyramid fairy and hera big chest that's... it.  Full clear.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnV7oLKPnz",
+          "full_name": "DJCrabhat#0022",
+          "name": "DJCrabhat",
+          "discriminator": "0022",
+          "url": "/user/XY0eABdnV7oLKPnz/djcrabhat",
+          "avatar": "https://racetime.gg/media/crabhat-avatar-small.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "djcrabhat",
+          "twitch_display_name": "djcrabhat",
+          "twitch_channel": "https://www.twitch.tv/djcrabhat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H20M57.885623S",
+        "finished_at": "2025-10-04T22:20:57.938Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1438,
+        "score_change": 33,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7VjEWV4GED",
+          "full_name": "SquishyPanda#2595",
+          "name": "SquishyPanda",
+          "discriminator": "2595",
+          "url": "/user/5JlzyB7VjEWV4GED/squishypanda",
+          "avatar": "https://racetime.gg/media/squishy-panda1.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "squishypanda86",
+          "twitch_display_name": "SquishyPanda86",
+          "twitch_channel": "https://www.twitch.tv/squishypanda86",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 518,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-04T22:20:57.965Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -52,13 +52,14 @@ def placed_race(name, order, **kwargs):
     return race(name, entrants=entrants, **kwargs)
 
 
-def payload(races):
+def payload(races, current_names=None):
     return participant_stats.build_participant_payload(
         build_stats.included_race_contexts(races),
         source_url=SOURCE_URL,
         timezone_label="Eastern Time",
         timezone_name=build_stats.SCHEDULE_TIMEZONE_NAME,
         generated_at=GENERATED_AT,
+        current_names=current_names,
     )
 
 
@@ -172,6 +173,30 @@ class EntrantNormalizationTests(unittest.TestCase):
             ]
         )
         self.assertIn({"id": "abc123", "name": "abc123"}, result["players"])
+
+    def test_latest_race_name_wins_without_a_current_name(self):
+        result = payload(
+            [
+                placed_race(
+                    "early",
+                    ["ana"],
+                    started_at="2026-03-01T20:00:00.000Z",
+                )
+                | {"entrants": [entrant("ana", user={"id": "ana", "name": "Old Ana"})]},
+                placed_race("late", ["ana"], started_at="2026-03-02T20:00:00.000Z"),
+            ]
+        )
+        self.assertEqual(result["players"], [{"id": "ana", "name": "ana"}])
+
+    def test_current_name_overrides_race_names(self):
+        result = payload(
+            [placed_race("solo", ["ana", "ben"])],
+            current_names={"ana": "Renamed Ana", "absent": "Not In Races"},
+        )
+        self.assertEqual(
+            result["players"],
+            [{"id": "ben", "name": "ben"}, {"id": "ana", "name": "Renamed Ana"}],
+        )
 
     def test_rejects_duplicate_entrant_identity(self):
         with self.assertRaisesRegex(
@@ -339,7 +364,7 @@ class PayloadShapeTests(unittest.TestCase):
             placed_race("too-old", ["ana", "ben"], started_at="2025-12-01T20:00:00.000Z"),
             race("cancelled", entrants=[entrant("ana")], status="cancelled"),
         ]
-        stats = build_stats.aggregate_races(races, 5, 1, generated_at=GENERATED_AT)
+        stats = build_stats.aggregate_races(races, generated_at=GENERATED_AT)
         result = payload(races)
         self.assertEqual(
             len(result["races"]), stats["source"]["included_race_count"]

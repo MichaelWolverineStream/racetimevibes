@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/agreeable-rayvis-9822",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/agreeable-rayvis-9822",
+    "data_url": "/alttpr-ladder/agreeable-rayvis-9822/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - HMG\nhmg - https://alttpr.racing/getseed.php?race=1364 - (HashCape/HashQuake/HashShield/HashBoots/HashHammer)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-11-07T14:30:00.087Z",
+    "started_at": "2025-11-07T15:00:00.074Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRN5OWmqXen",
+          "full_name": "Muffins#9229",
+          "name": "Muffins",
+          "discriminator": "9229",
+          "url": "/user/497NdWRN5OWmqXen/muffins",
+          "avatar": "https://racetime.gg/media/rsz_1binary_pipette.jpg",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "neo_muffins",
+          "twitch_display_name": "Neo_Muffins",
+          "twitch_channel": "https://www.twitch.tv/neo_muffins",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H33M14.910687S",
+        "finished_at": "2025-11-07T16:33:14.985Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2014,
+        "score_change": 58,
+        "comment": "160",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlG8JWaOP57",
+          "full_name": "Duden2#7537",
+          "name": "Duden2",
+          "discriminator": "7537",
+          "url": "/user/xldAMBlG8JWaOP57/duden2",
+          "avatar": "https://racetime.gg/media/0c2edfb9-8860-4267-828b-497e73d15132.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "duden2",
+          "twitch_display_name": "Duden2",
+          "twitch_channel": "https://www.twitch.tv/duden2",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H34M35.505736S",
+        "finished_at": "2025-11-07T16:34:35.580Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2426,
+        "score_change": -27,
+        "comment": "161",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "yMewn83Ve6B405Jv",
+          "full_name": "Cinaeth#2262",
+          "name": "Cinaeth",
+          "discriminator": "2262",
+          "url": "/user/yMewn83Ve6B405Jv/cinaeth",
+          "avatar": "https://racetime.gg/media/yMewn83Ve6B405Jv.png",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "cinaeth",
+          "twitch_display_name": "Cinaeth",
+          "twitch_channel": "https://www.twitch.tv/cinaeth",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": null,
+        "score_change": -213,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-07T16:34:35.628Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

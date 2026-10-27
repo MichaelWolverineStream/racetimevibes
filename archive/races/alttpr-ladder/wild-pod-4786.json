@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:24Z",
+  "race": {
+    "name": "alttpr-ladder/wild-pod-4786",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/wild-pod-4786",
+    "data_url": "/alttpr-ladder/wild-pod-4786/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=2398 - (HashBugnet/HashEmptyBottle/HashPendant/HashMagicPowder/HashQuake)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-02-07T12:30:00.127Z",
+    "started_at": "2026-02-07T13:00:00.094Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H06M07.342177S",
+        "finished_at": "2026-02-07T14:06:07.437Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2275,
+        "score_change": 6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7Lkx3V4GED",
+          "full_name": "Zorimyll#7692",
+          "name": "Zorimyll",
+          "discriminator": "7692",
+          "url": "/user/5JlzyB7Lkx3V4GED/zorimyll",
+          "avatar": "https://racetime.gg/media/Zehir.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "zorimyll",
+          "twitch_display_name": "Zorimyll",
+          "twitch_channel": "https://www.twitch.tv/zorimyll",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M42.008671S",
+        "finished_at": "2026-02-07T14:19:42.103Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2046,
+        "score_change": -29,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-02-07T14:19:42.147Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/fried-turtlerock-4375",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fried-turtlerock-4375",
+    "data_url": "/alttpr-ladder/fried-turtlerock-4375/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=3730 - (HashShield/HashGloves/HashBigKey/HashBook/HashGreenPotion)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-06-02T12:30:00.156Z",
+    "started_at": "2026-06-02T13:00:00.085Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "bpNAaBvXGxoJkg04",
+          "full_name": "Speeka89#2048",
+          "name": "Speeka89",
+          "discriminator": "2048",
+          "url": "/user/bpNAaBvXGxoJkg04/speeka89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "speeka89",
+          "twitch_display_name": "Speeka89",
+          "twitch_channel": "https://www.twitch.tv/speeka89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M27.554690S",
+        "finished_at": "2026-06-02T14:35:27.640Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2014,
+        "score_change": 25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XzVwZWqOmR35k8eb",
+          "full_name": "PeteZaiolo#9821",
+          "name": "PeteZaiolo",
+          "discriminator": "9821",
+          "url": "/user/XzVwZWqOmR35k8eb/petezaiolo",
+          "avatar": "https://racetime.gg/media/XzVwZWqOmR35k8eb.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "petezaiolo",
+          "twitch_display_name": "PeteZaiolo",
+          "twitch_channel": "https://www.twitch.tv/petezaiolo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M03.470423S",
+        "finished_at": "2026-06-02T14:51:03.556Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1481,
+        "score_change": 86,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXR1z31y8q0",
+          "full_name": "Topspecialist#1464",
+          "name": "Topspecialist",
+          "discriminator": "1464",
+          "url": "/user/zM65aWXR1z31y8q0/topspecialist",
+          "avatar": "https://racetime.gg/media/TS.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "topspecialist",
+          "twitch_display_name": "topspecialist",
+          "twitch_channel": "https://www.twitch.tv/topspecialist",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H51M05.568373S",
+        "finished_at": "2026-06-02T14:51:05.654Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 704,
+        "score_change": -28,
+        "comment": "160cr",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-02T14:51:05.707Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:56Z",
+  "race": {
+    "name": "alttpr-ladder/kind-byrna-2960",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/kind-byrna-2960",
+    "data_url": "/alttpr-ladder/kind-byrna-2960/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=426 - (Boomerang/Compass/Mushroom/Heart/Book)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-09T00:30:00.156Z",
+    "started_at": "2025-07-09T01:00:00.084Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlnyloaOP57",
+          "full_name": "dotdot#8396",
+          "name": "dotdot",
+          "discriminator": "8396",
+          "url": "/user/xldAMBlnyloaOP57/dotdot",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "dotdot00",
+          "twitch_display_name": "dotdot00",
+          "twitch_channel": "https://www.twitch.tv/dotdot00",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M04.587219S",
+        "finished_at": "2025-07-09T02:28:04.671Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2149,
+        "score_change": 366,
+        "comment": "133/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B86lyoPa52R",
+          "full_name": "MrByer#7307",
+          "name": "MrByer",
+          "discriminator": "7307",
+          "url": "/user/VwLN8B86lyoPa52R/mrbyer",
+          "avatar": "https://racetime.gg/media/2019112008471100-3C66B776DB1AA06323037049FACD96D3.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mrbyer",
+          "twitch_display_name": "MrByer",
+          "twitch_channel": "https://www.twitch.tv/mrbyer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M50.296994S",
+        "finished_at": "2025-07-09T02:46:50.381Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2893,
+        "score_change": -43,
+        "comment": "163/216 Imagine this seed as ped goal",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M20.328724S",
+        "finished_at": "2025-07-09T03:04:20.413Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1300,
+        "score_change": -3,
+        "comment": "123/216 - IGT 1:37:35",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-09T03:04:20.452Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

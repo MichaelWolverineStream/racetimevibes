@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:38Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-skullwoods-7611",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-skullwoods-7611",
+    "data_url": "/alttpr-ladder/trusty-skullwoods-7611/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=1375 - (HashHookshot/HashEmptyBottle/HashFlippers/HashFlippers/HashShield)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-11-09T18:30:00.085Z",
+    "started_at": "2025-11-09T19:00:00.068Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "kzM65aWXkao1y8q0",
+          "full_name": "Illus#6451",
+          "name": "Illus",
+          "discriminator": "6451",
+          "url": "/user/kzM65aWXkao1y8q0/illus",
+          "avatar": "https://racetime.gg/media/Hatsune_Priconne.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "illus24",
+          "twitch_display_name": "Illus24",
+          "twitch_channel": "https://www.twitch.tv/illus24",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M48.507135S",
+        "finished_at": "2025-11-09T20:56:48.575Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2047,
+        "score_change": 458,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H01M46.812075S",
+        "finished_at": "2025-11-09T21:01:46.880Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2526,
+        "score_change": 5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M53.815362S",
+        "finished_at": "2025-11-09T21:02:53.883Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2371,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-11-09T21:02:53.994Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

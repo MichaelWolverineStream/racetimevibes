@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:47Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-desert-3381",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-desert-3381",
+    "data_url": "/alttpr-ladder/trusty-desert-3381/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=1008 - (HashBook/HashMushroom/HashBombos/HashMap/HashQuake)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-09-23T03:30:00.102Z",
+    "started_at": "2025-09-23T04:00:00.119Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5rNGD3DQpno9blOy",
+          "full_name": "Specks#1514",
+          "name": "Specks",
+          "discriminator": "1514",
+          "url": "/user/5rNGD3DQpno9blOy/specks",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "speckyspecks",
+          "twitch_display_name": "SpeckySpecks",
+          "twitch_channel": "https://www.twitch.tv/speckyspecks",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M44.824313S",
+        "finished_at": "2025-09-23T05:46:44.943Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2948,
+        "score_change": 0,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4or27aoqDJX0",
+          "full_name": "Beth#1108",
+          "name": "Beth",
+          "discriminator": "1108",
+          "url": "/user/rZyM4or27aoqDJX0/beth",
+          "avatar": "https://racetime.gg/media/rZyM4or27aoqDJX0_JR6JUg1.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lamebeth",
+          "twitch_display_name": "LameBeth",
+          "twitch_channel": "https://www.twitch.tv/lamebeth",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1250,
+        "score_change": 0,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-09-23T06:02:10.353Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

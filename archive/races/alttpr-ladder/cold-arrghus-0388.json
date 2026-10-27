@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/cold-arrghus-0388",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/cold-arrghus-0388",
+    "data_url": "/alttpr-ladder/cold-arrghus-0388/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4308 - (HashCape/HashMap/HashMoonPearl/HashMushroom/HashBook)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-21T16:30:00.123Z",
+    "started_at": "2026-07-21T17:00:00.094Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M18.830553S",
+        "finished_at": "2026-07-21T18:27:18.925Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2669,
+        "score_change": 21,
+        "comment": "134, go mode quake. hit a very good route. death on Trinexx only real mistake",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H31M57.588427S",
+        "finished_at": "2026-07-21T18:31:57.683Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2557,
+        "score_change": 29,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "52QE8oNye53lywqX",
+          "full_name": "Ticknaldo#0359",
+          "name": "Ticknaldo",
+          "discriminator": "0359",
+          "url": "/user/52QE8oNye53lywqX/ticknaldo",
+          "avatar": "https://racetime.gg/media/Ticki_Salutieren_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ticknaldo",
+          "twitch_display_name": "Ticknaldo",
+          "twitch_channel": "https://www.twitch.tv/ticknaldo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M24.746345S",
+        "finished_at": "2026-07-21T18:32:24.840Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2696,
+        "score_change": -84,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5zbdeWeRwjBYPK8O",
+          "full_name": "skunkner#0974",
+          "name": "skunkner",
+          "discriminator": "0974",
+          "url": "/user/5zbdeWeRwjBYPK8O/skunkner",
+          "avatar": "https://racetime.gg/media/256_SirYoshi.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "skunkner",
+          "twitch_display_name": "skunkner",
+          "twitch_channel": "https://www.twitch.tv/skunkner",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M42.355904S",
+        "finished_at": "2026-07-21T18:38:42.450Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1819,
+        "score_change": 37,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "8QGZrB27023Ngk4V",
+          "full_name": "el_tonytv#8285",
+          "name": "el_tonytv",
+          "discriminator": "8285",
+          "url": "/user/8QGZrB27023Ngk4V/el_tonytv",
+          "avatar": "https://racetime.gg/media/8QGZrB27023Ngk4V.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "el_tonytv",
+          "twitch_display_name": "el_tonytv",
+          "twitch_channel": "https://www.twitch.tv/el_tonytv",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M28.196238S",
+        "finished_at": "2026-07-21T18:56:28.290Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1541,
+        "score_change": 7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "1jgrbWPl7kWe7P5Q",
+          "full_name": "1ganondwarf#0103",
+          "name": "1ganondwarf",
+          "discriminator": "0103",
+          "url": "/user/1jgrbWPl7kWe7P5Q/1ganondwarf",
+          "avatar": "https://racetime.gg/media/images_S0Ate97.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "1ganondwarf",
+          "twitch_display_name": "1ganondwarf",
+          "twitch_channel": "https://www.twitch.tv/1ganondwarf",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M26.671910S",
+        "finished_at": "2026-07-21T19:10:26.766Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1202,
+        "score_change": -121,
+        "comment": "Not bad considering I am the lowest rated person",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-21T19:10:26.802Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

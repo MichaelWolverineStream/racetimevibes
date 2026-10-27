@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/legendary-ganon-9141",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/legendary-ganon-9141",
+    "data_url": "/alttpr-ladder/legendary-ganon-9141/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keydrop Boots\nadkdb - https://alttpr.racing/getseed.php?race=593 - (Big Key/Empty Bottle/Book/Heart/Pendant)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-07-29T22:30:00.193Z",
+    "started_at": "2025-07-29T23:00:00.010Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M13.617564S",
+        "finished_at": "2025-07-30T00:55:13.627Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2837,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdLGeBLKPnz",
+          "full_name": "paulinhoy#5844",
+          "name": "paulinhoy",
+          "discriminator": "5844",
+          "url": "/user/XY0eABdLGeBLKPnz/paulinhoy",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "paullinhoy",
+          "twitch_display_name": "paullinhoy",
+          "twitch_channel": "https://www.twitch.tv/paullinhoy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2173,
+        "score_change": -13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-30T00:55:29.764Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

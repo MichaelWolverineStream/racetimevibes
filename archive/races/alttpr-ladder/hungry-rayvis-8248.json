@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:04Z",
+  "race": {
+    "name": "alttpr-ladder/hungry-rayvis-8248",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hungry-rayvis-8248",
+    "data_url": "/alttpr-ladder/hungry-rayvis-8248/data",
+    "goal": {
+      "name": "Beat the game (Fun)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - McEnemizer\ntylersalt/mcenemizer - https://alttpr.racing/getseed.php?race=3876 - (HashIceRod/HashBombos/HashHookshot/HashMagicPowder/HashBugnet)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-06-14T16:30:00.148Z",
+    "started_at": "2026-06-14T17:00:00.104Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H38M55.380211S",
+        "finished_at": "2026-06-14T18:38:55.484Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1411,
+        "score_change": 478,
+        "comment": "ll firerod i think this was everyones problem",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Aa5veoGadaBMVr6Z",
+          "full_name": "Skullrusha#3122",
+          "name": "Skullrusha",
+          "discriminator": "3122",
+          "url": "/user/Aa5veoGadaBMVr6Z/skullrusha",
+          "avatar": "https://racetime.gg/media/Aa5veoGadaBMVr6Z.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "skullrusha5",
+          "twitch_display_name": "Skullrusha5",
+          "twitch_channel": "https://www.twitch.tv/skullrusha5",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M42.420109S",
+        "finished_at": "2026-06-14T18:45:42.524Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1307,
+        "score_change": 442,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQmOaBK4xrZ",
+          "full_name": "Taelin116#6244",
+          "name": "Taelin116",
+          "discriminator": "6244",
+          "url": "/user/z56VnBQmOaBK4xrZ/taelin116",
+          "avatar": "https://racetime.gg/media/Garr.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "taelin116",
+          "twitch_display_name": "taelin116",
+          "twitch_channel": "https://www.twitch.tv/taelin116",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M54.801161S",
+        "finished_at": "2026-06-14T18:45:54.905Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -485,
+        "comment": "Not bad for being AKF for almost ten minutes...thanks neighbor",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7nxMQeoxlQoapX0A",
+          "full_name": "tylersalt#0124",
+          "name": "tylersalt",
+          "discriminator": "0124",
+          "url": "/user/7nxMQeoxlQoapX0A/tylersalt",
+          "avatar": "https://racetime.gg/media/tsalt.png",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "tylersalt",
+          "twitch_display_name": "tylersalt",
+          "twitch_channel": "https://www.twitch.tv/tylersalt",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M55.856955S",
+        "finished_at": "2026-06-14T18:46:55.961Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 626,
+        "score_change": -137,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-06-14T18:46:56.032Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

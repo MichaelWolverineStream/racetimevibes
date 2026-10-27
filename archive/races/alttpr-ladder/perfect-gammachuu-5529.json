@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/perfect-gammachuu-5529",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/perfect-gammachuu-5529",
+    "data_url": "/alttpr-ladder/perfect-gammachuu-5529/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1718 - (HashGloves/HashMagicPowder/HashIceRod/HashBook/HashFlute)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-12-08T10:30:00.128Z",
+    "started_at": "2025-12-08T11:00:00.096Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M43.398443S",
+        "finished_at": "2025-12-08T13:05:43.494Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1828,
+        "score_change": 10,
+        "comment": "This layout for that TR big ...",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnV7oLKPnz",
+          "full_name": "DJCrabhat#0022",
+          "name": "DJCrabhat",
+          "discriminator": "0022",
+          "url": "/user/XY0eABdnV7oLKPnz/djcrabhat",
+          "avatar": "https://racetime.gg/media/crabhat-avatar-small.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "djcrabhat",
+          "twitch_display_name": "djcrabhat",
+          "twitch_channel": "https://www.twitch.tv/djcrabhat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H33M58.376532S",
+        "finished_at": "2025-12-08T13:33:58.473Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1471,
+        "score_change": -99,
+        "comment": "197, hunting for mirror and GT big",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-08T13:33:58.667Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

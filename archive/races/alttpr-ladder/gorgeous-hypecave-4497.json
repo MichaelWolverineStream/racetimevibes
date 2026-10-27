@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:52Z",
+  "race": {
+    "name": "alttpr-ladder/gorgeous-hypecave-4497",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/gorgeous-hypecave-4497",
+    "data_url": "/alttpr-ladder/gorgeous-hypecave-4497/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4866 - (HashFlippers/HashBow/HashBombos/HashTunic/HashIceRod)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-09-09T15:30:00.152Z",
+    "started_at": "2026-09-09T16:00:00.165Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NZ1KRBORddW4qAyj",
+          "full_name": "Bumble#7458",
+          "name": "Bumble",
+          "discriminator": "7458",
+          "url": "/user/NZ1KRBORddW4qAyj/bumble",
+          "avatar": "https://racetime.gg/media/NZ1KRBORddW4qAyj.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bumblebee86x",
+          "twitch_display_name": "bumblebee86x",
+          "twitch_channel": "https://www.twitch.tv/bumblebee86x",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M53.256571S",
+        "finished_at": "2026-09-09T17:32:53.421Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2259,
+        "score_change": 44,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VyMjB405Jv",
+          "full_name": "Blackirave#1438",
+          "name": "Blackirave",
+          "discriminator": "1438",
+          "url": "/user/Mewn83VyMjB405Jv/blackirave",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "blackirave",
+          "twitch_display_name": "blackirave",
+          "twitch_channel": "https://www.twitch.tv/blackirave",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M27.029656S",
+        "finished_at": "2026-09-09T17:37:27.194Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2921,
+        "score_change": -116,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "z56VnBQZ7a3K4xrZ",
+          "full_name": "AviQuu#6155",
+          "name": "AviQuu",
+          "discriminator": "6155",
+          "url": "/user/z56VnBQZ7a3K4xrZ/aviquu",
+          "avatar": "https://racetime.gg/media/z56VnBQZ7a3K4xrZ_hysLSaO.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "aviquu",
+          "twitch_display_name": "AviQuu",
+          "twitch_channel": "https://www.twitch.tv/aviquu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M36.260879S",
+        "finished_at": "2026-09-09T17:42:36.426Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1873,
+        "score_change": -56,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-09T17:42:36.547Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

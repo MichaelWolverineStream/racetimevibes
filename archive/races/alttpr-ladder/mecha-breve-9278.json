@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:41Z",
+  "race": {
+    "name": "alttpr-ladder/mecha-breve-9278",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mecha-breve-9278",
+    "data_url": "/alttpr-ladder/mecha-breve-9278/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nkaesden/cabookey - https://alttpr.racing/getseed.php?race=1292 - (HashFlute/HashBigKey/HashMap/HashBook/HashMagicPowder)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-10-29T12:30:00.084Z",
+    "started_at": "2025-10-29T13:00:00.091Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbp193YlM65",
+          "full_name": "thalane#0908",
+          "name": "thalane",
+          "discriminator": "0908",
+          "url": "/user/jZ2EGWbp193YlM65/thalane",
+          "avatar": "https://racetime.gg/media/thalane.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "thalanee",
+          "twitch_display_name": "thalanee",
+          "twitch_channel": "https://www.twitch.tv/thalanee",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M37.680752S",
+        "finished_at": "2025-10-29T14:43:37.772Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 314,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VyMjB405Jv",
+          "full_name": "Blackirave#1438",
+          "name": "Blackirave",
+          "discriminator": "1438",
+          "url": "/user/Mewn83VyMjB405Jv/blackirave",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "blackirave",
+          "twitch_display_name": "blackirave",
+          "twitch_channel": "https://www.twitch.tv/blackirave",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M01.736258S",
+        "finished_at": "2025-10-29T14:56:01.828Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2685,
+        "score_change": 2,
+        "comment": "should check the goal befor i play the modus lul :D",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H56M21.408737S",
+        "finished_at": "2025-10-29T14:56:21.500Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1719,
+        "score_change": 27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M35.177678S",
+        "finished_at": "2025-10-29T14:59:35.269Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2365,
+        "score_change": -9,
+        "comment": "hookless swamp upsi :P",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M46.216127S",
+        "finished_at": "2025-10-29T15:04:46.308Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1561,
+        "score_change": -8,
+        "comment": "CR 185, some cruel small keys on the path to CT sk",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "497NdWRAlxomqXen",
+          "full_name": "Cen7ipede#7860",
+          "name": "Cen7ipede",
+          "discriminator": "7860",
+          "url": "/user/497NdWRAlxomqXen/cen7ipede",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "cen7ipede",
+          "twitch_display_name": "Cen7ipede",
+          "twitch_channel": "https://www.twitch.tv/cen7ipede",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H10M59.114655S",
+        "finished_at": "2025-10-29T15:10:59.206Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1170,
+        "score_change": -38,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-29T15:10:59.237Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

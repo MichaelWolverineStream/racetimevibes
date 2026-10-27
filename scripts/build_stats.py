@@ -1,39 +1,27 @@
 #!/usr/bin/env python3
-"""Fetch ALTTPR ladder races and build the static dashboard dataset."""
+"""Build the static dashboard dataset from the local race archive."""
 
 from __future__ import annotations
 
 import argparse
-import json
 import math
-import os
 import re
 import statistics
 import sys
-import time
 from collections import Counter, defaultdict
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any, Callable
-from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from typing import Any
 from zoneinfo import ZoneInfo
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import build_stats`.
 try:
-    from scripts import participant_stats
+    from scripts import participant_stats, race_archive
 except ImportError:
     import participant_stats
+    import race_archive
 
 
-SOURCE_URL = "https://racetime.gg/alttpr-ladder/races/data"
-PER_PAGE = 100
-REQUEST_TIMEOUT_SECONDS = 30
-REQUEST_DELAY_SECONDS = 0.2
-NETWORK_ATTEMPTS = 3
-COLLECTION_ATTEMPTS = 2
-USER_AGENT = "racetimevibes/1.0 (+static infographic data builder)"
 DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
 OUTPUT_PATH = DATA_DIR / "race-stats.json"
 PARTICIPANTS_OUTPUT_PATH = DATA_DIR / "participants.json"
@@ -41,8 +29,6 @@ PARTICIPANTS_OUTPUT_PATH = DATA_DIR / "participants.json"
 SCHEDULE_TIMEZONE_NAME = "America/New_York"
 SCHEDULE_TIMEZONE = ZoneInfo(SCHEDULE_TIMEZONE_NAME)
 DATA_START_LOCAL_DATE = date(2026, 1, 1)
-DATA_START_LOCAL = datetime(2026, 1, 1, tzinfo=SCHEDULE_TIMEZONE)
-DATA_START_UTC = DATA_START_LOCAL.astimezone(UTC)
 WEEKDAY_LABELS = (
     "Monday",
     "Tuesday",
@@ -59,168 +45,14 @@ MODE_PATTERN = re.compile(
 EXCLUDED_MODES = {"ladder test", "ladder_test"}
 
 JsonObject = dict[str, Any]
-PageLoader = Callable[[int], JsonObject]
 
 
 class DataError(RuntimeError):
-    """Raised when API data cannot produce a trustworthy aggregate."""
-
-
-class ConsistencyError(DataError):
-    """Raised when the paginated collection changes or contains duplicates."""
-
-
-def fetch_page(page: int) -> JsonObject:
-    """Fetch one API page with bounded retries for transient failures."""
-    query = urlencode(
-        {"page": page, "per_page": PER_PAGE, "show_entrants": "true"}
-    )
-    request = Request(
-        f"{SOURCE_URL}?{query}",
-        headers={"Accept": "application/json", "User-Agent": USER_AGENT},
-    )
-
-    for attempt in range(1, NETWORK_ATTEMPTS + 1):
-        try:
-            with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-                payload = json.load(response)
-            if not isinstance(payload, dict):
-                raise DataError(f"Page {page} returned a non-object JSON response")
-            return payload
-        except HTTPError as error:
-            is_transient = error.code == 429 or 500 <= error.code < 600
-            if not is_transient or attempt == NETWORK_ATTEMPTS:
-                raise DataError(f"Page {page} failed with HTTP {error.code}") from error
-        except (URLError, TimeoutError, ConnectionError) as error:
-            if attempt == NETWORK_ATTEMPTS:
-                raise DataError(f"Page {page} could not be fetched: {error}") from error
-        except json.JSONDecodeError as error:
-            raise DataError(f"Page {page} returned invalid JSON") from error
-
-        time.sleep(2 ** (attempt - 1))
-
-    raise AssertionError("network retry loop exited unexpectedly")
-
-
-def _page_metadata(payload: JsonObject, page: int) -> tuple[int, int, list[JsonObject]]:
-    count = payload.get("count")
-    num_pages = payload.get("num_pages")
-    races = payload.get("races")
-    if (
-        not isinstance(count, int)
-        or isinstance(count, bool)
-        or count < 0
-        or not isinstance(num_pages, int)
-        or isinstance(num_pages, bool)
-        or num_pages < 1
-        or not isinstance(races, list)
-        or any(not isinstance(race, dict) for race in races)
-    ):
-        raise DataError(f"Page {page} has invalid pagination data")
-    return count, num_pages, races
-
-
-def _parse_timestamp(value: Any, field_name: str) -> datetime:
-    if not isinstance(value, str) or not value:
-        raise ValueError(f"{field_name} is missing")
-    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
-    parsed = datetime.fromisoformat(normalized)
-    if parsed.tzinfo is None:
-        raise ValueError(f"{field_name} has no UTC offset")
-    return parsed.astimezone(UTC)
-
-
-def _completion_time(race: JsonObject) -> datetime:
-    value = race.get("ended_at") or race.get("cancelled_at")
-    try:
-        return _parse_timestamp(value, "ended_at/cancelled_at")
-    except (TypeError, ValueError) as error:
-        name = race.get("name", "<unnamed>")
-        raise DataError(f"Race {name} has no valid completion timestamp") from error
-
-
-def _collect_once(
-    page_loader: PageLoader,
-) -> tuple[list[JsonObject], int, int, int]:
-    first_payload = page_loader(1)
-    expected_count, expected_pages, first_races = _page_metadata(first_payload, 1)
-    newest_name = first_races[0].get("name") if first_races else None
-    races: list[JsonObject] = []
-    previous_completion: datetime | None = None
-    fetched_page_count = 0
-
-    for page in range(1, expected_pages + 1):
-        if page == 1:
-            page_races = first_races
-        else:
-            time.sleep(REQUEST_DELAY_SECONDS)
-            payload = page_loader(page)
-            count, num_pages, page_races = _page_metadata(payload, page)
-            if count != expected_count or num_pages != expected_pages:
-                raise ConsistencyError(
-                    f"Pagination changed on page {page}: "
-                    f"expected {expected_count} records/{expected_pages} pages, "
-                    f"received {count} records/{num_pages} pages"
-                )
-
-        page_completions = []
-        for race in page_races:
-            completion = _completion_time(race)
-            if previous_completion is not None and completion > previous_completion:
-                raise ConsistencyError(
-                    "Races were not returned in non-increasing completion order"
-                )
-            previous_completion = completion
-            page_completions.append(completion)
-
-        races.extend(page_races)
-        fetched_page_count = page
-        if page_completions and page_completions[-1] < DATA_START_UTC:
-            break
-
-    names = [race.get("name") for race in races]
-    if any(not isinstance(name, str) or not name for name in names):
-        raise DataError("At least one race is missing its unique name")
-    unique_names = set(names)
-    if len(unique_names) != len(names):
-        raise ConsistencyError("Duplicate race names were returned across pages")
-    if fetched_page_count == expected_pages and len(unique_names) != expected_count:
-        raise ConsistencyError(
-            f"Expected {expected_count} unique races, received {len(unique_names)}"
-        )
-
-    time.sleep(REQUEST_DELAY_SECONDS)
-    final_payload = page_loader(1)
-    final_count, final_pages, final_races = _page_metadata(final_payload, 1)
-    final_newest_name = final_races[0].get("name") if final_races else None
-    if (
-        final_count != expected_count
-        or final_pages != expected_pages
-        or final_newest_name != newest_name
-    ):
-        raise ConsistencyError("Race collection changed while pages were being fetched")
-
-    return races, expected_count, expected_pages, fetched_page_count
-
-
-def collect_races(
-    page_loader: PageLoader | None = None,
-    *,
-    collection_attempts: int = COLLECTION_ATTEMPTS,
-) -> tuple[list[JsonObject], int, int, int]:
-    """Fetch a consistent cutoff-bounded snapshot, retrying once if it changes."""
-    loader = page_loader or fetch_page
-    for attempt in range(1, collection_attempts + 1):
-        try:
-            return _collect_once(loader)
-        except ConsistencyError:
-            if attempt == collection_attempts:
-                raise
-    raise AssertionError("collection retry loop exited unexpectedly")
+    """Raised when archived data cannot produce a trustworthy aggregate."""
 
 
 def parse_started_at(value: Any) -> datetime:
-    return _parse_timestamp(value, "started_at")
+    return race_archive.parse_timestamp(value, "started_at")
 
 
 def extract_mode(info: str) -> str:
@@ -591,10 +423,7 @@ def included_race_contexts(races: list[JsonObject]) -> list[JsonObject]:
 
 def aggregate_races(
     races: list[JsonObject],
-    api_record_count: int,
-    api_page_count: int,
     *,
-    fetched_page_count: int | None = None,
     generated_at: datetime | None = None,
 ) -> JsonObject:
     """Filter and aggregate races into the static page's JSON schema."""
@@ -678,22 +507,19 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
-        "source_url": SOURCE_URL,
+        "source_url": race_archive.SOURCE_URL,
         "timezone": {
             "label": "Eastern Time",
             "name": SCHEDULE_TIMEZONE_NAME,
         },
         "source": {
             "data_start_local": DATA_START_LOCAL_DATE.isoformat(),
-            "api_record_count": api_record_count,
-            "api_page_count": api_page_count,
-            "fetched_record_count": len(races),
-            "fetched_page_count": fetched_page_count or api_page_count,
+            "archived_race_count": len(races),
             "included_race_count": included_count,
             "included_entrant_count": overall["entrant_total"],
-            "excluded_fetched_race_count": len(races) - included_count,
+            "excluded_archived_race_count": len(races) - included_count,
             "included_date_range": overall["included_date_range"],
         },
         "hourly": overall["hourly"],
@@ -713,41 +539,37 @@ def aggregate_races(
     }
 
 
-def write_json_atomic(payload: JsonObject, output_path: Path) -> None:
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
-    with temporary_path.open("w", encoding="utf-8") as output_file:
-        json.dump(payload, output_file, indent=2, sort_keys=False)
-        output_file.write("\n")
-        output_file.flush()
-        os.fsync(output_file.fileno())
-    os.replace(temporary_path, output_path)
-
-
 def build(
+    archive_dir: Path = race_archive.ARCHIVE_DIR,
     output_path: Path = OUTPUT_PATH,
     participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
 ) -> tuple[JsonObject, JsonObject]:
-    races, api_record_count, api_page_count, fetched_page_count = collect_races()
-    stats = aggregate_races(
-        races,
-        api_record_count,
-        api_page_count,
-        fetched_page_count=fetched_page_count,
-    )
+    races = [envelope["race"] for envelope in race_archive.load_races(archive_dir)]
+    if not races:
+        raise DataError(
+            f"Archive {archive_dir} has no races; run scripts/race_archive.py first"
+        )
+    stats = aggregate_races(races)
     participants = participant_stats.build_participant_payload(
         included_race_contexts(races),
-        source_url=SOURCE_URL,
+        source_url=race_archive.SOURCE_URL,
         timezone_label=stats["timezone"]["label"],
         timezone_name=SCHEDULE_TIMEZONE_NAME,
+        current_names=race_archive.load_racer_names(archive_dir),
     )
-    write_json_atomic(stats, output_path)
+    race_archive.write_json_atomic(stats, output_path)
     participant_stats.write_compact_json(participants, participants_output_path)
     return stats, participants
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--archive",
+        type=Path,
+        default=race_archive.ARCHIVE_DIR,
+        help=f"raw race archive directory (default: {race_archive.ARCHIVE_DIR})",
+    )
     parser.add_argument(
         "--output",
         type=Path,
@@ -766,15 +588,21 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
-        stats, participants = build(args.output, args.participants_output)
-    except (DataError, participant_stats.ParticipantDataError) as error:
+        stats, participants = build(
+            args.archive, args.output, args.participants_output
+        )
+    except (
+        DataError,
+        race_archive.ArchiveError,
+        participant_stats.ParticipantDataError,
+    ) as error:
         print(f"Data build failed: {error}", file=sys.stderr)
         return 1
 
     source = stats["source"]
     print(
         f"Wrote {args.output} with {source['included_race_count']} finished races "
-        f"from {source['api_record_count']} API records."
+        f"from {source['archived_race_count']} archived races."
     )
     participant_diagnostics = participants["diagnostics"]
     print(

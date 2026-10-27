@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:34Z",
+  "race": {
+    "name": "alttpr-ladder/awesome-bow-9140",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/awesome-bow-9140",
+    "data_url": "/alttpr-ladder/awesome-bow-9140/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=1731 - (HashHeart/HashBow/HashLamp/HashBoots/HashQuake)",
+    "entrants_count": 3,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-12-09T11:30:00.123Z",
+    "started_at": "2025-12-09T12:00:00.086Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "Aa5veoG0MbWMVr6Z",
+          "full_name": "SacriJuts#0739",
+          "name": "SacriJuts",
+          "discriminator": "0739",
+          "url": "/user/Aa5veoG0MbWMVr6Z/sacrijuts",
+          "avatar": "https://racetime.gg/media/mew_avatar.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "sacrijuts",
+          "twitch_display_name": "SacriJuts",
+          "twitch_channel": "https://www.twitch.tv/sacrijuts",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H15M49.462378S",
+        "finished_at": "2025-12-09T13:15:49.549Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 935,
+        "comment": "24m boots ftw",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "JrM6PoYpJ93Rdm5v",
+          "full_name": "Baku#3629",
+          "name": "Baku",
+          "discriminator": "3629",
+          "url": "/user/JrM6PoYpJ93Rdm5v/baku",
+          "avatar": "https://racetime.gg/media/JrM6PoYpJ93Rdm5v.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bakuzento",
+          "twitch_display_name": "Bakuzento",
+          "twitch_channel": "https://www.twitch.tv/bakuzento",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H30M34.879074S",
+        "finished_at": "2025-12-09T13:30:34.966Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1996,
+        "score_change": 0,
+        "comment": "Have to go so I'll drop my GGWP here ! (nice bombos lmao)",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mQeL3Pd1Xr",
+          "full_name": "rdsdb#3726",
+          "name": "rdsdb",
+          "discriminator": "3726",
+          "url": "/user/R6ym83mQeL3Pd1Xr/rdsdb",
+          "avatar": "https://racetime.gg/media/R6ym83mQeL3Pd1Xr_NamgYZE.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "rdsdb",
+          "twitch_display_name": "rdsdb",
+          "twitch_channel": "https://www.twitch.tv/rdsdb",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1320,
+        "score_change": -5,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-12-09T18:00:01.026Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:59Z",
+  "race": {
+    "name": "alttpr-ladder/tasty-bow-1077",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/tasty-bow-1077",
+    "data_url": "/alttpr-ladder/tasty-bow-1077/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4349 - (HashBombs/HashMirror/HashMagicPowder/HashMoonPearl/HashIceRod)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-25T03:30:00.146Z",
+    "started_at": "2026-07-25T04:00:00.153Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "pRbOXG3yYP3ZVKq1",
+          "full_name": "Gammachuu#1618",
+          "name": "Gammachuu",
+          "discriminator": "1618",
+          "url": "/user/pRbOXG3yYP3ZVKq1/gammachuu",
+          "avatar": "https://racetime.gg/media/Pichu_Good_luck.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gammachuu",
+          "twitch_display_name": "Gammachuu",
+          "twitch_channel": "https://www.twitch.tv/gammachuu",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M40.577096S",
+        "finished_at": "2026-07-25T05:32:40.730Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2687,
+        "score_change": 23,
+        "comment": "Pick a pendant. Hey look, it was all the pendants 163/216",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "GklxjWz97poLPdye",
+          "full_name": "oldmanhaiku#9934",
+          "name": "oldmanhaiku",
+          "discriminator": "9934",
+          "url": "/user/GklxjWz97poLPdye/oldmanhaiku",
+          "avatar": "https://racetime.gg/media/GklxjWz97poLPdye.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oldmanhaiku",
+          "twitch_display_name": "OldManHaiku",
+          "twitch_channel": "https://www.twitch.tv/oldmanhaiku",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H05M14.962453S",
+        "finished_at": "2026-07-25T06:05:15.116Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1381,
+        "score_change": 40,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABdnV7oLKPnz",
+          "full_name": "DJCrabhat#0022",
+          "name": "DJCrabhat",
+          "discriminator": "0022",
+          "url": "/user/XY0eABdnV7oLKPnz/djcrabhat",
+          "avatar": "https://racetime.gg/media/crabhat-avatar-small.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "djcrabhat",
+          "twitch_display_name": "djcrabhat",
+          "twitch_channel": "https://www.twitch.tv/djcrabhat",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H07M14.516957S",
+        "finished_at": "2026-07-25T06:07:14.670Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1208,
+        "score_change": -57,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-25T06:07:16.562Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

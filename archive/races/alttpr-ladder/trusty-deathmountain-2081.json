@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-deathmountain-2081",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-deathmountain-2081",
+    "data_url": "/alttpr-ladder/trusty-deathmountain-2081/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=4648 - (HashShield/HashFlippers/HashPendant/HashMagicPowder/HashHeart)",
+    "entrants_count": 5,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-19T00:30:00.116Z",
+    "started_at": "2026-08-19T01:00:00.099Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "lYZa5B5pDvW2Vwv9",
+          "full_name": "TjMaelstrom#1499",
+          "name": "TjMaelstrom",
+          "discriminator": "1499",
+          "url": "/user/lYZa5B5pDvW2Vwv9/tjmaelstrom",
+          "avatar": "https://racetime.gg/media/TJM.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tjmaelstrom",
+          "twitch_display_name": "TjMaelstrom",
+          "twitch_channel": "https://www.twitch.tv/tjmaelstrom",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H55M58.282527S",
+        "finished_at": "2026-08-19T02:55:58.382Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2298,
+        "score_change": 61,
+        "comment": "Scum it, lock it in.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7qQoV4GED",
+          "full_name": "KillerApp23#1596",
+          "name": "KillerApp23",
+          "discriminator": "1596",
+          "url": "/user/k5JlzyB7qQoV4GED/killerapp23",
+          "avatar": "https://racetime.gg/media/FeelsCubsMan.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "killerapp23",
+          "twitch_display_name": "KillerApp23",
+          "twitch_channel": "https://www.twitch.tv/killerapp23",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M40.206681S",
+        "finished_at": "2026-08-19T02:57:40.306Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1975,
+        "score_change": 171,
+        "comment": "1 bonk",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H15M10.621642S",
+        "finished_at": "2026-08-19T03:15:10.721Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2058,
+        "score_change": -5,
+        "comment": "more than 174. Literally only did not see two things (pedestal and Gamma's chest).",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "17DexWEJDlBak64R",
+          "full_name": "CarbsIncarnate#6261",
+          "name": "CarbsIncarnate",
+          "discriminator": "6261",
+          "url": "/user/17DexWEJDlBak64R/carbsincarnate",
+          "avatar": "https://racetime.gg/media/17DexWEJDlBak64R.png",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "carbsincarnate",
+          "twitch_display_name": "CarbsIncarnate",
+          "twitch_channel": "https://www.twitch.tv/carbsincarnate",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H24M51.139253S",
+        "finished_at": "2026-08-19T03:24:51.238Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1879,
+        "score_change": -46,
+        "comment": "LL Zora and then it didn't get better, how about them boots?",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXkEpo1y8q0",
+          "full_name": "tifa11234#0635",
+          "name": "tifa11234",
+          "discriminator": "0635",
+          "url": "/user/zM65aWXkEpo1y8q0/tifa11234",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tifa11234",
+          "twitch_display_name": "tifa11234",
+          "twitch_channel": "https://www.twitch.tv/tifa11234",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H30M01.193809S",
+        "finished_at": "2026-08-19T03:30:01.293Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": null,
+        "score_change": -349,
+        "comment": "falling at ganon so rip sub 2:30",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-19T03:30:01.374Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

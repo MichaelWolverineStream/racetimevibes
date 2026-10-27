@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:07Z",
+  "race": {
+    "name": "alttpr-ladder/quick-ether-2137",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/quick-ether-2137",
+    "data_url": "/alttpr-ladder/quick-ether-2137/data",
+    "goal": {
+      "name": "Beat the game (Inverted)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Influkeys\nalttprleague/influkeys - https://alttpr.racing/getseed.php?race=3599 - (HashQuake/HashBombs/HashQuake/HashBow/HashHookshot)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-05-22T15:30:00.097Z",
+    "started_at": "2026-05-22T16:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M44.953278S",
+        "finished_at": "2026-05-22T17:43:45.033Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2600,
+        "score_change": 41,
+        "comment": "151 - I really thought I was cooked after the Mire without BK, and the PoD clear for a pendant and the DP clear for a pendant and...  LUL",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "bpNAaBvLDDoJkg04",
+          "full_name": "sk00pula#7804",
+          "name": "sk00pula",
+          "discriminator": "7804",
+          "url": "/user/bpNAaBvLDDoJkg04/sk00pula",
+          "avatar": "https://racetime.gg/media/arthur1.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "sk00pula",
+          "twitch_display_name": "sk00pula",
+          "twitch_channel": "https://www.twitch.tv/sk00pula",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M18.575573S",
+        "finished_at": "2026-05-22T17:53:18.656Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1487,
+        "score_change": 90,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "k5JlzyB7dJ3V4GED",
+          "full_name": "greycorvid#1708",
+          "name": "greycorvid",
+          "discriminator": "1708",
+          "url": "/user/k5JlzyB7dJ3V4GED/greycorvid",
+          "avatar": "https://racetime.gg/media/k5JlzyB7dJ3V4GED_85vuhUV.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "greycorvid",
+          "twitch_display_name": "greycorvid",
+          "twitch_channel": "https://www.twitch.tv/greycorvid",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M22.686337S",
+        "finished_at": "2026-05-22T17:53:22.767Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": -265,
+        "comment": "150 cr... 0 bonks cause never found boots",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-05-22T17:53:22.836Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

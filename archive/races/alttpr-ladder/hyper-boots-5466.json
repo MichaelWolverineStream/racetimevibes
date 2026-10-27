@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:52Z",
+  "race": {
+    "name": "alttpr-ladder/hyper-boots-5466",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/hyper-boots-5466",
+    "data_url": "/alttpr-ladder/hyper-boots-5466/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - Grab Bag (Ludicrous Speed)\nladder/grabbag - https://alttpr.racing/getseed.php?race=4892 - (HashHammer/HashMushroom/HashBook/HashTunic/HashHammer)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-09-11T19:30:00.196Z",
+    "started_at": "2026-09-11T20:00:00.164Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H06M35.726277S",
+        "finished_at": "2026-09-11T21:06:35.891Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2571,
+        "score_change": 10,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rZyM4oryaX3qDJX0",
+          "full_name": "ScottishBrave44#2982",
+          "name": "ScottishBrave44",
+          "discriminator": "2982",
+          "url": "/user/rZyM4oryaX3qDJX0/scottishbrave44",
+          "avatar": "https://racetime.gg/media/Twitch_Avatar.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "scottishbrave44",
+          "twitch_display_name": "ScottishBrave44",
+          "twitch_channel": "https://www.twitch.tv/scottishbrave44",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H11M14.330314S",
+        "finished_at": "2026-09-11T21:11:14.495Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -84,
+        "comment": "",
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-11T21:11:14.584Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

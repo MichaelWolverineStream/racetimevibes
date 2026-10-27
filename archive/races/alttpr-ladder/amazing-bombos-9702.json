@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:30Z",
+  "race": {
+    "name": "alttpr-ladder/amazing-bombos-9702",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/amazing-bombos-9702",
+    "data_url": "/alttpr-ladder/amazing-bombos-9702/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - AD Keysanity\nadkeys - https://alttpr.racing/getseed.php?race=2117 - (HashMushroom/HashHookshot/HashGreenPotion/HashBigKey/HashQuake)",
+    "entrants_count": 4,
+    "entrants_count_finished": 4,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-01-15T01:30:00.091Z",
+    "started_at": "2026-01-15T02:00:00.083Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "yZ2Dv30ax5oewXma",
+          "full_name": "ARabidWombat85#0401",
+          "name": "ARabidWombat85",
+          "discriminator": "0401",
+          "url": "/user/yZ2Dv30ax5oewXma/arabidwombat85",
+          "avatar": "https://racetime.gg/media/Wombat.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "arabidwombat85",
+          "twitch_display_name": "arabidwombat85",
+          "twitch_channel": "https://www.twitch.tv/arabidwombat85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M57.505593S",
+        "finished_at": "2026-01-15T03:54:57.589Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2609,
+        "score_change": 7,
+        "comment": "174. Nice",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M27.564945S",
+        "finished_at": "2026-01-15T03:59:27.648Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2069,
+        "score_change": 11,
+        "comment": "CR 173, go mode...wait for it...wait for it....CT2",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "R6ym83mZJxoPd1Xr",
+          "full_name": "Ahab#1526",
+          "name": "Ahab",
+          "discriminator": "1526",
+          "url": "/user/R6ym83mZJxoPd1Xr/ahab",
+          "avatar": "https://racetime.gg/media/R6ym83mZJxoPd1Xr.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "oldbayhab",
+          "twitch_display_name": "OldBayhab",
+          "twitch_channel": "https://www.twitch.tv/oldbayhab",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H03M11.953354S",
+        "finished_at": "2026-01-15T04:03:12.037Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2348,
+        "score_change": -22,
+        "comment": "190 X Chickens",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83VzO43405Jv",
+          "full_name": "Scanlor#6528",
+          "name": "Scanlor",
+          "discriminator": "6528",
+          "url": "/user/Mewn83VzO43405Jv/scanlor",
+          "avatar": "https://racetime.gg/media/Screenshot_2023-09-23_150552.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "scanlor",
+          "twitch_display_name": "scanlor",
+          "twitch_channel": "https://www.twitch.tv/scanlor",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M26.544013S",
+        "finished_at": "2026-01-15T04:04:26.627Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 1852,
+        "score_change": -55,
+        "comment": "185 CR, definitely didnt get baited by the ped hint",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-01-15T04:04:26.722Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

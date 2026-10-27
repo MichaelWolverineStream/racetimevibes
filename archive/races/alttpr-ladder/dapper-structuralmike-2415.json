@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:52Z",
+  "race": {
+    "name": "alttpr-ladder/dapper-structuralmike-2415",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/dapper-structuralmike-2415",
+    "data_url": "/alttpr-ladder/dapper-structuralmike-2415/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4825 - (HashEmptyBottle/HashCape/HashShield/HashBook/HashHammer)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-09-03T02:40:02.050Z",
+    "started_at": "2026-09-03T03:00:20.582Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5dAW2Vwv9",
+          "full_name": "taco#7699",
+          "name": "taco",
+          "discriminator": "7699",
+          "url": "/user/7lYZa5B5dAW2Vwv9/taco",
+          "avatar": "https://racetime.gg/media/Screenshot_2024-11-30_184233.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "tacothefox",
+          "twitch_display_name": "tacothefox",
+          "twitch_channel": "https://www.twitch.tv/tacothefox",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H44M28.641610S",
+        "finished_at": "2026-09-03T04:44:49.224Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 82,
+        "comment": "CR 141 .... hello darkness my old friend.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "VwLN8B8ravoPa52R",
+          "full_name": "Bojangle#2919",
+          "name": "Bojangle",
+          "discriminator": "2919",
+          "url": "/user/VwLN8B8ravoPa52R/bojangle",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "bojanglehs",
+          "twitch_display_name": "BojangleHS",
+          "twitch_channel": "https://www.twitch.tv/bojanglehs",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M45.252336S",
+        "finished_at": "2026-09-03T04:46:05.835Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1422,
+        "score_change": -3,
+        "comment": "137, 3 trips to EP, one for saha, one for everything except the boss and one more time green pend for pearl @.@",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M26.135116S",
+        "finished_at": "2026-09-03T05:04:46.717Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1206,
+        "score_change": -8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-09-03T05:04:46.830Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

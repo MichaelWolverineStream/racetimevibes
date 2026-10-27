@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:57Z",
+  "race": {
+    "name": "alttpr-ladder/obedient-crackerito-0793",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/obedient-crackerito-0793",
+    "data_url": "/alttpr-ladder/obedient-crackerito-0793/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4483 - (HashBook/HashEmptyBottle/HashMagicPowder/HashBook/HashBow)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-05T06:30:00.131Z",
+    "started_at": "2026-08-05T07:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "52QE8oNye53lywqX",
+          "full_name": "Ticknaldo#0359",
+          "name": "Ticknaldo",
+          "discriminator": "0359",
+          "url": "/user/52QE8oNye53lywqX/ticknaldo",
+          "avatar": "https://racetime.gg/media/Ticki_Salutieren_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ticknaldo",
+          "twitch_display_name": "Ticknaldo",
+          "twitch_channel": "https://www.twitch.tv/ticknaldo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H19M33.590912S",
+        "finished_at": "2026-08-05T08:19:33.683Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2649,
+        "score_change": 27,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Mewn83V7Dno405Jv",
+          "full_name": "MisterBoogeyman#6142",
+          "name": "MisterBoogeyman",
+          "discriminator": "6142",
+          "url": "/user/Mewn83V7Dno405Jv/misterboogeyman",
+          "avatar": "https://racetime.gg/media/Mewn83V7Dno405Jv_mcLZNjH.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "mrboogeybot",
+          "twitch_display_name": "mrboogeybot",
+          "twitch_channel": "https://www.twitch.tv/mrboogeybot",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M00.731453S",
+        "finished_at": "2026-08-05T08:52:00.823Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": -55,
+        "comment": "Tough seed",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-05T08:52:00.901Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

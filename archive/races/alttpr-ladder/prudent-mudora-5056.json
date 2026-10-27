@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:01Z",
+  "race": {
+    "name": "alttpr-ladder/prudent-mudora-5056",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/prudent-mudora-5056",
+    "data_url": "/alttpr-ladder/prudent-mudora-5056/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Open\nopen - https://alttpr.racing/getseed.php?race=4120 - (HashHammer/HashGloves/HashMoonPearl/HashMirror/HashGreenPotion)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-07-06T00:30:00.198Z",
+    "started_at": "2026-07-06T01:00:00.093Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "497NdWRmk5omqXen",
+          "full_name": "ppchan#6201",
+          "name": "ppchan",
+          "discriminator": "6201",
+          "url": "/user/497NdWRmk5omqXen/ppchan",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "ppchan",
+          "twitch_display_name": "ppchan",
+          "twitch_channel": "https://www.twitch.tv/ppchan",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M14.414265S",
+        "finished_at": "2026-07-06T02:32:14.507Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2425,
+        "score_change": 13,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMjO13kqgyE",
+          "full_name": "DiRamz#4721",
+          "name": "DiRamz",
+          "discriminator": "4721",
+          "url": "/user/Gzr7pBMjO13kqgyE/diramz",
+          "avatar": "https://racetime.gg/media/MiniaturaPeaking.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "diramz_",
+          "twitch_display_name": "DiRamz_",
+          "twitch_channel": "https://www.twitch.tv/diramz_",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M14.003664S",
+        "finished_at": "2026-07-06T02:48:14.096Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1239,
+        "score_change": 124,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "rVwLN8B8X4BPa52R",
+          "full_name": "linktothepastken",
+          "name": "linktothepastken",
+          "discriminator": null,
+          "url": "/user/rVwLN8B8X4BPa52R/linktothepastken",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "linktothepastken",
+          "twitch_display_name": "linktothepastken",
+          "twitch_channel": "https://www.twitch.tv/linktothepastken",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M35.603735S",
+        "finished_at": "2026-07-06T02:57:35.696Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1236,
+        "score_change": -9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-07-06T02:57:35.778Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

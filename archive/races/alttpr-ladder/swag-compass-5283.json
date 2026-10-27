@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/swag-compass-5283",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/swag-compass-5283",
+    "data_url": "/alttpr-ladder/swag-compass-5283/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Invrosia\ninvrosia - https://alttpr.racing/getseed.php?race=171 - (Bombos/Hookshot/Gloves/Big Key/Mushroom)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-07T00:30:03.364Z",
+    "started_at": "2025-06-07T01:00:03.462Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "RbOXG3ydGOBZVKq1",
+          "full_name": "AverageFrustratedGamer#8364",
+          "name": "AverageFrustratedGamer",
+          "discriminator": "8364",
+          "url": "/user/RbOXG3ydGOBZVKq1/averagefrustratedgamer",
+          "avatar": "https://racetime.gg/media/inside-out-2015-anger-emotion-wallpaper-preview.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "averagefrustratedgamer",
+          "twitch_display_name": "AverageFrustratedGamer",
+          "twitch_channel": "https://www.twitch.tv/averagefrustratedgamer",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H27M05.250291S",
+        "finished_at": "2025-06-07T02:27:08.713Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2211,
+        "score_change": 149,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H48M39.381388S",
+        "finished_at": "2025-06-07T02:48:42.844Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1406,
+        "score_change": 50,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "Gzr7pBMyjyBkqgyE",
+          "full_name": "AK_drizzt#5830",
+          "name": "AK_drizzt",
+          "discriminator": "5830",
+          "url": "/user/Gzr7pBMyjyBkqgyE/ak_drizzt",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "akdrizzt",
+          "twitch_display_name": "AKdrizzt",
+          "twitch_channel": "https://www.twitch.tv/akdrizzt",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M53.093936S",
+        "finished_at": "2025-06-07T02:53:56.556Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2116,
+        "score_change": -126,
+        "comment": "Hard LL hammer, big oof",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-07T02:53:56.575Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

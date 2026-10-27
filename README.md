@@ -12,14 +12,35 @@ The data builder and web page have no third-party runtime dependencies.
 ## Refresh the data
 
 ```bash
+python3 scripts/race_archive.py
 python3 scripts/build_stats.py
 ```
 
-The script requests the API's maximum of 100 records per page with entrant details enabled. It validates completion-time ordering and stops after the first complete page that crosses the January 1, 2026 Eastern Time boundary, so older archive pages are not collected. A final page-one check confirms that the source did not change during pagination, and the aggregate is atomically written to `site/data/race-stats.json`. Transient network failures are retried with bounded backoff.
+Refreshing has two steps. `race_archive.py` saves new raw race records from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes the aggregate to `site/data/race-stats.json` and the per-racer leaderboard dataset to `site/data/participants.json`, in which each race record carries its Eastern Time date and start hour. Use `--archive` on either script to point at a different archive, and `--output` and `--participants-output` on `build_stats.py` to redirect either dataset.
 
-The same fetch also writes `site/data/participants.json`, the per-racer leaderboard dataset. Each race record carries its Eastern Time date and start hour. No extra API requests are made. Use `--output` and `--participants-output` to redirect either file.
+### The race archive
+
+`archive/races/alttpr-ladder/<slug>.json` holds one file per race, named after the race. Each file stores the race exactly as the API's past-races listing returned it, with entrant details, inside an envelope that records when it was fetched:
+
+```json
+{"schema_version": 1, "fetched_at": "2026-10-27T10:59:46Z", "race": {"name": "alttpr-ladder/dazzling-matt-4030", "...": "..."}}
+```
+
+The archive covers every race in the category, including those before 2026; the builder applies the dashboard's date filter. `archive/racer-names.json` maps each racer's stable user ID to their current display name.
+
+The listing is sorted by completion time, newest first, 100 races per page. A sync reads it backwards from page one and stops once it passes a horizon. The horizon is one day before the newest archived race, or the oldest archived race still waiting for a moderator to record it, whichever is earlier. On a normal day that is one request for page one plus one for the category leaderboards. With an empty archive the sync reads every page, so the first run is a full backfill of about 33 requests. Transient network failures are retried with bounded backoff, and the sync checks completion-time ordering and race names before writing anything.
+
+Finished races still change until a moderator records them, usually within two days: `recorded` flips, `score_change` is filled in, and racers add comments. So a race's file is rewritten while the race is unrecorded and its data changes. Once the race is recorded, is marked unrecordable, or finished more than 14 days ago, its file is never touched again. Files are written oldest first, so an interrupted sync leaves no gap behind the newest archived race.
+
+If the archive ever holds fewer races than the API reports, the sync reads every page once to fill the gap, and fails if races are still missing. If an unrecorded race disappears from the listing, its last archived copy is kept and the sync prints a warning.
+
+User IDs are stable, but display names can change, and each race file keeps the name a racer had when it was fetched. Each sync merges the names from the category leaderboards into `racer-names.json`; the leaderboards cover nearly every racer with a recorded race. The dashboard shows a racer under that name, or, if they have no entry, under the name on their most recent race.
+
+### Privacy
 
 `race-stats.json` is anonymous: entrant user IDs are used only as in-memory deduplication keys, and the file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields. `participants.json` publishes each racer's public display name and stable user ID because a leaderboard requires them; it still omits `full_name`, discriminators, avatars, pronouns, flair, Twitch fields, comments, and racetime.gg score fields.
+
+`archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
 
 ## Preview the dashboard
 
@@ -60,9 +81,9 @@ The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. 
 
 ## Scheduled data refresh
 
-The workflow in `.github/workflows/update-data.yml` runs `scripts/build_stats.py` daily at 06:17 UTC. It can also be started manually from **Actions > Update race data**. When anything other than `generated_at` differs from the committed files, it commits `site/data` to `main` as `YYYY-MM-DD data` and then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows. Runs that find no new races commit nothing.
+The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py` and then `scripts/build_stats.py` daily at 06:17 UTC. It can also be started manually from **Actions > Update race data**. Whenever the sync added or refreshed race files, it commits `archive/` to `main` as `YYYY-MM-DD data`. When anything other than `generated_at` differs in the dashboard datasets, the same commit includes `site/data`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows. Runs that find nothing new commit nothing, and a failed sync or build commits nothing.
 
-You can still refresh by hand with `python3 scripts/build_stats.py` and commit the result. Pull first, because the scheduled job may have pushed a data commit since your last sync.
+You can still refresh by hand with the two commands above and commit `archive/` and `site/data`. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run both scripts again.
 
 ## Metric definitions
 
@@ -122,17 +143,23 @@ python3 -m unittest discover -s tests -v
 
 Tests use mocked API responses and do not require network access.
 
+The suite also rebuilds both datasets from the committed `archive/` and fails if they differ from the committed `site/data` files, ignoring `generated_at`. After changing `scripts/build_stats.py` or `scripts/participant_stats.py`, run `python3 scripts/build_stats.py` and commit the result.
+
 ## Project layout
 
 ```text
-scripts/build_stats.py            Data retrieval, validation, and aggregation
+scripts/race_archive.py           Incremental sync of raw races and racer names
+scripts/build_stats.py            Archive validation and aggregation
 scripts/participant_stats.py      Per-racer leaderboard dataset
 scripts/version_assets.py         Content versioning for the static assets
+tests/test_race_archive.py        Archive sync unit tests
 tests/test_build_stats.py         Pipeline unit tests
 tests/test_participant_stats.py   Leaderboard unit tests
 tests/test_version_assets.py      Asset versioning unit tests
 .github/workflows/pages.yml       Test and deploy to GitHub Pages
-.github/workflows/update-data.yml Daily data refresh, commit, and deploy
+.github/workflows/update-data.yml Daily archive sync, data build, commit, and deploy
+archive/races/                    Raw race records, one file per race
+archive/racer-names.json          Current racer display names
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
 site/version.json                 Generated content version manifest

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:44Z",
+  "race": {
+    "name": "alttpr-ladder/proud-mirrorshield-1470",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/proud-mirrorshield-1470",
+    "data_url": "/alttpr-ladder/proud-mirrorshield-1470/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Open AD with OW Tile Swap\nkaesden/open_ad_tileswap - https://alttpr.racing/getseed.php?race=1145 - (HashCompass/HashBook/HashCape/HashShovel/HashBugnet)",
+    "entrants_count": 4,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-10-11T04:30:00.093Z",
+    "started_at": "2025-10-11T05:00:00.080Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "VXY0eABdae3LKPnz",
+          "full_name": "werfjig#9785",
+          "name": "werfjig",
+          "discriminator": "9785",
+          "url": "/user/VXY0eABdae3LKPnz/werfjig",
+          "avatar": "https://racetime.gg/media/dap.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "werfjig",
+          "twitch_display_name": "werfjig",
+          "twitch_channel": "https://www.twitch.tv/werfjig",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H37M09.571539S",
+        "finished_at": "2025-10-11T06:37:09.651Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": null,
+        "score_change": 1309,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M05.238327S",
+        "finished_at": "2025-10-11T06:50:05.318Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2601,
+        "score_change": 3,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "zM65aWXkQ5o1y8q0",
+          "full_name": "HtomSirveaux85#8552",
+          "name": "HtomSirveaux85",
+          "discriminator": "8552",
+          "url": "/user/zM65aWXkQ5o1y8q0/htomsirveaux85",
+          "avatar": "https://racetime.gg/media/HtomLogo_smaller.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "htomsirveaux85",
+          "twitch_display_name": "HtomSirveaux85",
+          "twitch_channel": "https://www.twitch.tv/htomsirveaux85",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M23.019999S",
+        "finished_at": "2025-10-11T07:02:23.100Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1782,
+        "score_change": 25,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "07QXz83KGR3eZDjr",
+          "full_name": "Freddyn3k#1873",
+          "name": "Freddyn3k",
+          "discriminator": "1873",
+          "url": "/user/07QXz83KGR3eZDjr/freddyn3k",
+          "avatar": "https://racetime.gg/media/F83CCBEF-FB3F-4335-AC22-423278DE1F24.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "freddyn3k",
+          "twitch_display_name": "freddyn3k",
+          "twitch_channel": "https://www.twitch.tv/freddyn3k",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 1679,
+        "score_change": -7,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-10-11T07:02:23.151Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

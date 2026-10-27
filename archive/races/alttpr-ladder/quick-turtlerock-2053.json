@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T10:59:55Z",
+  "race": {
+    "name": "alttpr-ladder/quick-turtlerock-2053",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/quick-turtlerock-2053",
+    "data_url": "/alttpr-ladder/quick-turtlerock-2053/data",
+    "goal": {
+      "name": "Beat the game (Simple)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=4616 - (HashBigKey/HashEmptyBottle/HashFlute/HashPendant/HashFlippers)",
+    "entrants_count": 6,
+    "entrants_count_finished": 6,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-08-16T09:30:00.122Z",
+    "started_at": "2026-08-16T10:00:00.093Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "52QE8oNye53lywqX",
+          "full_name": "Ticknaldo#0359",
+          "name": "Ticknaldo",
+          "discriminator": "0359",
+          "url": "/user/52QE8oNye53lywqX/ticknaldo",
+          "avatar": "https://racetime.gg/media/Ticki_Salutieren_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "ticknaldo",
+          "twitch_display_name": "Ticknaldo",
+          "twitch_channel": "https://www.twitch.tv/ticknaldo",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H07M06.767595S",
+        "finished_at": "2026-08-16T11:07:06.861Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2782,
+        "score_change": 60,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoApOO3mq6db",
+          "full_name": "Wabnik#5918",
+          "name": "Wabnik",
+          "discriminator": "5918",
+          "url": "/user/wezlNoApOO3mq6db/wabnik",
+          "avatar": "https://racetime.gg/media/Smile_rJgtAIA.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "wabnik",
+          "twitch_display_name": "Wabnik",
+          "twitch_channel": "https://www.twitch.tv/wabnik",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H07M27.818911S",
+        "finished_at": "2026-08-16T11:07:27.912Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 3035,
+        "score_change": -66,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "41jgrbWPE1Be7P5Q",
+          "full_name": "Hitsuyan1337#4395",
+          "name": "Hitsuyan1337",
+          "discriminator": "4395",
+          "url": "/user/41jgrbWPE1Be7P5Q/hitsuyan1337",
+          "avatar": "https://racetime.gg/media/itachi-by-a.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "hitsuyan1337",
+          "twitch_display_name": "Hitsuyan1337",
+          "twitch_channel": "https://www.twitch.tv/hitsuyan1337",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H08M12.524988S",
+        "finished_at": "2026-08-16T11:08:12.618Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 1352,
+        "score_change": 343,
+        "comment": "dpad deadge lost some time dashing up a lot of times and ganon last phase a lot of misses",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NY0OkW1YYzWKalP1",
+          "full_name": "diegoarmando18792#3459",
+          "name": "diegoarmando18792",
+          "discriminator": "3459",
+          "url": "/user/NY0OkW1YYzWKalP1/diegoarmando18792",
+          "avatar": "https://racetime.gg/media/Fondo_2_-_copia.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "diegoarmando18792",
+          "twitch_display_name": "diegoarmando18792",
+          "twitch_channel": "https://www.twitch.tv/diegoarmando18792",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H16M09.712476S",
+        "finished_at": "2026-08-16T11:16:09.806Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2246,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBlp14BaOP57",
+          "full_name": "Neo-Sanji#5833",
+          "name": "Neo-Sanji",
+          "discriminator": "5833",
+          "url": "/user/xldAMBlp14BaOP57/neo-sanji",
+          "avatar": "https://racetime.gg/media/xldAMBlp14BaOP57_ccoyCsW.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "neo_sanji",
+          "twitch_display_name": "Neo_Sanji",
+          "twitch_channel": "https://www.twitch.tv/neo_sanji",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M48.295828S",
+        "finished_at": "2026-08-16T11:32:48.389Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2010,
+        "score_change": -15,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOgKvB4qAyj",
+          "full_name": "Taale#3117",
+          "name": "Taale",
+          "discriminator": "3117",
+          "url": "/user/NZ1KRBOgKvB4qAyj/taale",
+          "avatar": "https://racetime.gg/media/shy_guy_3.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "wundertaale",
+          "twitch_display_name": "WunderTaale",
+          "twitch_channel": "https://www.twitch.tv/wundertaale",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H35M54.943501S",
+        "finished_at": "2026-08-16T11:35:55.037Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": null,
+        "score_change": -370,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-08-16T11:35:55.160Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

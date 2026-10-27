@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:19Z",
+  "race": {
+    "name": "alttpr-ladder/charming-bottle-0448",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/charming-bottle-0448",
+    "data_url": "/alttpr-ladder/charming-bottle-0448/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [simple] - Casual Boots\ncasualboots - https://alttpr.racing/getseed.php?race=2898 - (HashMirror/HashMoonPearl/HashBook/HashEther/HashBow)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-03-22T08:30:00.104Z",
+    "started_at": "2026-03-22T09:00:00.072Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "NY0OkW1YYzWKalP1",
+          "full_name": "diegoarmando18792#3459",
+          "name": "diegoarmando18792",
+          "discriminator": "3459",
+          "url": "/user/NY0OkW1YYzWKalP1/diegoarmando18792",
+          "avatar": "https://racetime.gg/media/Fondo_2_-_copia.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "diegoarmando18792",
+          "twitch_display_name": "diegoarmando18792",
+          "twitch_channel": "https://www.twitch.tv/diegoarmando18792",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M33.239900S",
+        "finished_at": "2026-03-22T10:50:33.312Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1970,
+        "score_change": 59,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "raP6yoay1wolV4zN",
+          "full_name": "Hardy#1306",
+          "name": "Hardy",
+          "discriminator": "1306",
+          "url": "/user/raP6yoay1wolV4zN/hardy",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "try_hardyy",
+          "twitch_display_name": "Try_Hardyy",
+          "twitch_channel": "https://www.twitch.tv/try_hardyy",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M11.090808S",
+        "finished_at": "2026-03-22T10:57:11.163Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1436,
+        "score_change": -6,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2026-03-22T10:57:11.230Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

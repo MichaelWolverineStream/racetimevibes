@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:54Z",
+  "race": {
+    "name": "alttpr-ladder/trusty-titos-5141",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/trusty-titos-5141",
+    "data_url": "/alttpr-ladder/trusty-titos-5141/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Pots and Bones\npab - https://alttpr.racing/getseed.php?race=567 - (Gloves/Compass/Bugnet/Bugnet/Compass)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-07-26T15:30:00.183Z",
+    "started_at": "2025-07-26T16:00:00.073Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "zM65aWXQ55B1y8q0",
+          "full_name": "DrBowser#9571",
+          "name": "DrBowser",
+          "discriminator": "9571",
+          "url": "/user/zM65aWXQ55B1y8q0/drbowser",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "drbowser9571",
+          "twitch_display_name": "DrBowser9571",
+          "twitch_channel": "https://www.twitch.tv/drbowser9571",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H32M53.762614S",
+        "finished_at": "2025-07-26T17:32:53.835Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2856,
+        "score_change": 9,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "57ZKD3g2PxBkyANO",
+          "full_name": "LimpBagel#5075",
+          "name": "LimpBagel",
+          "discriminator": "5075",
+          "url": "/user/57ZKD3g2PxBkyANO/limpbagel",
+          "avatar": "https://racetime.gg/media/4efdf89d430f3f5ffec85b1c2716586258998839e79e5b56f13212dd43b751b8.jpeg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "limp_bagel",
+          "twitch_display_name": "Limp_Bagel",
+          "twitch_channel": "https://www.twitch.tv/limp_bagel",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT03H22M07.942781S",
+        "finished_at": "2025-07-26T19:22:08.015Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2172,
+        "score_change": -24,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-07-26T19:22:08.075Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

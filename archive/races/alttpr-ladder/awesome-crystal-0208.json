@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:51Z",
+  "race": {
+    "name": "alttpr-ladder/awesome-crystal-0208",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/awesome-crystal-0208",
+    "data_url": "/alttpr-ladder/awesome-crystal-0208/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [inverted] - Inverted AD Keys\ninverted_adkeys - https://alttpr.racing/getseed.php?race=740 - (HashGreenPotion/HashShield/HashLamp/HashCompass/HashBombs)",
+    "entrants_count": 6,
+    "entrants_count_finished": 5,
+    "entrants_count_inactive": 1,
+    "opened_at": "2025-08-20T16:30:00.154Z",
+    "started_at": "2025-08-20T17:00:00.057Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "rZyM4oryaX3qDJX0",
+          "full_name": "ScottishBrave44#2982",
+          "name": "ScottishBrave44",
+          "discriminator": "2982",
+          "url": "/user/rZyM4oryaX3qDJX0/scottishbrave44",
+          "avatar": "https://racetime.gg/media/Twitch_Avatar.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "scottishbrave44",
+          "twitch_display_name": "ScottishBrave44",
+          "twitch_channel": "https://www.twitch.tv/scottishbrave44",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M10.522155S",
+        "finished_at": "2025-08-20T18:45:10.579Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2039,
+        "score_change": 183,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "wezlNoAVndWmq6db",
+          "full_name": "cheffy#3717",
+          "name": "cheffy",
+          "discriminator": "3717",
+          "url": "/user/wezlNoAVndWmq6db/cheffy",
+          "avatar": "https://racetime.gg/media/rcr2.jpg",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "cheffy111",
+          "twitch_display_name": "cheffy111",
+          "twitch_channel": "https://www.twitch.tv/cheffy111",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M59.187490S",
+        "finished_at": "2025-08-20T18:46:59.245Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2499,
+        "score_change": 56,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "RbOXG3y89OBZVKq1",
+          "full_name": "MalXantholos#6990",
+          "name": "MalXantholos",
+          "discriminator": "6990",
+          "url": "/user/RbOXG3y89OBZVKq1/malxantholos",
+          "avatar": "https://racetime.gg/media/Profil.PNG",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "malxantholos",
+          "twitch_display_name": "MalXantholos",
+          "twitch_channel": "https://www.twitch.tv/malxantholos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H52M10.816029S",
+        "finished_at": "2025-08-20T18:52:10.873Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2994,
+        "score_change": -57,
+        "comment": "193, thanks TR big key",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "7nxMQeoxlQoapX0A",
+          "full_name": "tylersalt#0124",
+          "name": "tylersalt",
+          "discriminator": "0124",
+          "url": "/user/7nxMQeoxlQoapX0A/tylersalt",
+          "avatar": "https://racetime.gg/media/tsalt.png",
+          "pronouns": "he/him",
+          "flair": "moderator",
+          "twitch_name": "tylersalt",
+          "twitch_display_name": "tylersalt",
+          "twitch_channel": "https://www.twitch.tv/tylersalt",
+          "can_moderate": true
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H57M47.228393S",
+        "finished_at": "2025-08-20T18:57:47.285Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2714,
+        "score_change": -31,
+        "comment": "@gammachuu",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "NZ1KRBOg44B4qAyj",
+          "full_name": "Gridasham#3379",
+          "name": "Gridasham",
+          "discriminator": "3379",
+          "url": "/user/NZ1KRBOg44B4qAyj/gridasham",
+          "avatar": "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gridasham",
+          "twitch_display_name": "Gridasham",
+          "twitch_channel": "https://www.twitch.tv/gridasham",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H02M58.714041S",
+        "finished_at": "2025-08-20T19:02:58.771Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 1587,
+        "score_change": 29,
+        "comment": "What a mirror",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "jZ2EGWbzqNWYlM65",
+          "full_name": "Shinmaru#3292",
+          "name": "Shinmaru",
+          "discriminator": "3292",
+          "url": "/user/jZ2EGWbzqNWYlM65/shinmaru",
+          "avatar": "https://racetime.gg/media/popee.jpg",
+          "pronouns": "he/him",
+          "flair": "supporter",
+          "twitch_name": "shinmaru007",
+          "twitch_display_name": "Shinmaru007",
+          "twitch_channel": "https://www.twitch.tv/shinmaru007",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2439,
+        "score_change": -56,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-08-20T19:02:58.790Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

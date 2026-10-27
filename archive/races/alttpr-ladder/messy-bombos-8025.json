@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:03Z",
+  "race": {
+    "name": "alttpr-ladder/messy-bombos-8025",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/messy-bombos-8025",
+    "data_url": "/alttpr-ladder/messy-bombos-8025/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=180 - (Big Key/Flute/Flute/Bombos/Ice Rod)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-08T04:30:01.135Z",
+    "started_at": "2025-06-08T05:00:01.213Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "N5zbdeWenDBYPK8O",
+          "full_name": "tso15#4732",
+          "name": "tso15",
+          "discriminator": "4732",
+          "url": "/user/N5zbdeWenDBYPK8O/tso15",
+          "avatar": "https://racetime.gg/media/Watermark.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "tso15",
+          "twitch_display_name": "Tso15",
+          "twitch_channel": "https://www.twitch.tv/tso15",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H13M50.105084S",
+        "finished_at": "2025-06-08T06:13:51.318Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 1730,
+        "score_change": 154,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M59.080412S",
+        "finished_at": "2025-06-08T06:43:00.293Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1972,
+        "score_change": -18,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-08T06:43:01.110Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

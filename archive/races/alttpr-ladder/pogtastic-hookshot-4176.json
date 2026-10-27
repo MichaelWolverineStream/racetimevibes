@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:01:05Z",
+  "race": {
+    "name": "alttpr-ladder/pogtastic-hookshot-4176",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/pogtastic-hookshot-4176",
+    "data_url": "/alttpr-ladder/pogtastic-hookshot-4176/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods\nnologic_rods - https://alttpr.racing/getseed.php?race=54 - (Heart/Mirror/Bombs/Pendant/Ice Rod)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-05-23T10:30:00.710Z",
+    "started_at": "2025-05-23T10:59:50.762Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "d17DexWEXgoak64R",
+          "full_name": "tam#8418",
+          "name": "tam",
+          "discriminator": "8418",
+          "url": "/user/d17DexWEXgoak64R/tam",
+          "avatar": "https://racetime.gg/media/Mikan_Tsumiki_Halfbody_Sprite_281329.webp",
+          "pronouns": "they/them",
+          "flair": "",
+          "twitch_name": "tammiki",
+          "twitch_display_name": "tammiki",
+          "twitch_channel": "https://www.twitch.tv/tammiki",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H28M51.847985S",
+        "finished_at": "2025-05-23T12:28:42.610Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 3284,
+        "score_change": 8,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "xldAMBld77BaOP57",
+          "full_name": "SimpleClips#4206",
+          "name": "SimpleClips",
+          "discriminator": "4206",
+          "url": "/user/xldAMBld77BaOP57/simpleclips",
+          "avatar": "https://racetime.gg/media/racetime_nep_pfp.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cimpleslips",
+          "twitch_display_name": "CimpleSlips",
+          "twitch_channel": "https://www.twitch.tv/cimpleslips",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H06M55.900766S",
+        "finished_at": "2025-05-23T13:06:46.663Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 1649,
+        "score_change": -1,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-05-23T13:06:46.685Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}

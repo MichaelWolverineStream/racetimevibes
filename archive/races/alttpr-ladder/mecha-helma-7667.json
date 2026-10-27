@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-27T11:00:59Z",
+  "race": {
+    "name": "alttpr-ladder/mecha-helma-7667",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/mecha-helma-7667",
+    "data_url": "/alttpr-ladder/mecha-helma-7667/data",
+    "goal": {
+      "name": "Beat the game (Group)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [fun] - Pots and Bones\npab - https://alttpr.racing/getseed.php?race=272 - (Compass/Shield/Gloves/Cape/Bow)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2025-06-19T16:30:10.156Z",
+    "started_at": "2025-06-19T17:26:11.900Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": null,
+    "entrants": [
+      {
+        "user": {
+          "id": "XY0eABdQjr3LKPnz",
+          "full_name": "HoustonBaba#7258",
+          "name": "HoustonBaba",
+          "discriminator": "7258",
+          "url": "/user/XY0eABdQjr3LKPnz/houstonbaba",
+          "avatar": "https://racetime.gg/media/XY0eABdQjr3LKPnz_hmboKkY.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "houstonbaba",
+          "twitch_display_name": "HoustonBaba",
+          "twitch_channel": "https://www.twitch.tv/houstonbaba",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H05M29.417206S",
+        "finished_at": "2025-06-19T18:31:41.317Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2378,
+        "score_change": 114,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      },
+      {
+        "user": {
+          "id": "5K9rm36Q9VBq1aOX",
+          "full_name": "Trystanien#6338",
+          "name": "Trystanien",
+          "discriminator": "6338",
+          "url": "/user/5K9rm36Q9VBq1aOX/trystanien",
+          "avatar": "https://racetime.gg/media/7_wolfspitz_-_komprimiert.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "trystanien",
+          "twitch_display_name": "trystanien",
+          "twitch_channel": "https://www.twitch.tv/trystanien",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H14M31.166463S",
+        "finished_at": "2025-06-19T18:40:43.066Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2200,
+        "score_change": -16,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": []
+      }
+    ],
+    "ended_at": "2025-06-19T18:40:43.148Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": true
+  }
+}
