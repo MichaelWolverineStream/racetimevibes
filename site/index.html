@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="4a753a0e4494">
+    <meta name="app-version" content="81e5525af2d1">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=4a753a0e4494">
+    <link rel="stylesheet" href="styles.css?v=81e5525af2d1">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -87,7 +87,7 @@
           <section id="finish-times" class="finish-times" aria-labelledby="finish-times-title" hidden>
             <div class="heatmap-heading">
               <h3 id="finish-times-title">Finish times</h3>
-              <p class="violin-legend"><span class="line-key"></span>Median</p>
+              <p class="violin-legend"><span class="line-key"></span>Median <span class="line-key line-key--gold"></span>Gold median</p>
             </div>
             <div id="finish-violin-chart" class="chart-host chart-host--violin" aria-live="polite"></div>
             <details class="data-details">
@@ -315,6 +315,7 @@
               <div id="player-scatter-chart" class="chart-host chart-host--scatter" aria-live="polite"></div>
               <div id="player-trend-chart" class="chart-host chart-host--scatter" aria-live="polite"></div>
             </div>
+            <p class="violin-legend violin-legend--standalone"><span class="line-key"></span>Median <span class="line-key line-key--gold"></span>Gold median</p>
             <div id="player-violin-chart" class="chart-host chart-host--violin" aria-live="polite"></div>
             <details class="data-details">
               <summary>View finish times</summary>
@@ -364,10 +365,10 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=4a753a0e4494" defer></script>
-    <script src="racer-charts.js?v=4a753a0e4494" defer></script>
-    <script src="leaderboard.js?v=4a753a0e4494" defer></script>
-    <script src="version-check.js?v=4a753a0e4494" defer></script>
-    <script src="visitor-counter.js?v=4a753a0e4494" defer></script>
+    <script src="app.js?v=81e5525af2d1" defer></script>
+    <script src="racer-charts.js?v=81e5525af2d1" defer></script>
+    <script src="leaderboard.js?v=81e5525af2d1" defer></script>
+    <script src="version-check.js?v=81e5525af2d1" defer></script>
+    <script src="visitor-counter.js?v=81e5525af2d1" defer></script>
   </body>
 </html>

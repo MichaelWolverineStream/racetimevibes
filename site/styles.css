@@ -627,6 +627,12 @@ a:hover {
   font-size: var(--text-xs);
 }
 
+/* A legend row of its own, right-aligned like the legends that share a heading. */
+.violin-legend--standalone {
+  margin: 10px 24px 0;
+  text-align: right;
+}
+
 .heatmap-key {
   display: inline-block;
   width: 12px;
@@ -694,6 +700,11 @@ a:hover {
   margin: 0 6px 0 12px;
   border-top: 2px solid var(--ink);
   vertical-align: middle;
+}
+
+.line-key--gold {
+  border-top-color: var(--gold);
+  opacity: 0.75;
 }
 
 .heatmap-host {
@@ -1005,6 +1016,19 @@ a:hover {
   stroke: var(--ink);
   stroke-width: 2;
   stroke-linecap: round;
+}
+
+.violin-gold {
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-opacity: 0.75;
+}
+
+.violin-summary:hover .violin-median,
+.violin-summary:focus .violin-median,
+.violin-summary:hover .violin-gold,
+.violin-summary:focus .violin-gold {
+  stroke-width: 4;
 }
 
 .violin-swatch {
