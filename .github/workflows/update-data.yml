@@ -2,8 +2,10 @@ name: Update race data
 
 "on":
   schedule:
-    # Daily, off the top of the hour to avoid GitHub's scheduling backlog.
-    - cron: "17 6 * * *"
+    # Three times daily, off the top of the hour to avoid GitHub's scheduling backlog.
+    - cron: "17 2 * * *"
+    - cron: "17 10 * * *"
+    - cron: "17 18 * * *"
   workflow_dispatch:
 
 permissions:
