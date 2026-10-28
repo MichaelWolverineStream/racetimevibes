@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-28T16:38:59Z",
+  "race": {
+    "name": "alttpr-ladder/legendary-bugnet-8725",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/legendary-bugnet-8725",
+    "data_url": "/alttpr-ladder/legendary-bugnet-8725/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=5447 - (HashEmptyBottle/HashEmptyBottle/HashIceRod/HashBombos/HashMoonPearl)",
+    "entrants_count": 7,
+    "entrants_count_finished": 7,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-28T01:30:00.165Z",
+    "started_at": "2026-10-28T02:00:00.093Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "jZ2EGWbzMZWYlM65",
+          "full_name": "Lanabean#3720",
+          "name": "Lanabean",
+          "discriminator": "3720",
+          "url": "/user/jZ2EGWbzMZWYlM65/lanabean",
+          "avatar": "https://racetime.gg/media/lana_anime.png",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "lanabean",
+          "twitch_display_name": "Lanabean",
+          "twitch_channel": "https://www.twitch.tv/lanabean",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H43M13.714580S",
+        "finished_at": "2026-10-28T03:43:13.808Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2620,
+        "score_change": null,
+        "comment": "187/216 at least I skipped a few things in TR.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H45M40.786528S",
+        "finished_at": "2026-10-28T03:45:40.880Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2540,
+        "score_change": null,
+        "comment": "185. crazy lamp and hookshot logic",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "AEk8wpok1DB5KQyV",
+          "full_name": "fcoughlin#7691",
+          "name": "fcoughlin",
+          "discriminator": "7691",
+          "url": "/user/AEk8wpok1DB5KQyV/fcoughlin",
+          "avatar": "https://racetime.gg/media/deadmonkey.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "fcoughlin",
+          "twitch_display_name": "fcoughlin",
+          "twitch_channel": "https://www.twitch.tv/fcoughlin",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H50M39.186566S",
+        "finished_at": "2026-10-28T03:50:39.280Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "5JlzyB7JyxWV4GED",
+          "full_name": "AryaStark2942#5333",
+          "name": "AryaStark2942",
+          "discriminator": "5333",
+          "url": "/user/5JlzyB7JyxWV4GED/aryastark2942",
+          "avatar": "https://racetime.gg/media/Emily_No_Background.png",
+          "pronouns": "she/they",
+          "flair": "",
+          "twitch_name": "aryastark2942",
+          "twitch_display_name": "AryaStark2942",
+          "twitch_channel": "https://www.twitch.tv/aryastark2942",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H53M33.733506S",
+        "finished_at": "2026-10-28T03:53:33.827Z",
+        "place": 4,
+        "place_ordinal": "4th",
+        "score": 2534,
+        "score_change": null,
+        "comment": "more than 174. Wrong ordered the heck out of most of this one, so at least the zany skips at the end felt nice. :p",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "XzVwZWqaJRW5k8eb",
+          "full_name": "Zaruvyen#7867",
+          "name": "Zaruvyen",
+          "discriminator": "7867",
+          "url": "/user/XzVwZWqaJRW5k8eb/zaruvyen",
+          "avatar": "https://racetime.gg/media/XzVwZWqaJRW5k8eb_FgxSBQU.jpg",
+          "pronouns": "he/they",
+          "flair": "",
+          "twitch_name": "zaruvyen",
+          "twitch_display_name": "Zaruvyen",
+          "twitch_channel": "https://www.twitch.tv/zaruvyen",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M49.342087S",
+        "finished_at": "2026-10-28T03:54:49.435Z",
+        "place": 5,
+        "place_ordinal": "5th",
+        "score": 2134,
+        "score_change": null,
+        "comment": "LL Quake derails us wholesale",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "zM65aWXbPk31y8q0",
+          "full_name": "WhiskeyBill25#0457",
+          "name": "WhiskeyBill25",
+          "discriminator": "0457",
+          "url": "/user/zM65aWXbPk31y8q0/whiskeybill25",
+          "avatar": "https://racetime.gg/media/zM65aWXbPk31y8q0_5AdHM2p.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "whiskeybill25",
+          "twitch_display_name": "whiskeybill25",
+          "twitch_channel": "https://www.twitch.tv/whiskeybill25",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H59M54.445282S",
+        "finished_at": "2026-10-28T03:59:54.539Z",
+        "place": 6,
+        "place_ordinal": "6th",
+        "score": 1756,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "52QE8oNvlvolywqX",
+          "full_name": "It's me, Facebones!#4169",
+          "name": "It's me, Facebones!",
+          "discriminator": "4169",
+          "url": "/user/52QE8oNvlvolywqX/its-me-facebones",
+          "avatar": "https://racetime.gg/media/52QE8oNvlvolywqX_LxMlaHp.jpg",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "itsmefacebones",
+          "twitch_display_name": "itsmefacebones",
+          "twitch_channel": "https://www.twitch.tv/itsmefacebones",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H04M33.363638S",
+        "finished_at": "2026-10-28T04:04:33.457Z",
+        "place": 7,
+        "place_ordinal": "7th",
+        "score": 998,
+        "score_change": null,
+        "comment": "201",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      }
+    ],
+    "ended_at": "2026-10-28T04:04:33.547Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": false
+  }
+}

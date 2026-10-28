@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-28T16:38:59Z",
+  "race": {
+    "name": "alttpr-ladder/vanilla-hoverseed-5518",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/vanilla-hoverseed-5518",
+    "data_url": "/alttpr-ladder/vanilla-hoverseed-5518/data",
+    "goal": {
+      "name": "Beat the game (Glitched)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [glitched] - No Logic Double-Rods [DR]\nladder/nologic_rods - https://alttpr.racing/getseed.php?race=5444 - (HashMoonPearl/HashBoots/HashBombs/HashBombs/HashBigKey)",
+    "entrants_count": 2,
+    "entrants_count_finished": 2,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-27T19:30:00.176Z",
+    "started_at": "2026-10-27T20:00:00.091Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "7lYZa5B5qyB2Vwv9",
+          "full_name": "malmo#4794",
+          "name": "malmo",
+          "discriminator": "4794",
+          "url": "/user/7lYZa5B5qyB2Vwv9/malmo",
+          "avatar": "https://racetime.gg/media/helma.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "supermalmoworld",
+          "twitch_display_name": "supermalmoworld",
+          "twitch_channel": "https://www.twitch.tv/supermalmoworld",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H42M10.401456S",
+        "finished_at": "2026-10-27T21:42:10.492Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2348,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "Ek8wpokQNdB5KQyV",
+          "full_name": "Gabrieljcampos#3904",
+          "name": "Gabrieljcampos",
+          "discriminator": "3904",
+          "url": "/user/Ek8wpokQNdB5KQyV/gabrieljcampos",
+          "avatar": null,
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "gabrieljcampos",
+          "twitch_display_name": "gabrieljcampos",
+          "twitch_channel": "https://www.twitch.tv/gabrieljcampos",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H46M03.612546S",
+        "finished_at": "2026-10-27T21:46:03.703Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": 2122,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      }
+    ],
+    "ended_at": "2026-10-27T21:46:03.770Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": false
+  }
+}
