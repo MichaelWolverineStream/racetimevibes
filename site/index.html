@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="7c3df197f1aa">
+    <meta name="app-version" content="fab79fa3b93f">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=7c3df197f1aa">
+    <link rel="stylesheet" href="styles.css?v=fab79fa3b93f">
+    <link rel="stylesheet" href="ui.css?v=fab79fa3b93f">
+    <link rel="stylesheet" href="feed.css?v=fab79fa3b93f">
+    <link rel="stylesheet" href="records.css?v=fab79fa3b93f">
+    <link rel="stylesheet" href="racer-extras.css?v=fab79fa3b93f">
+    <link rel="stylesheet" href="easter-eggs.css?v=fab79fa3b93f">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -28,6 +33,7 @@
           <h1>ALTTPR Step Ladder</h1>
           <p class="lede">Stats don't lie.</p>
         </div>
+        <div id="comment-hero" class="comment-hero" aria-live="polite"></div>
         <div class="source-block">
           <div class="source-block__snapshot">
             <span>Data snapshot</span>
@@ -49,6 +55,7 @@
               rel="noreferrer"
             >View site stats</a>
           </div>
+          <div id="heart-hud" class="heart-hud" hidden></div>
         </div>
       </header>
 
@@ -75,11 +82,27 @@
         </div>
       </section>
 
+      <section id="updates" class="updates-section" aria-labelledby="updates-title" hidden>
+        <article class="chart-panel chart-panel--latest">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">01 / Latest</p>
+              <h2 id="updates-title">Latest results</h2>
+            </div>
+            <div id="updates-new" class="updates-new"></div>
+          </header>
+          <div class="updates-layout">
+            <div id="latest-feed" class="latest-feed"></div>
+            <aside id="updates-sidebar" class="updates-sidebar" aria-label="Your racers and highlights"></aside>
+          </div>
+        </article>
+      </section>
+
       <section id="leaderboard" class="leaderboard-section" aria-labelledby="leaderboard-title">
         <article class="chart-panel chart-panel--racers chart-panel--leaderboard">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">01 / Racers</p>
+              <p class="panel-index">02 / Racers</p>
               <h2 id="leaderboard-title" tabindex="-1">Racer leaderboard</h2>
             </div>
             <p>Who wins the most</p>
@@ -139,6 +162,19 @@
         </article>
       </section>
 
+      <section id="records" class="records-section" aria-labelledby="records-title" hidden>
+        <article class="chart-panel chart-panel--records">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">03 / Records</p>
+              <h2 id="records-title">Hall of records</h2>
+            </div>
+            <p>Fastest, closest, longest</p>
+          </header>
+          <div id="records-body" class="records-body"></div>
+        </article>
+      </section>
+
       <p id="load-status" class="load-status" role="status">Loading race statistics...</p>
 
       <section id="dashboard" class="dashboard" hidden>
@@ -159,7 +195,7 @@
         <article class="chart-panel chart-panel--decision" style="--i: 0">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">02 / Schedule</p>
+              <p class="panel-index">04 / Schedule</p>
               <h2>Best times to start a race</h2>
             </div>
             <p>Compared with similar races</p>
@@ -179,7 +215,7 @@
         <article class="chart-panel chart-panel--community" style="--i: 1">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">03 / Community</p>
+              <p class="panel-index">05 / Community</p>
               <h2>Who keeps coming back</h2>
             </div>
             <p>Racers grouped by how often they race</p>
@@ -199,7 +235,7 @@
         <article class="chart-panel chart-panel--participation" style="--i: 2">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">04 / Participation</p>
+              <p class="panel-index">06 / Participation</p>
               <h2>Turnout over time</h2>
             </div>
             <p>Average racers per race</p>
@@ -215,7 +251,7 @@
           <article class="chart-panel" style="--i: 3">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">05 / Traffic</p>
+                <p class="panel-index">07 / Traffic</p>
                 <h2>When races start</h2>
               </div>
               <p>Races per hour</p>
@@ -230,7 +266,7 @@
           <article class="chart-panel" style="--i: 4">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">06 / Turnout</p>
+                <p class="panel-index">08 / Turnout</p>
                 <h2>When races draw a crowd</h2>
               </div>
               <p>Average racers per race</p>
@@ -245,7 +281,7 @@
           <article class="chart-panel chart-panel--hourly-total" style="--i: 5">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">07 / Volume</p>
+                <p class="panel-index">09 / Volume</p>
                 <h2>Busiest hours</h2>
               </div>
               <p>Total racers · <span id="hourly-total-range">All data</span></p>
@@ -274,7 +310,7 @@
         <article class="chart-panel chart-panel--modes" style="--i: 6">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">08 / Modes</p>
+              <p class="panel-index">10 / Modes</p>
               <h2>Which modes draw a crowd</h2>
             </div>
             <p>Biggest fields first</p>
@@ -292,11 +328,22 @@
           <header class="panel-heading">
             <div>
               <a class="back-link" href="#leaderboard">&larr; All racers</a>
-              <h2 id="player-name" tabindex="-1">Racer</h2>
+              <span id="player-follow" class="player-follow"></span>
+              <div class="player-identity">
+                <div id="player-avatar" class="player-avatar"></div>
+                <h2 id="player-name" tabindex="-1">Racer</h2>
+              </div>
             </div>
-            <p id="player-subtitle">How they match up</p>
+            <div class="player-heading-side">
+              <div id="player-quote" class="player-quote" aria-live="polite"></div>
+              <p id="player-subtitle">How they match up</p>
+            </div>
           </header>
           <div id="player-summary" class="summary-strip player-summary"></div>
+          <div id="player-badges" class="player-badges"></div>
+          <div id="player-rivals" class="player-rivals"></div>
+          <div id="player-pbs" class="player-pbs"></div>
+          <div id="player-rating-chart" class="chart-host chart-host--scatter" aria-live="polite"></div>
           <div class="leaderboard-controls">
             <div
               id="player-mode-toggle"
@@ -350,10 +397,11 @@
     </main>
 
     <footer>
-      <p>2026 finished races only. Schedule times use America/New_York wall-clock time. Deleted-room values are model estimates, not recorded cancellations.</p>
+      <p>Every archived finished race. Schedule times use America/New_York wall-clock time. Deleted-room values are model estimates, not recorded cancellations.</p>
       <div class="footer-meta">
         <p class="footer-credit">Built by StructuralMike</p>
         <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Twemoji (CC-BY 4.0)</a>
         <a
           class="easter-egg"
           href="https://www.youtube.com/watch?v=msSc7Mv0QHY"
@@ -365,10 +413,16 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=7c3df197f1aa" defer></script>
-    <script src="racer-charts.js?v=7c3df197f1aa" defer></script>
-    <script src="leaderboard.js?v=7c3df197f1aa" defer></script>
-    <script src="version-check.js?v=7c3df197f1aa" defer></script>
-    <script src="visitor-counter.js?v=7c3df197f1aa" defer></script>
+    <script src="app.js?v=fab79fa3b93f" defer></script>
+    <script src="racer-charts.js?v=fab79fa3b93f" defer></script>
+    <script src="store.js?v=fab79fa3b93f" defer></script>
+    <script src="ui.js?v=fab79fa3b93f" defer></script>
+    <script src="feed.js?v=fab79fa3b93f" defer></script>
+    <script src="records.js?v=fab79fa3b93f" defer></script>
+    <script src="racer-extras.js?v=fab79fa3b93f" defer></script>
+    <script src="easter-eggs.js?v=fab79fa3b93f" defer></script>
+    <script src="leaderboard.js?v=fab79fa3b93f" defer></script>
+    <script src="version-check.js?v=fab79fa3b93f" defer></script>
+    <script src="visitor-counter.js?v=fab79fa3b93f" defer></script>
   </body>
 </html>

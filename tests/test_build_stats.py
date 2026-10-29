@@ -136,7 +136,7 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(by_mode["keys"]["race_count"], 2)
         self.assertEqual(by_mode["keys"]["average_racers"], 6)
         self.assertEqual(by_mode["unknown"]["race_count"], 1)
-        self.assertEqual(stats["schema_version"], 5)
+        self.assertEqual(stats["schema_version"], 6)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
         self.assertEqual(stats["diagnostics"]["excluded_by_status"], {"cancelled": 1})
@@ -208,16 +208,21 @@ class AggregationTests(unittest.TestCase):
             ["entrance", "keys", "simple"],
         )
 
-    def test_excludes_ladder_tests_and_groups_calendar_half_years(self):
+    def test_includes_2025_races_excludes_ladder_tests_and_groups_half_years(self):
         stats = build_stats.aggregate_races(
             [
                 race(
-                    "before-cutoff",
-                    started_at="2026-01-01T04:59:59Z",
+                    "archive-start",
+                    started_at="2025-04-20T16:00:00Z",
                     entrants_count=4,
                 ),
                 race(
-                    "at-cutoff",
+                    "late-2025",
+                    started_at="2025-12-31T20:00:00Z",
+                    entrants_count=5,
+                ),
+                race(
+                    "first-half",
                     started_at="2026-01-01T05:00:00Z",
                     entrants_count=6,
                     info="Step Ladder Series - [keys]",
@@ -242,27 +247,34 @@ class AggregationTests(unittest.TestCase):
             generated_at=self.generated_at,
         )
 
-        self.assertEqual(stats["schema_version"], 5)
-        self.assertEqual(stats["source"]["data_start_local"], "2026-01-01")
-        self.assertEqual(stats["source"]["included_race_count"], 2)
-        self.assertEqual(stats["source"]["included_entrant_count"], 14)
-        self.assertEqual(stats["source"]["excluded_archived_race_count"], 3)
+        self.assertEqual(stats["schema_version"], 6)
+        self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
+        self.assertEqual(stats["source"]["included_race_count"], 4)
+        self.assertEqual(stats["source"]["included_entrant_count"], 23)
+        self.assertEqual(stats["source"]["excluded_archived_race_count"], 2)
         self.assertNotIn("ladder_test", {item["mode"] for item in stats["modes"]})
-        self.assertEqual(stats["diagnostics"]["excluded_before_data_start"], 1)
+        self.assertNotIn("excluded_before_data_start", stats["diagnostics"])
         self.assertEqual(
             stats["diagnostics"]["excluded_by_mode"],
             {"ladder test": 1, "ladder_test": 1},
         )
 
         periods = {item["id"]: item for item in stats["periods"]}
-        self.assertEqual(list(periods), ["2026-H1", "2026-H2"])
-        self.assertEqual(periods["2026-H1"]["label"], "Jan-Jun 2026")
-        self.assertEqual(periods["2026-H1"]["completeness"], "complete")
-        self.assertEqual(periods["2026-H1"]["race_count"], 1)
+        self.assertEqual(
+            list(periods), ["2025-H1", "2025-H2", "2026-H1", "2026-H2"]
+        )
+        self.assertEqual(periods["2025-H1"]["label"], "Jan-Jun 2025")
+        self.assertEqual(
+            {period_id: item["completeness"] for period_id, item in periods.items()},
+            {
+                "2025-H1": "partial",
+                "2025-H2": "complete",
+                "2026-H1": "complete",
+                "2026-H2": "partial",
+            },
+        )
+        self.assertEqual(periods["2025-H2"]["entrant_total"], 5)
         self.assertEqual(periods["2026-H1"]["entrant_total"], 6)
-        self.assertEqual(periods["2026-H2"]["completeness"], "partial")
-        self.assertEqual(periods["2026-H2"]["race_count"], 1)
-        self.assertEqual(periods["2026-H2"]["entrant_total"], 8)
         self.assertEqual(
             sum(item["race_count"] for item in stats["periods"]),
             stats["source"]["included_race_count"],
@@ -359,6 +371,43 @@ class AggregationTests(unittest.TestCase):
             )
 
 
+class ExtractPresetTests(unittest.TestCase):
+    def test_extracts_and_normalizes_presets(self):
+        cases = {
+            "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024": "Crosskeys 2024",
+            "Step Ladder Series - [keys] - HMG [DR]": "HMG (DR)",
+            "Step Ladder Series - [keys] - HMG (DR)": "HMG (DR)",
+            "Step Ladder Series - [keys] -   HMG   [VT]  ": "HMG (VT)",
+            "Step Ladder Series - [simple] - Grab Bag (Open 7/7 Enemizer (Starting Maps & Compasses))": "Grab Bag",
+            "Step Ladder Series - [simple] - Grab Bag (Open 7/7) https://alttpr.com/h/abc": "Grab Bag",
+            "Step Ladder Series - [simple] - Open https://alttpr.com/h/abc": "Open",
+            "Step Ladder Series - [entrance] - Crosskeys - https://avianart.games/perm/qsX (Pendant/Cape)": "Crosskeys",
+            "Step Ladder Series - [entrance] - XD Hunt  jem041/xkeydrophunt - https://avianart.games/perm/q - (Rod / Lamp)": "XD Hunt",
+            "Step Ladder Series - [fun] - Open 7/7 Swordless": "Open 7/7 Swordless",
+            "Step Ladder Series - [simple] - Open 7/7 - https://alttpr.com/h/abc - (Bow/Lamp)": "Open 7/7",
+        }
+        for info, expected in cases.items():
+            with self.subTest(info=info):
+                self.assertEqual(build_stats.extract_preset(info), expected)
+
+    def test_returns_none_without_a_preset(self):
+        for info in (
+            "Casual race with friends",
+            "Step Ladder Series - [simple]",
+            "Step Ladder Series - [simple] -   \nnext line",
+            "Step Ladder Series - [simple] - https://alttpr.com/h/abc",
+            "",
+        ):
+            with self.subTest(info=info):
+                self.assertIsNone(build_stats.extract_preset(info))
+
+    def test_classify_race_includes_the_preset(self):
+        context, _ = build_stats.classify_race(
+            race("preset", info="Step Ladder Series - [keys] - HMG [DR]")
+        )
+        self.assertEqual(context["preset"], "HMG (DR)")
+
+
 class BuildTests(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
@@ -368,6 +417,7 @@ class BuildTests(unittest.TestCase):
         self.output_paths = (
             self.directory / "race-stats.json",
             self.directory / "participants.json",
+            self.directory / "comments.json",
         )
 
     def archive(self, race_record):
@@ -380,27 +430,44 @@ class BuildTests(unittest.TestCase):
             race_archive.race_path(self.archive_dir, race_record["name"]),
         )
 
-    def test_builds_both_datasets_from_the_archive(self):
-        self.archive(race("alttpr-ladder/kept-race-0001", entrants_count=2))
+    def test_builds_all_datasets_from_the_archive(self):
+        entrants = [
+            {"user": {"id": "player-a", "name": "A"}, "comment": "  gg  "},
+            {"user": {"id": "player-b", "name": "B"}, "comment": "   "},
+        ]
         self.archive(
             race(
-                "alttpr-ladder/old-race-0002",
-                started_at="2025-12-01T20:00:00Z",
-                ended_at="2025-12-01T22:00:00Z",
+                "alttpr-ladder/kept-race-0001",
+                entrants_count=2,
+                entrants=entrants,
+            )
+        )
+        self.archive(
+            race(
+                "alttpr-ladder/test-race-0002",
+                info="Step Ladder Series - [ladder_test]",
             )
         )
         race_archive.write_json_atomic(
-            {"alttpr-ladder/kept-race-0001-player-0": "Renamed"},
+            {"player-a": "Renamed"},
             self.archive_dir / race_archive.RACER_NAMES_FILE,
         )
 
-        stats, participants = build_stats.build(self.archive_dir, *self.output_paths)
+        stats, participants, comments = build_stats.build(
+            self.archive_dir, *self.output_paths
+        )
 
         source = stats["source"]
         self.assertEqual(source["archived_race_count"], 2)
         self.assertEqual(source["included_race_count"], 1)
         self.assertEqual(source["excluded_archived_race_count"], 1)
-        self.assertEqual(stats["diagnostics"]["excluded_before_data_start"], 1)
+        self.assertEqual(stats["diagnostics"]["excluded_by_mode"], {"ladder_test": 1})
+        self.assertEqual(
+            comments["races"], {"alttpr-ladder/kept-race-0001": [["player-a", "gg"]]}
+        )
+        self.assertEqual(
+            json.loads(self.output_paths[2].read_text(encoding="utf-8")), comments
+        )
         self.assertEqual(
             json.loads(self.output_paths[0].read_text(encoding="utf-8")), stats
         )
@@ -409,7 +476,7 @@ class BuildTests(unittest.TestCase):
         )
         self.assertEqual(
             sorted(player["name"] for player in participants["players"]),
-            ["Player 1", "Renamed"],
+            ["B", "Renamed"],
         )
 
     def test_empty_archive_fails_with_instructions(self):
@@ -481,13 +548,15 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 5)
-        self.assertEqual(source["data_start_local"], "2026-01-01")
+        self.assertEqual(data["schema_version"], 6)
+        self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
             source["included_race_count"] + source["excluded_archived_race_count"],
         )
-        self.assertTrue(all(period["start"] >= "2026-01-01" for period in data["periods"]))
+        self.assertTrue(
+            all(period["end"] >= source["data_start_local"] for period in data["periods"])
+        )
         self.assertEqual(
             sum(period["race_count"] for period in data["periods"]),
             source["included_race_count"],
@@ -545,10 +614,13 @@ class GeneratedDataTests(unittest.TestCase):
                     visit(child)
 
         visit(self.data)
-        self.assertNotIn("2025-", self.serialized)
 
     def test_matches_a_rebuild_from_the_archive(self):
-        committed_paths = (build_stats.OUTPUT_PATH, build_stats.PARTICIPANTS_OUTPUT_PATH)
+        committed_paths = (
+            build_stats.OUTPUT_PATH,
+            build_stats.PARTICIPANTS_OUTPUT_PATH,
+            build_stats.COMMENTS_OUTPUT_PATH,
+        )
         with tempfile.TemporaryDirectory() as directory:
             rebuilt_paths = tuple(Path(directory) / path.name for path in committed_paths)
             build_stats.build(race_archive.ARCHIVE_DIR, *rebuilt_paths)

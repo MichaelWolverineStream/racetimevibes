@@ -13,8 +13,17 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+# Supports both `python3 scripts/build_stats.py` and `from scripts import participant_stats`.
+try:
+    from scripts import highlights, ladder_rating
+except ImportError:
+    import highlights
+    import ladder_rating
 
-PARTICIPANT_SCHEMA_VERSION = 2
+
+PARTICIPANT_SCHEMA_VERSION = 5
+AVATAR_ORIGIN = "https://racetime.gg/media/"
+AVATAR_FILENAME = re.compile(r"^[\w.-]+$")
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -32,8 +41,8 @@ class ParticipantDataError(RuntimeError):
     """Raised when entrant data cannot produce a trustworthy leaderboard."""
 
 
-def parse_finish_time(value: str | None) -> int | None:
-    """Convert an ISO 8601 duration such as PT1H23M45S into whole seconds."""
+def parse_finish_seconds(value: str | None) -> float | None:
+    """Convert an ISO 8601 duration such as PT1H23M45.6S into exact seconds."""
     if value is None:
         return None
     if not isinstance(value, str):
@@ -44,7 +53,23 @@ def parse_finish_time(value: str | None) -> int | None:
     days, hours, minutes, seconds = (
         float(part) if part else 0.0 for part in match.groups()
     )
-    return round(days * 86400 + hours * 3600 + minutes * 60 + seconds)
+    return days * 86400 + hours * 3600 + minutes * 60 + seconds
+
+
+def parse_finish_time(value: str | None) -> int | None:
+    """Convert an ISO 8601 duration into whole seconds."""
+    seconds = parse_finish_seconds(value)
+    return None if seconds is None else round(seconds)
+
+
+def _avatar_filename(entrant: JsonObject) -> str | None:
+    """Return the avatar's filename when it is hosted on racetime.gg/media, else None."""
+    user = entrant.get("user")
+    url = user.get("avatar") if isinstance(user, dict) else None
+    if not isinstance(url, str) or not url.startswith(AVATAR_ORIGIN):
+        return None
+    filename = url.removeprefix(AVATAR_ORIGIN)
+    return filename if AVATAR_FILENAME.match(filename) else None
 
 
 def _status_value(entrant: JsonObject) -> str:
@@ -104,7 +129,7 @@ def _race_entries(race: JsonObject, diagnostics: Counter[str]) -> list[list[Any]
         seen.add(user_id)
         status_code = STATUS_CODES.get(status_value, OTHER_STATUS_CODE)
         place = _entrant_place(entrant, race_name)
-        seconds = parse_finish_time(entrant.get("finish_time"))
+        seconds = parse_finish_seconds(entrant.get("finish_time"))
         if status_code == DONE_STATUS_CODE:
             if place is None:
                 diagnostics["finishes_without_place"] += 1
@@ -153,7 +178,7 @@ def _leaderboard(
     for race in races:
         if mode_index is not None and race["m"] != mode_index:
             continue
-        for player_index, place, status_code, seconds in race["e"]:
+        for player_index, place, status_code, seconds, *_rating in race["e"]:
             row = totals.get(player_index)
             if row is None:
                 row = totals[player_index] = _blank_row(player_index)
@@ -211,16 +236,27 @@ def build_participant_payload(
     )
 
     names: dict[str, str] = {}
+    avatars: dict[str, str] = {}
     staged: list[JsonObject] = []
     for context in ordered:
         race = context["race"]
         entries = _race_entries(race, diagnostics)
         for user_id, name, *_rest in entries:
             names[user_id] = name
+        for entrant in race["entrants"]:
+            identity = _entrant_identity(entrant)
+            if identity is None:
+                continue
+            avatar = _avatar_filename(entrant)
+            if avatar:
+                avatars[identity[0]] = avatar
+            else:
+                avatars.pop(identity[0], None)
         staged.append(
             {
                 "r": race.get("name"),
                 "mode": context["mode"],
+                "preset": context.get("preset"),
                 "d": context["local_started_at"].date().isoformat(),
                 "h": context["local_started_at"].hour,
                 "n": len(race["entrants"]),
@@ -241,20 +277,66 @@ def build_participant_payload(
     modes = sorted({row["mode"] for row in staged})
     mode_index = {mode: index for index, mode in enumerate(modes)}
 
-    races = [
+    preset_keys = sorted(
+        {(mode_index[row["mode"]], row["preset"]) for row in staged if row["preset"]},
+        key=lambda key: (key[0], key[1].casefold(), key[1]),
+    )
+    preset_index = {key: index for index, key in enumerate(preset_keys)}
+    presets = [{"m": mode, "n": name} for mode, name in preset_keys]
+
+    records = [
         {
             "r": row["r"],
             "m": mode_index[row["mode"]],
+            "mode": row["mode"],
             "d": row["d"],
             "h": row["h"],
             "n": row["n"],
+            "p": preset_index.get((mode_index[row["mode"]], row["preset"])),
             "e": [
-                [player_index[user_id], place, status_code, seconds]
+                (player_index[user_id], place, status_code, seconds)
                 for user_id, _name, place, status_code, seconds in row["entries"]
             ],
         }
         for row in staged
     ]
+    diagnostics["races_without_preset"] = sum(1 for record in records if record["p"] is None)
+
+    ratings = ladder_rating.rate(records, len(players))
+    derived = highlights.compute(
+        records, players=players, modes=modes, presets=presets, ratings=ratings
+    )
+
+    for index, (player, (user_id, _name)) in enumerate(zip(players, ordered_players)):
+        rating = ratings.players[index]
+        if user_id in avatars:
+            player["a"] = avatars[user_id]
+        player["rating"] = rating.rating if rating else None
+        player["mu"] = rating.mu if rating else None
+        player["sigma"] = rating.sigma if rating else None
+        player["finishes"] = rating.finishes if rating else 0
+        player.update(derived["players"][index])
+
+    races = []
+    for index, record in enumerate(records):
+        race_row = {
+            "r": record["r"],
+            "m": record["m"],
+            "d": record["d"],
+            "h": record["h"],
+            "n": record["n"],
+            "p": record["p"],
+            "e": [
+                [player, place, status_code, None if seconds is None else round(seconds), after]
+                for (player, place, status_code, seconds), after in zip(
+                    record["e"],
+                    (ratings.display(state) for state in ratings.post[index]),
+                )
+            ],
+        }
+        if derived["race_tags"][index]:
+            race_row["t"] = derived["race_tags"][index]
+        races.append(race_row)
 
     leaderboards = [{"mode": ALL_MODES, "rows": _leaderboard(races, players, None)}]
     for mode in modes:
@@ -275,9 +357,18 @@ def build_participant_payload(
         "source_url": source_url,
         "timezone": {"label": timezone_label, "name": timezone_name},
         "modes": modes,
+        "presets": [
+            preset | stats for preset, stats in zip(presets, derived["preset_stats"])
+        ],
+        "hardest_preset": derived["hardest_preset"],
+        "preset_min_races": highlights.PRESET_MIN_RACES,
         "players": players,
         "races": races,
         "leaderboards": leaderboards,
+        "badges": derived["badges"],
+        "records": derived["records"],
+        "facts": derived["facts"],
+        "rating": ratings.params,
         "diagnostics": {
             "race_count": len(races),
             "player_count": len(players),
@@ -285,7 +376,9 @@ def build_participant_payload(
             "unidentified_entry_count": diagnostics["unidentified_entry_count"],
             "finishes_without_place": diagnostics["finishes_without_place"],
             "finishes_without_time": diagnostics["finishes_without_time"],
+            "races_without_preset": diagnostics["races_without_preset"],
             "status_counts": status_counts,
+            "highlights": derived["diagnostics"],
         },
     }
 

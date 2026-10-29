@@ -1,0 +1,127 @@
+/* Konami / triforce overlay: sits just above the modal dialog box (z-index 41) and never takes clicks. */
+.ee-triforce {
+  position: fixed;
+  bottom: 130px;
+  left: 50%;
+  z-index: 41;
+  width: 150px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.ee-triforce__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 10px rgba(220, 166, 41, 0.6));
+}
+
+.ee-triforce__piece {
+  fill: var(--gold);
+  stroke: var(--gold-ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  animation: ee-triforce-assemble 900ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.ee-triforce__piece--top {
+  --from: translate(0, -60px);
+}
+
+.ee-triforce__piece--left {
+  --from: translate(-60px, 40px);
+}
+
+.ee-triforce__piece--right {
+  --from: translate(60px, 40px);
+}
+
+@keyframes ee-triforce-assemble {
+  from {
+    opacity: 0;
+    transform: var(--from);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+/* Heart HUD, spaced like the LED counter beside it. */
+.heart-hud {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-left: 22px;
+  border-left: 1px solid var(--line);
+}
+
+.heart-hud[hidden] {
+  display: none;
+}
+
+.ee-heart {
+  display: block;
+  overflow: visible;
+  shape-rendering: crispEdges;
+}
+
+.ee-heart__quarter {
+  fill: none;
+}
+
+.ee-heart__quarter--found {
+  fill: var(--red);
+}
+
+.ee-heart__outline {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.5;
+  stroke-linejoin: miter;
+}
+
+.heart-hud--complete .ee-heart {
+  filter: drop-shadow(0 0 3px var(--red));
+}
+
+/* "ganon": a red wash over the top rail. */
+.top-rail {
+  position: relative;
+}
+
+.top-rail::after {
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.top-rail--ganon::after {
+  animation: ee-rail-tint 1200ms ease-in-out both;
+}
+
+@keyframes ee-rail-tint {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ee-triforce__piece {
+    animation: none;
+  }
+
+  .top-rail--ganon::after {
+    opacity: 1;
+    animation: none;
+  }
+}

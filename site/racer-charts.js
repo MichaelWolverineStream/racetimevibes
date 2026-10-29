@@ -452,7 +452,7 @@ function finishScatterChart(points, { id, highlightPlayer, title, description, x
   return svg;
 }
 
-function finishTrendChart(points, trend, { id, title, description }, width) {
+function finishTrendChart(points, trend, { id, title, description, pbs = [] }, width) {
   const days = points.map((point) => point.day);
   const first = Math.min(...days);
   const last = Math.max(...days);
@@ -486,6 +486,16 @@ function finishTrendChart(points, trend, { id, title, description }, width) {
       }),
     );
     svg.append(marks);
+  }
+  if (pbs.length) {
+    // Step-after: each personal best holds until the next one, and the last runs to the final race.
+    const steps = pbs.map(([raceIndex, seconds]) => [dayNumber(participants.races[raceIndex].d), seconds]);
+    const d = steps
+      .map(([day, seconds], step) => (step ? `H${x(day)} V${y(seconds)}` : `M${x(day)} ${y(seconds)}`))
+      .concat(`H${x(last)}`)
+      .join(" ");
+    const line = svgElement("path", { class: "pb-line", d, "clip-path": clipPath });
+    svg.append(line);
   }
   svg.append(
     ...points.map((point, index) =>
@@ -845,15 +855,34 @@ function renderPlayerFinishTable(own) {
     const dateCell = document.createElement("td");
     dateCell.append(link);
     row.append(dateCell);
-    [ordinal(point.place), integerFormatter.format(point.n), formatDuration(point.seconds)].forEach((value) => {
+    const time = typeof UI !== "undefined" ? UI.time(point.seconds) : formatDuration(point.seconds);
+    [ordinal(point.place), integerFormatter.format(point.n), time].forEach((value) => {
       const cell = document.createElement("td");
-      cell.textContent = value;
+      cell.append(value);
       row.append(cell);
     });
     body.append(row);
   });
   table.append(head, body);
   document.querySelector("#player-finish-table").replaceChildren(table);
+}
+
+// The key is only shown while the trend chart actually draws a PB line.
+function showPbLegendKey(visible) {
+  const legend = document.querySelector("#player-view .violin-legend");
+  if (!legend) {
+    return;
+  }
+  let item = legend.querySelector(".line-key-item--pb");
+  if (!item) {
+    item = document.createElement("span");
+    item.className = "line-key-item--pb";
+    const key = document.createElement("span");
+    key.className = "line-key line-key--pb";
+    item.append(key, document.createTextNode("PB"));
+    legend.append(item);
+  }
+  item.hidden = !visible;
 }
 
 function renderPlayerCharts(playerIndex) {
@@ -891,6 +920,7 @@ function renderPlayerCharts(playerIndex) {
         )
       : emptyMessage("No recorded finish times in this mode."),
   );
+  const pbs = participants.players[playerIndex].pbs[mode] || [];
   mountChart(document.querySelector("#player-trend-chart"), (width) =>
     own.length
       ? finishTrendChart(
@@ -902,6 +932,7 @@ function renderPlayerCharts(playerIndex) {
             description: trend
               ? "Finish times with a linear trend line and its 95% confidence band."
               : "Finish times by race date.",
+            pbs,
           },
           width,
         )
@@ -927,6 +958,7 @@ function renderPlayerCharts(playerIndex) {
     );
   }
   renderPlayerFinishTable(own);
+  showPbLegendKey(own.length > 0 && pbs.length > 0);
   renderPlayerHeatmap(playerIndex);
 }
 

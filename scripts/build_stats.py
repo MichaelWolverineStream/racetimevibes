@@ -16,8 +16,9 @@ from zoneinfo import ZoneInfo
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import build_stats`.
 try:
-    from scripts import participant_stats, race_archive
+    from scripts import comment_stats, participant_stats, race_archive
 except ImportError:
+    import comment_stats
     import participant_stats
     import race_archive
 
@@ -25,10 +26,10 @@ except ImportError:
 DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
 OUTPUT_PATH = DATA_DIR / "race-stats.json"
 PARTICIPANTS_OUTPUT_PATH = DATA_DIR / "participants.json"
+COMMENTS_OUTPUT_PATH = DATA_DIR / "comments.json"
 
 SCHEDULE_TIMEZONE_NAME = "America/New_York"
 SCHEDULE_TIMEZONE = ZoneInfo(SCHEDULE_TIMEZONE_NAME)
-DATA_START_LOCAL_DATE = date(2026, 1, 1)
 WEEKDAY_LABELS = (
     "Monday",
     "Tuesday",
@@ -42,6 +43,15 @@ MODE_PATTERN = re.compile(
     r"^\s*Step\s+Ladder\s+Series\s*-\s*\[([^\[\]]+)\]",
     re.IGNORECASE,
 )
+PRESET_PATTERN = re.compile(
+    r"^\s*Step\s+Ladder\s+Series\s*-\s*\[[^\[\]]+\][ \t]*-[ \t]*([^\n]*)",
+    re.IGNORECASE,
+)
+# Some rooms put the seed link and hash on the first line, as "Preset owner/slug - URL - (hash)".
+PRESET_URL_TAIL = re.compile(r"(?:^|\s+)(?:-\s*)?https?://.*$")
+# A room slug such as "jem041/xkeydrophunt"; crystal settings such as "7/7" have no letters.
+PRESET_SLUG_TAIL = re.compile(r"\s+(?=[\w.-]*[A-Za-z])[\w.-]+/(?=[\w.-]*[A-Za-z])[\w.-]+$")
+GRAB_BAG_PATTERN = re.compile(r"Grab Bag\s*\(", re.IGNORECASE)
 EXCLUDED_MODES = {"ladder test", "ladder_test"}
 
 JsonObject = dict[str, Any]
@@ -61,6 +71,33 @@ def extract_mode(info: str) -> str:
         return "unknown"
     mode = match.group(1).strip().lower()
     return mode or "unknown"
+
+
+def _collapse_grab_bag(preset: str) -> str:
+    """Drop the parenthesized option list after "Grab Bag", nesting included."""
+    match = GRAB_BAG_PATTERN.search(preset)
+    if not match:
+        return preset
+    depth = 1
+    end = match.end()
+    while end < len(preset) and depth:
+        depth += {"(": 1, ")": -1}.get(preset[end], 0)
+        end += 1
+    return f"{preset[: match.start()]}Grab Bag{preset[end:]}"
+
+
+def extract_preset(info: str) -> str | None:
+    """Return the normalized preset named after the mode on the first line."""
+    match = PRESET_PATTERN.search(info)
+    if not match:
+        return None
+    preset = match.group(1).strip()
+    if PRESET_URL_TAIL.search(preset):
+        preset = PRESET_SLUG_TAIL.sub("", PRESET_URL_TAIL.sub("", preset))
+    preset = preset.replace("[", "(").replace("]", ")")
+    preset = " ".join(preset.split())
+    preset = " ".join(_collapse_grab_bag(preset).split())
+    return preset or None
 
 
 def _average(total: int, count: int) -> float | None:
@@ -383,8 +420,6 @@ def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] 
         return None, ("invalid", "invalid_started_at")
 
     local_started_at = started_at.astimezone(SCHEDULE_TIMEZONE)
-    if local_started_at.date() < DATA_START_LOCAL_DATE:
-        return None, ("before_data_start", "")
 
     entrants_count = race.get("entrants_count")
     if (
@@ -408,6 +443,7 @@ def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] 
         "local_started_at": local_started_at,
         "entrants_count": entrants_count,
         "mode": mode,
+        "preset": extract_preset(info),
     }, None
 
 
@@ -434,7 +470,6 @@ def aggregate_races(
     period_records: dict[str, list[JsonObject]] = defaultdict(list)
     period_metadata: dict[str, JsonObject] = {}
     unknown_mode_count = 0
-    excluded_before_data_start = 0
 
     for race in races:
         context, reason = classify_race(race)
@@ -444,8 +479,6 @@ def aggregate_races(
                 excluded_statuses[detail] += 1
             elif kind == "mode":
                 excluded_modes[detail] += 1
-            elif kind == "before_data_start":
-                excluded_before_data_start += 1
             else:
                 invalid_records[detail] += 1
             continue
@@ -507,7 +540,7 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 5,
+        "schema_version": 6,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {
@@ -515,7 +548,7 @@ def aggregate_races(
             "name": SCHEDULE_TIMEZONE_NAME,
         },
         "source": {
-            "data_start_local": DATA_START_LOCAL_DATE.isoformat(),
+            "data_start_local": archive_start.isoformat(),
             "archived_race_count": len(races),
             "included_race_count": included_count,
             "included_entrant_count": overall["entrant_total"],
@@ -530,7 +563,6 @@ def aggregate_races(
         "room_cancellation_estimate": overall["room_cancellation_estimate"],
         "periods": periods,
         "diagnostics": {
-            "excluded_before_data_start": excluded_before_data_start,
             "excluded_by_status": dict(sorted(excluded_statuses.items())),
             "excluded_by_mode": dict(sorted(excluded_modes.items())),
             "invalid_records": dict(sorted(invalid_records.items())),
@@ -543,23 +575,31 @@ def build(
     archive_dir: Path = race_archive.ARCHIVE_DIR,
     output_path: Path = OUTPUT_PATH,
     participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
-) -> tuple[JsonObject, JsonObject]:
+    comments_output_path: Path = COMMENTS_OUTPUT_PATH,
+) -> tuple[JsonObject, JsonObject, JsonObject]:
     races = [envelope["race"] for envelope in race_archive.load_races(archive_dir)]
     if not races:
         raise DataError(
             f"Archive {archive_dir} has no races; run scripts/race_archive.py first"
         )
-    stats = aggregate_races(races)
+    generated_at = datetime.now(UTC)
+    contexts = included_race_contexts(races)
+    stats = aggregate_races(races, generated_at=generated_at)
     participants = participant_stats.build_participant_payload(
-        included_race_contexts(races),
+        contexts,
         source_url=race_archive.SOURCE_URL,
         timezone_label=stats["timezone"]["label"],
         timezone_name=SCHEDULE_TIMEZONE_NAME,
+        generated_at=generated_at,
         current_names=race_archive.load_racer_names(archive_dir),
+    )
+    comments = comment_stats.build_comments_payload(
+        contexts, generated_at=generated_at
     )
     race_archive.write_json_atomic(stats, output_path)
     participant_stats.write_compact_json(participants, participants_output_path)
-    return stats, participants
+    participant_stats.write_compact_json(comments, comments_output_path)
+    return stats, participants, comments
 
 
 def parse_args() -> argparse.Namespace:
@@ -582,19 +622,29 @@ def parse_args() -> argparse.Namespace:
         default=PARTICIPANTS_OUTPUT_PATH,
         help=f"racer leaderboard JSON path (default: {PARTICIPANTS_OUTPUT_PATH})",
     )
+    parser.add_argument(
+        "--comments-output",
+        type=Path,
+        default=COMMENTS_OUTPUT_PATH,
+        help=f"racer comments JSON path (default: {COMMENTS_OUTPUT_PATH})",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     try:
-        stats, participants = build(
-            args.archive, args.output, args.participants_output
+        stats, participants, comments = build(
+            args.archive,
+            args.output,
+            args.participants_output,
+            args.comments_output,
         )
     except (
         DataError,
         race_archive.ArchiveError,
         participant_stats.ParticipantDataError,
+        comment_stats.CommentDataError,
     ) as error:
         print(f"Data build failed: {error}", file=sys.stderr)
         return 1
@@ -609,6 +659,11 @@ def main() -> int:
         f"Wrote {args.participants_output} with "
         f"{participant_diagnostics['player_count']} racers across "
         f"{participant_diagnostics['entry_count']} entries."
+    )
+    print(
+        f"Wrote {args.comments_output} with "
+        f"{sum(len(entries) for entries in comments['races'].values())} comments "
+        f"across {len(comments['races'])} races."
     )
     return 0
 
