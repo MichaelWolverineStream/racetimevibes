@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 2;
+const PARTICIPANT_SCHEMA_VERSION = 5;
 const ALL_MODES = "all";
 const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
@@ -20,7 +20,10 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 let participants = null;
 let playerIndexById = new Map();
 let raceIndexesByPlayer = [];
+let badgeHolderCounts = new Map();
 let recordCache = new Map();
+let rankDeltaCache = new Map();
+let ratingDeltaCache = null;
 let currentView = null;
 
 const leaderboardState = {
@@ -41,16 +44,33 @@ function validateParticipants(data) {
     !Array.isArray(data.players) ||
     !Array.isArray(data.races) ||
     !Array.isArray(data.modes) ||
-    !Array.isArray(data.leaderboards)
+    !Array.isArray(data.leaderboards) ||
+    !Array.isArray(data.presets)
   ) {
     throw new Error("Racer data is missing required collections.");
   }
   if (!data.players.length || !data.races.length) {
     throw new Error("Racer data is empty.");
   }
+  if (
+    !Array.isArray(data.badges) ||
+    !data.badges.every((badge) => ["id", "label", "image", "still"].every((key) => typeof badge[key] === "string"))
+  ) {
+    throw new Error("Racer data contains an invalid badge definition.");
+  }
+  data.players.forEach((player) => {
+    if (player.rating !== null && typeof player.rating !== "number") {
+      throw new Error("Racer data contains an invalid rating.");
+    }
+    if (typeof player.rating === "number" && (typeof player.mu !== "number" || typeof player.sigma !== "number")) {
+      throw new Error("Racer data contains an invalid rating.");
+    }
+  });
   data.races.forEach((race) => {
     if (
       !Array.isArray(race.e) ||
+      !(race.p === null || (Number.isInteger(race.p) && race.p >= 0 && race.p < data.presets.length)) ||
+      (race.t !== undefined && !Array.isArray(race.t)) ||
       !Number.isInteger(race.m) ||
       race.m < 0 ||
       race.m >= data.modes.length ||
@@ -61,7 +81,7 @@ function validateParticipants(data) {
       throw new Error("Racer data contains an invalid race record.");
     }
     race.e.forEach((entry) => {
-      if (!Array.isArray(entry) || !Number.isInteger(entry[0]) || entry[0] < 0 || entry[0] >= data.players.length) {
+      if (!Array.isArray(entry) || entry.length < 5 || !Number.isInteger(entry[0]) || entry[0] < 0 || entry[0] >= data.players.length) {
         throw new Error("Racer data contains an out-of-range player index.");
       }
     });
@@ -77,6 +97,10 @@ function buildIndexes(data) {
   raceIndexesByPlayer = data.players.map(() => []);
   data.races.forEach((race, raceIndex) => {
     race.e.forEach((entry) => raceIndexesByPlayer[entry[0]].push(raceIndex));
+  });
+  badgeHolderCounts = new Map();
+  data.players.forEach((player) => {
+    Object.keys(player.badges).forEach((badgeId) => badgeHolderCounts.set(badgeId, (badgeHolderCounts.get(badgeId) ?? 0) + 1));
   });
 }
 
@@ -195,6 +219,48 @@ function computeBoardRows(modeIndex, range) {
     );
 }
 
+function playerIndexFor(userId) {
+  return playerIndexById.get(userId);
+}
+
+// Positive when the racer moved up the all-time board over the last 7 days; "new" if unranked then.
+function rankDeltas(modeId) {
+  if (rankDeltaCache.has(modeId)) {
+    return rankDeltaCache.get(modeId);
+  }
+  const deltas = new Map();
+  const board = participants.leaderboards.find((item) => item.mode === modeId);
+  if (board) {
+    const before = computeBoardRows(modeIndexFor(modeId), { start: null, end: shiftIsoDate(todayInZone(), -7) });
+    const rankBefore = new Map(before.map((row, index) => [row.p, index + 1]));
+    board.rows.forEach((row, index) => {
+      const previous = rankBefore.get(row.p);
+      if (previous === undefined) {
+        deltas.set(row.p, "new");
+      } else if (previous !== index + 1) {
+        deltas.set(row.p, previous - (index + 1));
+      }
+    });
+  }
+  rankDeltaCache.set(modeId, deltas);
+  return deltas;
+}
+
+// Rating change for one entry; a first race counts from the starting rating.
+function ratingDelta(raceIndex, entryIndex) {
+  if (!ratingDeltaCache) {
+    const last = new Map();
+    ratingDeltaCache = participants.races.map((race) =>
+      race.e.map((entry) => {
+        const previous = last.get(entry[0]);
+        last.set(entry[0], entry[4]);
+        return entry[4] - (previous === undefined ? participants.rating.base : previous);
+      }),
+    );
+  }
+  return ratingDeltaCache[raceIndex][entryIndex];
+}
+
 function lastRaceDate(playerIndex, modeIndex) {
   const raceIndexes = raceIndexesByPlayer[playerIndex];
   for (let index = raceIndexes.length - 1; index >= 0; index -= 1) {
@@ -289,6 +355,28 @@ function formatRate(value) {
   return value === null ? "--" : `${Math.round(value * 100)}%`;
 }
 
+function hasRating(player) {
+  return typeof player.rating === "number" && typeof player.mu === "number" && typeof player.sigma === "number";
+}
+
+// Chance that `subject` beats `opponent` next time, from their current ratings.
+function winChance(subject, opponent) {
+  if (!hasRating(subject) || !hasRating(opponent)) {
+    return null;
+  }
+  const { beta } = participants.rating;
+  const spread = Math.sqrt(subject.sigma ** 2 + opponent.sigma ** 2 + 2 * beta ** 2);
+  return 1 / (1 + Math.exp(-(subject.mu - opponent.mu) / spread));
+}
+
+function ratingText(player) {
+  return player.rating === null ? "--" : String(player.rating);
+}
+
+function ratingTooltip() {
+  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 all modes`;
+}
+
 function formatRaceDate(isoDate) {
   return dateFormatter.format(new Date(`${isoDate}T00:00:00Z`));
 }
@@ -330,12 +418,29 @@ function playerHash(playerId, modeId) {
   return `#/player/${encodeURIComponent(playerId)}${suffix}`;
 }
 
-function appendRacerLink(cell, player, modeId, rank) {
+function appendRankDelta(cell, rank, delta) {
+  const arrow = document.createElement("span");
+  if (delta === "new") {
+    arrow.className = "rank-new";
+    arrow.textContent = "NEW";
+    arrow.title = "New in the last 7 days";
+  } else {
+    arrow.className = `trend rank-delta trend--${delta > 0 ? "up" : "down"}`;
+    arrow.textContent = `${delta > 0 ? "\u25B2" : "\u25BC"}${Math.abs(delta)}`;
+    arrow.title = `Rank 7 days ago: ${rank + delta}`;
+  }
+  cell.appendChild(arrow);
+}
+
+function appendRacerLink(cell, player, modeId, rank, rankDelta) {
   if (rank !== null) {
     const badge = document.createElement("span");
     badge.className = rank <= 3 ? `rank-badge rank-badge--podium rank-badge--${rank}` : "rank-badge";
     badge.textContent = integerFormatter.format(rank);
     cell.appendChild(badge);
+    if (rankDelta !== undefined) {
+      appendRankDelta(cell, rank, rankDelta);
+    }
   }
   const link = document.createElement("a");
   link.className = "racer-link";
@@ -431,6 +536,9 @@ function renderSortableTable(container, columns, rows, state, onSort) {
     button.textContent = column.label;
     button.setAttribute("aria-label", `Sort by ${column.sortLabel || column.label}`);
     button.addEventListener("click", () => onSort(column));
+    if (column.tooltip) {
+      bindTooltip(button, column.tooltip);
+    }
     cell.appendChild(button);
     headRow.appendChild(cell);
   });
@@ -483,7 +591,16 @@ function leaderboardColumns() {
       align: "left",
       defaultDirection: "asc",
       sortValue: (row) => row.rank,
-      render: (cell, row) => appendRacerLink(cell, row.player, leaderboardState.mode, row.rank),
+      render: (cell, row) => {
+        // Ranks are range-relative once a date range is active, so 7-day movement means nothing then.
+        const delta = isRangeActive(leaderboardState.range) ? undefined : rankDeltas(leaderboardState.mode).get(row.p);
+        appendRacerLink(cell, row.player, leaderboardState.mode, row.rank, delta);
+        if (typeof UI !== "undefined") {
+          const star = UI.followStar(row.p);
+          star.classList.add("follow-star--row");
+          cell.appendChild(star);
+        }
+      },
     },
     {
       key: "races",
@@ -532,6 +649,22 @@ function leaderboardColumns() {
       sortLabel: "head-to-head win rate",
       sortValue: (row) => row.headToHeadRate,
       render: (cell, row) => appendText(cell, formatRate(row.headToHeadRate)),
+    },
+    {
+      key: "rating",
+      label: "Rating",
+      sortLabel: "ladder rating",
+      tooltip: "Ladder rating \u00B7 all modes, all time",
+      sortValue: (row) => row.player.rating,
+      render: (cell, row) => {
+        const text = document.createElement("span");
+        text.className = "rating-value";
+        text.textContent = ratingText(row.player);
+        if (row.player.rating !== null) {
+          bindTooltip(text, ratingTooltip());
+        }
+        cell.appendChild(text);
+      },
     },
     {
       key: "average",
@@ -725,7 +858,13 @@ function renderPlayerSummary(playerIndex, modeId, matchups) {
     { wins: 0, losses: 0, draws: 0 },
   );
   const container = document.querySelector("#player-summary");
+  const player = participants.players[playerIndex];
+  const rating = summaryItem("Rating", ratingText(player));
+  if (player.rating !== null) {
+    bindTooltip(rating, ratingTooltip());
+  }
   container.replaceChildren(
+    rating,
     summaryItem("Races", row ? integerFormatter.format(row.races) : "0"),
     summaryItem("Podiums", row ? `${row.first} / ${row.second} / ${row.third}` : "--"),
     summaryItem("Record W-L-D", `${totals.wins}-${totals.losses}-${totals.draws}`),
@@ -738,7 +877,7 @@ function renderPlayerSummary(playerIndex, modeId, matchups) {
   );
 }
 
-function headToHeadColumns() {
+function headToHeadColumns(playerIndex) {
   return [
     {
       key: "opponent",
@@ -781,6 +920,14 @@ function headToHeadColumns() {
       render: (cell, row) => appendText(cell, formatRate(row.winRate)),
     },
     {
+      key: "winChance",
+      label: "Win chance",
+      sortLabel: "chance of beating this opponent next time",
+      tooltip: "From current ratings",
+      sortValue: (row) => winChance(participants.players[playerIndex], row.player),
+      render: (cell, row) => appendText(cell, formatRate(winChance(participants.players[playerIndex], row.player))),
+    },
+    {
       key: "trend",
       label: "Trend",
       sortLabel: "recent form",
@@ -812,7 +959,7 @@ function renderPlayerView(playerIndex) {
   }
 
   document.querySelector("#player-name").textContent = player.name;
-  document.querySelector("#player-subtitle").textContent = `How they match up · ${modeLabel(playerState.mode)}`;
+  document.querySelector("#player-subtitle").textContent = `${modeLabel(playerState.mode)}`;
 
   renderModeToggle(document.querySelector("#player-mode-toggle"), available, playerState.mode, (mode) => {
     playerState.mode = mode;
@@ -846,7 +993,7 @@ function renderPlayerView(playerIndex) {
       : "No recorded opponents for this mode.";
     container.replaceChildren(empty);
   } else {
-    const columns = headToHeadColumns();
+    const columns = headToHeadColumns(playerIndex);
     renderSortableTable(container, columns, sortRows(visible, columns, playerState.sort), playerState, (column) => {
       playerState.sort = nextSort(playerState, column);
       renderPlayerView(playerIndex);
@@ -875,6 +1022,22 @@ function focusHeading(selector) {
   document.querySelector(selector).focus({ preventScroll: true });
 }
 
+// A failing feature must never break the board or the racer page.
+function runFeature(name, run) {
+  try {
+    run();
+  } catch (error) {
+    console.error(`${name} failed`, error);
+  }
+}
+
+// The extras cover every mode, so they only redraw for a different racer.
+function renderRacerExtras(playerIndex) {
+  if (typeof RacerExtras !== "undefined") {
+    runFeature("RacerExtras.render", () => RacerExtras.render(playerIndex));
+  }
+}
+
 function showPlayer(playerIndex, modeId, isInitial) {
   const wasPlayer = currentView && currentView.kind === "player";
   playerState.mode = modeId;
@@ -892,6 +1055,7 @@ function showPlayer(playerIndex, modeId, isInitial) {
     focusHeading("#player-name");
   }
   currentView = { kind: "player", index: playerIndex };
+  renderRacerExtras(playerIndex);
 }
 
 function showLeaderboard(isInitial) {
@@ -938,6 +1102,8 @@ async function loadParticipants() {
     participants = data;
     buildIndexes(data);
     recordCache = new Map();
+    rankDeltaCache = new Map();
+    ratingDeltaCache = null;
 
     bindFilter("#leaderboard-search", leaderboardState, () => renderLeaderboard({ fromSearch: true }));
     bindFilter("#player-search", playerState, () => {
@@ -969,6 +1135,15 @@ async function loadParticipants() {
     document.querySelector("#leaderboard-controls").hidden = false;
     route(true);
     window.addEventListener("hashchange", () => route(false));
+    if (typeof Feed !== "undefined") {
+      runFeature("Feed.init", () => Feed.init());
+    }
+    if (typeof Records !== "undefined") {
+      runFeature("Records.init", () => Records.init());
+    }
+    if (typeof EasterEggs !== "undefined") {
+      runFeature("EasterEggs.init", () => EasterEggs.init());
+    }
   } catch (error) {
     console.error(error);
     status.classList.add("load-status--error");

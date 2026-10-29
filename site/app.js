@@ -810,24 +810,31 @@ function hasValidAggregate(aggregate) {
   );
 }
 
+function isIsoDate(value) {
+  return typeof value === "string"
+    && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+}
+
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 5
+    || data.schema_version !== 6
     || !hasValidAggregate(data)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
     || data.periods.some((period) => (
       typeof period.id !== "string"
       || typeof period.start !== "string"
-      || period.start < "2026-01-01"
+      || !isIsoDate(period.end)
+      || period.end < data.source?.data_start_local
       || !period.observed_local_date_range
       || typeof period.observed_local_date_range.start !== "string"
       || typeof period.observed_local_date_range.end !== "string"
       || !hasValidAggregate(period)
     ))
     || !data.source
-    || data.source.data_start_local !== "2026-01-01"
+    || !isIsoDate(data.source.data_start_local)
     || !Number.isFinite(data.source.archived_race_count)
     || !Number.isFinite(data.source.included_race_count)
   ) {

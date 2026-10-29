@@ -14,10 +14,21 @@ INDEX_TEMPLATE = """<!doctype html>
   <head>
     <meta name="app-version" content="">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="ui.css">
+    <link rel="stylesheet" href="feed.css">
+    <link rel="stylesheet" href="records.css">
+    <link rel="stylesheet" href="racer-extras.css">
+    <link rel="stylesheet" href="easter-eggs.css">
   </head>
   <body>
     <script src="app.js" defer></script>
     <script src="racer-charts.js" defer></script>
+    <script src="store.js" defer></script>
+    <script src="ui.js" defer></script>
+    <script src="feed.js" defer></script>
+    <script src="records.js" defer></script>
+    <script src="racer-extras.js" defer></script>
+    <script src="easter-eggs.js" defer></script>
     <script src="leaderboard.js" defer></script>
     <script src="version-check.js" defer></script>
     <script src="visitor-counter.js" defer></script>

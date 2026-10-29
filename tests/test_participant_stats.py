@@ -1,10 +1,11 @@
 import json
+import re
 import tempfile
 import unittest
 from datetime import UTC, datetime
 from pathlib import Path
 
-from scripts import build_stats, participant_stats
+from scripts import build_stats, highlights, participant_stats
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +95,10 @@ class FinishTimeTests(unittest.TestCase):
         self.assertEqual(participant_stats.parse_finish_time("PT45.4S"), 45)
         self.assertEqual(participant_stats.parse_finish_time("PT45.6S"), 46)
 
+    def test_exact_seconds_keep_the_fraction(self):
+        self.assertAlmostEqual(participant_stats.parse_finish_seconds("PT1M0.61S"), 60.61)
+        self.assertIsNone(participant_stats.parse_finish_seconds(None))
+
     def test_parses_day_component(self):
         self.assertEqual(participant_stats.parse_finish_time("P1DT2H"), 93600)
 
@@ -172,7 +177,7 @@ class EntrantNormalizationTests(unittest.TestCase):
                 )
             ]
         )
-        self.assertIn({"id": "abc123", "name": "abc123"}, result["players"])
+        self.assertIn(("abc123", "abc123"), [(p["id"], p["name"]) for p in result["players"]])
 
     def test_latest_race_name_wins_without_a_current_name(self):
         result = payload(
@@ -186,7 +191,7 @@ class EntrantNormalizationTests(unittest.TestCase):
                 placed_race("late", ["ana"], started_at="2026-03-02T20:00:00.000Z"),
             ]
         )
-        self.assertEqual(result["players"], [{"id": "ana", "name": "ana"}])
+        self.assertEqual([player["name"] for player in result["players"]], ["ana"])
 
     def test_current_name_overrides_race_names(self):
         result = payload(
@@ -194,8 +199,8 @@ class EntrantNormalizationTests(unittest.TestCase):
             current_names={"ana": "Renamed Ana", "absent": "Not In Races"},
         )
         self.assertEqual(
-            result["players"],
-            [{"id": "ben", "name": "ben"}, {"id": "ana", "name": "Renamed Ana"}],
+            [(player["id"], player["name"]) for player in result["players"]],
+            [("ben", "ben"), ("ana", "Renamed Ana")],
         )
 
     def test_rejects_duplicate_entrant_identity(self):
@@ -361,7 +366,6 @@ class PayloadShapeTests(unittest.TestCase):
             placed_race("keep-1", ["ana", "ben"]),
             placed_race("keep-2", ["ana", "ben"], mode="keys"),
             placed_race("ladder-test", ["ana", "ben"], mode="ladder test"),
-            placed_race("too-old", ["ana", "ben"], started_at="2025-12-01T20:00:00.000Z"),
             race("cancelled", entrants=[entrant("ana")], status="cancelled"),
         ]
         stats = build_stats.aggregate_races(races, generated_at=GENERATED_AT)
@@ -414,7 +418,6 @@ class PayloadShapeTests(unittest.TestCase):
         for forbidden in (
             "full_name",
             "discriminator",
-            "avatar",
             "pronouns",
             "flair",
             "twitch_name",
@@ -422,11 +425,14 @@ class PayloadShapeTests(unittest.TestCase):
             "comment",
             "score",
             "Visible#1234",
-            "2025-",
         ):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, serialized)
-        self.assertIn({"id": "abc123", "name": "Visible"}, result["players"])
+        self.assertEqual(
+            [(player["id"], player["name"]) for player in result["players"]],
+            [("abc123", "Visible")],
+        )
+        self.assertNotIn("a", result["players"][0])
 
     def test_writes_compact_json_atomically(self):
         result = payload([placed_race("solo", ["ana", "ben"])])
@@ -434,13 +440,114 @@ class PayloadShapeTests(unittest.TestCase):
             output_path = Path(directory) / "nested" / "participants.json"
             participant_stats.write_compact_json(result, output_path)
             text = output_path.read_text(encoding="utf-8")
-        self.assertNotIn(", ", text)
-        self.assertNotIn(": ", text)
+        self.assertEqual(text, json.dumps(result, separators=(",", ":")) + "\n")
         self.assertEqual(
             json.loads(text)["schema_version"],
             participant_stats.PARTICIPANT_SCHEMA_VERSION,
         )
         self.assertTrue(text.endswith("\n"))
+
+
+class SchemaThreeTests(unittest.TestCase):
+    def avatar_races(self):
+        def with_avatar(user_id, avatar):
+            return entrant(
+                user_id,
+                place=1 if user_id == "ana" else 2,
+                finish_time="PT10M" if user_id == "ana" else "PT11M",
+                user={"id": user_id, "name": user_id, "avatar": avatar},
+            )
+
+        return [
+            race(
+                "early",
+                started_at="2026-03-01T20:00:00.000Z",
+                entrants=[
+                    with_avatar("ana", "https://racetime.gg/media/old.png"),
+                    with_avatar("ben", "https://evil.example/x.png"),
+                ],
+            ),
+            race(
+                "late",
+                started_at="2026-03-02T20:00:00.000Z",
+                entrants=[
+                    with_avatar("ana", "https://racetime.gg/media/new-1.jpg"),
+                    with_avatar("ben", "https://racetime.gg/media/../x.png"),
+                ],
+            ),
+        ]
+
+    def test_avatar_comes_from_the_latest_race_and_must_be_on_origin(self):
+        result = payload(self.avatar_races())
+        avatars = {player["name"]: player.get("a") for player in result["players"]}
+        self.assertEqual(avatars, {"ana": "new-1.jpg", "ben": None})
+
+    def test_off_origin_latest_avatar_drops_an_older_one(self):
+        races = self.avatar_races()
+        races[1]["entrants"][0]["user"]["avatar"] = "https://evil.example/x.png"
+        result = payload(races)
+        self.assertNotIn("a", next(p for p in result["players"] if p["id"] == "ana"))
+
+    def test_payload_has_rating_fields_and_int_rating_after(self):
+        result = payload(
+            [
+                placed_race("one", ["ana", "ben", "cid"], info="Step Ladder Series - [keys] - Open"),
+                placed_race(
+                    "two",
+                    ["ben", "ana"],
+                    started_at="2026-09-18T20:00:00.000Z",
+                    info="Step Ladder Series - [simple]",
+                ),
+            ]
+        )
+        self.assertEqual(result["schema_version"], 5)
+        for player in result["players"]:
+            for key in ("rating", "mu", "sigma", "finishes", "badges", "progress",
+                        "pbs", "streaks", "best_preset"):
+                self.assertIn(key, player)
+            self.assertNotIn("rd", player)
+            self.assertNotIn("provisional", player)
+        for race_row in result["races"]:
+            for entry in race_row["e"]:
+                self.assertEqual(len(entry), 5)
+                self.assertIsInstance(entry[4], int)
+        self.assertEqual(result["races"][1]["p"], None)
+        self.assertEqual(result["diagnostics"]["races_without_preset"], 1)
+
+    def test_presets_are_sorted_by_mode_then_name_and_indexed_by_races(self):
+        result = payload(
+            [
+                placed_race("a", ["ana", "ben"], mode="keys",
+                            info="Step Ladder Series - [keys] - beta"),
+                placed_race("b", ["ana", "ben"], mode="fun",
+                            info="Step Ladder Series - [fun] - Zed",
+                            started_at="2026-09-18T20:00:00.000Z"),
+                placed_race("c", ["ana", "ben"], mode="keys",
+                            info="Step Ladder Series - [keys] - Alpha",
+                            started_at="2026-09-19T20:00:00.000Z"),
+            ]
+        )
+        self.assertEqual(
+            [(preset["m"], preset["n"]) for preset in result["presets"]],
+            [(0, "Zed"), (1, "Alpha"), (1, "beta")],
+        )
+        self.assertEqual([race_row["p"] for race_row in result["races"]], [2, 0, 1])
+        self.assertEqual(result["diagnostics"]["races_without_preset"], 0)
+
+    def test_comment_text_is_never_published(self):
+        result = payload(
+            [
+                race(
+                    "chatty",
+                    entrants=[
+                        {**entrant("ana", place=1, finish_time="PT10M"), "comment": "secret"},
+                        entrant("ben", place=2, finish_time="PT11M"),
+                    ],
+                )
+            ]
+        )
+        self.assertNotIn("secret", json.dumps(result))
+        self.assertNotIn('"comment"', json.dumps(result))
 
 
 class GeneratedParticipantDataTests(unittest.TestCase):
@@ -496,6 +603,95 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         for row in leaderboard(self.participants, "all"):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
+    def test_schema_version_and_top_level_keys(self):
+        self.assertEqual(self.participants["schema_version"], 5)
+        for key in ("presets", "hardest_preset", "badges", "records", "facts", "rating"):
+            self.assertIn(key, self.participants)
+        self.assertIn("highlights", self.participants["diagnostics"])
+
+    def test_badge_definitions_carry_image_paths(self):
+        for badge in self.participants["badges"]:
+            image, still = highlights.badge_image_paths(badge["id"])
+            self.assertIsInstance(badge["image"], str)
+            self.assertIsInstance(badge["still"], str)
+            self.assertEqual(badge["image"], image)
+            self.assertEqual(badge["still"], still)
+
+    def test_badge_rules_use_names_that_exist_in_the_data(self):
+        for mode in (
+            highlights.GLITCHED_MODE,
+            highlights.ENTRANCE_MODE,
+            highlights.MYSTERY_MODE,
+        ):
+            self.assertIn(mode, self.participants["modes"])
+        preset_names = {preset["n"] for preset in self.participants["presets"]}
+        self.assertIn(highlights.CASUAL_BOOTS_PRESET, preset_names)
+
+    def test_avatars_are_bare_filenames(self):
+        pattern = re.compile(r"^[\w.-]+$")
+        for player in self.participants["players"]:
+            if "a" in player:
+                self.assertRegex(player["a"], pattern)
+
+    def test_no_comment_key_anywhere(self):
+        def walk(value):
+            if isinstance(value, dict):
+                self.assertNotIn("comment", value)
+                for item in value.values():
+                    walk(item)
+            elif isinstance(value, list):
+                for item in value:
+                    walk(item)
+
+        walk(self.participants)
+
+    def test_preset_and_tag_indexes_stay_within_range(self):
+        player_count = len(self.participants["players"])
+        preset_count = len(self.participants["presets"])
+        mode_count = len(self.participants["modes"])
+        for preset in self.participants["presets"]:
+            self.assertTrue(0 <= preset["m"] < mode_count)
+        for race_row in self.participants["races"]:
+            self.assertTrue(race_row["p"] is None or 0 <= race_row["p"] < preset_count)
+            for tag in race_row.get("t", []):
+                self.assertTrue(tag)
+                self.assertTrue(0 <= tag[1] < player_count)
+
+    def test_rating_after_is_an_int_on_every_entry(self):
+        for race_row in self.participants["races"]:
+            for entry in race_row["e"]:
+                self.assertEqual(len(entry), 5)
+                self.assertIsInstance(entry[4], int)
+
+    def test_every_player_has_the_rating_fields(self):
+        for player in self.participants["players"]:
+            for key in ("rating", "mu", "sigma", "finishes", "badges", "progress",
+                        "pbs", "streaks", "best_preset"):
+                self.assertIn(key, player)
+            self.assertNotIn("rd", player)
+            self.assertNotIn("provisional", player)
+            self.assertIsInstance(player["rating"], int)
+            self.assertIsInstance(player["mu"], float)
+            self.assertIsInstance(player["sigma"], float)
+            self.assertGreaterEqual(player["sigma"], self.participants["rating"]["sigma_floor"])
+
+    def test_rating_params_describe_the_model(self):
+        params = self.participants["rating"]
+        self.assertEqual(params["model"], "bradley-terry")
+        self.assertEqual(params["base"], 1000)
+        for key in ("scale", "k", "mu0", "beta", "sigma0", "sigma_floor", "kappa",
+                    "provisional_finishes"):
+            self.assertIn(key, params)
+        self.assertNotIn("anchor", params)
+
+    def test_a_players_rating_is_their_last_entry_rating(self):
+        last = {}
+        for race_row in self.participants["races"]:
+            for entry in race_row["e"]:
+                last[entry[0]] = entry[4]
+        for index, player in enumerate(self.participants["players"]):
+            self.assertEqual(player["rating"], last[index])
+
     def test_contains_no_sensitive_racetime_fields(self):
         serialized = (REPO_ROOT / "site" / "data" / "participants.json").read_text(
             encoding="utf-8"
@@ -503,12 +699,10 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         for forbidden in (
             "full_name",
             "discriminator",
-            "avatar",
             "pronouns",
             "twitch_name",
             "twitch_channel",
             "score_change",
-            "2025-",
         ):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, serialized)

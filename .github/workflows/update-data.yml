@@ -38,12 +38,20 @@ jobs:
           import json, os, subprocess
 
           site = False
-          for path in ("site/data/race-stats.json", "site/data/participants.json"):
+          for path in (
+              "site/data/race-stats.json",
+              "site/data/participants.json",
+              "site/data/comments.json",
+          ):
               committed = subprocess.run(
                   ["git", "show", f"HEAD:{path}"],
-                  check=True, capture_output=True, text=True,
-              ).stdout
-              old = json.loads(committed)
+                  capture_output=True, text=True,
+              )
+              # A dataset that HEAD does not have yet is new, so the site changed.
+              if committed.returncode != 0:
+                  site = True
+                  continue
+              old = json.loads(committed.stdout)
               with open(path, encoding="utf-8") as current:
                   new = json.load(current)
               old.pop("generated_at", None)

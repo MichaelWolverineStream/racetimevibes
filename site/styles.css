@@ -124,7 +124,7 @@ footer {
 
 .masthead {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
   padding: 34px 0 28px;
@@ -1169,13 +1169,17 @@ th.align-right {
   white-space: nowrap;
 }
 
-.leaderboard-section {
+.leaderboard-section,
+.updates-section,
+.records-section {
   margin-top: 32px;
 }
 
 body.viewing-player > main > .summary-strip,
 body.viewing-player #load-status,
 body.viewing-player #dashboard,
+body.viewing-player #updates,
+body.viewing-player #records,
 body.viewing-player #leaderboard {
   display: none;
 }
@@ -1419,6 +1423,29 @@ th[aria-sort="descending"] .sort-button::after {
   color: var(--muted);
 }
 
+.rank-delta {
+  margin-right: 8px;
+  font-size: var(--text-xs, 11px);
+}
+
+.rank-new {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.rating-value {
+  font-variant-numeric: tabular-nums;
+}
+
 .table-empty {
   margin: 0;
   padding: 16px 24px 26px;
@@ -1521,6 +1548,10 @@ footer p {
 
   .masthead {
     grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .comment-hero {
+    grid-column: 1 / -1;
   }
 
   .source-block {
