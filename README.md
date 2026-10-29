@@ -300,6 +300,36 @@ A preset is the name after the mode in the race's `info` first line, trimmed, cu
 - **Streak boards:** the 10 best streaks of each kind. Whether a streak is still active depends on today's date, so the page's **Active now** view ranks every racer's current streak of two or more: a daily streak whose last day is today or yesterday in Eastern Time, or any other kind whose latest race is within the last 30 days.
 - **Facts:** about a dozen English sentences generated from the data, such as the hardest preset or the busiest day. A fact without enough data is skipped.
 
+## Mode overlap
+
+`scripts/mode_overlap.py` measures how much the modes share racers, to find modes that could run in the same slot without making racers pick one. It is a standalone analysis: the dashboard build does not run it, and it writes nothing unless asked. `--html` writes a self-contained report page, with no scripts or external requests, in the claude.ai Artifact page format, which leaves the document skeleton to the publisher.
+
+```bash
+python3 scripts/mode_overlap.py                  # ranked pair table
+python3 scripts/mode_overlap.py --min-entries 2  # count only racers with 2+ entries in the other mode
+python3 scripts/mode_overlap.py --html report.html
+```
+
+### In plain words
+
+For a pair of modes A and B, look only at the months when both were on the schedule, and ask: what share of A's entries came from racers who also raced B that month? If A ran against B, that share of A's field would have to choose. The pair's score is the larger of the two directions, because a pairing is only as good as its effect on the mode that loses more.
+
+### Definitions
+
+- Races are the dashboard's included races, and entrants are identified by stable user ID; anonymous entries are skipped. Any entry counts, DNFs and DQs included, because entering is what a clash takes away.
+- Months are Eastern Time calendar months. A mode is **on the schedule** in a month when it has at least 4 races that month. A pair's **co-active months** are the months when both modes are on the schedule, and every pair figure uses only those months.
+- The **directed share A→B** is A's entries in the co-active months made by racers who entered B at least once that same month (`--min-entries` raises the once), divided by all of A's identified entries in those months.
+- The **chance baseline A→B** is the share expected if A's racers entered B at B's general rate. In each co-active month, B's reach is the racers who met the same entry threshold in B divided by every racer with any entry that month. The baseline is that reach averaged over the co-active months, weighted by A's entries in each. A share well below its baseline means the two modes draw different crowds; a share near it means B is simply popular.
+- The **pair score** is the larger of A→B and B→A. Below 0.25 it rates **low**, below 0.5 **moderate**, and **high** otherwise. A pair with fewer than 6 co-active months is **weak evidence**. A pair with no co-active months is unmeasured.
+- The **95% interval** is a percentile bootstrap of the pair score: 1,000 rounds that each draw every racer in the archive with replacement, keeping all of a racer's months together, with a fixed seed so runs repeat exactly.
+- The **trend** repeats the pair score within each calendar half-year, over the co-active months in that half-year, without an interval.
+- Thresholds are constants at the top of the module.
+
+### Limits
+
+- The score is an upper bound on the conflict. Racing both modes in a month does not prove a racer would want both slots on the same day. The bot never runs two modes at once, so the true forced choice cannot be observed.
+- Pairs are measured over different months, so a paused mode such as inverted is compared on the racers of its own era.
+
 ## Dashboard sections
 
 The page runs top to bottom as: **01 Latest** (the newest results with their tags), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. A racer's rivals (Nemesis and Favourite victim) sit directly under the badges and are always computed across all modes, whatever mode is selected. There is no race-day calendar.
@@ -323,6 +353,7 @@ scripts/participant_stats.py      Per-racer dataset: records, avatars, assembly 
 scripts/ladder_rating.py          Ladder rating model and backtest
 scripts/highlights.py             Tags, badges, streaks, presets, records and facts
 scripts/comment_stats.py          Racer comments dataset
+scripts/mode_overlap.py           Mode overlap analysis and report
 scripts/badge_images.py           Converts badge art to the standard WebP pair (needs ImageMagick 7)
 scripts/version_assets.py         Content versioning for the static assets
 tests/test_race_archive.py        Archive sync unit tests
@@ -331,6 +362,7 @@ tests/test_participant_stats.py   Racer dataset unit tests
 tests/test_ladder_rating.py       Rating model unit tests
 tests/test_highlights.py          Tag, badge, streak and record unit tests
 tests/test_comment_stats.py       Comments dataset unit tests
+tests/test_mode_overlap.py        Mode overlap unit tests
 tests/test_site_globals.py        Checks that site scripts declare no clashing globals
 tests/test_badge_assets.py        Badge image pair checks
 tests/test_version_assets.py      Asset versioning unit tests
