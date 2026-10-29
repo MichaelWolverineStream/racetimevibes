@@ -603,7 +603,7 @@ const Feed = (() => {
   }
 
   function renderSidebar() {
-    const sidebar = document.getElementById("updates-sidebar");
+    const sidebar = document.getElementById("updates-sidebar-body");
     const racersHost = element("div", "feed-side-racers");
     sidebar.appendChild(racersHost);
     renderFact(sidebar);
@@ -611,6 +611,17 @@ const Feed = (() => {
     const rerender = () => renderYourRacers(racersHost);
     rerender();
     document.addEventListener("racetimevibes:following", rerender);
+  }
+
+  // The toggle only shows below the sidebar breakpoint in feed.css, which also ignores
+  // the open class on wide screens, so this never needs to know the viewport width.
+  function bindSidebarToggle() {
+    const layout = document.getElementById("updates-layout");
+    const toggle = document.getElementById("updates-sidebar-toggle");
+    toggle.addEventListener("click", () => {
+      const open = layout.classList.toggle("updates-layout--open");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
   }
 
   function init() {
@@ -624,6 +635,7 @@ const Feed = (() => {
     renderNewSummary();
     renderFeed();
     renderSidebar();
+    bindSidebarToggle();
     renderHero();
   }
 

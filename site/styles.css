@@ -1541,11 +1541,8 @@ footer p {
   }
 }
 
-@media (max-width: 980px) {
-  .player-charts__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
+/* Below this the title and source block leave the comment too little room to share a row. */
+@media (max-width: 1365px) {
   .masthead {
     grid-template-columns: auto minmax(0, 1fr);
   }
@@ -1572,6 +1569,12 @@ footer p {
 
   .source-block strong {
     margin: 0;
+  }
+}
+
+@media (max-width: 980px) {
+  .player-charts__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .summary-strip {
@@ -1640,7 +1643,7 @@ footer p {
     display: block;
   }
 
-  .source-block span {
+  .source-block__snapshot > span {
     display: block;
   }
 

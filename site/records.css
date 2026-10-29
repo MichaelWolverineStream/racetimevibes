@@ -195,3 +195,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Two columns, like every summary strip at this width; the shared divider rules assume it. */
+@media (max-width: 980px) {
+  .records-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
