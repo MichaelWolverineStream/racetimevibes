@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-29T16:56:58Z",
+  "race": {
+    "name": "alttpr-ladder/banzai-humbugh-1055",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/banzai-humbugh-1055",
+    "data_url": "/alttpr-ladder/banzai-humbugh-1055/data",
+    "goal": {
+      "name": "Beat the game (Keys)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [keys] - Cabookey\nladder/cabookey - https://alttpr.racing/getseed.php?race=5465 - (HashCompass/HashQuake/HashEmptyBottle/HashBombos/HashPendant)",
+    "entrants_count": 3,
+    "entrants_count_finished": 3,
+    "entrants_count_inactive": 0,
+    "opened_at": "2026-10-29T13:30:00.212Z",
+    "started_at": "2026-10-29T14:00:00.092Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H41M05.789037S",
+        "finished_at": "2026-10-29T15:41:05.881Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2457,
+        "score_change": null,
+        "comment": "165 - IR on vacation? Why, I never... That TR big, though. TOPKEK game.",
+        "has_comment": true,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "change_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "xldAMBldg4BaOP57",
+          "full_name": "CFate91#7613",
+          "name": "CFate91",
+          "discriminator": "7613",
+          "url": "/user/xldAMBldg4BaOP57/cfate91",
+          "avatar": "https://racetime.gg/media/Face_112.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "cfate91",
+          "twitch_display_name": "CFate91",
+          "twitch_channel": "https://www.twitch.tv/cfate91",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M06.965124S",
+        "finished_at": "2026-10-29T15:54:07.057Z",
+        "place": 2,
+        "place_ordinal": "2nd",
+        "score": null,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "Gzr7pBM6b23kqgyE",
+          "full_name": "Dr Jon#6071",
+          "name": "Dr Jon",
+          "discriminator": "6071",
+          "url": "/user/Gzr7pBM6b23kqgyE/dr-jon",
+          "avatar": "https://racetime.gg/media/Gzr7pBM6b23kqgyE.png",
+          "pronouns": "he/him",
+          "flair": "",
+          "twitch_name": "thegooddrjon",
+          "twitch_display_name": "TheGoodDrJon",
+          "twitch_channel": "https://www.twitch.tv/thegooddrjon",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT01H54M27.314448S",
+        "finished_at": "2026-10-29T15:54:27.406Z",
+        "place": 3,
+        "place_ordinal": "3rd",
+        "score": 2540,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      }
+    ],
+    "ended_at": "2026-10-29T15:54:27.462Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": false
+  }
+}
