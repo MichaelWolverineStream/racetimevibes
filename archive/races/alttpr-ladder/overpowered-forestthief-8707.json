@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "fetched_at": "2026-10-28T22:38:04Z",
+  "fetched_at": "2026-10-29T08:29:50Z",
   "race": {
     "name": "alttpr-ladder/overpowered-forestthief-8707",
     "status": {
@@ -55,8 +55,7 @@
         "stream_live": false,
         "stream_override": false,
         "actions": [
-          "add_comment",
-          "undone"
+          "add_comment"
         ]
       },
       {
@@ -91,8 +90,7 @@
         "stream_live": true,
         "stream_override": false,
         "actions": [
-          "add_comment",
-          "undone"
+          "add_comment"
         ]
       }
     ],
