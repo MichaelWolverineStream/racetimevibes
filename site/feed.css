@@ -2,21 +2,24 @@
 .comment-hero {
   min-height: 120px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   min-width: 0;
 }
 
+/* A fixed-width speech track keeps the refresh button in one spot, whatever the comment's size. */
 .comment-hero__stage {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 600px) auto;
+  align-items: start;
   gap: 12px;
   max-width: 100%;
   animation: feed-fade-in 400ms ease-out both;
 }
 
+/* Centred on the 56px hero avatar. */
 .comment-hero__refresh {
-  flex: 0 0 auto;
   width: 28px;
+  margin-top: 14px;
   height: 28px;
   padding: 0;
   border: 1px solid var(--line);

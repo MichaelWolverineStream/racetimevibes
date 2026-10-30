@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="bb4181a7eaa9">
+    <meta name="app-version" content="ca51b60c739b">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=bb4181a7eaa9">
-    <link rel="stylesheet" href="ui.css?v=bb4181a7eaa9">
-    <link rel="stylesheet" href="feed.css?v=bb4181a7eaa9">
-    <link rel="stylesheet" href="records.css?v=bb4181a7eaa9">
-    <link rel="stylesheet" href="racer-extras.css?v=bb4181a7eaa9">
-    <link rel="stylesheet" href="easter-eggs.css?v=bb4181a7eaa9">
+    <link rel="stylesheet" href="styles.css?v=ca51b60c739b">
+    <link rel="stylesheet" href="ui.css?v=ca51b60c739b">
+    <link rel="stylesheet" href="feed.css?v=ca51b60c739b">
+    <link rel="stylesheet" href="records.css?v=ca51b60c739b">
+    <link rel="stylesheet" href="racer-extras.css?v=ca51b60c739b">
+    <link rel="stylesheet" href="easter-eggs.css?v=ca51b60c739b">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -30,7 +30,7 @@
         >
         <div class="title-block">
           <p class="kicker">Racetime.gg archive</p>
-          <h1>ALTTPR Step Ladder</h1>
+          <h1><a class="title-block__link" href="https://alttpr.racing/" target="_blank" rel="noreferrer">Climbers</a></h1>
           <p class="lede">Stats don't lie.</p>
         </div>
         <div id="comment-hero" class="comment-hero" aria-live="polite"></div>
@@ -59,28 +59,24 @@
         </div>
       </header>
 
-      <section class="summary-strip" aria-label="Dataset summary">
-        <div class="summary-item">
-          <span class="summary-label">Finished races</span>
-          <strong id="race-total">--</strong>
+      <nav class="section-nav" aria-label="Sections">
+        <div class="section-nav__group" role="group" aria-labelledby="section-nav-racing">
+          <span id="section-nav-racing" class="section-nav__heading">Racing</span>
+          <a class="section-nav__link" href="#updates">Latest</a>
+          <a class="section-nav__link" href="#leaderboard">Racers</a>
+          <a class="section-nav__link" href="#records">Records</a>
         </div>
-        <div class="summary-item">
-          <span id="unique-player-label" class="summary-label">Identified racers</span>
-          <strong><a href="#leaderboard" id="unique-player-total">--</a></strong>
+        <div class="section-nav__group section-nav__group--data" role="group" aria-labelledby="section-nav-data">
+          <span id="section-nav-data" class="section-nav__heading">Ladder Data</span>
+          <a class="section-nav__link" href="#schedule">Schedule</a>
+          <a class="section-nav__link" href="#community">Community</a>
+          <a class="section-nav__link" href="#participation">Participation</a>
+          <a class="section-nav__link" href="#traffic">Traffic</a>
+          <a class="section-nav__link" href="#turnout">Turnout</a>
+          <a class="section-nav__link" href="#volume">Volume</a>
+          <a class="section-nav__link" href="#modes">Modes</a>
         </div>
-        <div class="summary-item">
-          <span class="summary-label">Most popular hour</span>
-          <strong id="peak-hour">--</strong>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Least popular hour</span>
-          <strong id="quiet-hour">--</strong>
-        </div>
-        <div class="summary-item summary-item--wide">
-          <span class="summary-label">Coverage</span>
-          <strong id="date-range">--</strong>
-        </div>
-      </section>
+      </nav>
 
       <section id="updates" class="updates-section" aria-labelledby="updates-title" hidden>
         <article class="chart-panel chart-panel--latest">
@@ -204,7 +200,7 @@
           <p class="period-current">Viewing <strong id="active-period-label">All data</strong></p>
         </section>
 
-        <article class="chart-panel chart-panel--decision" style="--i: 0">
+        <article id="schedule" class="chart-panel chart-panel--decision" style="--i: 0">
           <header class="panel-heading">
             <div>
               <p class="panel-index">04 / Schedule</p>
@@ -224,7 +220,7 @@
           <div id="opportunity-heatmap" class="heatmap-host" aria-live="polite"></div>
         </article>
 
-        <article class="chart-panel chart-panel--community" style="--i: 1">
+        <article id="community" class="chart-panel chart-panel--community" style="--i: 1">
           <header class="panel-heading">
             <div>
               <p class="panel-index">05 / Community</p>
@@ -244,7 +240,7 @@
           </details>
         </article>
 
-        <article class="chart-panel chart-panel--participation" style="--i: 2">
+        <article id="participation" class="chart-panel chart-panel--participation" style="--i: 2">
           <header class="panel-heading">
             <div>
               <p class="panel-index">06 / Participation</p>
@@ -260,7 +256,7 @@
         </article>
 
         <div class="hourly-grid">
-          <article class="chart-panel" style="--i: 3">
+          <article id="traffic" class="chart-panel" style="--i: 3">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">07 / Traffic</p>
@@ -275,7 +271,7 @@
             </details>
           </article>
 
-          <article class="chart-panel" style="--i: 4">
+          <article id="turnout" class="chart-panel" style="--i: 4">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">08 / Turnout</p>
@@ -290,7 +286,7 @@
             </details>
           </article>
 
-          <article class="chart-panel chart-panel--hourly-total" style="--i: 5">
+          <article id="volume" class="chart-panel chart-panel--hourly-total" style="--i: 5">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">09 / Volume</p>
@@ -319,7 +315,7 @@
           </article>
         </div>
 
-        <article class="chart-panel chart-panel--modes" style="--i: 6">
+        <article id="modes" class="chart-panel chart-panel--modes" style="--i: 6">
           <header class="panel-heading">
             <div>
               <p class="panel-index">10 / Modes</p>
@@ -425,16 +421,16 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=bb4181a7eaa9" defer></script>
-    <script src="racer-charts.js?v=bb4181a7eaa9" defer></script>
-    <script src="store.js?v=bb4181a7eaa9" defer></script>
-    <script src="ui.js?v=bb4181a7eaa9" defer></script>
-    <script src="feed.js?v=bb4181a7eaa9" defer></script>
-    <script src="records.js?v=bb4181a7eaa9" defer></script>
-    <script src="racer-extras.js?v=bb4181a7eaa9" defer></script>
-    <script src="easter-eggs.js?v=bb4181a7eaa9" defer></script>
-    <script src="leaderboard.js?v=bb4181a7eaa9" defer></script>
-    <script src="version-check.js?v=bb4181a7eaa9" defer></script>
-    <script src="visitor-counter.js?v=bb4181a7eaa9" defer></script>
+    <script src="app.js?v=ca51b60c739b" defer></script>
+    <script src="racer-charts.js?v=ca51b60c739b" defer></script>
+    <script src="store.js?v=ca51b60c739b" defer></script>
+    <script src="ui.js?v=ca51b60c739b" defer></script>
+    <script src="feed.js?v=ca51b60c739b" defer></script>
+    <script src="records.js?v=ca51b60c739b" defer></script>
+    <script src="racer-extras.js?v=ca51b60c739b" defer></script>
+    <script src="easter-eggs.js?v=ca51b60c739b" defer></script>
+    <script src="leaderboard.js?v=ca51b60c739b" defer></script>
+    <script src="version-check.js?v=ca51b60c739b" defer></script>
+    <script src="visitor-counter.js?v=ca51b60c739b" defer></script>
   </body>
 </html>

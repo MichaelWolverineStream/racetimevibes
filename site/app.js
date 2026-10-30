@@ -50,15 +50,6 @@ function hourRange(hour) {
   return `${fullHour(hour)}-${fullHour((hour + 1) % 24)}`;
 }
 
-function scheduleDate(isoString, timeZone) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone,
-  }).format(new Date(isoString));
-}
-
 function utcTimestamp(isoString) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -858,30 +849,8 @@ function allDataSelection(data) {
   };
 }
 
-function renderSummary(data, selection) {
-  const dateRange = selection.included_date_range;
-  const peakHour = selection.hourly.reduce((peak, item) => (
-    item.race_count > peak.race_count ? item : peak
-  ));
-  const quietHour = selection.hourly.reduce((quiet, item) => (
-    item.race_count < quiet.race_count ? item : quiet
-  ));
-  document.querySelector("#generated-at").textContent = utcTimestamp(data.generated_at);
-  document.querySelector("#race-total").textContent = integerFormatter.format(selection.race_count);
-  document.querySelector("#unique-player-label").textContent = selection.unique_players.identity_coverage === 1
-    ? "Unique racers"
-    : "Identified racers";
-  document.querySelector("#unique-player-total").textContent = integerFormatter.format(selection.unique_players.identified_player_count);
-  document.querySelector("#peak-hour").textContent = hourRange(peakHour.hour);
-  document.querySelector("#quiet-hour").textContent = hourRange(quietHour.hour);
-  document.querySelector("#date-range").textContent = dateRange
-    ? `${scheduleDate(dateRange.start, data.timezone.name)} to ${scheduleDate(dateRange.end, data.timezone.name)}`
-    : "No finished races";
-  document.querySelector("#active-period-label").textContent = selection.label;
-}
-
 function renderSelection(data, selection) {
-  renderSummary(data, selection);
+  document.querySelector("#active-period-label").textContent = selection.label;
   renderCandidateTable(document.querySelector("#candidate-table"), selection.weekday_hourly);
   renderOpportunityHeatmap(
     document.querySelector("#opportunity-heatmap"),
@@ -979,6 +948,7 @@ function renderPeriodControls(data) {
 }
 
 function renderDashboard(data) {
+  document.querySelector("#generated-at").textContent = utcTimestamp(data.generated_at);
   renderPeriodControls(data);
   renderSelection(data, allDataSelection(data));
 }

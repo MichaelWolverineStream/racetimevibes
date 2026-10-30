@@ -332,7 +332,7 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 ## Dashboard sections
 
-The page runs top to bottom as: **01 Latest** (the newest results with their tags), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. A racer's rivals (Nemesis and Favourite victim) sit directly under the badges and are always computed across all modes, whatever mode is selected. There is no race-day calendar.
+The page runs top to bottom as: **01 Latest** (the newest results with their tags), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. A racer's rivals (Nemesis and Favourite victim) sit directly under the badges and are always computed across all modes, whatever mode is selected. There is no race-day calendar. A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10); Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages.
 
 ## Tests
 
