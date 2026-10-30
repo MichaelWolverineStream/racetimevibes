@@ -480,7 +480,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(source["excluded_archived_race_count"], 1)
         self.assertEqual(stats["diagnostics"]["excluded_by_mode"], {"ladder_test": 1})
         self.assertEqual(
-            comments["races"], {"alttpr-ladder/kept-race-0001": [["player-a", "gg"]]}
+            comments["races"], {"alttpr-ladder/kept-race-0001": [["player-a", "gg", None]]}
         )
         self.assertEqual(
             json.loads(self.output_paths[2].read_text(encoding="utf-8")), comments

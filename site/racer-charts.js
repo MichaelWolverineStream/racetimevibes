@@ -836,7 +836,7 @@ function renderPlayerFinishTable(own) {
   const table = document.createElement("table");
   const head = document.createElement("thead");
   const headRow = document.createElement("tr");
-  ["Date", "Place", "Field", "Time"].forEach((header) => {
+  ["Date", "Place", "Field", "Time", "CR", "CPH"].forEach((header) => {
     const cell = document.createElement("th");
     cell.scope = "col";
     cell.textContent = header;
@@ -861,6 +861,18 @@ function renderPlayerFinishTable(own) {
       cell.append(value);
       row.append(cell);
     });
+    const chestsCell = document.createElement("td");
+    const perHourCell = document.createElement("td");
+    row.append(chestsCell, perHourCell);
+    if (typeof UI !== "undefined") {
+      UI.comments().then((payload) => {
+        const pace = UI.chestPace(payload, race.r, participants.players[point.p].id, point.seconds);
+        if (pace) {
+          chestsCell.textContent = pace.chests;
+          perHourCell.textContent = pace.perHour;
+        }
+      });
+    }
     body.append(row);
   });
   table.append(head, body);

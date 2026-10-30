@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="ca51b60c739b">
+    <meta name="app-version" content="5ba35f88f822">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=ca51b60c739b">
-    <link rel="stylesheet" href="ui.css?v=ca51b60c739b">
-    <link rel="stylesheet" href="feed.css?v=ca51b60c739b">
-    <link rel="stylesheet" href="records.css?v=ca51b60c739b">
-    <link rel="stylesheet" href="racer-extras.css?v=ca51b60c739b">
-    <link rel="stylesheet" href="easter-eggs.css?v=ca51b60c739b">
-    <title>ALTTPR Step Ladder Race Signals</title>
+    <link rel="stylesheet" href="styles.css?v=5ba35f88f822">
+    <link rel="stylesheet" href="ui.css?v=5ba35f88f822">
+    <link rel="stylesheet" href="feed.css?v=5ba35f88f822">
+    <link rel="stylesheet" href="records.css?v=5ba35f88f822">
+    <link rel="stylesheet" href="racer-extras.css?v=5ba35f88f822">
+    <link rel="stylesheet" href="easter-eggs.css?v=5ba35f88f822">
+    <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
     <div class="top-rail" aria-hidden="true"></div>
@@ -29,7 +29,7 @@
           height="112"
         >
         <div class="title-block">
-          <p class="kicker">Racetime.gg archive</p>
+          <p class="kicker">Stepladder results</p>
           <h1><a class="title-block__link" href="https://alttpr.racing/" target="_blank" rel="noreferrer">Climbers</a></h1>
           <p class="lede">Stats don't lie.</p>
         </div>
@@ -113,7 +113,7 @@
               <p class="panel-index">02 / Racers</p>
               <h2 id="leaderboard-title" tabindex="-1">Racer leaderboard</h2>
             </div>
-            <p>Who wins the most</p>
+            <p>Who lucksacks the most?</p>
           </header>
           <section id="finish-times" class="finish-times" aria-labelledby="finish-times-title" hidden>
             <div class="heatmap-heading">
@@ -177,7 +177,7 @@
               <p class="panel-index">03 / Records</p>
               <h2 id="records-title">Hall of records</h2>
             </div>
-            <p>Fastest, closest, longest</p>
+            <p>Fastest, closest, longest, hardest </p>
           </header>
           <div id="records-body" class="records-body"></div>
         </article>
@@ -208,10 +208,6 @@
             </div>
             <p>Compared with similar races</p>
           </header>
-          <div class="panel-intro">
-            <p>Positive lift means races in that window drew more entries than their matching mode-period baseline. Rankings are observational leads, not causal forecasts.</p>
-            <span>Minimum ranking sample: 20 races</span>
-          </div>
           <div id="candidate-table" class="table-wrap table-wrap--candidates" aria-live="polite"></div>
           <div class="heatmap-heading">
             <h3>Opportunity map</h3>
@@ -228,10 +224,6 @@
             </div>
             <p>Racers grouped by how often they race</p>
           </header>
-          <div class="panel-intro panel-intro--flush">
-            <p>Node area represents the share of identified racers. Connector weight and the annotation beneath each node show the share of identified entries they contributed.</p>
-            <span>Finished archived races only</span>
-          </div>
           <div id="community-orbit" class="orbit-host" aria-live="polite"></div>
           <p id="community-coverage" class="community-coverage"></p>
           <details class="data-details">
@@ -305,7 +297,7 @@
                 <span id="room-observed-bar" class="room-survival__observed"></span>
                 <span id="room-cancelled-bar" class="room-survival__cancelled"></span>
               </div>
-              <p>Estimate assumes rooms opened uniformly by hour. The central baseline is the median finished-room count among the six busiest hours (<strong id="room-baseline">--</strong> rooms/hour); hourly deficits are clamped at zero. The range is sensitivity analysis, not statistical confidence.</p>
+              <p>Estimate assumes rooms opened uniformly by hour. The central baseline is the median finished-room count among the six busiest hours (<strong id="room-baseline">--</strong> rooms/hour).</p>
             </div>
             <div id="hourly-total-chart" class="chart-host" aria-live="polite"></div>
             <details class="data-details">
@@ -405,7 +397,7 @@
     </main>
 
     <footer>
-      <p>Every archived finished race. Schedule times use America/New_York wall-clock time. Cancelled-room values are model estimates, not archived records.</p>
+      <p>Every archived finished race. Schedule times use America/New_York wall-clock time.</p>
       <div class="footer-meta">
         <p class="footer-credit">Built by StructuralMike</p>
         <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
@@ -421,16 +413,16 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=ca51b60c739b" defer></script>
-    <script src="racer-charts.js?v=ca51b60c739b" defer></script>
-    <script src="store.js?v=ca51b60c739b" defer></script>
-    <script src="ui.js?v=ca51b60c739b" defer></script>
-    <script src="feed.js?v=ca51b60c739b" defer></script>
-    <script src="records.js?v=ca51b60c739b" defer></script>
-    <script src="racer-extras.js?v=ca51b60c739b" defer></script>
-    <script src="easter-eggs.js?v=ca51b60c739b" defer></script>
-    <script src="leaderboard.js?v=ca51b60c739b" defer></script>
-    <script src="version-check.js?v=ca51b60c739b" defer></script>
-    <script src="visitor-counter.js?v=ca51b60c739b" defer></script>
+    <script src="app.js?v=5ba35f88f822" defer></script>
+    <script src="racer-charts.js?v=5ba35f88f822" defer></script>
+    <script src="store.js?v=5ba35f88f822" defer></script>
+    <script src="ui.js?v=5ba35f88f822" defer></script>
+    <script src="feed.js?v=5ba35f88f822" defer></script>
+    <script src="records.js?v=5ba35f88f822" defer></script>
+    <script src="racer-extras.js?v=5ba35f88f822" defer></script>
+    <script src="easter-eggs.js?v=5ba35f88f822" defer></script>
+    <script src="leaderboard.js?v=5ba35f88f822" defer></script>
+    <script src="version-check.js?v=5ba35f88f822" defer></script>
+    <script src="visitor-counter.js?v=5ba35f88f822" defer></script>
   </body>
 </html>

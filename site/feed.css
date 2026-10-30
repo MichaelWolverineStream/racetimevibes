@@ -296,7 +296,7 @@
 
 .feed-entrant {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 80px 56px;
+  grid-template-columns: 30px minmax(0, 1fr) 80px 64px 72px 56px;
   align-items: center;
   gap: 10px;
   padding: 4px 0;
@@ -320,6 +320,17 @@
   font-family: var(--display);
   font-size: var(--text-md);
   font-weight: 700;
+}
+
+.feed-entrant__chests,
+.feed-entrant__cph {
+  white-space: nowrap;
+}
+
+.feed-entrant__unit {
+  margin-left: 3px;
+  color: var(--muted);
+  font-size: var(--text-xs);
 }
 
 .feed-entrant__delta {
@@ -529,6 +540,11 @@
 
   .feed-row__detail {
     padding-left: 0;
+  }
+
+  .feed-entrant {
+    grid-template-columns: 26px minmax(0, 1fr) 60px 52px 60px 40px;
+    gap: 6px;
   }
 }
 

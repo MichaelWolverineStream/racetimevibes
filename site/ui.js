@@ -335,6 +335,15 @@ const UI = (() => {
     return commentsPromise;
   }
 
+  function chestPace(payload, raceName, userId, seconds) {
+    const entries = payload && payload.races ? payload.races[raceName] : null;
+    const match = (entries || []).find(([id]) => id === userId);
+    if (!match || match[2] === null || match[2] === undefined || !seconds) {
+      return null;
+    }
+    return { chests: match[2], perHour: Math.round((match[2] * 3600) / seconds) };
+  }
+
   function relativeDay(isoDate) {
     const toUtcDay = (iso) => Date.parse(`${iso}T00:00:00Z`);
     const days = Math.round((toUtcDay(todayInZone()) - toUtcDay(isoDate)) / 86400000);
@@ -343,5 +352,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, speech, tag, followStar, isPalindromeTime, time, badge, badgeShare, dialogBox, comments, relativeDay };
+  return { avatarUrl, avatar, speech, tag, followStar, isPalindromeTime, time, badge, badgeShare, dialogBox, comments, chestPace, relativeDay };
 })();

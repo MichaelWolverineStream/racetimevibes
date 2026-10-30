@@ -271,12 +271,14 @@ const Feed = (() => {
     } else {
       timeCell.textContent = status === STATUS_DQ ? "DQ" : status === STATUS_DNF ? "DNF" : "—";
     }
+    const chestsCell = element("span", "feed-entrant__chests");
+    const perHourCell = element("span", "feed-entrant__cph");
     const deltaCell = element("span", "feed-entrant__delta");
     const delta = ratingDeltaNode(raceIndex, entryIndex);
     if (delta) {
       deltaCell.appendChild(delta);
     }
-    row.append(placeCell, nameCell, timeCell, deltaCell);
+    row.append(placeCell, nameCell, timeCell, chestsCell, perHourCell, deltaCell);
     return row;
   }
 
@@ -294,6 +296,24 @@ const Feed = (() => {
     });
   }
 
+  function fillChestCells(race, rows) {
+    const pending = UI.comments();
+    if (!pending) {
+      return;
+    }
+    pending.then((payload) => {
+      race.e.forEach(([playerIndex, , status, seconds], entryIndex) => {
+        const pace = status === 0 ? UI.chestPace(payload, race.r, participants.players[playerIndex].id, seconds) : null;
+        if (!pace) {
+          return;
+        }
+        const row = rows.children[entryIndex];
+        row.querySelector(".feed-entrant__chests").append(String(pace.chests), element("span", "feed-entrant__unit", "CR"));
+        row.querySelector(".feed-entrant__cph").append(String(pace.perHour), element("span", "feed-entrant__unit", "CPH"));
+      });
+    });
+  }
+
   function buildDetail(race, raceIndex, detailId) {
     const detail = element("div", "feed-row__detail");
     detail.id = detailId;
@@ -306,6 +326,7 @@ const Feed = (() => {
     link.rel = "noopener noreferrer";
     const comments = element("div", "feed-row__comments");
     detail.append(entrants, link, comments);
+    fillChestCells(race, entrants);
     fillRaceComments(race, comments);
     return detail;
   }
