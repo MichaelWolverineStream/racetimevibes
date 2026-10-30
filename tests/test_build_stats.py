@@ -136,7 +136,7 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(by_mode["keys"]["race_count"], 2)
         self.assertEqual(by_mode["keys"]["average_racers"], 6)
         self.assertEqual(by_mode["unknown"]["race_count"], 1)
-        self.assertEqual(stats["schema_version"], 6)
+        self.assertEqual(stats["schema_version"], 7)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
         self.assertEqual(stats["diagnostics"]["excluded_by_status"], {"cancelled": 1})
@@ -208,7 +208,7 @@ class AggregationTests(unittest.TestCase):
             ["entrance", "keys", "simple"],
         )
 
-    def test_includes_2025_races_excludes_ladder_tests_and_groups_half_years(self):
+    def test_includes_2025_races_excludes_ladder_tests_and_groups_quarters(self):
         stats = build_stats.aggregate_races(
             [
                 race(
@@ -222,13 +222,13 @@ class AggregationTests(unittest.TestCase):
                     entrants_count=5,
                 ),
                 race(
-                    "first-half",
+                    "early-2026",
                     started_at="2026-01-01T05:00:00Z",
                     entrants_count=6,
                     info="Step Ladder Series - [keys]",
                 ),
                 race(
-                    "second-half",
+                    "mid-2026",
                     started_at="2026-07-01T04:00:00Z",
                     entrants_count=8,
                     info="Step Ladder Series - [entrance]",
@@ -247,7 +247,7 @@ class AggregationTests(unittest.TestCase):
             generated_at=self.generated_at,
         )
 
-        self.assertEqual(stats["schema_version"], 6)
+        self.assertEqual(stats["schema_version"], 7)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -261,20 +261,20 @@ class AggregationTests(unittest.TestCase):
 
         periods = {item["id"]: item for item in stats["periods"]}
         self.assertEqual(
-            list(periods), ["2025-H1", "2025-H2", "2026-H1", "2026-H2"]
+            list(periods), ["2025-Q2", "2025-Q4", "2026-Q1", "2026-Q3"]
         )
-        self.assertEqual(periods["2025-H1"]["label"], "Jan-Jun 2025")
+        self.assertEqual(periods["2025-Q2"]["label"], "Q2 2025")
         self.assertEqual(
             {period_id: item["completeness"] for period_id, item in periods.items()},
             {
-                "2025-H1": "partial",
-                "2025-H2": "complete",
-                "2026-H1": "complete",
-                "2026-H2": "partial",
+                "2025-Q2": "partial",
+                "2025-Q4": "complete",
+                "2026-Q1": "complete",
+                "2026-Q3": "partial",
             },
         )
-        self.assertEqual(periods["2025-H2"]["entrant_total"], 5)
-        self.assertEqual(periods["2026-H1"]["entrant_total"], 6)
+        self.assertEqual(periods["2025-Q4"]["entrant_total"], 5)
+        self.assertEqual(periods["2026-Q1"]["entrant_total"], 6)
         self.assertEqual(
             sum(item["race_count"] for item in stats["periods"]),
             stats["source"]["included_race_count"],
@@ -283,6 +283,23 @@ class AggregationTests(unittest.TestCase):
             sum(item["entrant_total"] for item in stats["periods"]),
             stats["source"]["included_entrant_count"],
         )
+
+    def test_quarter_period_spans_calendar_quarters(self):
+        expected = {
+            2: ("2026-Q1", "Q1 2026", "2026-01-01", "2026-03-31"),
+            4: ("2026-Q2", "Q2 2026", "2026-04-01", "2026-06-30"),
+            9: ("2026-Q3", "Q3 2026", "2026-07-01", "2026-09-30"),
+            12: ("2026-Q4", "Q4 2026", "2026-10-01", "2026-12-31"),
+        }
+        for month, (period_id, label, start, end) in expected.items():
+            with self.subTest(month=month):
+                period = build_stats.quarter_period(
+                    datetime(2026, month, 15, tzinfo=build_stats.SCHEDULE_TIMEZONE)
+                )
+                self.assertEqual(
+                    period,
+                    {"id": period_id, "label": label, "start": start, "end": end},
+                )
 
     def test_aggregates_unique_players_without_serializing_identities(self):
         private_id = "private-player-id"
@@ -501,25 +518,25 @@ class RoomCancellationEstimateTests(unittest.TestCase):
         )
 
         self.assertEqual(estimate["baseline_rooms_per_hour"], 7.5)
-        self.assertEqual(estimate["estimated_deleted_rooms"], 140)
+        self.assertEqual(estimate["estimated_cancelled_rooms"], 140)
         self.assertEqual(estimate["observed_finished_rooms"], 45)
         self.assertEqual(estimate["estimated_opened_rooms"], 185)
-        self.assertEqual(estimate["estimated_deleted_share"], 140 / 185)
+        self.assertEqual(estimate["estimated_cancelled_share"], 140 / 185)
         self.assertLessEqual(
-            estimate["sensitivity"]["lower_estimated_deleted_rooms"],
-            estimate["estimated_deleted_rooms"],
+            estimate["sensitivity"]["lower_estimated_cancelled_rooms"],
+            estimate["estimated_cancelled_rooms"],
         )
         self.assertLessEqual(
-            estimate["estimated_deleted_rooms"],
-            estimate["sensitivity"]["upper_estimated_deleted_rooms"],
+            estimate["estimated_cancelled_rooms"],
+            estimate["sensitivity"]["upper_estimated_cancelled_rooms"],
         )
 
-    def test_equal_hours_infer_no_deleted_rooms(self):
+    def test_equal_hours_infer_no_cancelled_rooms(self):
         estimate = build_stats._room_cancellation_estimate(self.hourly([4] * 24))
 
-        self.assertEqual(estimate["estimated_deleted_rooms"], 0)
+        self.assertEqual(estimate["estimated_cancelled_rooms"], 0)
         self.assertEqual(estimate["estimated_opened_rooms"], 96)
-        self.assertEqual(estimate["estimated_deleted_share"], 0)
+        self.assertEqual(estimate["estimated_cancelled_share"], 0)
 
     def test_sparse_hours_remain_nonnegative(self):
         estimate = build_stats._room_cancellation_estimate(
@@ -527,9 +544,9 @@ class RoomCancellationEstimateTests(unittest.TestCase):
         )
 
         self.assertEqual(estimate["baseline_rooms_per_hour"], 0.5)
-        self.assertEqual(estimate["estimated_deleted_rooms"], 11)
+        self.assertEqual(estimate["estimated_cancelled_rooms"], 11)
         self.assertGreaterEqual(
-            estimate["sensitivity"]["lower_estimated_deleted_rooms"], 0
+            estimate["sensitivity"]["lower_estimated_cancelled_rooms"], 0
         )
 
 
@@ -548,7 +565,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 6)
+        self.assertEqual(data["schema_version"], 7)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
@@ -589,7 +606,7 @@ class GeneratedDataTests(unittest.TestCase):
             self.assertEqual(
                 estimate["estimated_opened_rooms"],
                 estimate["observed_finished_rooms"]
-                + estimate["estimated_deleted_rooms"],
+                + estimate["estimated_cancelled_rooms"],
             )
 
     def test_generated_schema_contains_no_participant_details(self):

@@ -92,17 +92,17 @@ You can still refresh by hand with the two commands above and commit `archive/` 
 - The dataset covers every archived finished race, beginning 2025-04-20. Dates are `America/New_York` local start dates.
 - Races whose normalized `info` mode is `ladder_test` or `ladder test` are excluded from every metric.
 - Schedule buckets use `America/New_York`, including the seasonal switch between EST and EDT.
-- Six-month periods are calendar half-years (`Jan-Jun` and `Jul-Dec`) determined from the race's Eastern Time start. Edge periods are marked partial when the archive does not cover the full half-year.
+- Periods are calendar quarters (`Q1` to `Q4`) determined from the race's Eastern Time start. Edge periods are marked partial when the archive does not cover the full quarter.
 - Race turnout uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries.
 - Identified racers are deduplicated from stable public user IDs within the selected period. Identity coverage is the share of entries carrying such an ID. Cohorts are one race, occasional (2-5), regular (6-20), and core (21+); cohort entry shares use identified entries as the denominator.
-- Unique-player metrics cover archived finished races only. They do not estimate people from deleted rooms, and anonymized entries contribute to identity coverage but not player or cohort counts.
-- Six-month participation is average entries per finished race: total race entries divided by races in that calendar half-year.
+- Unique-player metrics cover archived finished races only. They do not estimate people from cancelled rooms, and anonymized entries contribute to identity coverage but not player or cohort counts.
+- Quarterly participation is average entries per finished race: total race entries divided by races in that calendar quarter.
 - Hour, weekday-hour, and mode averages use the same entries-per-finished-race definition.
 - Total entrants per hour sums recorded entries for the selected reporting period.
-- Racerooms with fewer than two entrants are deleted and are not available through the archive. The dashboard estimates their count under a uniform hourly-opening assumption. Let $F_h$ be observed finished rooms in hour $h$ and let $B_6$ be the median of the six busiest hourly counts. The central estimate is $\sum_h \max(0, B_6 - F_h)$, rounded to the nearest room.
+- Racerooms with fewer than two entrants are cancelled and are not available through the archive. The dashboard estimates their count under a uniform hourly-opening assumption. Let $F_h$ be observed finished rooms in hour $h$ and let $B_6$ be the median of the six busiest hourly counts. The central estimate is $\sum_h \max(0, B_6 - F_h)$, rounded to the nearest room.
 - The displayed sensitivity range repeats that calculation with the median of the 12 busiest hours as the lower baseline and the maximum observed hour as the upper baseline. This is sensitivity analysis, not a confidence interval. It estimates rooms missing from the archive and is separate from API records explicitly marked `cancelled`.
 - Medians and quartiles describe the observed race-level distribution. The displayed 95% ranges are normal confidence intervals for the mean using the sample standard deviation; cells with fewer than two races have no interval.
-- Adjusted weekday-hour lift subtracts the matching mode-by-calendar-half-year mean from every race, then averages those residuals within each weekday-hour cell. This reduces mode and broad time-period mix effects.
+- Adjusted weekday-hour lift subtracts the matching mode-by-calendar-quarter mean from every race, then averages those residuals within each weekday-hour cell. This reduces mode and broad time-period mix effects.
 - Mode is the normalized first token in the `Step Ladder Series - [mode]` prefix of `info`. Later tags such as `[VT]` are ignored. A missing or malformed prefix is grouped as `unknown`.
 
 ### Racer leaderboard

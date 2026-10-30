@@ -372,11 +372,11 @@ function participationChart(periods, selectedPeriodId, width) {
     "aria-labelledby": "participation-chart-title participation-chart-description",
   });
   svg.append(
-    svgElement("title", { id: "participation-chart-title" }, "Average entries per race by six-month period"),
+    svgElement("title", { id: "participation-chart-title" }, "Average entries per race by quarter"),
     svgElement(
       "desc",
       { id: "participation-chart-description" },
-      "Vertical bars compare average total entrants per finished race across calendar half-years.",
+      "Vertical bars compare average total entrants per finished race across calendar quarters.",
     ),
   );
 
@@ -434,7 +434,7 @@ function participationChart(periods, selectedPeriodId, width) {
       svgElement("title", {}, label),
     );
     bindTooltip(group, label);
-    const [range, year] = period.label.split(" ");
+    const [quarter, year] = period.label.split(" ");
     svg.append(
       group,
       svgElement(
@@ -450,7 +450,7 @@ function participationChart(periods, selectedPeriodId, width) {
       svgElement(
         "text",
         { class: "axis-label axis-label--period", x: x + barWidth / 2, y: height - 34, "text-anchor": "middle" },
-        range.toUpperCase(),
+        quarter.toUpperCase(),
       ),
       svgElement(
         "text",
@@ -633,12 +633,12 @@ function renderRoomSurvival(selection) {
     ? estimate.observed_finished_rooms / estimate.estimated_opened_rooms
     : 0;
   document.querySelector("#room-finished").textContent = integerFormatter.format(estimate.observed_finished_rooms);
-  document.querySelector("#room-deleted").textContent = `~${integerFormatter.format(estimate.estimated_deleted_rooms)}`;
-  document.querySelector("#room-deleted-share").textContent = formatPercent(estimate.estimated_deleted_share);
-  document.querySelector("#room-sensitivity").textContent = `${integerFormatter.format(sensitivity.lower_estimated_deleted_rooms)}-${integerFormatter.format(sensitivity.upper_estimated_deleted_rooms)}`;
+  document.querySelector("#room-cancelled").textContent = `~${integerFormatter.format(estimate.estimated_cancelled_rooms)}`;
+  document.querySelector("#room-cancelled-share").textContent = formatPercent(estimate.estimated_cancelled_share);
+  document.querySelector("#room-sensitivity").textContent = `${integerFormatter.format(sensitivity.lower_estimated_cancelled_rooms)}-${integerFormatter.format(sensitivity.upper_estimated_cancelled_rooms)}`;
   document.querySelector("#room-baseline").textContent = decimalFormatter.format(estimate.baseline_rooms_per_hour);
   document.querySelector("#room-observed-bar").style.width = `${observedShare * 100}%`;
-  document.querySelector("#room-deleted-bar").style.width = `${estimate.estimated_deleted_share * 100}%`;
+  document.querySelector("#room-cancelled-bar").style.width = `${estimate.estimated_cancelled_share * 100}%`;
 }
 
 function renderCommunityOrbit(container, tableContainer, coverageContainer, summary) {
@@ -801,12 +801,12 @@ function hasValidAggregate(aggregate) {
     ))
     && estimate?.method === "top_6_median_clamped_hourly_deficit"
     && Number.isFinite(estimate.observed_finished_rooms)
-    && Number.isFinite(estimate.estimated_deleted_rooms)
+    && Number.isFinite(estimate.estimated_cancelled_rooms)
     && estimate.estimated_opened_rooms === (
-      estimate.observed_finished_rooms + estimate.estimated_deleted_rooms
+      estimate.observed_finished_rooms + estimate.estimated_cancelled_rooms
     )
-    && Number.isFinite(estimate.sensitivity?.lower_estimated_deleted_rooms)
-    && Number.isFinite(estimate.sensitivity?.upper_estimated_deleted_rooms)
+    && Number.isFinite(estimate.sensitivity?.lower_estimated_cancelled_rooms)
+    && Number.isFinite(estimate.sensitivity?.upper_estimated_cancelled_rooms)
   );
 }
 
@@ -819,7 +819,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 6
+    || data.schema_version !== 7
     || !hasValidAggregate(data)
     || !Array.isArray(data.periods)
     || data.periods.length === 0

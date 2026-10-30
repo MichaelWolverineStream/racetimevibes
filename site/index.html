@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="289f5f6201ad">
+    <meta name="app-version" content="bb4181a7eaa9">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=289f5f6201ad">
-    <link rel="stylesheet" href="ui.css?v=289f5f6201ad">
-    <link rel="stylesheet" href="feed.css?v=289f5f6201ad">
-    <link rel="stylesheet" href="records.css?v=289f5f6201ad">
-    <link rel="stylesheet" href="racer-extras.css?v=289f5f6201ad">
-    <link rel="stylesheet" href="easter-eggs.css?v=289f5f6201ad">
+    <link rel="stylesheet" href="styles.css?v=bb4181a7eaa9">
+    <link rel="stylesheet" href="ui.css?v=bb4181a7eaa9">
+    <link rel="stylesheet" href="feed.css?v=bb4181a7eaa9">
+    <link rel="stylesheet" href="records.css?v=bb4181a7eaa9">
+    <link rel="stylesheet" href="racer-extras.css?v=bb4181a7eaa9">
+    <link rel="stylesheet" href="easter-eggs.css?v=bb4181a7eaa9">
     <title>ALTTPR Step Ladder Race Signals</title>
   </head>
   <body>
@@ -298,16 +298,16 @@
               </div>
               <p>Total racers · <span id="hourly-total-range">All data</span></p>
             </header>
-            <div class="room-survival" aria-label="Finished and inferred deleted room summary">
+            <div class="room-survival" aria-label="Finished and inferred cancelled room summary">
               <div class="room-survival__metrics">
                 <div><span>Finished rooms</span><strong id="room-finished">--</strong></div>
-                <div><span>Est. deleted</span><strong id="room-deleted">--</strong></div>
-                <div><span>Est. deleted share</span><strong id="room-deleted-share">--</strong></div>
+                <div><span>Est. cancelled</span><strong id="room-cancelled">--</strong></div>
+                <div><span>Est. cancelled share</span><strong id="room-cancelled-share">--</strong></div>
                 <div><span>Sensitivity range</span><strong id="room-sensitivity">--</strong></div>
               </div>
               <div class="room-survival__track" aria-hidden="true">
                 <span id="room-observed-bar" class="room-survival__observed"></span>
-                <span id="room-deleted-bar" class="room-survival__deleted"></span>
+                <span id="room-cancelled-bar" class="room-survival__cancelled"></span>
               </div>
               <p>Estimate assumes rooms opened uniformly by hour. The central baseline is the median finished-room count among the six busiest hours (<strong id="room-baseline">--</strong> rooms/hour); hourly deficits are clamped at zero. The range is sensitivity analysis, not statistical confidence.</p>
             </div>
@@ -409,7 +409,7 @@
     </main>
 
     <footer>
-      <p>Every archived finished race. Schedule times use America/New_York wall-clock time. Deleted-room values are model estimates, not recorded cancellations.</p>
+      <p>Every archived finished race. Schedule times use America/New_York wall-clock time. Cancelled-room values are model estimates, not archived records.</p>
       <div class="footer-meta">
         <p class="footer-credit">Built by StructuralMike</p>
         <a href="https://racetime.gg/alttpr-ladder/races/data" target="_blank" rel="noreferrer">API source</a>
@@ -425,16 +425,16 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=289f5f6201ad" defer></script>
-    <script src="racer-charts.js?v=289f5f6201ad" defer></script>
-    <script src="store.js?v=289f5f6201ad" defer></script>
-    <script src="ui.js?v=289f5f6201ad" defer></script>
-    <script src="feed.js?v=289f5f6201ad" defer></script>
-    <script src="records.js?v=289f5f6201ad" defer></script>
-    <script src="racer-extras.js?v=289f5f6201ad" defer></script>
-    <script src="easter-eggs.js?v=289f5f6201ad" defer></script>
-    <script src="leaderboard.js?v=289f5f6201ad" defer></script>
-    <script src="version-check.js?v=289f5f6201ad" defer></script>
-    <script src="visitor-counter.js?v=289f5f6201ad" defer></script>
+    <script src="app.js?v=bb4181a7eaa9" defer></script>
+    <script src="racer-charts.js?v=bb4181a7eaa9" defer></script>
+    <script src="store.js?v=bb4181a7eaa9" defer></script>
+    <script src="ui.js?v=bb4181a7eaa9" defer></script>
+    <script src="feed.js?v=bb4181a7eaa9" defer></script>
+    <script src="records.js?v=bb4181a7eaa9" defer></script>
+    <script src="racer-extras.js?v=bb4181a7eaa9" defer></script>
+    <script src="easter-eggs.js?v=bb4181a7eaa9" defer></script>
+    <script src="leaderboard.js?v=bb4181a7eaa9" defer></script>
+    <script src="version-check.js?v=bb4181a7eaa9" defer></script>
+    <script src="visitor-counter.js?v=bb4181a7eaa9" defer></script>
   </body>
 </html>

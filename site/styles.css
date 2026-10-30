@@ -848,7 +848,7 @@ a:hover {
   background: var(--series);
 }
 
-.room-survival__deleted {
+.room-survival__cancelled {
   background: repeating-linear-gradient(
     135deg,
     var(--negative) 0 5px,

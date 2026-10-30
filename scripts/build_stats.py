@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import calendar
 import math
 import re
 import statistics
@@ -162,7 +163,7 @@ def _entry_summary(values: list[int]) -> JsonObject:
     }
 
 
-def _estimated_deleted_rooms(counts: list[int], top_hour_count: int) -> tuple[float, int]:
+def _estimated_cancelled_rooms(counts: list[int], top_hour_count: int) -> tuple[float, int]:
     busiest_counts = sorted(counts, reverse=True)[:top_hour_count]
     baseline = statistics.median(busiest_counts)
     raw_estimate = sum(max(0, baseline - count) for count in counts)
@@ -174,28 +175,28 @@ def _room_cancellation_estimate(hourly_output: list[JsonObject]) -> JsonObject:
     if not counts:
         raise DataError("Room cancellation estimate requires hourly observations")
 
-    baseline, estimated_deleted = _estimated_deleted_rooms(counts, 6)
-    _, lower_estimate = _estimated_deleted_rooms(counts, 12)
-    upper_baseline, upper_estimate = _estimated_deleted_rooms(counts, 1)
+    baseline, estimated_cancelled = _estimated_cancelled_rooms(counts, 6)
+    _, lower_estimate = _estimated_cancelled_rooms(counts, 12)
+    upper_baseline, upper_estimate = _estimated_cancelled_rooms(counts, 1)
     observed_finished = sum(counts)
-    estimated_opened = observed_finished + estimated_deleted
+    estimated_opened = observed_finished + estimated_cancelled
 
     return {
         "method": "top_6_median_clamped_hourly_deficit",
         "top_hour_count": 6,
         "baseline_rooms_per_hour": baseline,
         "observed_finished_rooms": observed_finished,
-        "estimated_deleted_rooms": estimated_deleted,
+        "estimated_cancelled_rooms": estimated_cancelled,
         "estimated_opened_rooms": estimated_opened,
-        "estimated_deleted_share": (
-            estimated_deleted / estimated_opened if estimated_opened else 0
+        "estimated_cancelled_share": (
+            estimated_cancelled / estimated_opened if estimated_opened else 0
         ),
         "sensitivity": {
             "lower_method": "top_12_median_clamped_hourly_deficit",
-            "lower_estimated_deleted_rooms": lower_estimate,
+            "lower_estimated_cancelled_rooms": lower_estimate,
             "upper_method": "maximum_hour_clamped_hourly_deficit",
             "upper_baseline_rooms_per_hour": upper_baseline,
-            "upper_estimated_deleted_rooms": upper_estimate,
+            "upper_estimated_cancelled_rooms": upper_estimate,
         },
     }
 
@@ -374,16 +375,16 @@ def _aggregate_records(records: list[JsonObject]) -> JsonObject:
     }
 
 
-def six_month_period(local_started_at: datetime) -> JsonObject:
-    first_half = local_started_at.month <= 6
-    half = 1 if first_half else 2
-    start_month = 1 if first_half else 7
-    end_month = 6 if first_half else 12
+def quarter_period(local_started_at: datetime) -> JsonObject:
+    year = local_started_at.year
+    quarter = (local_started_at.month - 1) // 3 + 1
+    start_month = 3 * quarter - 2
+    end_month = 3 * quarter
     return {
-        "id": f"{local_started_at.year}-H{half}",
-        "label": f"{'Jan-Jun' if first_half else 'Jul-Dec'} {local_started_at.year}",
-        "start": f"{local_started_at.year}-{start_month:02d}-01",
-        "end": f"{local_started_at.year}-{end_month:02d}-{30 if end_month == 6 else 31}",
+        "id": f"{year}-Q{quarter}",
+        "label": f"Q{quarter} {year}",
+        "start": f"{year}-{start_month:02d}-01",
+        "end": f"{year}-{end_month:02d}-{calendar.monthrange(year, end_month)[1]}",
     }
 
 
@@ -492,7 +493,7 @@ def aggregate_races(
         entrant_ids, unidentified_entry_count = _entrant_identity_counts(
             race, entrants_count
         )
-        period = six_month_period(local_started_at)
+        period = quarter_period(local_started_at)
         record = {
             "started_at": context["started_at"],
             "local_started_at": local_started_at,
@@ -540,7 +541,7 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 6,
+        "schema_version": 7,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {

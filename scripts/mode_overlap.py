@@ -103,6 +103,19 @@ def month_key(local_started_at: datetime) -> str:
     return local_started_at.strftime("%Y-%m")
 
 
+def six_month_period(local_started_at: datetime) -> JsonObject:
+    first_half = local_started_at.month <= 6
+    half = 1 if first_half else 2
+    start_month = 1 if first_half else 7
+    end_month = 6 if first_half else 12
+    return {
+        "id": f"{local_started_at.year}-H{half}",
+        "label": f"{'Jan-Jun' if first_half else 'Jul-Dec'} {local_started_at.year}",
+        "start": f"{local_started_at.year}-{start_month:02d}-01",
+        "end": f"{local_started_at.year}-{end_month:02d}-{30 if end_month == 6 else 31}",
+    }
+
+
 def monthly_entries(contexts: list[JsonObject]) -> MonthlyEntries:
     """Count each identified racer's entries per Eastern Time month and mode."""
     if not contexts:
@@ -116,7 +129,7 @@ def monthly_entries(contexts: list[JsonObject]) -> MonthlyEntries:
         month = month_key(local_started_at)
         mode = context["mode"]
         races[month][mode] += 1
-        periods[month] = build_stats.six_month_period(local_started_at)
+        periods[month] = six_month_period(local_started_at)
         for user_id, *_rest in participant_stats._race_entries(context["race"], diagnostics):
             racers[user_id][month][mode] += 1
     return MonthlyEntries(
