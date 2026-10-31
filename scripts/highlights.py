@@ -53,6 +53,7 @@ TOUCHED_GRASS_FROM = date(2026, 8, 1)
 YAP_COMMENTS = 11
 NIGHT_HOURS = range(0, 5)
 BIG_FIELD_SIZE = 16
+BLOWOUT_MIN_FIELD = 5
 GOD_ROUTE_MIN_MARGIN = 600
 GOD_ROUTE_MIN_FIELD = 7
 RANKING_WINDOW_DAYS = 90
@@ -699,7 +700,8 @@ def compute(
                 photos.append([ri, winner[0], runner_up[0], margin])
                 snipers = {winner[0]}
                 sniped = {runner_up[0]}
-            blowouts.append([ri, winner[0], runner_up[0], margin])
+            if n >= BLOWOUT_MIN_FIELD:
+                blowouts.append([ri, winner[0], runner_up[0], margin])
         if winner is not None and n >= BIG_FIELD_SIZE:
             big_fields.append([ri, winner[0], n])
 
@@ -937,6 +939,11 @@ def compute(
             lambda row: (-row[1], row[0]),
             BOARD_TOP,
         ),
+        "rivals": _top(
+            [[a, b, count] for (a, b), count in pair_counts.items()],
+            lambda row: (-row[2], row[0], row[1]),
+            BOARD_TOP,
+        ),
         "streaks": _streak_boards(states, daily),
     }
 
@@ -978,7 +985,6 @@ def compute(
         result=result,
         daily=daily,
         day_races=day_races,
-        pair_counts=pair_counts,
         total_seconds=total_seconds,
         palindromes=palindromes,
         palindrome_example=palindrome_example,
@@ -1050,7 +1056,6 @@ def _facts(
     result: JsonObject,
     daily: dict[int, tuple[list[Any], list[Any]]],
     day_races: Counter[str],
-    pair_counts: Counter[tuple[int, int]],
     total_seconds: float,
     palindromes: int,
     palindrome_example: float | None,
@@ -1105,8 +1110,9 @@ def _facts(
         index, length, *_rest = finish_board[0]
         facts.append(f"{name(index)} finished {plural(length, 'race')} in a row.")
 
-    if pair_counts:
-        (a, b), count = min(pair_counts.items(), key=lambda item: (-item[1], item[0]))
+    rivals = result["records"]["rivals"]
+    if rivals:
+        a, b, count = rivals[0]
         facts.append(f"{name(a)} and {name(b)} have shared {plural(count, 'race')}.")
 
     if palindromes:

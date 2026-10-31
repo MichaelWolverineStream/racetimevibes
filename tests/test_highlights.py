@@ -959,14 +959,26 @@ class RecordBoardTests(unittest.TestCase):
         )
 
     def test_blowout_board_is_largest_margin_first(self):
-        records = [duel(0, 1, margin=3.0), duel(2, 3, margin=900.0), duel(4, 5, margin=90.0)]
+        field = highlights.BLOWOUT_MIN_FIELD
+        records = [
+            duel(0, 1, margin=3.0, n=field),
+            duel(2, 3, margin=900.0, n=field),
+            duel(4, 5, margin=90.0, n=field),
+        ]
         self.assertEqual(
             run(records)["records"]["blowouts"],
             [[1, 2, 3, 900], [2, 4, 5, 90], [0, 0, 1, 3]],
         )
 
+    def test_blowout_board_skips_fields_under_five(self):
+        field = highlights.BLOWOUT_MIN_FIELD
+        records = [duel(0, 1, margin=5000.0, n=field - 1), duel(2, 3, margin=60.0, n=field)]
+        self.assertEqual(run(records)["records"]["blowouts"], [[1, 2, 3, 60]])
+
     def test_boards_are_capped_at_ten(self):
-        records = [duel(0, 1, margin=1.0 + i / 10) for i in range(15)]
+        records = [
+            duel(0, 1, margin=1.0 + i / 10, n=highlights.BLOWOUT_MIN_FIELD) for i in range(15)
+        ]
         result = run(records)["records"]
         self.assertEqual(len(result["photo"]), 10)
         self.assertEqual(len(result["blowouts"]), 10)
@@ -974,6 +986,13 @@ class RecordBoardTests(unittest.TestCase):
     def test_most_races_board(self):
         records = [duel(0, 1), duel(0, 2), duel(0, 1)]
         self.assertEqual(run(records)["records"]["most_races"], [[0, 3], [1, 2], [2, 1]])
+
+    def test_rivals_board_counts_shared_races(self):
+        trio = record([done(2, 1, 3600.0), done(1, 2, 3700.0), dnf(0)])
+        records = [duel(0, 1), duel(1, 0), duel(0, 2), trio]
+        self.assertEqual(
+            run(records)["records"]["rivals"], [[0, 1, 3], [0, 2, 2], [1, 2, 1]]
+        )
 
 
 class OutputTests(unittest.TestCase):

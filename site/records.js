@@ -157,7 +157,7 @@ const Records = (() => {
         modeIndex: participants.races[raceIndex].m,
       });
     });
-    const node = card("Biggest wins");
+    const node = card(`Biggest wins · ${participants.blowout_min_field}+ racers`);
     node.appendChild(rankedList(rows));
     return node;
   }
@@ -181,6 +181,18 @@ const Records = (() => {
       listRow(index + 1, player, { value: plural(count, ["race", "races"]) })
     ));
     const node = card("Most races");
+    node.appendChild(rankedList(rows));
+    return node;
+  }
+
+  function rivalsCard() {
+    const rows = participants.records.rivals.slice(0, CARD_ROWS).map(([first, second, count], index) => {
+      const partner = participants.players[second];
+      const link = element("a", "records-muted-link", `& ${partner.name}`);
+      link.href = playerHash(partner.id, ALL_MODES);
+      return listRow(index + 1, first, { suffix: link, value: plural(count, ["race", "races"]) });
+    });
+    const node = card("Most-met rivals");
     node.appendChild(rankedList(rows));
     return node;
   }
@@ -224,7 +236,7 @@ const Records = (() => {
   }
 
   function streaksCard() {
-    const node = card("Streaks", "records-card--wide");
+    const node = card("Streaks", "records-card--wide records-card--tall");
     const toggle = element("div", "mode-toggle records-card__toggle");
     toggle.setAttribute("role", "group");
     toggle.setAttribute("aria-label", "Streak board");
@@ -547,12 +559,12 @@ const Records = (() => {
     parts.presets = element("div", "table-wrap table-wrap--leaderboard records-presets");
 
     const cards = element("div", "records-grid");
-    cards.append(photoCard(), blowoutCard(), bigFieldCard(), mostRacesCard(), streaksCard());
+    cards.append(photoCard(), blowoutCard(), bigFieldCard(), mostRacesCard(), streaksCard(), rivalsCard());
 
     body.replaceChildren(
       sectionHeading("Across all modes"),
       cards,
-      sectionHeading("Record progression", "Record time by race date · each chart has its own time scale"),
+      sectionHeading("Record progression", "Record time by race date"),
       parts.progress,
       sectionHeading("By mode"),
       toolbar,

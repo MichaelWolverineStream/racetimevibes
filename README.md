@@ -321,9 +321,10 @@ A preset is the name after the mode in the race's `info` first line, trimmed, cu
 ### Records
 
 - **Mode records:** one progression step per race that sets a new record, per mode.
-- **Photo finishes** and **blowouts:** the 10 smallest and 10 largest margins between places 1 and 2.
+- **Photo finishes** and **blowouts:** the 10 smallest and 10 largest margins between places 1 and 2. Blowouts count only fields of 5 or more racers.
 - **Big fields:** the 10 largest fields that had an identified winner.
 - **Most races:** the 10 racers with the most entries.
+- **Most-met rivals:** the 10 pairs of racers who entered the most races together. Any entry counts, DNFs and DQs included.
 - **Streak boards:** the 10 best streaks of each kind. Whether a streak is still active depends on today's date, so the page's **Active now** view ranks every racer's current streak of two or more: a daily streak whose last day is today or yesterday in Eastern Time, or any other kind whose latest race is within the last 30 days.
 - **Facts:** about a dozen English sentences generated from the data, such as the hardest preset or the busiest day. A fact without enough data is skipped.
 

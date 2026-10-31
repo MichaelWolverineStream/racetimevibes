@@ -21,7 +21,7 @@ except ImportError:
     import ladder_rating
 
 
-PARTICIPANT_SCHEMA_VERSION = 6
+PARTICIPANT_SCHEMA_VERSION = 7
 AVATAR_ORIGIN = "https://racetime.gg/media/"
 AVATAR_FILENAME = re.compile(r"^[\w.-]+$")
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
@@ -374,6 +374,7 @@ def build_participant_payload(
         ],
         "hardest_preset": derived["hardest_preset"],
         "preset_min_races": highlights.PRESET_MIN_RACES,
+        "blowout_min_field": highlights.BLOWOUT_MIN_FIELD,
         "players": players,
         "races": races,
         "leaderboards": leaderboards,

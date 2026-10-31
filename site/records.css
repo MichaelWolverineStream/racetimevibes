@@ -168,6 +168,11 @@
   grid-column: span 2;
 }
 
+/* Streaks is about as tall as two cards, so it spans two rows and the card after it fills the space beside it. */
+.records-card--tall {
+  grid-row: span 2;
+}
+
 .records-card__label {
   margin: 0 0 8px;
   color: var(--accent);
@@ -275,6 +280,11 @@
   .records-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  /* Streaks spans the full width here, so nothing sits beside it. */
+  .records-card--tall {
+    grid-row: auto;
+  }
 }
 
 /* Two columns, like every summary strip at this width; the shared divider rules assume it. */
@@ -284,9 +294,15 @@
   }
 }
 
+/* One column on phones: two squeeze the racer names to nothing. */
 @media (max-width: 620px) {
-  .records-grid--progress {
+  .records-grid,
+  .records-streaks {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .records-card--wide {
+    grid-column: auto;
   }
 }
 
