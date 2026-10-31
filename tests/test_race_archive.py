@@ -436,11 +436,13 @@ class LoadTests(ArchiveTestCase):
         with self.assertRaisesRegex(race_archive.ArchiveError, "does not match its path"):
             race_archive.load_races(self.archive_dir)
 
-    def test_writes_valid_json_atomically(self):
+    def test_writes_compact_json_atomically(self):
         output_path = self.archive_dir / "nested" / "stats.json"
-        race_archive.write_json_atomic({"hourly": []}, output_path)
+        race_archive.write_json_atomic({"hourly": [1, 2], "label": "a b"}, output_path)
 
-        self.assertEqual(json.loads(output_path.read_text()), {"hourly": []})
+        self.assertEqual(
+            output_path.read_text(encoding="utf-8"), '{"hourly":[1,2],"label":"a b"}\n'
+        )
         self.assertFalse(output_path.with_suffix(".json.tmp").exists())
 
 
@@ -489,6 +491,28 @@ class CommittedArchiveTests(unittest.TestCase):
         self.assertTrue(envelopes)
         names = race_archive.load_racer_names()
         self.assertTrue(names)
+
+    def test_committed_archive_is_compact(self):
+        archive_dir = race_archive.ARCHIVE_DIR
+        files = [
+            (race_archive.race_path(archive_dir, envelope["race"]["name"]), envelope)
+            for envelope in race_archive.load_races()
+        ]
+        files.append(
+            (
+                archive_dir / race_archive.RACER_NAMES_FILE,
+                race_archive.load_racer_names(),
+            )
+        )
+        stale = [
+            path.name
+            for path, payload in files
+            if path.read_text(encoding="utf-8")
+            != json.dumps(payload, separators=(",", ":")) + "\n"
+        ]
+        self.assertEqual(
+            stale, [], "rewrite these files with race_archive.write_json_atomic"
+        )
 
 
 if __name__ == "__main__":

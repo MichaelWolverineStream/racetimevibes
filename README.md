@@ -17,7 +17,7 @@ python3 scripts/race_archive.py
 python3 scripts/build_stats.py
 ```
 
-Refreshing has two steps. `race_archive.py` saves new raw race records from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes three datasets: the aggregate to `site/data/race-stats.json`; the per-racer dataset to `site/data/participants.json`, in which each race carries its Eastern Time date and start hour, its seed preset, and its derived tags, and each racer carries a rating, badges, streaks and personal bests; and the racers' post-race comments, each with the chest count parsed from it, to `site/data/comments.json`, which the page fetches after its first render so it never delays the board. Use `--archive` on either script to point at a different archive, and `--output`, `--participants-output` and `--comments-output` on `build_stats.py` to redirect each dataset.
+Refreshing has two steps. `race_archive.py` saves new raw race records from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes three datasets, all minified: the aggregate to `site/data/race-stats.json`; the per-racer dataset to `site/data/participants.json`, in which each race carries its Eastern Time date and start hour, its seed preset, and its derived tags, and each racer carries a rating, badges, streaks and personal bests; and the racers' post-race comments, each with the chest count parsed from it, to `site/data/comments.json`, which the page fetches after its first render so it never delays the board. Use `--archive` on either script to point at a different archive, and `--output`, `--participants-output` and `--comments-output` on `build_stats.py` to redirect each dataset.
 
 ### The race archive
 
@@ -27,7 +27,7 @@ Refreshing has two steps. `race_archive.py` saves new raw race records from race
 {"schema_version": 1, "fetched_at": "2026-10-27T10:59:46Z", "race": {"name": "alttpr-ladder/dazzling-matt-4030", "...": "..."}}
 ```
 
-The archive covers every race in the category from 2025-04-20; the builder drops only the `ladder_test` mode. `archive/racer-names.json` maps each racer's stable user ID to their current display name.
+The archive covers every race in the category from 2025-04-20; the builder drops only the `ladder_test` mode. `archive/racer-names.json` maps each racer's stable user ID to their current display name. Every archive file is minified JSON: no whitespace between tokens, and one trailing newline.
 
 The listing is sorted by completion time, newest first, 100 races per page. A sync reads it backwards from page one and stops once it passes a horizon. The horizon is one day before the newest archived race, or the oldest archived race still waiting for a moderator to record it, whichever is earlier. On a normal day that is one request for page one plus one for the category leaderboards. With an empty archive the sync reads every page, so the first run is a full backfill of about 33 requests. Transient network failures are retried with bounded backoff, and the sync checks completion-time ordering and race names before writing anything.
 

@@ -154,10 +154,11 @@ def is_settled(race: JsonObject, now: datetime) -> bool:
 
 
 def write_json_atomic(payload: JsonObject, output_path: Path) -> None:
+    """Write the payload without whitespace between tokens, replacing any old file."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
     with temporary_path.open("w", encoding="utf-8") as output_file:
-        json.dump(payload, output_file, indent=2, sort_keys=False)
+        json.dump(payload, output_file, separators=(",", ":"), sort_keys=False)
         output_file.write("\n")
         output_file.flush()
         os.fsync(output_file.fileno())
