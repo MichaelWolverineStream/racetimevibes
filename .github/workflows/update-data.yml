@@ -16,6 +16,11 @@ name: Update race data
     - cron: "17 22 * * *"
     - cron: "17 0 * * *"
   workflow_dispatch:
+    inputs:
+      reason:
+        description: "Reason for manually triggering the workflow"
+        required: false
+        default: "Webhook Trigger"
 
 permissions:
   contents: write
