@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-31T08:26:19Z",
+  "race": {
+    "name": "alttpr-ladder/fortunate-tempered-1764",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/fortunate-tempered-1764",
+    "data_url": "/alttpr-ladder/fortunate-tempered-1764/data",
+    "goal": {
+      "name": "Beat the game (Entrance)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [entrance] - Crosskeys 2024\nladder/crosskeys2024 - https://alttpr.racing/getseed.php?race=5485 - (HashPendant/HashBoots/HashBook/HashFlute/HashMoonPearl)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-10-31T04:30:00.188Z",
+    "started_at": "2026-10-31T05:00:00.128Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "XY0eABd2OXoLKPnz",
+          "full_name": "Tenit#5351",
+          "name": "Tenit",
+          "discriminator": "5351",
+          "url": "/user/XY0eABd2OXoLKPnz/tenit",
+          "avatar": null,
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "tenithk",
+          "twitch_display_name": "TenitHK",
+          "twitch_channel": "https://www.twitch.tv/tenithk",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H40M14.471610S",
+        "finished_at": "2026-10-31T07:40:14.599Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2378,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "dm1LPWj21GWEnVx6",
+          "full_name": "eris#5928",
+          "name": "eris",
+          "discriminator": "5928",
+          "url": "/user/dm1LPWj21GWEnVx6/eris",
+          "avatar": "https://racetime.gg/media/0n5juoc5y2941_-_Kopie.jpg",
+          "pronouns": "she/her",
+          "flair": "",
+          "twitch_name": "erisbtw",
+          "twitch_display_name": "erisbtw",
+          "twitch_channel": "https://www.twitch.tv/erisbtw",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 3187,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": false,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      }
+    ],
+    "ended_at": "2026-10-31T07:40:14.699Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": false
+  }
+}
