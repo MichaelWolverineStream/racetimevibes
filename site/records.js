@@ -21,11 +21,6 @@ const Records = (() => {
   };
   // Narrow enough that two columns never scroll sideways, down to the 620px breakpoint.
   const CHART_MIN_WIDTH = 220;
-  // records.css grows each dot by 2 on hover; change both together.
-  const DOT_RADIUS = 4;
-  const CURRENT_RADIUS = 5;
-  const HALO_RADIUS = 10;
-  const HIT_RADIUS = 12;
   // Room below the current record, as a share of the mode's total improvement, so the latest run never sits on the axis.
   const AXIS_FLOOR_ROOM = 0.1;
 
@@ -320,8 +315,7 @@ const Records = (() => {
     return `${formatDuration(seconds)} · ${participants.players[holder].name} · ${formatRaceDate(participants.races[raceIndex].d)} · ${change}`;
   }
 
-  // A staircase where each record holds until the next one drops it. Each step carries --at,
-  // its share of the line's length, so on the draw-in its dot appears as the line reaches it.
+  // A staircase where each record holds until the next one drops it.
   function progressChart(modeIndex, steps, { domain, lastDay }, width) {
     const races = participants.races;
     const modeName = participants.modes[modeIndex];
@@ -333,7 +327,7 @@ const Records = (() => {
     const floor = { seconds: current[2] - (first[2] - current[2]) * AXIS_FLOOR_ROOM, day: lastDay };
     const { svg, defs, x, y, plotBottom, clipPath } = finishChartFrame({
       id,
-      className: "chart-svg records-chart",
+      className: "chart-svg step-chart",
       title: `${modeLabel(modeName)} record progression`,
       description: `${plural(steps.length, ["record", "records"])}, from ${formatDuration(first[2])} on ${formatRaceDate(races[first[0]].d)} to ${formatDuration(current[2])} on ${formatRaceDate(races[current[0]].d)}.`,
       width,
@@ -341,64 +335,19 @@ const Records = (() => {
       xDomain: domain,
       layout: CHART_LAYOUT,
     });
-    svg.style.setProperty("--record-color", modeColor(modeName));
+    svg.style.setProperty("--step-color", modeColor(modeName));
 
-    // A new record at index i lands on corner 2i: one corner ends the old run, the next drops to the new time.
-    const corners = [];
-    steps.forEach(([, , seconds], index) => {
-      if (index > 0) {
-        corners.push([x(days[index]), y(steps[index - 1][2])]);
-      }
-      corners.push([x(days[index]), y(seconds)]);
+    const { wash, line, at } = stepLine(defs, {
+      id,
+      points: steps.map(([, , seconds], index) => [x(days[index]), y(seconds)]),
+      endX: x(lastDay),
+      plotBottom,
+      clipPath,
     });
-    corners.push([x(lastDay), y(current[2])]);
-    const travelled = [0];
-    corners.slice(1).forEach(([cx, cy], index) => {
-      const [px, py] = corners[index];
-      travelled.push(travelled[index] + Math.abs(cx - px) + Math.abs(cy - py));
-    });
-    const length = travelled.at(-1) || 1;
-    const path = corners.map(([cx, cy], index) => `${index ? "L" : "M"}${cx},${cy}`).join("");
-
-    // The wash fades out toward the plot floor, which is not zero, so it implies no magnitude.
-    const gradient = svgElement("linearGradient", { id: `${id}-wash`, x1: 0, y1: 0, x2: 0, y2: 1 });
-    gradient.append(
-      svgElement("stop", { class: "records-chart__wash-top", offset: 0 }),
-      svgElement("stop", { class: "records-chart__wash-bottom", offset: 1 }),
-    );
-    defs.append(gradient);
-    svg.append(
-      svgElement("path", {
-        class: "records-chart__wash",
-        d: `${path}V${plotBottom}H${corners[0][0]}Z`,
-        fill: `url(#${id}-wash)`,
-        "clip-path": clipPath,
-      }),
-      svgElement("path", { class: "records-chart__line", d: path, pathLength: 1 }),
-    );
-
+    svg.append(wash, line);
     steps.forEach(([, , seconds], index) => {
-      const isCurrent = index === steps.length - 1;
-      const kind = isCurrent ? "current" : index === 0 ? "first" : "break";
-      const cx = x(days[index]);
-      const cy = y(seconds);
-      const label = stepLabel(steps, index);
-      const mark = svgElement("g", { class: "chart-mark records-chart__step", tabindex: 0, role: "img", "aria-label": label });
-      mark.style.setProperty("--at", (travelled[index * 2] / length).toFixed(3));
-      if (isCurrent) {
-        mark.appendChild(svgElement("circle", { class: "records-chart__halo", cx, cy, r: HALO_RADIUS }));
-      }
-      mark.append(
-        svgElement("circle", { class: "records-chart__hit", cx, cy, r: HIT_RADIUS }),
-        svgElement("circle", {
-          class: `records-chart__dot records-chart__dot--${kind}`,
-          cx,
-          cy,
-          r: isCurrent ? CURRENT_RADIUS : DOT_RADIUS,
-        }),
-      );
-      bindTooltip(mark, label);
-      svg.appendChild(mark);
+      const kind = index === steps.length - 1 ? "current" : index === 0 ? "first" : "break";
+      svg.appendChild(stepMark({ cx: x(days[index]), cy: y(seconds), kind, label: stepLabel(steps, index), at: at[index] }));
     });
     return svg;
   }
@@ -406,7 +355,7 @@ const Records = (() => {
   // The panel's header is the chart's end label: the mode and its current record.
   function progressPanel(modeIndex, steps, host) {
     const modeName = participants.modes[modeIndex];
-    const node = card(modeLabel(modeName), "records-progress records-progress--pending");
+    const node = card(modeLabel(modeName), "records-progress");
     const label = node.querySelector(".records-card__label");
     label.prepend(UI.modeDot(modeName));
     if (steps.length) {
@@ -427,7 +376,9 @@ const Records = (() => {
         observer.unobserve(panel);
         panel.style.setProperty("--i", order);
       });
-      requestAnimationFrame(() => shown.forEach((panel) => panel.classList.remove("records-progress--pending")));
+      requestAnimationFrame(() => shown.forEach((panel) => {
+        panel.querySelector(".step-chart-host").classList.remove("step-chart-host--pending");
+      }));
     }, { threshold: 0.4 });
     panels.forEach((panel) => observer.observe(panel));
   }
@@ -436,7 +387,7 @@ const Records = (() => {
     const timeline = progressTimeline();
     const panels = participants.modes.map((modeName, modeIndex) => {
       const steps = modeSteps(modeIndex);
-      const host = element("div", "chart-host records-chart-host");
+      const host = element("div", "chart-host records-chart-host step-chart-host step-chart-host--pending");
       const panel = progressPanel(modeIndex, steps, host);
       parts.progress.appendChild(panel);
       if (steps.length) {
@@ -555,7 +506,7 @@ const Records = (() => {
     toolbar.appendChild(parts.toggle);
 
     parts.summary = element("div", "summary-strip records-summary");
-    parts.progress = element("div", "records-grid records-grid--progress");
+    parts.progress = element("div", "records-grid");
     parts.presets = element("div", "table-wrap table-wrap--leaderboard records-presets");
 
     const cards = element("div", "records-grid");

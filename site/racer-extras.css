@@ -152,11 +152,33 @@
   white-space: nowrap;
 }
 
-.rating-line {
-  fill: none;
-  stroke: var(--series);
+/* Slower than the record charts' draw-in: this line spans the whole panel. */
+#player-rating-chart {
+  --draw: 1200ms;
+}
+
+.rating-chart__cursor {
+  pointer-events: none;
+}
+
+.rating-chart__guide {
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The same ring as the step-chart dots. */
+.rating-chart__dot {
+  fill: var(--step-color);
+  stroke: var(--panel);
   stroke-width: 2;
-  stroke-linejoin: round;
+}
+
+/* The dashes must match .rating-reference. */
+.line-key--start {
+  height: 1px;
+  border-top: 0;
+  background: repeating-linear-gradient(90deg, var(--muted) 0 5px, transparent 5px 9px);
 }
 
 .rating-reference {

@@ -1200,6 +1200,99 @@ summary:focus-visible {
   font-weight: 800;
 }
 
+/* Step charts (record progression, racer rating). Each draws itself in once: the host starts
+   --pending, and markers wait on --i (a stagger between charts) and --at (see stepLine). */
+.step-chart-host {
+  --draw: 900ms;
+}
+
+.step-chart {
+  --step-color: var(--series);
+}
+
+/* pathLength="1" lets one dash cover the whole line, so the draw-in needs no measuring. */
+.step-chart__line {
+  fill: none;
+  stroke: var(--step-color);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  transition: stroke-dashoffset var(--draw) linear calc(var(--i, 0) * 60ms);
+}
+
+.step-chart__wash {
+  transition: opacity var(--draw) ease-out calc(var(--i, 0) * 60ms);
+}
+
+.step-chart__wash-top {
+  stop-color: var(--step-color);
+  stop-opacity: 0.22;
+}
+
+.step-chart__wash-bottom {
+  stop-color: var(--step-color);
+  stop-opacity: 0;
+}
+
+.step-chart__hit {
+  fill: transparent;
+}
+
+/* The panel-coloured ring keeps each dot legible where it sits on the line. Each dot pops in
+   as the line reaches it: --at is its share of the line's length. */
+.step-chart__dot {
+  fill: var(--step-color);
+  stroke: var(--panel);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 240ms ease-out calc(var(--i, 0) * 60ms + var(--at, 0) * var(--draw)),
+    transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i, 0) * 60ms + var(--at, 0) * var(--draw)),
+    r 120ms ease;
+}
+
+/* The first point only sets the baseline, so its dot is hollow. */
+.step-chart__dot--first {
+  fill: var(--panel);
+  stroke: var(--step-color);
+}
+
+.step-chart__halo {
+  fill: var(--step-color);
+  opacity: 0.18;
+  transition: opacity 400ms ease-out calc(var(--i, 0) * 60ms + var(--draw));
+}
+
+/* Two more than STEP_DOT_RADIUS and STEP_CURRENT_RADIUS in racer-charts.js. */
+.chart-mark:hover .step-chart__dot,
+.chart-mark:focus .step-chart__dot {
+  r: 6;
+}
+
+.chart-mark:hover .step-chart__dot--current,
+.chart-mark:focus .step-chart__dot--current {
+  r: 7;
+}
+
+.chart-mark:focus .step-chart__dot {
+  stroke: var(--focus);
+}
+
+.step-chart-host--pending .step-chart__line {
+  stroke-dashoffset: 1;
+}
+
+.step-chart-host--pending .step-chart__wash,
+.step-chart-host--pending .step-chart__halo {
+  opacity: 0;
+}
+
+.step-chart-host--pending .step-chart__dot {
+  opacity: 0;
+  transform: scale(0.3);
+}
+
 /* Above the dialog layer, so tooltips inside the badge panel stay visible. */
 .chart-tooltip {
   position: fixed;
@@ -1955,5 +2048,13 @@ footer p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* The rule above shortens durations but not delays, so the step charts' staggered draw-in is cleared here. */
+  .step-chart__line,
+  .step-chart__wash,
+  .step-chart__dot,
+  .step-chart__halo {
+    transition: none;
   }
 }

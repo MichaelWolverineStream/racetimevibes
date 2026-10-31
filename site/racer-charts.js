@@ -1,4 +1,5 @@
-// Finish-time scatter, personal trend, and start-time heatmap for the leaderboard and racer pages.
+// Finish-time scatter, personal trend, and start-time heatmap for the leaderboard and racer pages,
+// plus the step-chart pieces shared by the record progression and the racer's rating.
 // Loaded between app.js and leaderboard.js. Nothing here touches the DOM at load time, so the
 // pure helpers can be exercised outside a browser.
 
@@ -101,6 +102,11 @@ const BAND_SAMPLES = 40;
 // Each mode keeps one hue whatever the filters show; a mode missing here is drawn in gray.
 const MODE_COLOR_SLOTS = { entrance: 1, fun: 2, glitched: 3, inverted: 4, keys: 5, mystery: 6, simple: 7, spoiler: 8 };
 const DENSITY_SAMPLES = 64;
+// Step-chart markers. styles.css grows each dot by 2 on hover; change both together.
+const STEP_DOT_RADIUS = 4;
+const STEP_CURRENT_RADIUS = 5;
+const STEP_HALO_RADIUS = 10;
+const STEP_HIT_RADIUS = 12;
 
 const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" });
 const monthYearFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
@@ -426,6 +432,67 @@ function finishChartFrame({ id, className, title, description, width, points, xD
     );
   }
   return { svg, defs, x, y, plotBottom: margin.top + plotHeight, clipPath: `url(#${id}-plot)` };
+}
+
+// A staircase through screen points where each value holds until the next one, and the last
+// holds to endX. Point i lands on corner 2i: one corner ends the old run, the next moves to the
+// new value. `at` is each point's share of the line's length, so on the draw-in its marker can
+// appear as the line reaches it. The wash fades out toward the plot floor, which is not zero,
+// so it implies no magnitude.
+function stepLine(defs, { id, points, endX, plotBottom, clipPath }) {
+  const corners = [];
+  points.forEach(([px, py], index) => {
+    if (index > 0) {
+      corners.push([px, points[index - 1][1]]);
+    }
+    corners.push([px, py]);
+  });
+  corners.push([endX, points.at(-1)[1]]);
+  const travelled = [0];
+  corners.slice(1).forEach(([cx, cy], index) => {
+    const [px, py] = corners[index];
+    travelled.push(travelled[index] + Math.abs(cx - px) + Math.abs(cy - py));
+  });
+  const length = travelled.at(-1) || 1;
+  const path = corners.map(([cx, cy], index) => `${index ? "L" : "M"}${cx},${cy}`).join("");
+
+  const gradient = svgElement("linearGradient", { id: `${id}-wash`, x1: 0, y1: 0, x2: 0, y2: 1 });
+  gradient.append(
+    svgElement("stop", { class: "step-chart__wash-top", offset: 0 }),
+    svgElement("stop", { class: "step-chart__wash-bottom", offset: 1 }),
+  );
+  defs.append(gradient);
+  return {
+    wash: svgElement("path", {
+      class: "step-chart__wash",
+      d: `${path}V${plotBottom}H${points[0][0]}Z`,
+      fill: `url(#${id}-wash)`,
+      "clip-path": clipPath,
+    }),
+    line: svgElement("path", { class: "step-chart__line", d: path, pathLength: 1 }),
+    at: points.map((point, index) => travelled[index * 2] / length),
+  };
+}
+
+// A focusable marker on a step chart. kind is "first" (hollow), "break" or "current" (with a halo).
+function stepMark({ cx, cy, kind, label, at }) {
+  const isCurrent = kind === "current";
+  const mark = svgElement("g", { class: "chart-mark", tabindex: 0, role: "img", "aria-label": label });
+  mark.style.setProperty("--at", at.toFixed(3));
+  if (isCurrent) {
+    mark.appendChild(svgElement("circle", { class: "step-chart__halo", cx, cy, r: STEP_HALO_RADIUS }));
+  }
+  mark.append(
+    svgElement("circle", { class: "step-chart__hit", cx, cy, r: STEP_HIT_RADIUS }),
+    svgElement("circle", {
+      class: `step-chart__dot step-chart__dot--${kind}`,
+      cx,
+      cy,
+      r: isCurrent ? STEP_CURRENT_RADIUS : STEP_DOT_RADIUS,
+    }),
+  );
+  bindTooltip(mark, label);
+  return mark;
 }
 
 function finishScatterChart(points, { id, highlightPlayer, title, description, xDomain }, width) {

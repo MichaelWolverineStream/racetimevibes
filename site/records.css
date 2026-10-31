@@ -31,10 +31,6 @@
 }
 
 /* One panel per mode; the header row is the chart's end label. */
-.records-grid--progress {
-  --draw: 900ms;
-}
-
 .records-progress {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -60,93 +56,6 @@
   grid-column: 1 / -1;
   min-height: 220px;
   padding: 0;
-}
-
-.records-chart {
-  --record-color: var(--series);
-}
-
-/* pathLength="1" lets one dash cover the whole line, so the draw-in needs no measuring. */
-.records-chart__line {
-  fill: none;
-  stroke: var(--record-color);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  transition: stroke-dashoffset var(--draw) linear calc(var(--i, 0) * 60ms);
-}
-
-.records-chart__wash {
-  transition: opacity var(--draw) ease-out calc(var(--i, 0) * 60ms);
-}
-
-.records-chart__wash-top {
-  stop-color: var(--record-color);
-  stop-opacity: 0.22;
-}
-
-.records-chart__wash-bottom {
-  stop-color: var(--record-color);
-  stop-opacity: 0;
-}
-
-.records-chart__hit {
-  fill: transparent;
-}
-
-/* The panel-coloured ring keeps each dot legible where it sits on the line. Each dot pops in
-   as the line reaches it: --at is its share of the line's length. */
-.records-chart__dot {
-  fill: var(--record-color);
-  stroke: var(--panel);
-  stroke-width: 2;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition:
-    opacity 240ms ease-out calc(var(--i, 0) * 60ms + var(--at, 0) * var(--draw)),
-    transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i, 0) * 60ms + var(--at, 0) * var(--draw)),
-    r 120ms ease;
-}
-
-/* The first race only sets the baseline, so its dot is hollow; every later dot is a break. */
-.records-chart__dot--first {
-  fill: var(--panel);
-  stroke: var(--record-color);
-}
-
-.records-chart__halo {
-  fill: var(--record-color);
-  opacity: 0.18;
-  transition: opacity 400ms ease-out calc(var(--i, 0) * 60ms + var(--draw));
-}
-
-/* Two more than DOT_RADIUS and CURRENT_RADIUS in records.js. */
-.chart-mark:hover .records-chart__dot,
-.chart-mark:focus .records-chart__dot {
-  r: 6;
-}
-
-.chart-mark:hover .records-chart__dot--current,
-.chart-mark:focus .records-chart__dot--current {
-  r: 7;
-}
-
-.chart-mark:focus .records-chart__dot {
-  stroke: var(--focus);
-}
-
-.records-progress--pending .records-chart__line {
-  stroke-dashoffset: 1;
-}
-
-.records-progress--pending .records-chart__wash,
-.records-progress--pending .records-chart__halo {
-  opacity: 0;
-}
-
-.records-progress--pending .records-chart__dot {
-  opacity: 0;
-  transform: scale(0.3);
 }
 
 .records-grid {
@@ -303,15 +212,5 @@
 
   .records-card--wide {
     grid-column: auto;
-  }
-}
-
-/* The global rule shortens durations but not delays, so the staggered draw-in is cleared here. */
-@media (prefers-reduced-motion: reduce) {
-  .records-chart__line,
-  .records-chart__wash,
-  .records-chart__dot,
-  .records-chart__halo {
-    transition: none;
   }
 }
