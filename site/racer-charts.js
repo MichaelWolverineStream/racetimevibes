@@ -89,6 +89,13 @@ const VIOLIN_MARK_MIN_HALF = 6;
 const SEARCH_REDRAW_DELAY_MS = 120;
 const TIME_TICK_STEPS_MINUTES = [5, 10, 15, 30, 60, 120];
 const MAX_TIME_INTERVALS = 6;
+// The full-size frame; a caller can pass its own, as the records small multiples do.
+const FINISH_CHART_LAYOUT = {
+  height: FINISH_CHART_HEIGHT,
+  margin: FINISH_CHART_MARGIN,
+  axisTitles: true,
+  maxTimeIntervals: MAX_TIME_INTERVALS,
+};
 const MONTHLY_TICK_MIN_DAYS = 45;
 const BAND_SAMPLES = 40;
 // Each mode keeps one hue whatever the filters show; a mode missing here is drawn in gray.
@@ -269,13 +276,13 @@ function stableJitter(raceIndex, playerIndex) {
   return ((hash >>> 0) / 0xffffffff) * 2 - 1;
 }
 
-function timeTicks(minSeconds, maxSeconds) {
+function timeTicks(minSeconds, maxSeconds, maxIntervals = MAX_TIME_INTERVALS) {
   const stepsInSeconds = TIME_TICK_STEPS_MINUTES.map((minutes) => minutes * 60);
   const bounds = (step) => [Math.floor(minSeconds / step) * step, Math.ceil(maxSeconds / step) * step];
   const step =
     stepsInSeconds.find((candidate) => {
       const [low, high] = bounds(candidate);
-      return (high - low) / candidate <= MAX_TIME_INTERVALS;
+      return (high - low) / candidate <= maxIntervals;
     }) ?? stepsInSeconds.at(-1);
   let [min, max] = bounds(step);
   if (min === max) {
@@ -292,15 +299,18 @@ function timeTicks(minSeconds, maxSeconds) {
   return { min, max, ticks };
 }
 
-function dateTicks(startDay, endDay) {
+// Given the plot width, month labels thin out by MONTH_LABEL_STEPS so neighbours never overlap.
+function dateTicks(startDay, endDay, plotWidth = Infinity) {
   const ticks = [];
   if (endDay - startDay >= MONTHLY_TICK_MIN_DAYS) {
     const start = new Date(startDay * DAY_MS);
     const crossesYear = start.getUTCFullYear() !== new Date(endDay * DAY_MS).getUTCFullYear();
+    const monthWidth = (plotWidth / (endDay - startDay)) * (365.25 / 12);
+    const labelStep = MONTH_LABEL_STEPS.find((candidate) => candidate * monthWidth >= MONTH_LABEL_MIN_SPACING) ?? 12;
     let month = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
     while (month.getTime() / DAY_MS <= endDay) {
       const day = month.getTime() / DAY_MS;
-      if (day >= startDay) {
+      if (day >= startDay && month.getUTCMonth() % labelStep === 0) {
         const label = crossesYear && month.getUTCMonth() === 0 ? monthYearFormatter : monthFormatter;
         ticks.push({ day, label: label.format(month) });
       }
@@ -338,8 +348,8 @@ function bindPointTooltip(svg, points) {
   svg.addEventListener("mouseleave", hideTooltip);
 }
 
-// Horizontal grid, clock labels, and the rotated title for the shared finish-time axis.
-function appendTimeAxis(svg, { time, y, margin, width, height }) {
+// Horizontal grid, clock labels, and the optional rotated title for the shared finish-time axis.
+function appendTimeAxis(svg, { time, y, margin, width, height, title = true }) {
   time.ticks.forEach((tick, index) => {
     svg.append(
       svgElement("line", {
@@ -356,6 +366,7 @@ function appendTimeAxis(svg, { time, y, margin, width, height }) {
       ),
     );
   });
+  if (!title) return;
   const titleY = margin.top + (height - margin.top - margin.bottom) / 2;
   svg.append(
     svgElement(
@@ -367,13 +378,12 @@ function appendTimeAxis(svg, { time, y, margin, width, height }) {
 }
 
 // Shared frame for the finish-time charts: grid, time axis, date axis, and axis titles.
-function finishChartFrame({ id, className, title, description, width, points, xDomain }) {
-  const height = FINISH_CHART_HEIGHT;
-  const margin = FINISH_CHART_MARGIN;
+function finishChartFrame({ id, className, title, description, width, points, xDomain, layout = FINISH_CHART_LAYOUT }) {
+  const { height, margin, axisTitles, maxTimeIntervals } = layout;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const seconds = points.map((point) => point.seconds);
-  const time = timeTicks(Math.min(...seconds), Math.max(...seconds));
+  const time = timeTicks(Math.min(...seconds), Math.max(...seconds), maxTimeIntervals);
   const [startDay, endDay] = xDomain;
   const span = endDay - startDay || 1;
   const x = (day) => Math.min(width - margin.right, Math.max(margin.left, margin.left + ((day - startDay) / span) * plotWidth));
@@ -396,8 +406,8 @@ function finishChartFrame({ id, className, title, description, width, points, xD
   const defs = svgElement("defs");
   defs.append(clip);
   svg.append(defs);
-  appendTimeAxis(svg, { time, y, margin, width, height });
-  dateTicks(Math.ceil(startDay), Math.floor(endDay)).forEach((tick) => {
+  appendTimeAxis(svg, { time, y, margin, width, height, title: axisTitles });
+  dateTicks(Math.ceil(startDay), Math.floor(endDay), plotWidth).forEach((tick) => {
     svg.append(
       svgElement(
         "text",
@@ -406,14 +416,16 @@ function finishChartFrame({ id, className, title, description, width, points, xD
       ),
     );
   });
-  svg.append(
-    svgElement(
-      "text",
-      { class: "axis-label", x: margin.left + plotWidth / 2, y: height - 8, "text-anchor": "middle" },
-      "RACE DATE",
-    ),
-  );
-  return { svg, x, y, clipPath: `url(#${id}-plot)` };
+  if (axisTitles) {
+    svg.append(
+      svgElement(
+        "text",
+        { class: "axis-label", x: margin.left + plotWidth / 2, y: height - 8, "text-anchor": "middle" },
+        "RACE DATE",
+      ),
+    );
+  }
+  return { svg, defs, x, y, plotBottom: margin.top + plotHeight, clipPath: `url(#${id}-plot)` };
 }
 
 function finishScatterChart(points, { id, highlightPlayer, title, description, xDomain }, width) {

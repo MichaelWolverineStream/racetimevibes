@@ -12,7 +12,22 @@ const Records = (() => {
     { id: "best", label: "All-time" },
   ];
   const CHART_ID = "records-progress";
-  const DOT_RADIUS = 4.5;
+  // The height must match .records-chart-host in records.css.
+  const CHART_LAYOUT = {
+    height: 220,
+    margin: { top: 14, right: 14, bottom: 24, left: 40 },
+    axisTitles: false,
+    maxTimeIntervals: 4,
+  };
+  // Narrow enough that two columns never scroll sideways, down to the 620px breakpoint.
+  const CHART_MIN_WIDTH = 220;
+  // records.css grows each dot by 2 on hover; change both together.
+  const DOT_RADIUS = 4;
+  const CURRENT_RADIUS = 5;
+  const HALO_RADIUS = 10;
+  const HIT_RADIUS = 12;
+  // Room below the current record, as a share of the mode's total improvement, so the latest run never sits on the axis.
+  const AXIS_FLOOR_ROOM = 0.1;
 
   const state = {
     mode: null,
@@ -229,9 +244,12 @@ const Records = (() => {
     return node;
   }
 
-  function sectionHeading(text) {
+  function sectionHeading(text, note = null) {
     const heading = element("div", "heatmap-heading records-heading");
     heading.appendChild(element("h3", null, text));
+    if (note) {
+      heading.appendChild(element("p", null, note));
+    }
     return heading;
   }
 
@@ -244,13 +262,13 @@ const Records = (() => {
     return item;
   }
 
-  function currentSteps() {
-    const entry = participants.records.modes.find((item) => item.m === state.mode);
+  function modeSteps(modeIndex) {
+    const entry = participants.records.modes.find((item) => item.m === modeIndex);
     return entry ? entry.steps : [];
   }
 
   function renderSummary() {
-    const steps = currentSteps();
+    const steps = modeSteps(state.mode);
     if (!steps.length) {
       parts.summary.replaceChildren(summaryTile("Current record", "--"));
       return;
@@ -276,54 +294,147 @@ const Records = (() => {
     parts.summary.replaceChildren(...tiles);
   }
 
-  function progressChart(steps, width) {
+  // Every panel shares one date axis, from the first race in the archive to the latest.
+  function progressTimeline() {
+    const firstDay = dayNumber(participants.races[0].d);
+    const lastDay = dayNumber(participants.races.at(-1).d);
+    const pad = Math.max(1, (lastDay - firstDay) * 0.03);
+    return { domain: [firstDay - pad, lastDay + pad], lastDay };
+  }
+
+  function stepLabel(steps, index) {
+    const [raceIndex, holder, seconds] = steps[index];
+    const change = index === 0 ? "first recorded time" : `${formatDuration(steps[index - 1][2] - seconds)} faster`;
+    return `${formatDuration(seconds)} · ${participants.players[holder].name} · ${formatRaceDate(participants.races[raceIndex].d)} · ${change}`;
+  }
+
+  // A staircase where each record holds until the next one drops it. Each step carries --at,
+  // its share of the line's length, so on the draw-in its dot appears as the line reaches it.
+  function progressChart(modeIndex, steps, { domain, lastDay }, width) {
     const races = participants.races;
-    const modeName = participants.modes[state.mode];
+    const modeName = participants.modes[modeIndex];
+    const id = `${CHART_ID}-${modeName}`;
+    const first = steps[0];
+    const current = steps.at(-1);
     const days = steps.map(([raceIndex]) => dayNumber(races[raceIndex].d));
-    const lastDay = Math.max(dayNumber(races.at(-1).d), days.at(-1));
-    const pad = Math.max(1, (lastDay - days[0]) * 0.03);
-    const points = steps.map(([, , seconds], index) => ({ seconds, day: days[index] }));
-    const { svg, x, y } = finishChartFrame({
-      id: CHART_ID,
+    // The frame fits its time axis to these points; the extra one only sets the floor.
+    const floor = { seconds: current[2] - (first[2] - current[2]) * AXIS_FLOOR_ROOM, day: lastDay };
+    const { svg, defs, x, y, plotBottom, clipPath } = finishChartFrame({
+      id,
       className: "chart-svg records-chart",
       title: `${modeLabel(modeName)} record progression`,
-      description: `Each step is a new record time, ${steps.length - 1} breaks in all.`,
+      description: `${plural(steps.length, ["record", "records"])}, from ${formatDuration(first[2])} on ${formatRaceDate(races[first[0]].d)} to ${formatDuration(current[2])} on ${formatRaceDate(races[current[0]].d)}.`,
       width,
-      points,
-      xDomain: [days[0] - pad, lastDay + pad],
+      points: [...steps.map(([, , seconds], index) => ({ seconds, day: days[index] })), floor],
+      xDomain: domain,
+      layout: CHART_LAYOUT,
     });
     svg.style.setProperty("--record-color", modeColor(modeName));
 
-    let path = `M${x(days[0])},${y(steps[0][2])}`;
-    steps.slice(1).forEach(([, , seconds], index) => {
-      path += ` H${x(days[index + 1])} V${y(seconds)}`;
+    // A new record at index i lands on corner 2i: one corner ends the old run, the next drops to the new time.
+    const corners = [];
+    steps.forEach(([, , seconds], index) => {
+      if (index > 0) {
+        corners.push([x(days[index]), y(steps[index - 1][2])]);
+      }
+      corners.push([x(days[index]), y(seconds)]);
     });
-    path += ` H${x(lastDay)}`;
-    svg.appendChild(svgElement("path", { class: "records-chart__line", d: path }));
+    corners.push([x(lastDay), y(current[2])]);
+    const travelled = [0];
+    corners.slice(1).forEach(([cx, cy], index) => {
+      const [px, py] = corners[index];
+      travelled.push(travelled[index] + Math.abs(cx - px) + Math.abs(cy - py));
+    });
+    const length = travelled.at(-1) || 1;
+    const path = corners.map(([cx, cy], index) => `${index ? "L" : "M"}${cx},${cy}`).join("");
 
-    steps.forEach(([raceIndex, holder, seconds], index) => {
-      const dot = svgElement("circle", {
-        class: "records-chart__dot",
-        cx: x(days[index]),
-        cy: y(seconds),
-        r: DOT_RADIUS,
-        tabindex: 0,
-      });
-      const label = `${formatDuration(seconds)} · ${participants.players[holder].name} · ${formatRaceDate(races[raceIndex].d)}`;
-      dot.setAttribute("aria-label", label);
-      bindTooltip(dot, label);
-      svg.appendChild(dot);
+    // The wash fades out toward the plot floor, which is not zero, so it implies no magnitude.
+    const gradient = svgElement("linearGradient", { id: `${id}-wash`, x1: 0, y1: 0, x2: 0, y2: 1 });
+    gradient.append(
+      svgElement("stop", { class: "records-chart__wash-top", offset: 0 }),
+      svgElement("stop", { class: "records-chart__wash-bottom", offset: 1 }),
+    );
+    defs.append(gradient);
+    svg.append(
+      svgElement("path", {
+        class: "records-chart__wash",
+        d: `${path}V${plotBottom}H${corners[0][0]}Z`,
+        fill: `url(#${id}-wash)`,
+        "clip-path": clipPath,
+      }),
+      svgElement("path", { class: "records-chart__line", d: path, pathLength: 1 }),
+    );
+
+    steps.forEach(([, , seconds], index) => {
+      const isCurrent = index === steps.length - 1;
+      const kind = isCurrent ? "current" : index === 0 ? "first" : "break";
+      const cx = x(days[index]);
+      const cy = y(seconds);
+      const label = stepLabel(steps, index);
+      const mark = svgElement("g", { class: "chart-mark records-chart__step", tabindex: 0, role: "img", "aria-label": label });
+      mark.style.setProperty("--at", (travelled[index * 2] / length).toFixed(3));
+      if (isCurrent) {
+        mark.appendChild(svgElement("circle", { class: "records-chart__halo", cx, cy, r: HALO_RADIUS }));
+      }
+      mark.append(
+        svgElement("circle", { class: "records-chart__hit", cx, cy, r: HIT_RADIUS }),
+        svgElement("circle", {
+          class: `records-chart__dot records-chart__dot--${kind}`,
+          cx,
+          cy,
+          r: isCurrent ? CURRENT_RADIUS : DOT_RADIUS,
+        }),
+      );
+      bindTooltip(mark, label);
+      svg.appendChild(mark);
     });
     return svg;
   }
 
-  function renderChart() {
-    const steps = currentSteps();
-    if (!steps.length) {
-      parts.chart.replaceChildren(element("p", "table-empty", "No finished races in this mode."));
-      return;
+  // The panel's header is the chart's end label: the mode and its current record.
+  function progressPanel(modeIndex, steps, host) {
+    const modeName = participants.modes[modeIndex];
+    const node = card(modeLabel(modeName), "records-progress records-progress--pending");
+    const label = node.querySelector(".records-card__label");
+    label.prepend(UI.modeDot(modeName));
+    if (steps.length) {
+      const record = element("span", "records-progress__record");
+      record.appendChild(UI.time(steps.at(-1)[2]));
+      label.after(record);
     }
-    mountChart(parts.chart, (width) => progressChart(steps, width));
+    node.appendChild(host);
+    return node;
+  }
+
+  // Each staircase draws itself once, the first time its panel scrolls into view. Panels that
+  // arrive together stagger by --i; a redraw after that inserts finished nodes, so nothing replays.
+  function revealOnView(panels) {
+    const observer = new IntersectionObserver((entries) => {
+      const shown = entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target);
+      shown.forEach((panel, order) => {
+        observer.unobserve(panel);
+        panel.style.setProperty("--i", order);
+      });
+      requestAnimationFrame(() => shown.forEach((panel) => panel.classList.remove("records-progress--pending")));
+    }, { threshold: 0.4 });
+    panels.forEach((panel) => observer.observe(panel));
+  }
+
+  function renderProgress() {
+    const timeline = progressTimeline();
+    const panels = participants.modes.map((modeName, modeIndex) => {
+      const steps = modeSteps(modeIndex);
+      const host = element("div", "chart-host records-chart-host");
+      const panel = progressPanel(modeIndex, steps, host);
+      parts.progress.appendChild(panel);
+      if (steps.length) {
+        mountChart(host, (width) => progressChart(modeIndex, steps, timeline, width), CHART_MIN_WIDTH);
+      } else {
+        host.appendChild(element("p", "table-empty", "No finished races in this mode."));
+      }
+      return panel;
+    });
+    revealOnView(panels);
   }
 
   function presetColumns() {
@@ -414,7 +525,6 @@ const Records = (() => {
       },
     );
     renderSummary();
-    renderChart();
     renderPresets();
   }
 
@@ -433,23 +543,24 @@ const Records = (() => {
     toolbar.appendChild(parts.toggle);
 
     parts.summary = element("div", "summary-strip records-summary");
-    parts.chart = element("div", "chart-host records-chart-host");
+    parts.progress = element("div", "records-grid records-grid--progress");
     parts.presets = element("div", "table-wrap table-wrap--leaderboard records-presets");
 
     const cards = element("div", "records-grid");
     cards.append(photoCard(), blowoutCard(), bigFieldCard(), mostRacesCard(), streaksCard());
 
     body.replaceChildren(
-      toolbar,
-      parts.summary,
-      sectionHeading("Record progression"),
-      parts.chart,
       sectionHeading("Across all modes"),
       cards,
-      sectionHeading("Presets"),
+      sectionHeading("Record progression", "Record time by race date · each chart has its own time scale"),
+      parts.progress,
+      sectionHeading("By mode"),
+      toolbar,
+      parts.summary,
       parts.presets,
     );
     section.hidden = false;
+    renderProgress();
     renderModeScoped();
   }
 

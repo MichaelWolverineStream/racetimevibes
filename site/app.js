@@ -15,6 +15,7 @@ const NICE_SCALES = [
 ];
 // Month labels thin out by divisors of 12, so January always keeps its label.
 const MONTH_LABEL_STEPS = [1, 2, 3, 6, 12];
+const MONTH_LABEL_MIN_SPACING = 40;
 const COHORTS = {
   one_race: { label: "One race", range: "1 race", markClass: "orbit-mark--one-race" },
   occasional: { label: "Occasional", range: "2-5 races", markClass: "orbit-mark--occasional" },
@@ -87,14 +88,15 @@ function hostWidth(host) {
 function drawChart(host) {
   const available = hostWidth(host);
   if (available <= 0) return; // Hidden; the resize observer draws it once it is shown.
-  const width = Math.max(MIN_CHART_WIDTH, Math.floor(available));
+  const { build, minWidth } = chartBuilders.get(host);
+  const width = Math.max(minWidth, Math.floor(available));
   if (chartWidths.get(host) === width) return;
   chartWidths.set(host, width);
-  host.replaceChildren(chartBuilders.get(host)(width));
+  host.replaceChildren(build(width));
 }
 
-function mountChart(host, build) {
-  chartBuilders.set(host, build);
+function mountChart(host, build, minWidth = MIN_CHART_WIDTH) {
+  chartBuilders.set(host, { build, minWidth });
   chartWidths.delete(host);
   chartResizeObserver.observe(host);
   drawChart(host);
@@ -433,7 +435,7 @@ function monthlyLineChart(months, selectedPeriodId, options, width) {
     .join("");
   svg.append(svgElement("path", { class: "turnout-line", d: path }));
 
-  const labelStep = MONTH_LABEL_STEPS.find((candidate) => candidate * step >= 40) ?? 12;
+  const labelStep = MONTH_LABEL_STEPS.find((candidate) => candidate * step >= MONTH_LABEL_MIN_SPACING) ?? 12;
   let labelledYear = null;
   months.forEach((month, index) => {
     const value = values[index];
