@@ -112,7 +112,7 @@ function modeIndexFor(modeId) {
 }
 
 function modeLabel(modeId) {
-  return modeId === ALL_MODES ? "All modes" : modeId.replaceAll("_", " ");
+  return modeId === ALL_MODES ? "All modes" : formatModeName(modeId);
 }
 
 function isFinisher(entry) {
@@ -1158,7 +1158,7 @@ async function loadParticipants() {
       renderLeaderboard();
     });
     // Unstarring a racer while the Followed filter is on drops their row straight away.
-    document.addEventListener("racetimevibes:following", () => {
+    document.addEventListener(FOLLOWING_EVENT, () => {
       if (leaderboardState.followedOnly) {
         renderLeaderboard();
       }

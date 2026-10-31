@@ -28,13 +28,11 @@ const RacerExtras = (() => {
     return race.e.findIndex((entry) => entry[0] === playerIndex);
   }
 
-  function tile(label, dotColor = null) {
+  function tile(label, mode = null) {
     const item = element("div", "summary-item");
     const caption = element("span", "summary-label");
-    if (dotColor) {
-      const dot = element("span", "mode-dot");
-      dot.style.background = dotColor;
-      caption.append(dot);
+    if (mode) {
+      caption.append(UI.modeDot(mode));
     }
     caption.append(label);
     item.append(caption);
@@ -51,7 +49,7 @@ const RacerExtras = (() => {
     document.querySelector("#player-follow").replaceChildren(star, label);
     if (!followListening) {
       followListening = true;
-      document.addEventListener("racetimevibes:following", () => {
+      document.addEventListener(FOLLOWING_EVENT, () => {
         const current = document.querySelector("#player-follow .player-follow__label");
         if (current) {
           syncFollowLabel(current);
@@ -87,7 +85,7 @@ const RacerExtras = (() => {
       context: [
         { text: modeLabel(participants.modes[race.m]) },
         { text: place },
-        { text: UI.relativeDay(race.d), href: `${RACE_ROOT}${race.r}` },
+        { text: UI.relativeDay(race.d), href: `${RACE_ROOT}${race.r}`, tooltip: formatRaceDate(race.d) },
       ],
     });
   }
@@ -174,7 +172,7 @@ const RacerExtras = (() => {
         return;
       }
       const [raceIndex, seconds] = steps[steps.length - 1];
-      const item = tile(modeLabel(mode), modeColor(mode));
+      const item = tile(modeLabel(mode), mode);
       const value = element("strong");
       value.append(UI.time(seconds));
       item.append(value, element("span", "pb-note", formatRaceDate(participants.races[raceIndex].d)));

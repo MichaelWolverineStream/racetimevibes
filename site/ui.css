@@ -29,6 +29,42 @@
   line-height: 1;
 }
 
+/* Per-name tints from earthy tokens; mode hues are avoided so avatars never read as a mode. */
+.ui-avatar__monogram--tint-1 {
+  background: var(--accent);
+}
+
+.ui-avatar__monogram--tint-2 {
+  background: var(--cohort-3);
+}
+
+.ui-avatar__monogram--tint-3 {
+  background: var(--cohort-4);
+}
+
+.ui-avatar__monogram--tint-4 {
+  background: var(--gold-ink);
+}
+
+.ui-avatar__monogram--tint-5 {
+  background: var(--bronze-ink);
+}
+
+.ui-avatar__monogram--tint-6 {
+  background: var(--silver-ink);
+}
+
+.ui-mode-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.ui-mode-dot--none {
+  background: transparent;
+}
+
 .ui-speech {
   display: flex;
   align-items: flex-start;
@@ -343,8 +379,8 @@ tr:focus-within .follow-star--row,
 .ui-dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
-  background: rgba(23, 33, 29, 0.55);
+  z-index: var(--layer-backdrop);
+  background: var(--scrim);
 }
 
 .ui-dialog {
@@ -352,7 +388,7 @@ tr:focus-within .follow-star--row,
   right: 0;
   bottom: 32px;
   left: 0;
-  z-index: 41;
+  z-index: var(--layer-dialog);
   width: fit-content;
   max-width: 560px;
   margin: 0 auto;
@@ -390,14 +426,14 @@ tr:focus-within .follow-star--row,
 .ui-badge-panel-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
-  background: rgba(23, 33, 29, 0.55);
+  z-index: var(--layer-backdrop);
+  background: var(--scrim);
 }
 
 .ui-badge-panel {
   position: fixed;
   inset: 0;
-  z-index: 41;
+  z-index: var(--layer-dialog);
   display: flex;
   flex-direction: column;
   gap: 16px;

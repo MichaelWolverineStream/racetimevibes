@@ -1,9 +1,9 @@
-/* Konami / triforce overlay: sits just above the modal dialog box (z-index 41) and never takes clicks. */
+/* Konami / triforce overlay: sits on --layer-effects, just above the dialog layer and never takes clicks. */
 .ee-triforce {
   position: fixed;
   bottom: 130px;
   left: 50%;
-  z-index: 41;
+  z-index: var(--layer-effects);
   width: 150px;
   transform: translateX(-50%);
   pointer-events: none;
@@ -55,10 +55,6 @@
   align-items: center;
   padding-left: 22px;
   border-left: 1px solid var(--line);
-}
-
-.heart-hud[hidden] {
-  display: none;
 }
 
 .ee-heart {

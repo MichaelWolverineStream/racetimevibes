@@ -8,6 +8,8 @@ const BADGE_TILE_SIZE = 60;
 const BADGE_TILE_RADIUS = 12;
 const BADGE_TILE_BORDER = 3;
 const BADGE_IMAGE_SIZE = 46;
+// Must match the .ui-avatar__monogram--tint-N rules in ui.css.
+const MONOGRAM_TINTS = 6;
 
 const UI = (() => {
   let commentsPromise = null;
@@ -31,8 +33,18 @@ const UI = (() => {
     return player && player.a ? AVATAR_BASE_URL + encodeURIComponent(player.a) : null;
   }
 
+  // The same name always gets the same tint, so neighbouring monograms stay distinct.
+  function monogramTint(name) {
+    let hash = 0;
+    for (const character of name) {
+      hash = (hash * 31 + character.codePointAt(0)) >>> 0;
+    }
+    return (hash % MONOGRAM_TINTS) + 1;
+  }
+
   function monogram(name, size) {
-    const tile = element("span", "ui-avatar__monogram", (name.trim().charAt(0) || "?").toUpperCase());
+    const className = `ui-avatar__monogram ui-avatar__monogram--tint-${monogramTint(name)}`;
+    const tile = element("span", className, (name.trim().charAt(0) || "?").toUpperCase());
     tile.style.fontSize = `${Math.round(size * 0.55)}px`;
     return tile;
   }
@@ -73,6 +85,9 @@ const UI = (() => {
       link.target = "_blank";
       link.rel = "noopener noreferrer";
     }
+    if (part.tooltip) {
+      bindTooltip(link, part.tooltip);
+    }
     return link;
   }
 
@@ -109,6 +124,12 @@ const UI = (() => {
     return pill;
   }
 
+  function modeDot(modeName) {
+    const dot = element("span", "ui-mode-dot");
+    dot.style.background = modeColor(modeName);
+    return dot;
+  }
+
   function syncFollowStar(button) {
     const player = participants.players[Number(button.dataset.player)];
     const following = Following.has(player.id);
@@ -123,7 +144,7 @@ const UI = (() => {
       return;
     }
     followListenerBound = true;
-    document.addEventListener("racetimevibes:following", () => {
+    document.addEventListener(FOLLOWING_EVENT, () => {
       document.querySelectorAll("button.follow-star[data-player]").forEach(syncFollowStar);
     });
   }
@@ -260,18 +281,45 @@ const UI = (() => {
     return root;
   }
 
+  // Makes the page behind a modal inert and closes it on Escape. The returned release()
+  // must run after the modal's nodes are gone: it lifts inert first, because focus()
+  // into an inert page silently does nothing.
+  function holdModal(close) {
+    const previousFocus = document.activeElement;
+    const inertHosts = [document.querySelector("main"), document.querySelector("footer")].filter(Boolean);
+
+    function onKeydown(event) {
+      if (event.key === "Escape") {
+        close();
+      }
+    }
+
+    inertHosts.forEach((host) => {
+      host.inert = true;
+    });
+    document.addEventListener("keydown", onKeydown);
+
+    return function release() {
+      document.removeEventListener("keydown", onKeydown);
+      inertHosts.forEach((host) => {
+        host.inert = false;
+      });
+      if (previousFocus && previousFocus.isConnected && typeof previousFocus.focus === "function") {
+        previousFocus.focus();
+      }
+    };
+  }
+
   function badgePanel(definition) {
     if (openDialog) {
       openDialog.close();
     }
-    const previousFocus = document.activeElement;
     const titleId = `ui-badge-panel-title-${definition.id}`;
     const backdrop = element("div", "ui-badge-panel-backdrop");
     const panel = element("div", "ui-badge-panel");
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "true");
     panel.setAttribute("aria-labelledby", titleId);
-    const inertHosts = [document.querySelector("main"), document.querySelector("footer")].filter(Boolean);
     let closed = false;
 
     function close() {
@@ -279,10 +327,6 @@ const UI = (() => {
         return;
       }
       closed = true;
-      document.removeEventListener("keydown", onKeydown);
-      inertHosts.forEach((host) => {
-        host.inert = false;
-      });
       // A holder's tooltip would outlive its link, which is removed before mouseleave can fire.
       hideTooltip();
       panel.remove();
@@ -290,15 +334,7 @@ const UI = (() => {
       if (openDialog === handle) {
         openDialog = null;
       }
-      if (previousFocus && previousFocus.isConnected && typeof previousFocus.focus === "function") {
-        previousFocus.focus();
-      }
-    }
-
-    function onKeydown(event) {
-      if (event.key === "Escape") {
-        close();
-      }
+      release();
     }
 
     const holders = [];
@@ -348,11 +384,8 @@ const UI = (() => {
     backdrop.addEventListener("click", close);
     panel.append(closeButton, header, body);
     document.body.append(backdrop, panel);
-    inertHosts.forEach((host) => {
-      host.inert = true;
-    });
     openDialog = handle;
-    document.addEventListener("keydown", onKeydown);
+    const release = holdModal(close);
     hideTooltip();
     closeButton.focus();
     return handle;
@@ -362,7 +395,6 @@ const UI = (() => {
     if (openDialog) {
       openDialog.close();
     }
-    const previousFocus = document.activeElement;
     const box = element("div", "ui-dialog", text);
     box.tabIndex = -1;
     box.setAttribute("role", modal ? "dialog" : "status");
@@ -372,15 +404,16 @@ const UI = (() => {
     }
     const backdrop = modal ? element("div", "ui-dialog-backdrop") : null;
     let timer = null;
+    let release = null;
     let closed = false;
 
+    // onClose runs last, once openDialog is cleared, so a dialog it opens is not closed straight away.
     function close() {
       if (closed) {
         return;
       }
       closed = true;
       clearTimeout(timer);
-      document.removeEventListener("keydown", onKeydown);
       box.remove();
       if (backdrop) {
         backdrop.remove();
@@ -388,17 +421,11 @@ const UI = (() => {
       if (openDialog === handle) {
         openDialog = null;
       }
-      if (modal && previousFocus && previousFocus.isConnected && typeof previousFocus.focus === "function") {
-        previousFocus.focus();
+      if (release) {
+        release();
       }
       if (onClose) {
         onClose();
-      }
-    }
-
-    function onKeydown(event) {
-      if (event.key === "Escape") {
-        close();
       }
     }
 
@@ -411,7 +438,7 @@ const UI = (() => {
     document.body.appendChild(box);
     openDialog = handle;
     if (modal) {
-      document.addEventListener("keydown", onKeydown);
+      release = holdModal(close);
       box.focus();
     } else {
       timer = setTimeout(close, duration);
@@ -453,5 +480,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, speech, tag, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, dialogBox, comments, chestPace, relativeDay };
+  return { avatarUrl, avatar, speech, tag, modeDot, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, dialogBox, comments, chestPace, relativeDay };
 })();

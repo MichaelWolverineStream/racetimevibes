@@ -1,7 +1,7 @@
 const Feed = (() => {
   const PAGE_SIZE = 20;
   const MAX_VISIBLE_TAGS = 4;
-  const MAX_PB_DETAILS = 5;
+  const MAX_TAG_DETAILS = 5;
   const HERO_MIN_LENGTH = 12;
   const HERO_MIN_POOL = 20;
   const HERO_WINDOW_DAYS = 30;
@@ -141,12 +141,12 @@ const Feed = (() => {
   }
 
   function pbTag(pbTags) {
-    const details = pbTags.slice(0, MAX_PB_DETAILS).map(([, playerIndex, seconds, previous]) => {
+    const details = pbTags.slice(0, MAX_TAG_DETAILS).map(([, playerIndex, seconds, previous]) => {
       const previousText = previous === null || previous === undefined ? "" : `, previous best ${formatDuration(previous)}`;
       return `${playerName(playerIndex)}: ${formatDuration(seconds)}${previousText}`;
     });
-    if (pbTags.length > MAX_PB_DETAILS) {
-      details.push(`and ${pbTags.length - MAX_PB_DETAILS} more`);
+    if (pbTags.length > MAX_TAG_DETAILS) {
+      details.push(`and ${pbTags.length - MAX_TAG_DETAILS} more`);
     }
     return { kind: "pb", label: pbTags.length > 1 ? `PB ×${pbTags.length}` : "PB", detail: details.join("; ") };
   }
@@ -174,23 +174,42 @@ const Feed = (() => {
         };
       case "milestone":
         return { kind, label: `${ordinal(a)} race`, detail: `${playerName(playerIndex)} raced for the ${ordinal(a)} time` };
-      case "badge": {
-        const definition = badgeDefinition(a);
-        return { kind, label: definition.label, detail: `${playerName(playerIndex)} unlocked ${definition.label}: ${definition.description ?? ""} · ${UI.badgeShare(a)}` };
-      }
       default:
         return null;
     }
   }
 
+  // Racers unlocking the same badge in one race share a pill, as PBs do.
+  function badgeTag(sameBadge) {
+    const definition = badgeDefinition(sameBadge[0][2]);
+    const listed = sameBadge.slice(0, MAX_TAG_DETAILS).map(([, playerIndex]) => playerName(playerIndex)).join(", ");
+    const names = sameBadge.length > MAX_TAG_DETAILS ? `${listed} and ${sameBadge.length - MAX_TAG_DETAILS} more` : listed;
+    return {
+      kind: "badge",
+      label: sameBadge.length > 1 ? `${definition.label} ×${sameBadge.length}` : definition.label,
+      detail: `${names} unlocked ${definition.label}: ${definition.description ?? ""} · ${UI.badgeShare(definition.id)}`,
+    };
+  }
+
   function raceTagDescriptions(race) {
     const tags = race.t || [];
     const pbTags = tags.filter((tag) => tag[0] === "pb");
+    const badgeTagsById = new Map();
+    tags.filter((tag) => tag[0] === "badge").forEach((tag) => {
+      badgeTagsById.set(tag[2], [...(badgeTagsById.get(tag[2]) ?? []), tag]);
+    });
     const descriptions = [];
     tags.forEach((tag) => {
       if (tag[0] === "pb") {
         if (tag === pbTags[0]) {
           descriptions.push(pbTag(pbTags));
+        }
+        return;
+      }
+      if (tag[0] === "badge") {
+        const sameBadge = badgeTagsById.get(tag[2]);
+        if (tag === sameBadge[0]) {
+          descriptions.push(badgeTag(sameBadge));
         }
         return;
       }
@@ -226,9 +245,7 @@ const Feed = (() => {
   function modeCell(race) {
     const name = modeName(race);
     const cell = element("span", "feed-row__mode");
-    const dot = element("span", "feed-row__mode-dot");
-    dot.style.background = modeColor(name);
-    cell.append(dot, element("span", null, name));
+    cell.append(UI.modeDot(name), element("span", null, modeLabel(name)));
     return cell;
   }
 
@@ -381,6 +398,7 @@ const Feed = (() => {
       const open = detail.hidden;
       detail.hidden = !open;
       toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Hide entrants" : "Show entrants");
       wrapper.classList.toggle("feed-row--open", open);
     }
     toggle.addEventListener("click", toggleDetail);
@@ -392,9 +410,11 @@ const Feed = (() => {
     return wrapper;
   }
 
+  // Returns the first row added, or null when every race is already shown.
   function renderMoreRows() {
     const races = participants.races;
     const end = Math.min(races.length, shownCount + PAGE_SIZE);
+    let firstRow = null;
     for (let offset = shownCount; offset < end; offset += 1) {
       const raceIndex = races.length - 1 - offset;
       const race = races[raceIndex];
@@ -402,10 +422,21 @@ const Feed = (() => {
         lastRenderedDay = race.d;
         feedList.appendChild(element("h3", "feed-day", dayLabel(race.d)));
       }
-      feedList.appendChild(raceRow(race, raceIndex));
+      const row = raceRow(race, raceIndex);
+      firstRow ??= row;
+      feedList.appendChild(row);
     }
     shownCount = end;
     moreButton.hidden = shownCount >= races.length;
+    return firstRow;
+  }
+
+  // Focus moves to the first new row, so keyboard users carry on where the list grew.
+  function showMoreRows() {
+    const firstRow = renderMoreRows();
+    if (firstRow) {
+      firstRow.querySelector(".feed-row__toggle").focus();
+    }
   }
 
   function renderFeed() {
@@ -413,7 +444,7 @@ const Feed = (() => {
     feedList = element("div", "feed-list");
     moreButton = element("button", "mode-toggle__button feed-more", `Show ${PAGE_SIZE} more`);
     moreButton.type = "button";
-    moreButton.addEventListener("click", renderMoreRows);
+    moreButton.addEventListener("click", showMoreRows);
     host.append(feedList, moreButton);
     renderMoreRows();
   }
@@ -447,9 +478,9 @@ const Feed = (() => {
     const shortText = text.length > HERO_MAX_LENGTH ? `${text.slice(0, HERO_MAX_LENGTH - 1).trimEnd()}…` : text;
     const context = [
       { text: playerName(playerIndex) },
-      { text: modeName(race) },
+      { text: modeLabel(modeName(race)) },
       { text: entry ? placeText(race, entry) : "DNF" },
-      { text: UI.relativeDay(race.d), href: RACE_ROOT + race.r },
+      { text: UI.relativeDay(race.d), href: RACE_ROOT + race.r, tooltip: formatRaceDate(race.d) },
     ];
     return UI.speech(shortText, { playerIndex, size: "hero", context });
   }
@@ -530,7 +561,7 @@ const Feed = (() => {
     }
     const race = participants.races[raceIndexes.at(-1)];
     const entry = race.e.find((candidate) => candidate[0] === playerIndex);
-    return [placeText(race, entry), modeName(race), UI.relativeDay(race.d)].join(" · ");
+    return [placeText(race, entry), modeLabel(modeName(race)), UI.relativeDay(race.d)].join(" · ");
   }
 
   function racerCard(playerIndex, deltas) {
@@ -629,7 +660,7 @@ const Feed = (() => {
     renderNewBadges(sidebar);
     const rerender = () => renderYourRacers(racersHost);
     rerender();
-    document.addEventListener("racetimevibes:following", rerender);
+    document.addEventListener(FOLLOWING_EVENT, rerender);
   }
 
   // The toggle only shows below the sidebar breakpoint in feed.css, which also ignores

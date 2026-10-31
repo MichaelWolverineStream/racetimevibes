@@ -76,8 +76,7 @@ const Records = (() => {
 
   function modeDot(modeIndex) {
     const modeName = participants.modes[modeIndex];
-    const dot = element("span", "records-mode-dot");
-    dot.style.background = modeColor(modeName);
+    const dot = UI.modeDot(modeName);
     dot.tabIndex = 0;
     dot.setAttribute("aria-label", modeLabel(modeName));
     bindTooltip(dot, modeLabel(modeName));
@@ -100,7 +99,7 @@ const Records = (() => {
       bindTooltip(valueNode, tip);
     }
     row.appendChild(valueNode);
-    row.appendChild(modeIndex === null ? element("span", "records-mode-dot records-mode-dot--none") : modeDot(modeIndex));
+    row.appendChild(modeIndex === null ? element("span", "ui-mode-dot ui-mode-dot--none") : modeDot(modeIndex));
     return row;
   }
 

@@ -59,7 +59,7 @@ python3 scripts/version_assets.py
 
 Run this after editing `site/index.html` or any versioned asset listed in `VERSIONED_ASSETS` in `scripts/version_assets.py`, then commit the result. It hashes the markup and those assets into a single token, rewrites every reference to `asset?v=<token>`, and writes `site/version.json`.
 
-Two things follow from that. A deploy changes the asset URLs, so returning visitors always fetch the new files instead of a cached copy. And `site/version-check.js` polls `version.json` every five minutes, plus whenever the tab regains focus, and reloads the page once if the published token no longer matches the one embedded in the loaded document.
+Two things follow from that. A deploy changes the asset URLs, so returning visitors always fetch the new files instead of a cached copy. And `site/version-check.js` checks `version.json` when the page loads, whenever the tab regains focus, and every five minutes, and reloads the page once if the published token no longer matches the one embedded in the loaded document. A check on load or on regaining focus reloads at once. A five-minute poll that finds a new version while the page is on screen waits instead, and reloads at the next visibility change, so the page never reloads under someone reading it. A tab that stays on screen the whole time therefore keeps the old version until it is hidden or refocused.
 
 The reload is guarded by `sessionStorage`: a tab reloads at most once per newly published version. Without that guard a browser still serving a cached `index.html` would report the old token forever and reload in a loop.
 

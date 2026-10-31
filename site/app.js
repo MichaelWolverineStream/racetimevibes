@@ -52,6 +52,12 @@ function hourRange(hour) {
   return `${fullHour(hour)}-${fullHour((hour + 1) % 24)}`;
 }
 
+// Mode ids are snake_case; labels read in sentence case, like "All modes".
+function formatModeName(mode) {
+  const words = mode.replaceAll("_", " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 function utcTimestamp(isoString) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -112,12 +118,16 @@ function formatPercent(value) {
   return `${decimalFormatter.format(value * 100)}%`;
 }
 
-function positionTooltip(clientX, clientY) {
+// Sits above the anchor; with no room there it drops below anchorBottom instead of covering it,
+// and either way stays inside the viewport.
+function positionTooltip(clientX, clientY, anchorBottom = clientY + 8) {
   const margin = 12;
   const width = tooltip.offsetWidth;
   const height = tooltip.offsetHeight;
   const left = Math.min(window.innerWidth - width - margin, Math.max(margin, clientX + 10));
-  const top = Math.max(margin, clientY - height - 12);
+  const above = clientY - height - 12;
+  const preferred = above >= margin ? above : anchorBottom + 12;
+  const top = Math.max(margin, Math.min(preferred, window.innerHeight - height - margin));
   tooltip.style.left = `${left}px`;
   tooltip.style.top = `${top}px`;
 }
@@ -130,12 +140,19 @@ function showTooltip(target, text, event = null) {
     return;
   }
   const bounds = target.getBoundingClientRect();
-  positionTooltip(bounds.left + bounds.width / 2, bounds.top);
+  positionTooltip(bounds.left + bounds.width / 2, bounds.top, bounds.bottom);
 }
 
 function hideTooltip() {
   tooltip.hidden = true;
 }
+
+// Escape dismisses the tooltip wherever it came from, so it never has to be moused away.
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    hideTooltip();
+  }
+});
 
 function bindTooltip(target, text) {
   target.addEventListener("mouseenter", (event) => showTooltip(target, text, event));
@@ -523,7 +540,7 @@ function modeChart(items, width) {
     const y = margin.top + index * rowHeight + 9;
     const barHeight = 24;
     const barWidth = ((item.average_racers ?? 0) / maximum) * plotWidth;
-    const modeName = item.mode.replaceAll("_", " ");
+    const modeName = formatModeName(item.mode);
     const label = `${modeName}: ${decimalFormatter.format(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`;
     const group = svgElement("g", {
       class: "chart-mark",
@@ -965,7 +982,7 @@ function renderSelection(data, selection) {
     document.querySelector("#mode-average-table"),
     ["Mode", "Races", "Avg entries"],
     selection.modes.map((item) => [
-      item.mode.replaceAll("_", " "),
+      formatModeName(item.mode),
       integerFormatter.format(item.race_count),
       decimalFormatter.format(item.average_racers),
     ]),

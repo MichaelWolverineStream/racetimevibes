@@ -176,13 +176,6 @@
   text-transform: uppercase;
 }
 
-.feed-row__mode-dot {
-  flex: 0 0 auto;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-}
-
 .feed-row__preset {
   grid-area: preset;
   overflow: hidden;
@@ -629,5 +622,9 @@
 @media (max-width: 620px) {
   .updates-layout {
     padding-inline: 16px;
+  }
+
+  .chart-panel--latest .panel-heading {
+    flex-direction: column;
   }
 }
