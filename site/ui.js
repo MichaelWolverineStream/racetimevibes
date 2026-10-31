@@ -242,7 +242,9 @@ const UI = (() => {
 
   function badge(definition, { earnedRaceIndex = null, progress = null } = {}) {
     const earned = earnedRaceIndex !== null && earnedRaceIndex !== undefined;
-    const root = element("div", `ui-badge ui-badge--${earned ? "earned" : "locked"}`);
+    const root = element("button", `ui-badge ui-badge--${earned ? "earned" : "locked"}`);
+    root.type = "button";
+    root.setAttribute("aria-haspopup", "dialog");
     const tile = element("span", "ui-badge__tile");
     if (!earned && definition.target && progress) {
       tile.appendChild(progressFrame(definition, progress));
@@ -254,7 +256,106 @@ const UI = (() => {
     if (tooltipText) {
       bindTooltip(root, tooltipText);
     }
+    root.addEventListener("click", () => badgePanel(definition));
     return root;
+  }
+
+  function badgePanel(definition) {
+    if (openDialog) {
+      openDialog.close();
+    }
+    const previousFocus = document.activeElement;
+    const titleId = `ui-badge-panel-title-${definition.id}`;
+    const backdrop = element("div", "ui-badge-panel-backdrop");
+    const panel = element("div", "ui-badge-panel");
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-labelledby", titleId);
+    const inertHosts = [document.querySelector("main"), document.querySelector("footer")].filter(Boolean);
+    let closed = false;
+
+    function close() {
+      if (closed) {
+        return;
+      }
+      closed = true;
+      document.removeEventListener("keydown", onKeydown);
+      inertHosts.forEach((host) => {
+        host.inert = false;
+      });
+      // A holder's tooltip would outlive its link, which is removed before mouseleave can fire.
+      hideTooltip();
+      panel.remove();
+      backdrop.remove();
+      if (openDialog === handle) {
+        openDialog = null;
+      }
+      if (previousFocus && previousFocus.isConnected && typeof previousFocus.focus === "function") {
+        previousFocus.focus();
+      }
+    }
+
+    function onKeydown(event) {
+      if (event.key === "Escape") {
+        close();
+      }
+    }
+
+    const holders = [];
+    participants.players.forEach((player, playerIndex) => {
+      if (player.badges[definition.id] !== undefined) {
+        holders.push({ player, playerIndex, raceIndex: player.badges[definition.id] });
+      }
+    });
+    holders.sort((a, b) => a.raceIndex - b.raceIndex || a.playerIndex - b.playerIndex);
+
+    const closeButton = element("button", "ui-badge-panel__close", "×");
+    closeButton.type = "button";
+    closeButton.setAttribute("aria-label", "Close");
+    closeButton.addEventListener("click", close);
+
+    const tile = element("span", "ui-badge__tile");
+    tile.appendChild(badgeArt(definition, true));
+    const art = element("span", "ui-badge ui-badge--earned ui-badge-panel__art");
+    art.appendChild(tile);
+
+    const title = element("h2", "ui-badge-panel__title", definition.label);
+    title.id = titleId;
+    const share = shareFormatter.format(holders.length / participants.players.length);
+    const count = `${holders.length} ${holders.length === 1 ? "racer" : "racers"} · ${share}`;
+    const text = element("div", "ui-badge-panel__text");
+    text.append(title, element("p", "ui-badge-panel__description", definition.description || ""), element("p", "ui-badge-panel__count", count));
+    const header = element("div", "ui-badge-panel__header");
+    header.append(art, text);
+
+    let body;
+    if (holders.length) {
+      body = element("div", "ui-badge-panel__holders");
+      holders.forEach(({ player, playerIndex }) => {
+        const link = element("a", "ui-badge-panel__holder");
+        link.href = playerHash(player.id, ALL_MODES);
+        link.setAttribute("aria-label", player.name);
+        link.appendChild(avatar(playerIndex, 40));
+        link.addEventListener("click", close);
+        bindTooltip(link, player.name);
+        body.appendChild(link);
+      });
+    } else {
+      body = element("p", "ui-badge-panel__empty", "Nobody has earned this badge yet.");
+    }
+
+    const handle = { element: panel, close };
+    backdrop.addEventListener("click", close);
+    panel.append(closeButton, header, body);
+    document.body.append(backdrop, panel);
+    inertHosts.forEach((host) => {
+      host.inert = true;
+    });
+    openDialog = handle;
+    document.addEventListener("keydown", onKeydown);
+    hideTooltip();
+    closeButton.focus();
+    return handle;
   }
 
   function dialogBox(text, { modal = false, onClose = null, duration = DIALOG_DEFAULT_MS } = {}) {
@@ -352,5 +453,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, speech, tag, followStar, isPalindromeTime, time, badge, badgeShare, dialogBox, comments, chestPace, relativeDay };
+  return { avatarUrl, avatar, speech, tag, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, dialogBox, comments, chestPace, relativeDay };
 })();

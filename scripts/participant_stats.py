@@ -21,7 +21,7 @@ except ImportError:
     import ladder_rating
 
 
-PARTICIPANT_SCHEMA_VERSION = 5
+PARTICIPANT_SCHEMA_VERSION = 6
 AVATAR_ORIGIN = "https://racetime.gg/media/"
 AVATAR_FILENAME = re.compile(r"^[\w.-]+$")
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
@@ -171,7 +171,7 @@ def _finalize_row(row: JsonObject) -> JsonObject:
         "podiums": row["first"] + row["second"] + row["third"],
         "best_place": min(places) if places else None,
         "median_place": statistics.median(places) if places else None,
-        "average_seconds": sum(times) / len(times) if times else None,
+        "median_seconds": statistics.median(times) if times else None,
         "min_seconds": min(times) if times else None,
         "max_seconds": max(times) if times else None,
     }

@@ -1,5 +1,6 @@
 const RacerExtras = (() => {
   const RIVAL_MIN_DECISIVE = 5;
+  const RIVAL_AVATAR_SIZE = 28;
   const RATING_HEIGHT = 360;
   const RATING_MARGIN = { top: 20, right: 18, bottom: 46, left: 62 };
   const shortDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
@@ -281,44 +282,73 @@ const RacerExtras = (() => {
     );
   }
 
+  function valueTile(label, ...value) {
+    const item = tile(label);
+    const strong = element("strong", "summary-value");
+    strong.append(...value);
+    item.append(strong);
+    return item;
+  }
+
   function rivalTile(label, matchup) {
+    if (!matchup) {
+      return valueTile(label, "--");
+    }
     const player = participants.players[matchup.opponent];
     const item = tile(label);
-    const row = element("div", "rival");
+    const row = element("div", "summary-value rival");
     const link = element("a", "rival__name", player.name);
     link.href = playerHash(player.id, ALL_MODES);
-    row.append(UI.avatar(matchup.opponent, 36), link, element("strong", "rival__record", `${matchup.wins}–${matchup.losses}`));
+    row.append(UI.avatar(matchup.opponent, RIVAL_AVATAR_SIZE), link, element("strong", "rival__record", `${matchup.wins}-${matchup.losses}`));
     item.append(row);
     return item;
   }
 
-  function renderRivals(playerIndex) {
+  function rivals(playerIndex) {
     const candidates = computeHeadToHead(playerIndex, ALL_MODES)
       .filter((matchup) => matchup.wins + matchup.losses >= RIVAL_MIN_DECISIVE)
       .map((matchup) => ({ ...matchup, rate: matchup.wins / (matchup.wins + matchup.losses) }));
     const pick = (list, order) => list.sort((left, right) => order * (left.rate - right.rate) || right.meetings - left.meetings)[0];
-    const nemesis = pick(candidates.filter((matchup) => matchup.rate < 0.5), 1);
-    const victim = pick(candidates.filter((matchup) => matchup.rate > 0.5), -1);
-    const tiles = [];
-    if (nemesis) {
-      tiles.push(rivalTile("Nemesis", nemesis));
+    return {
+      nemesis: pick(candidates.filter((matchup) => matchup.rate < 0.5), 1),
+      victim: pick(candidates.filter((matchup) => matchup.rate > 0.5), -1),
+    };
+  }
+
+  // Every tile covers all modes and the whole archive, so the strip ignores the racer page's mode toggle.
+  function renderSummary(playerIndex) {
+    const player = participants.players[playerIndex];
+    const board = participants.leaderboards.find((item) => item.mode === ALL_MODES);
+    const row = board.rows.find((item) => item.p === playerIndex);
+    const record = recordsForMode(ALL_MODES, ALL_RACES)[playerIndex];
+    const rank = ratingRank(playerIndex);
+    const rating =
+      rank === undefined
+        ? valueTile("Rank & Rating", "--")
+        : valueTile("Rank & Rating", `#${integerFormatter.format(rank)}`, element("span", "summary-value__joiner", "with"), ratingText(player));
+    if (rank !== undefined) {
+      bindTooltip(rating, ratingTooltip());
     }
-    if (victim) {
-      tiles.push(rivalTile("Favourite victim", victim));
-    }
-    const host = document.querySelector("#player-rivals");
-    host.hidden = !tiles.length;
-    host.replaceChildren(...tiles);
+    const { nemesis, victim } = rivals(playerIndex);
+    document.querySelector("#player-summary").replaceChildren(
+      rating,
+      valueTile("Podiums", row ? `${row.first} / ${row.second} / ${row.third}` : "--"),
+      valueTile("Record W-L-D", `${record.wins}-${record.losses}-${record.draws}`),
+      valueTile("H2H Win Rate", formatRate(winRate(record.wins, record.losses))),
+      valueTile("Badges", `${Object.keys(player.badges).length} / ${participants.badges.length}`),
+      rivalTile("Nemesis", nemesis),
+      rivalTile("Favourite Victim", victim),
+    );
   }
 
   function render(playerIndex) {
     if (renderedPlayer !== playerIndex) {
       renderedPlayer = playerIndex;
       renderHeading(playerIndex);
+      renderSummary(playerIndex);
       renderBadges(playerIndex);
       renderPbs(playerIndex);
       renderRating(playerIndex);
-      renderRivals(playerIndex);
     }
   }
 

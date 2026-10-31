@@ -281,7 +281,7 @@ class LeaderboardTests(unittest.TestCase):
         racer = row_for(result, "all", "racer")
         self.assertEqual(racer["min_seconds"], 600)
         self.assertEqual(racer["max_seconds"], 1800)
-        self.assertEqual(racer["average_seconds"], 1200)
+        self.assertEqual(racer["median_seconds"], 1200)
         self.assertEqual(racer["finishes"], 2)
 
         rival = row_for(result, "all", "rival")
@@ -301,7 +301,7 @@ class LeaderboardTests(unittest.TestCase):
             ]
         )
         quitter = row_for(result, "all", "quitter")
-        self.assertIsNone(quitter["average_seconds"])
+        self.assertIsNone(quitter["median_seconds"])
         self.assertIsNone(quitter["min_seconds"])
         self.assertIsNone(quitter["max_seconds"])
         self.assertIsNone(quitter["best_place"])
@@ -500,7 +500,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 5)
+        self.assertEqual(result["schema_version"], 6)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "badges", "progress",
                         "pbs", "streaks", "best_preset"):
@@ -620,7 +620,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 5)
+        self.assertEqual(self.participants["schema_version"], 6)
         for key in ("presets", "hardest_preset", "badges", "records", "facts", "rating"):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])

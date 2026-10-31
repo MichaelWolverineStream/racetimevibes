@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 5;
+const PARTICIPANT_SCHEMA_VERSION = 6;
 const ALL_MODES = "all";
 const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
@@ -22,16 +22,19 @@ let playerIndexById = new Map();
 let raceIndexesByPlayer = [];
 let badgeHolderCounts = new Map();
 let recordCache = new Map();
-let rankDeltaCache = new Map();
+let ratingRankCache = null;
+let ratingRankDeltaCache = null;
 let ratingDeltaCache = null;
 let currentView = null;
 
+const DEFAULT_LEADERBOARD_SORT = { key: "rating", direction: "desc" };
 const leaderboardState = {
   mode: ALL_MODES,
-  sort: null,
+  sort: DEFAULT_LEADERBOARD_SORT,
   query: "",
   minRaces: 0,
   recentOnly: false,
+  followedOnly: false,
   range: { preset: "all", start: null, end: null },
 };
 const playerState = { mode: ALL_MODES, sort: null, query: "", heatmapMetric: "h2h" };
@@ -181,14 +184,13 @@ function computeBoardRows(modeIndex, range) {
       const [playerIndex, place, status, seconds] = entry;
       let row = totals.get(playerIndex);
       if (!row) {
-        row = { p: playerIndex, races: 0, first: 0, second: 0, third: 0, dnf: 0, dq: 0, totalSeconds: 0, timed: 0 };
+        row = { p: playerIndex, races: 0, first: 0, second: 0, third: 0, dnf: 0, dq: 0, times: [] };
         totals.set(playerIndex, row);
       }
       row.races += 1;
       if (isFinisher(entry)) {
         if (seconds !== null) {
-          row.totalSeconds += seconds;
-          row.timed += 1;
+          row.times.push(seconds);
         }
         if (place === 1) {
           row.first += 1;
@@ -205,9 +207,9 @@ function computeBoardRows(modeIndex, range) {
     });
   });
   return [...totals.values()]
-    .map(({ totalSeconds, timed, ...row }) => ({
+    .map(({ times, ...row }) => ({
       ...row,
-      average_seconds: timed ? totalSeconds / timed : null,
+      median_seconds: times.length ? median(times) : null,
     }))
     .sort(
       (left, right) =>
@@ -223,26 +225,66 @@ function playerIndexFor(userId) {
   return playerIndexById.get(userId);
 }
 
-// Positive when the racer moved up the all-time board over the last 7 days; "new" if unranked then.
-function rankDeltas(modeId) {
-  if (rankDeltaCache.has(modeId)) {
-    return rankDeltaCache.get(modeId);
-  }
-  const deltas = new Map();
-  const board = participants.leaderboards.find((item) => item.mode === modeId);
-  if (board) {
-    const before = computeBoardRows(modeIndexFor(modeId), { start: null, end: shiftIsoDate(todayInZone(), -7) });
-    const rankBefore = new Map(before.map((row, index) => [row.p, index + 1]));
-    board.rows.forEach((row, index) => {
-      const previous = rankBefore.get(row.p);
-      if (previous === undefined) {
-        deltas.set(row.p, "new");
-      } else if (previous !== index + 1) {
-        deltas.set(row.p, previous - (index + 1));
+// Competition ranks: one more than the number of racers rated strictly higher, so ties share a rank.
+function competitionRanks(ratings) {
+  const firstRank = new Map();
+  [...ratings.values()]
+    .sort((left, right) => right - left)
+    .forEach((rating, index) => {
+      if (!firstRank.has(rating)) {
+        firstRank.set(rating, index + 1);
       }
     });
+  return new Map([...ratings].map(([playerIndex, rating]) => [playerIndex, firstRank.get(rating)]));
+}
+
+// Undefined for an unrated racer.
+function ratingRank(playerIndex) {
+  if (!ratingRankCache) {
+    const ratings = new Map();
+    participants.players.forEach((player, index) => {
+      if (typeof player.rating === "number") {
+        ratings.set(index, player.rating);
+      }
+    });
+    ratingRankCache = competitionRanks(ratings);
   }
-  rankDeltaCache.set(modeId, deltas);
+  return ratingRankCache.get(playerIndex);
+}
+
+// Positive when the racer climbed the overall rating ranks over the last 7 days; "new" if they had not raced then.
+// A rating only moves when its racer races, so the rating on a past date is the one after their last race by then.
+function ratingRankDeltas() {
+  if (ratingRankDeltaCache) {
+    return ratingRankDeltaCache;
+  }
+  const cutoff = shiftIsoDate(todayInZone(), -7);
+  const ratingsBefore = new Map();
+  participants.races.forEach((race) => {
+    if (race.d > cutoff) {
+      return;
+    }
+    race.e.forEach((entry) => {
+      if (typeof entry[4] === "number") {
+        ratingsBefore.set(entry[0], entry[4]);
+      }
+    });
+  });
+  const ranksBefore = competitionRanks(ratingsBefore);
+  const deltas = new Map();
+  participants.players.forEach((player, playerIndex) => {
+    const rank = ratingRank(playerIndex);
+    if (rank === undefined) {
+      return;
+    }
+    const previous = ranksBefore.get(playerIndex);
+    if (previous === undefined) {
+      deltas.set(playerIndex, "new");
+    } else if (previous !== rank) {
+      deltas.set(playerIndex, previous - rank);
+    }
+  });
+  ratingRankDeltaCache = deltas;
   return deltas;
 }
 
@@ -427,19 +469,20 @@ function appendRankDelta(cell, rank, delta) {
   } else {
     arrow.className = `trend rank-delta trend--${delta > 0 ? "up" : "down"}`;
     arrow.textContent = `${delta > 0 ? "\u25B2" : "\u25BC"}${Math.abs(delta)}`;
-    arrow.title = `Rank 7 days ago: ${rank + delta}`;
+    arrow.title = `Rating rank 7 days ago: #${rank + delta}`;
   }
   cell.appendChild(arrow);
 }
 
-function appendRacerLink(cell, player, modeId, rank, rankDelta) {
-  if (rank !== null) {
+// `rowNumber` is the row's position as displayed; `rankDelta` is the racer's rating-rank movement.
+function appendRacerLink(cell, player, modeId, rowNumber, rankDelta) {
+  if (rowNumber !== null) {
     const badge = document.createElement("span");
-    badge.className = rank <= 3 ? `rank-badge rank-badge--podium rank-badge--${rank}` : "rank-badge";
-    badge.textContent = integerFormatter.format(rank);
+    badge.className = rowNumber <= 3 ? `rank-badge rank-badge--podium rank-badge--${rowNumber}` : "rank-badge";
+    badge.textContent = integerFormatter.format(rowNumber);
     cell.appendChild(badge);
     if (rankDelta !== undefined) {
-      appendRankDelta(cell, rank, rankDelta);
+      appendRankDelta(cell, ratingRank(playerIndexFor(player.id)), rankDelta);
     }
   }
   const link = document.createElement("a");
@@ -453,10 +496,10 @@ function appendText(cell, text) {
   cell.textContent = text;
 }
 
-function appendMedal(cell, value, isGold) {
+function appendMedal(cell, value, medal) {
   cell.textContent = integerFormatter.format(value);
-  if (isGold && value > 0) {
-    cell.classList.add("medal-count--first");
+  if (value > 0) {
+    cell.classList.add(`medal-count--${medal}`);
   }
 }
 
@@ -547,12 +590,12 @@ function renderSortableTable(container, columns, rows, state, onSort) {
   table.appendChild(head);
 
   const body = document.createElement("tbody");
-  rows.forEach((row) => {
+  rows.forEach((row, rowIndex) => {
     const bodyRow = document.createElement("tr");
     columns.forEach((column) => {
       const cell = document.createElement("td");
       cell.classList.add(`align-${column.align || "right"}`);
-      column.render(cell, row);
+      column.render(cell, row, rowIndex);
       bodyRow.appendChild(cell);
     });
     body.appendChild(bodyRow);
@@ -583,23 +626,41 @@ function matchesQuery(name, query) {
 }
 
 function leaderboardColumns() {
+  const { sort } = leaderboardState;
+  // Rank movement is in overall rating rank, so it only reads against the row order when sorted by rating.
+  const showRankMovement = sort.key === DEFAULT_LEADERBOARD_SORT.key && sort.direction === DEFAULT_LEADERBOARD_SORT.direction;
   return [
     {
-      key: "rank",
+      key: "name",
       label: "Racer",
-      sortLabel: "leaderboard rank",
+      sortLabel: "racer name",
       align: "left",
       defaultDirection: "asc",
-      sortValue: (row) => row.rank,
-      render: (cell, row) => {
-        // Ranks are range-relative once a date range is active, so 7-day movement means nothing then.
-        const delta = isRangeActive(leaderboardState.range) ? undefined : rankDeltas(leaderboardState.mode).get(row.p);
-        appendRacerLink(cell, row.player, leaderboardState.mode, row.rank, delta);
+      sortValue: (row) => row.player.name.toLowerCase(),
+      render: (cell, row, rowIndex) => {
+        const delta = showRankMovement ? ratingRankDeltas().get(row.p) : undefined;
+        appendRacerLink(cell, row.player, leaderboardState.mode, rowIndex + 1, delta);
         if (typeof UI !== "undefined") {
           const star = UI.followStar(row.p);
           star.classList.add("follow-star--row");
           cell.appendChild(star);
         }
+      },
+    },
+    {
+      key: "rating",
+      label: "Rating",
+      sortLabel: "ladder rating",
+      tooltip: "Ladder rating · all modes, all time",
+      sortValue: (row) => row.player.rating,
+      render: (cell, row) => {
+        const text = document.createElement("span");
+        text.className = "rating-value";
+        text.textContent = ratingText(row.player);
+        if (row.player.rating !== null) {
+          bindTooltip(text, ratingTooltip());
+        }
+        cell.appendChild(text);
       },
     },
     {
@@ -613,21 +674,21 @@ function leaderboardColumns() {
       label: "1st",
       sortLabel: "first places",
       sortValue: (row) => row.first,
-      render: (cell, row) => appendMedal(cell, row.first, true),
+      render: (cell, row) => appendMedal(cell, row.first, "first"),
     },
     {
       key: "second",
       label: "2nd",
       sortLabel: "second places",
       sortValue: (row) => row.second,
-      render: (cell, row) => appendMedal(cell, row.second, false),
+      render: (cell, row) => appendMedal(cell, row.second, "second"),
     },
     {
       key: "third",
       label: "3rd",
       sortLabel: "third places",
       sortValue: (row) => row.third,
-      render: (cell, row) => appendMedal(cell, row.third, false),
+      render: (cell, row) => appendMedal(cell, row.third, "third"),
     },
     {
       key: "unfinished",
@@ -651,62 +712,63 @@ function leaderboardColumns() {
       render: (cell, row) => appendText(cell, formatRate(row.headToHeadRate)),
     },
     {
-      key: "rating",
-      label: "Rating",
-      sortLabel: "ladder rating",
-      tooltip: "Ladder rating \u00B7 all modes, all time",
-      sortValue: (row) => row.player.rating,
-      render: (cell, row) => {
-        const text = document.createElement("span");
-        text.className = "rating-value";
-        text.textContent = ratingText(row.player);
-        if (row.player.rating !== null) {
-          bindTooltip(text, ratingTooltip());
-        }
-        cell.appendChild(text);
-      },
+      key: "badges",
+      label: "Badges",
+      sortLabel: "badges earned",
+      tooltip: "Badges earned \u00B7 all modes, all time",
+      sortValue: (row) => row.badges,
+      render: (cell, row) => appendText(cell, integerFormatter.format(row.badges)),
     },
     {
-      key: "average",
-      label: "Avg time",
-      sortLabel: "average finish time",
+      key: "median",
+      label: "Median time",
+      sortLabel: "median finish time",
       defaultDirection: "asc",
-      sortValue: (row) => row.averageSeconds,
-      render: (cell, row) => appendText(cell, formatDuration(row.averageSeconds)),
+      sortValue: (row) => row.medianSeconds,
+      render: (cell, row) => appendText(cell, formatDuration(row.medianSeconds)),
     },
   ];
 }
 
+// Rows in rating order, highest first, unrated last; the players array is name-sorted, so its index breaks ties.
 function leaderboardRows(modeId, range) {
   const modeIndex = modeIndexFor(modeId);
-  let rows;
+  let boardRows;
   if (isRangeActive(range)) {
-    rows = computeBoardRows(modeIndex, range);
+    boardRows = computeBoardRows(modeIndex, range);
   } else {
     const board = participants.leaderboards.find((item) => item.mode === modeId);
     if (!board) {
       return [];
     }
-    rows = board.rows;
+    boardRows = board.rows;
   }
   const records = recordsForMode(modeId, range);
-  return rows.map((row, index) => {
+  const rows = boardRows.map((row) => {
     const record = records[row.p];
+    const player = participants.players[row.p];
     return {
-      rank: index + 1,
+      rank: 0,
       p: row.p,
-      player: participants.players[row.p],
+      player,
       lastRaceDate: lastRaceDate(row.p, modeIndex),
       races: row.races,
       first: row.first,
       second: row.second,
       third: row.third,
       unfinished: row.dnf + row.dq,
-      averageSeconds: row.average_seconds,
+      badges: Object.keys(player.badges).length,
+      medianSeconds: row.median_seconds,
       raceWinRate: row.first / row.races,
       headToHeadRate: winRate(record.wins, record.losses),
     };
   });
+  const ratingOf = (row) => row.player.rating ?? -Infinity;
+  rows.sort((left, right) => ratingOf(right) - ratingOf(left) || left.p - right.p);
+  rows.forEach((row, index) => {
+    row.rank = index + 1;
+  });
+  return rows;
 }
 
 function renderLeaderboard({ fromSearch = false } = {}) {
@@ -717,7 +779,7 @@ function renderLeaderboard({ fromSearch = false } = {}) {
     leaderboardState.mode,
     (mode) => {
       leaderboardState.mode = mode;
-      leaderboardState.sort = null;
+      leaderboardState.sort = DEFAULT_LEADERBOARD_SORT;
       renderLeaderboard();
     },
   );
@@ -730,6 +792,7 @@ function renderLeaderboard({ fromSearch = false } = {}) {
     (row) =>
       row.races >= leaderboardState.minRaces &&
       (!leaderboardState.recentOnly || row.lastRaceDate >= recentCutoff) &&
+      (!leaderboardState.followedOnly || Following.has(row.player.id)) &&
       matchesQuery(row.player.name, leaderboardState.query),
   );
   document
@@ -738,6 +801,9 @@ function renderLeaderboard({ fromSearch = false } = {}) {
   document
     .querySelector("#leaderboard-recent")
     .setAttribute("aria-pressed", String(leaderboardState.recentOnly));
+  document
+    .querySelector("#leaderboard-followed")
+    .setAttribute("aria-pressed", String(leaderboardState.followedOnly));
   document.querySelectorAll("#leaderboard-range-presets [data-range]").forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.range === range.preset));
   });
@@ -749,7 +815,7 @@ function renderLeaderboard({ fromSearch = false } = {}) {
   if (!visible.length) {
     const empty = document.createElement("p");
     empty.className = "table-empty";
-    empty.textContent = all.length ? "No racers match these filters." : "No races in this mode during the selected dates.";
+    empty.textContent = emptyLeaderboardText(all.length > 0);
     container.replaceChildren(empty);
   } else {
     renderSortableTable(container, columns, sortRows(visible, columns, leaderboardState.sort), leaderboardState, (column) => {
@@ -771,8 +837,21 @@ function renderLeaderboard({ fromSearch = false } = {}) {
   if (leaderboardState.recentOnly) {
     filterLabels.push(`raced in the last ${RECENT_DAYS} days`);
   }
+  if (leaderboardState.followedOnly) {
+    filterLabels.push("followed racers only");
+  }
   const filterLabel = filterLabels.map((label) => `, ${label}`).join("");
   announce("#leaderboard-announcer", `${sortLabel}${visible.length} of ${all.length} racers shown for ${modeLabel(leaderboardState.mode)}${filterLabel}.`);
+}
+
+function emptyLeaderboardText(hasRaces) {
+  if (!hasRaces) {
+    return "No races in this mode during the selected dates.";
+  }
+  if (leaderboardState.followedOnly && !Following.ids().length) {
+    return "Star a racer to follow them, then they show up here.";
+  }
+  return "No racers match these filters.";
 }
 
 function clampIsoDate(isoDate, min, max) {
@@ -832,49 +911,6 @@ function playerModes(playerIndex) {
     seen.add(participants.modes[participants.races[raceIndex].m]);
   });
   return participants.modes.filter((mode) => seen.has(mode));
-}
-
-function summaryItem(label, value) {
-  const item = document.createElement("div");
-  item.className = "summary-item";
-  const caption = document.createElement("span");
-  caption.className = "summary-label";
-  caption.textContent = label;
-  const strong = document.createElement("strong");
-  strong.textContent = value;
-  item.append(caption, strong);
-  return item;
-}
-
-function renderPlayerSummary(playerIndex, modeId, matchups) {
-  const board = participants.leaderboards.find((item) => item.mode === modeId);
-  const row = board ? board.rows.find((item) => item.p === playerIndex) : null;
-  const totals = matchups.reduce(
-    (carry, matchup) => ({
-      wins: carry.wins + matchup.wins,
-      losses: carry.losses + matchup.losses,
-      draws: carry.draws + matchup.draws,
-    }),
-    { wins: 0, losses: 0, draws: 0 },
-  );
-  const container = document.querySelector("#player-summary");
-  const player = participants.players[playerIndex];
-  const rating = summaryItem("Rating", ratingText(player));
-  if (player.rating !== null) {
-    bindTooltip(rating, ratingTooltip());
-  }
-  container.replaceChildren(
-    rating,
-    summaryItem("Races", row ? integerFormatter.format(row.races) : "0"),
-    summaryItem("Podiums", row ? `${row.first} / ${row.second} / ${row.third}` : "--"),
-    summaryItem("Record W-L-D", `${totals.wins}-${totals.losses}-${totals.draws}`),
-    summaryItem("H2H win rate", formatRate(winRate(totals.wins, totals.losses))),
-    summaryItem("DNF / DQ", row ? `${row.dnf} / ${row.dq}` : "--"),
-    summaryItem("Median place", row && row.median_place !== null ? decimalFormatter.format(row.median_place) : "--"),
-    summaryItem("Average", row ? formatDuration(row.average_seconds) : "--"),
-    summaryItem("Best", row ? formatDuration(row.min_seconds) : "--"),
-    summaryItem("Worst", row ? formatDuration(row.max_seconds) : "--"),
-  );
 }
 
 function headToHeadColumns(playerIndex) {
@@ -959,7 +995,6 @@ function renderPlayerView(playerIndex) {
   }
 
   document.querySelector("#player-name").textContent = player.name;
-  document.querySelector("#player-subtitle").textContent = `${modeLabel(playerState.mode)}`;
 
   renderModeToggle(document.querySelector("#player-mode-toggle"), available, playerState.mode, (mode) => {
     playerState.mode = mode;
@@ -980,8 +1015,6 @@ function renderPlayerView(playerIndex) {
   matchups.forEach((matchup, index) => {
     matchup.rank = index + 1;
   });
-
-  renderPlayerSummary(playerIndex, playerState.mode, matchups);
 
   const container = document.querySelector("#player-h2h-table");
   const visible = matchups.filter((matchup) => matchesQuery(matchup.player.name, playerState.query));
@@ -1102,7 +1135,8 @@ async function loadParticipants() {
     participants = data;
     buildIndexes(data);
     recordCache = new Map();
-    rankDeltaCache = new Map();
+    ratingRankCache = null;
+    ratingRankDeltaCache = null;
     ratingDeltaCache = null;
 
     bindFilter("#leaderboard-search", leaderboardState, () => renderLeaderboard({ fromSearch: true }));
@@ -1118,6 +1152,16 @@ async function loadParticipants() {
     document.querySelector("#leaderboard-recent").addEventListener("click", () => {
       leaderboardState.recentOnly = !leaderboardState.recentOnly;
       renderLeaderboard();
+    });
+    document.querySelector("#leaderboard-followed").addEventListener("click", () => {
+      leaderboardState.followedOnly = !leaderboardState.followedOnly;
+      renderLeaderboard();
+    });
+    // Unstarring a racer while the Followed filter is on drops their row straight away.
+    document.addEventListener("racetimevibes:following", () => {
+      if (leaderboardState.followedOnly) {
+        renderLeaderboard();
+      }
     });
     bindRangeControls();
     document.querySelectorAll("#player-heatmap-metric [data-metric]").forEach((button) => {

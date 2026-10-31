@@ -53,7 +53,9 @@
   --gold: #dca629;
   --gold-ink: #8a6200;
   --silver: #c3ccc8;
+  --silver-ink: #5b6e7d;
   --bronze: #d49a68;
+  --bronze-ink: #995a28;
   --red: #c84a3e;
   /* Data roles: one hue for single-series bars, a diverging pair for lift, an ordinal ramp for cohorts. */
   --series: #39778a;
@@ -1151,9 +1153,10 @@ a:hover {
   font-weight: 800;
 }
 
+/* Above the badge panel (z-index 41), so tooltips inside it stay visible. */
 .chart-tooltip {
   position: fixed;
-  z-index: 10;
+  z-index: 50;
   max-width: 260px;
   padding: 8px 10px;
   border-radius: 3px;
@@ -1369,7 +1372,7 @@ body.viewing-player #leaderboard {
 }
 
 .table-wrap--leaderboard th:first-child {
-  width: 32%;
+  width: 16%;
 }
 
 .table-wrap--leaderboard thead th {
@@ -1468,6 +1471,16 @@ th[aria-sort="descending"] .sort-button::after {
   font-weight: 800;
 }
 
+.medal-count--second {
+  color: var(--silver-ink);
+  font-weight: 800;
+}
+
+.medal-count--third {
+  color: var(--bronze-ink);
+  font-weight: 800;
+}
+
 .trend {
   display: inline-block;
   white-space: nowrap;
@@ -1509,6 +1522,7 @@ th[aria-sort="descending"] .sort-button::after {
 
 .rating-value {
   font-variant-numeric: tabular-nums;
+  font-weight: 800;
 }
 
 .table-empty {
@@ -1533,8 +1547,9 @@ th[aria-sort="descending"] .sort-button::after {
   outline-offset: 4px;
 }
 
+/* Five stat tiles, then two wider tiles for the rivals' avatar, name and record. */
 .player-summary {
-  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr)) repeat(2, minmax(0, 1.5fr));
   margin: 0 24px 16px;
   animation: none;
 }
@@ -1545,11 +1560,31 @@ th[aria-sort="descending"] .sort-button::after {
 }
 
 .player-summary .summary-item {
-  padding: 15px 18px 14px 0;
+  padding: 15px 16px 14px 0;
+}
+
+.player-summary .summary-item + .summary-item {
+  padding-left: 16px;
 }
 
 .player-summary .summary-item strong {
   font-size: var(--text-lg);
+}
+
+/* Text values and the rivals' avatar rows share one height, so every value sits on the same line. */
+.player-summary .summary-value {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  align-items: center;
+  min-height: 28px;
+  margin-top: 8px;
+}
+
+.summary-value__joiner {
+  color: var(--muted);
+  font-size: 0.7em;
+  text-transform: lowercase;
 }
 
 footer {
@@ -1654,7 +1689,8 @@ footer p {
     border-top: 1px solid var(--line);
   }
 
-  .summary-item:nth-child(odd) {
+  .summary-item:nth-child(odd),
+  .player-summary .summary-item:nth-child(odd) {
     padding-left: 0;
     border-left: 0;
   }

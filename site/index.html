@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="5ba35f88f822">
+    <meta name="app-version" content="d9f6e330d34b">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=5ba35f88f822">
-    <link rel="stylesheet" href="ui.css?v=5ba35f88f822">
-    <link rel="stylesheet" href="feed.css?v=5ba35f88f822">
-    <link rel="stylesheet" href="records.css?v=5ba35f88f822">
-    <link rel="stylesheet" href="racer-extras.css?v=5ba35f88f822">
-    <link rel="stylesheet" href="easter-eggs.css?v=5ba35f88f822">
+    <link rel="stylesheet" href="styles.css?v=d9f6e330d34b">
+    <link rel="stylesheet" href="ui.css?v=d9f6e330d34b">
+    <link rel="stylesheet" href="feed.css?v=d9f6e330d34b">
+    <link rel="stylesheet" href="records.css?v=d9f6e330d34b">
+    <link rel="stylesheet" href="racer-extras.css?v=d9f6e330d34b">
+    <link rel="stylesheet" href="easter-eggs.css?v=d9f6e330d34b">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -156,6 +156,7 @@
                 <div class="mode-toggle" role="group" aria-labelledby="leaderboard-filter-label">
                   <button id="leaderboard-min-races" class="mode-toggle__button" type="button" aria-pressed="false">5+ races only</button>
                   <button id="leaderboard-recent" class="mode-toggle__button" type="button" aria-pressed="false">Raced in last 30 days</button>
+                  <button id="leaderboard-followed" class="mode-toggle__button" type="button" aria-pressed="false">Followed</button>
                 </div>
               </div>
               <div class="leaderboard-filter">
@@ -336,12 +337,10 @@
             </div>
             <div class="player-heading-side">
               <div id="player-quote" class="player-quote" aria-live="polite"></div>
-              <p id="player-subtitle">How they match up</p>
             </div>
           </header>
           <div id="player-summary" class="summary-strip player-summary"></div>
           <div id="player-badges" class="player-badges"></div>
-          <div id="player-rivals" class="player-rivals"></div>
           <div id="player-pbs" class="player-pbs"></div>
           <div id="player-rating-chart" class="chart-host chart-host--scatter" aria-live="polite"></div>
           <div class="leaderboard-controls">
@@ -413,16 +412,16 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=5ba35f88f822" defer></script>
-    <script src="racer-charts.js?v=5ba35f88f822" defer></script>
-    <script src="store.js?v=5ba35f88f822" defer></script>
-    <script src="ui.js?v=5ba35f88f822" defer></script>
-    <script src="feed.js?v=5ba35f88f822" defer></script>
-    <script src="records.js?v=5ba35f88f822" defer></script>
-    <script src="racer-extras.js?v=5ba35f88f822" defer></script>
-    <script src="easter-eggs.js?v=5ba35f88f822" defer></script>
-    <script src="leaderboard.js?v=5ba35f88f822" defer></script>
-    <script src="version-check.js?v=5ba35f88f822" defer></script>
-    <script src="visitor-counter.js?v=5ba35f88f822" defer></script>
+    <script src="app.js?v=d9f6e330d34b" defer></script>
+    <script src="racer-charts.js?v=d9f6e330d34b" defer></script>
+    <script src="store.js?v=d9f6e330d34b" defer></script>
+    <script src="ui.js?v=d9f6e330d34b" defer></script>
+    <script src="feed.js?v=d9f6e330d34b" defer></script>
+    <script src="records.js?v=d9f6e330d34b" defer></script>
+    <script src="racer-extras.js?v=d9f6e330d34b" defer></script>
+    <script src="easter-eggs.js?v=d9f6e330d34b" defer></script>
+    <script src="leaderboard.js?v=d9f6e330d34b" defer></script>
+    <script src="version-check.js?v=d9f6e330d34b" defer></script>
+    <script src="visitor-counter.js?v=d9f6e330d34b" defer></script>
   </body>
 </html>

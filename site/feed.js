@@ -6,8 +6,7 @@ const Feed = (() => {
   const HERO_MIN_POOL = 20;
   const HERO_WINDOW_DAYS = 30;
   const HERO_MAX_LENGTH = 180;
-  const NEW_BADGE_DAYS = 7;
-  const NEW_BADGE_LIMIT = 8;
+  const NEW_BADGE_LIMIT = 12;
   const STATUS_DNF = 1;
   const STATUS_DQ = 2;
   const SUMMARY_TAGS = [
@@ -563,7 +562,7 @@ const Feed = (() => {
     if (!indexes.length) {
       section.appendChild(element("p", "feed-side__empty", "☆ Star a racer to follow them here."));
     } else {
-      const deltas = typeof rankDeltas === "function" ? rankDeltas(ALL_MODES) : new Map();
+      const deltas = typeof ratingRankDeltas === "function" ? ratingRankDeltas() : new Map();
       indexes.forEach((playerIndex) => section.appendChild(racerCard(playerIndex, deltas)));
     }
     host.replaceChildren(section);
@@ -591,11 +590,10 @@ const Feed = (() => {
     host.appendChild(section);
   }
 
-  function recentUnlocks() {
-    const cutoff = daysAgoCutoff(NEW_BADGE_DAYS);
+  function latestUnlocks() {
     const unlocks = [];
     const races = participants.races;
-    for (let raceIndex = races.length - 1; raceIndex >= 0 && races[raceIndex].d >= cutoff; raceIndex -= 1) {
+    for (let raceIndex = races.length - 1; raceIndex >= 0 && unlocks.length < NEW_BADGE_LIMIT; raceIndex -= 1) {
       (races[raceIndex].t || []).forEach((tag) => {
         if (tag[0] === "badge") {
           unlocks.push({ playerIndex: tag[1], badgeId: tag[2], raceIndex });
@@ -608,11 +606,11 @@ const Feed = (() => {
   }
 
   function renderNewBadges(host) {
-    const unlocks = recentUnlocks();
+    const unlocks = latestUnlocks();
     if (!unlocks.length) {
       return;
     }
-    const section = sidebarSection("New badges");
+    const section = sidebarSection("Latest badges");
     const grid = element("div", "feed-badges");
     unlocks.forEach(({ playerIndex, badgeId, raceIndex }) => {
       const cell = element("div", "feed-badges__item");
