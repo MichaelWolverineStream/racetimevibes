@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "fetched_at": "2026-10-31T15:44:49Z",
+  "race": {
+    "name": "alttpr-ladder/lazy-fireshield-4792",
+    "status": {
+      "value": "finished",
+      "verbose_value": "Finished",
+      "help_text": "This race has been completed"
+    },
+    "url": "/alttpr-ladder/lazy-fireshield-4792",
+    "data_url": "/alttpr-ladder/lazy-fireshield-4792/data",
+    "goal": {
+      "name": "Beat the game (Mystery)",
+      "custom": false
+    },
+    "info": "Step Ladder Series - [mystery] - MMMM (Custom Weights)\nmmmmladder - https://alttpr.racing/getseed.php?race=5488 - (HashPendant/HashHammer/HashBoots/HashQuake/HashQuake)",
+    "entrants_count": 2,
+    "entrants_count_finished": 1,
+    "entrants_count_inactive": 1,
+    "opened_at": "2026-10-31T10:30:00.119Z",
+    "started_at": "2026-10-31T11:00:00.077Z",
+    "time_limit": "P0DT06H00M00S",
+    "opened_by_bot": "StoolChicken",
+    "entrants": [
+      {
+        "user": {
+          "id": "xldAMBlpklBaOP57",
+          "full_name": "Steinchen89#4425",
+          "name": "Steinchen89",
+          "discriminator": "4425",
+          "url": "/user/xldAMBlpklBaOP57/steinchen89",
+          "avatar": null,
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "steinchen89",
+          "twitch_display_name": "steinchen89",
+          "twitch_channel": "https://www.twitch.tv/steinchen89",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "done",
+          "verbose_value": "Finished",
+          "help_text": "Finished the race."
+        },
+        "finish_time": "P0DT02H12M28.405433S",
+        "finished_at": "2026-10-31T13:12:28.483Z",
+        "place": 1,
+        "place_ordinal": "1st",
+        "score": 2501,
+        "score_change": null,
+        "comment": null,
+        "has_comment": false,
+        "stream_live": true,
+        "stream_override": false,
+        "actions": [
+          "add_comment"
+        ]
+      },
+      {
+        "user": {
+          "id": "R6ym83m000BPd1Xr",
+          "full_name": "miendiem#7662",
+          "name": "miendiem",
+          "discriminator": "7662",
+          "url": "/user/R6ym83m000BPd1Xr/miendiem",
+          "avatar": "https://racetime.gg/media/miendiemtwitchbackground_B0ObtA6.png",
+          "pronouns": null,
+          "flair": "",
+          "twitch_name": "miendiem",
+          "twitch_display_name": "miendiem",
+          "twitch_channel": "https://www.twitch.tv/miendiem",
+          "can_moderate": false
+        },
+        "team": null,
+        "status": {
+          "value": "dnf",
+          "verbose_value": "DNF",
+          "help_text": "Did not finish the race."
+        },
+        "finish_time": null,
+        "finished_at": null,
+        "place": null,
+        "place_ordinal": null,
+        "score": 2262,
+        "score_change": null,
+        "comment": "Missed something.",
+        "has_comment": true,
+        "stream_live": false,
+        "stream_override": true,
+        "actions": [
+          "change_comment"
+        ]
+      }
+    ],
+    "ended_at": "2026-10-31T13:12:28.591Z",
+    "cancelled_at": null,
+    "recordable": true,
+    "recorded": false
+  }
+}
