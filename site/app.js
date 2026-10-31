@@ -13,6 +13,8 @@ const MIN_CHART_WIDTH = 480;
 const NICE_SCALES = [
   [1, 5], [1.2, 4], [1.5, 5], [2, 4], [2.5, 5], [3, 3], [4, 4], [5, 5], [6, 6], [8, 4], [10, 5],
 ];
+// Month labels thin out by divisors of 12, so January always keeps its label.
+const MONTH_LABEL_STEPS = [1, 2, 3, 6, 12];
 const COHORTS = {
   one_race: { label: "One race", range: "1 race", markClass: "orbit-mark--one-race" },
   occasional: { label: "Occasional", range: "2-5 races", markClass: "orbit-mark--occasional" },
@@ -347,115 +349,129 @@ function verticalChart(items, options, width) {
   return svg;
 }
 
-function participationChart(periods, selectedPeriodId, width) {
+function monthTitle(month) {
+  return `${month.label}${month.is_complete ? "" : " (partial)"}`;
+}
+
+function monthlyLineChart(months, selectedPeriodId, options, width) {
   const height = 360;
-  const margin = { top: 38, right: 20, bottom: 68, left: 68 };
+  const margin = { top: 24, right: 20, bottom: 60, left: 68 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const periodAverages = periods.map((period) => period.entrant_total / period.race_count);
-  const { maximum, tickCount } = niceScale(Math.max(...periodAverages));
+  const values = months.map((month) => month[options.valueKey]);
+  const { maximum, tickCount } = niceScale(Math.max(...values.filter((value) => value !== null)));
+  const step = plotWidth / months.length;
+  const x = (index) => margin.left + (index + 0.5) * step;
+  const y = (value) => margin.top + plotHeight - (value / maximum) * plotHeight;
   const svg = svgElement("svg", {
     class: "chart-svg",
     width,
     height,
     viewBox: `0 0 ${width} ${height}`,
     role: "img",
-    "aria-labelledby": "participation-chart-title participation-chart-description",
+    "aria-labelledby": `${options.id}-title ${options.id}-description`,
   });
   svg.append(
-    svgElement("title", { id: "participation-chart-title" }, "Average entries per race by quarter"),
-    svgElement(
-      "desc",
-      { id: "participation-chart-description" },
-      "Vertical bars compare average total entrants per finished race across calendar quarters.",
-    ),
+    svgElement("title", { id: `${options.id}-title` }, options.title),
+    svgElement("desc", { id: `${options.id}-description` }, options.description),
   );
+
+  // A selected quarter shades its months instead of hiding the rest of the trend.
+  const selectedIndexes = months.flatMap((month, index) => (month.quarter_id === selectedPeriodId ? [index] : []));
+  if (selectedIndexes.length) {
+    svg.append(svgElement("rect", {
+      class: "period-highlight",
+      x: margin.left + selectedIndexes[0] * step,
+      y: margin.top,
+      width: selectedIndexes.length * step,
+      height: plotHeight,
+    }));
+  }
 
   for (let tick = 0; tick <= tickCount; tick += 1) {
     const value = (maximum * tick) / tickCount;
-    const y = margin.top + plotHeight - (value / maximum) * plotHeight;
     svg.append(
       svgElement("line", {
         class: tick === 0 ? "baseline" : "grid-line",
         x1: margin.left,
         x2: width - margin.right,
-        y1: y,
-        y2: y,
+        y1: y(value),
+        y2: y(value),
       }),
       svgElement(
         "text",
-        { class: "axis-label", x: margin.left - 10, y: y + 4, "text-anchor": "end" },
-        decimalFormatter.format(value),
+        { class: "axis-label", x: margin.left - 10, y: y(value) + 4, "text-anchor": "end" },
+        options.axisFormatter(value),
       ),
     );
   }
 
-  const bandWidth = plotWidth / periods.length;
-  const barWidth = Math.min(116, bandWidth * 0.58);
-  periods.forEach((period, index) => {
-    const average = period.entrant_total / period.race_count;
-    const barHeight = (average / maximum) * plotHeight;
-    const x = margin.left + index * bandWidth + (bandWidth - barWidth) / 2;
-    const y = margin.top + plotHeight - barHeight;
-    const label = `${period.label}${period.is_complete ? "" : " (partial)"}: ${integerFormatter.format(period.entrant_total)} race entries across ${integerFormatter.format(period.race_count)} races (${decimalFormatter.format(average)} average)`;
-    const isActive = selectedPeriodId === "all" || selectedPeriodId === period.id;
-    const group = svgElement("g", {
-      class: "chart-mark",
-      tabindex: "0",
-      role: "img",
-      "aria-label": label,
-    });
-    group.append(
-      svgElement("rect", {
-        class: `bar ${isActive ? "bar--series" : "bar--muted"}`,
-        x,
-        y,
-        width: barWidth,
-        height: barHeight,
-        rx: 1,
-      }),
-      svgElement("rect", {
-        class: "focus-ring",
-        x: x - 2,
-        y: y - 2,
-        width: barWidth + 4,
-        height: barHeight + 4,
-        rx: 2,
-      }),
-      svgElement("title", {}, label),
-    );
-    bindTooltip(group, label);
-    const [quarter, year] = period.label.split(" ");
-    svg.append(
-      group,
-      svgElement(
+  // A month without races has no average, so the line breaks there instead of bridging the gap.
+  const path = values
+    .map((value, index) => {
+      if (value === null) return "";
+      const command = index > 0 && values[index - 1] !== null ? "L" : "M";
+      return `${command}${x(index)},${y(value)}`;
+    })
+    .join("");
+  svg.append(svgElement("path", { class: "turnout-line", d: path }));
+
+  const labelStep = MONTH_LABEL_STEPS.find((candidate) => candidate * step >= 40) ?? 12;
+  let labelledYear = null;
+  months.forEach((month, index) => {
+    const value = values[index];
+    if (value !== null) {
+      const label = options.tooltip(month);
+      const group = svgElement("g", {
+        class: "chart-mark",
+        tabindex: "0",
+        role: "img",
+        "aria-label": label,
+      });
+      group.append(
+        svgElement("rect", {
+          class: "turnout-hit",
+          x: x(index) - step / 2,
+          y: margin.top,
+          width: step,
+          height: plotHeight,
+        }),
+        svgElement("line", {
+          class: "turnout-guide",
+          x1: x(index),
+          x2: x(index),
+          y1: margin.top,
+          y2: margin.top + plotHeight,
+        }),
+        svgElement("circle", { class: "turnout-dot", cx: x(index), cy: y(value), r: 4 }),
+        svgElement("title", {}, label),
+      );
+      bindTooltip(group, label);
+      svg.append(group);
+    }
+
+    if ((Number(month.id.slice(5)) - 1) % labelStep !== 0) return;
+    const [monthName, year] = month.label.split(" ");
+    svg.append(svgElement(
+      "text",
+      { class: "axis-label axis-label--period", x: x(index), y: height - 34, "text-anchor": "middle" },
+      monthName.toUpperCase(),
+    ));
+    if (year !== labelledYear) {
+      svg.append(svgElement(
         "text",
-        {
-          class: "value-label",
-          x: x + barWidth / 2,
-          y: Math.max(margin.top - 8, y - 8),
-          "text-anchor": "middle",
-        },
-        decimalFormatter.format(average),
-      ),
-      svgElement(
-        "text",
-        { class: "axis-label axis-label--period", x: x + barWidth / 2, y: height - 34, "text-anchor": "middle" },
-        quarter.toUpperCase(),
-      ),
-      svgElement(
-        "text",
-        { class: "axis-label", x: x + barWidth / 2, y: height - 19, "text-anchor": "middle" },
+        { class: "axis-label", x: x(index), y: height - 19, "text-anchor": "middle" },
         year,
-      ),
-    );
+      ));
+      labelledYear = year;
+    }
   });
 
   svg.append(
     svgElement(
       "text",
       { class: "axis-label", x: 14, y: margin.top + plotHeight / 2, transform: `rotate(-90 14 ${margin.top + plotHeight / 2})`, "text-anchor": "middle" },
-      "AVERAGE RACERS PER RACE",
+      options.axisTitle,
     ),
   );
   return svg;
@@ -810,7 +826,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 7
+    || data.schema_version !== 8
     || !hasValidAggregate(data)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
@@ -823,6 +839,18 @@ function validateData(data) {
       || typeof period.observed_local_date_range.start !== "string"
       || typeof period.observed_local_date_range.end !== "string"
       || !hasValidAggregate(period)
+    ))
+    || !Array.isArray(data.monthly)
+    || data.monthly.length === 0
+    || data.monthly.some((month) => (
+      typeof month.id !== "string"
+      || typeof month.label !== "string"
+      || typeof month.quarter_id !== "string"
+      || !Number.isFinite(month.race_count)
+      || !Number.isFinite(month.entrant_total)
+      || !(month.covered_day_count > 0)
+      || !Number.isFinite(month.entries_per_day)
+      || (month.average_racers !== null && !Number.isFinite(month.average_racers))
     ))
     || !data.source
     || !isIsoDate(data.source.data_start_local)
@@ -862,10 +890,24 @@ function renderSelection(data, selection) {
     document.querySelector("#community-coverage"),
     selection.unique_players,
   );
-  mountChart(
-    document.querySelector("#participation-chart"),
-    (width) => participationChart(data.periods, selection.id, width),
-  );
+  mountChart(document.querySelector("#participation-racers-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
+    id: "participation-racers",
+    valueKey: "average_racers",
+    title: "Average racers per race by month",
+    description: "A line with one dot per calendar month shows average total entrants per finished race.",
+    axisTitle: "AVERAGE RACERS PER RACE",
+    axisFormatter: (value) => decimalFormatter.format(value),
+    tooltip: (month) => `${monthTitle(month)}: ${formatAverage(month.average_racers)} average racers across ${integerFormatter.format(month.race_count)} races`,
+  }, width));
+  mountChart(document.querySelector("#participation-entries-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
+    id: "participation-entries",
+    valueKey: "entries_per_day",
+    title: "Race entries per day by month",
+    description: "A line with one dot per calendar month shows recorded race entries per calendar day the archive covers.",
+    axisTitle: "RACE ENTRIES PER DAY",
+    axisFormatter: (value) => integerFormatter.format(value),
+    tooltip: (month) => `${monthTitle(month)}: ${decimalFormatter.format(month.entries_per_day)} entries per day (${integerFormatter.format(month.entrant_total)} entries over ${integerFormatter.format(month.covered_day_count)} days)`,
+  }, width));
   mountChart(document.querySelector("#race-count-chart"), (width) => verticalChart(selection.hourly, {
     id: "race-count",
     valueKey: "race_count",
@@ -896,15 +938,17 @@ function renderSelection(data, selection) {
   ]);
   renderTable(
     document.querySelector("#participation-table"),
-    ["Period", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries"],
-    data.periods.map((period) => [
-      period.label,
-      period.is_complete ? "Complete" : "Partial",
-      formatAverage(period.average_racers),
-      formatAverage(period.median_racers),
-      period.ci95_low === null ? "--" : `${formatAverage(period.ci95_low)} to ${formatAverage(period.ci95_high)}`,
-      integerFormatter.format(period.race_count),
-      integerFormatter.format(period.entrant_total),
+    ["Month", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries", "Days", "Entries/day"],
+    data.monthly.map((month) => [
+      month.label,
+      month.is_complete ? "Complete" : "Partial",
+      formatAverage(month.average_racers),
+      formatAverage(month.median_racers),
+      month.ci95_low === null ? "--" : `${formatAverage(month.ci95_low)} to ${formatAverage(month.ci95_high)}`,
+      integerFormatter.format(month.race_count),
+      integerFormatter.format(month.entrant_total),
+      integerFormatter.format(month.covered_day_count),
+      decimalFormatter.format(month.entries_per_day),
     ]),
   );
   renderTable(

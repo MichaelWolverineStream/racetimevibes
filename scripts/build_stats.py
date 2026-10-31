@@ -40,6 +40,20 @@ WEEKDAY_LABELS = (
     "Saturday",
     "Sunday",
 )
+MONTH_LABELS = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+)
 MODE_PATTERN = re.compile(
     r"^\s*Step\s+Ladder\s+Series\s*-\s*\[([^\[\]]+)\]",
     re.IGNORECASE,
@@ -375,7 +389,7 @@ def _aggregate_records(records: list[JsonObject]) -> JsonObject:
     }
 
 
-def quarter_period(local_started_at: datetime) -> JsonObject:
+def quarter_period(local_started_at: date) -> JsonObject:
     year = local_started_at.year
     quarter = (local_started_at.month - 1) // 3 + 1
     start_month = 3 * quarter - 2
@@ -386,6 +400,52 @@ def quarter_period(local_started_at: datetime) -> JsonObject:
         "start": f"{year}-{start_month:02d}-01",
         "end": f"{year}-{end_month:02d}-{calendar.monthrange(year, end_month)[1]}",
     }
+
+
+def month_period(day: date) -> JsonObject:
+    year = day.year
+    month = day.month
+    return {
+        "id": f"{year}-{month:02d}",
+        "label": f"{MONTH_LABELS[month - 1]} {year}",
+        "start": f"{year}-{month:02d}-01",
+        "end": f"{year}-{month:02d}-{calendar.monthrange(year, month)[1]}",
+        "quarter_id": quarter_period(day)["id"],
+    }
+
+
+def _monthly_turnout(
+    records: list[JsonObject],
+    archive_start: date,
+    archive_end: date,
+) -> list[JsonObject]:
+    month_values: dict[str, list[int]] = defaultdict(list)
+    for record in records:
+        month = month_period(record["local_started_at"])
+        month_values[month["id"]].append(record["entrants_count"])
+
+    monthly = []
+    year, month = archive_start.year, archive_start.month
+    while (year, month) <= (archive_end.year, archive_end.month):
+        period = month_period(date(year, month, 1))
+        month_start = date.fromisoformat(period["start"])
+        month_end = date.fromisoformat(period["end"])
+        covered_start = max(archive_start, month_start)
+        covered_end = min(archive_end, month_end)
+        covered_day_count = (covered_end - covered_start).days + 1
+        summary = _entry_summary(month_values[period["id"]])
+        monthly.append(
+            period
+            | {
+                "is_complete": archive_start <= month_start
+                and archive_end >= month_end,
+                "covered_day_count": covered_day_count,
+            }
+            | summary
+            | {"entries_per_day": summary["entrant_total"] / covered_day_count}
+        )
+        year, month = (year + 1, 1) if month == 12 else (year, month + 1)
+    return monthly
 
 
 def _period_coverage(
@@ -541,7 +601,7 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 7,
+        "schema_version": 8,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {
@@ -563,6 +623,7 @@ def aggregate_races(
         "unique_players": overall["unique_players"],
         "room_cancellation_estimate": overall["room_cancellation_estimate"],
         "periods": periods,
+        "monthly": _monthly_turnout(included_records, archive_start, archive_end),
         "diagnostics": {
             "excluded_by_status": dict(sorted(excluded_statuses.items())),
             "excluded_by_mode": dict(sorted(excluded_modes.items())),

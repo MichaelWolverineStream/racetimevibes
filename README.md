@@ -96,7 +96,8 @@ You can still refresh by hand with the two commands above and commit `archive/` 
 - Race turnout uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries.
 - Identified racers are deduplicated from stable public user IDs within the selected period. Identity coverage is the share of entries carrying such an ID. Cohorts are one race, occasional (2-5), regular (6-20), and core (21+); cohort entry shares use identified entries as the denominator.
 - Unique-player metrics cover archived finished races only. They do not estimate people from cancelled rooms, and anonymized entries contribute to identity coverage but not player or cohort counts.
-- Quarterly participation is average entries per finished race: total race entries divided by races in that calendar quarter.
+- Monthly participation is average entries per finished race: total race entries divided by races in that calendar month.
+- Entries per day is a month's total race entries divided by the calendar days the archive covers in that month, so the first and current months use only their covered days. Months without a finished race still appear, with no average and zero entries per day.
 - Hour, weekday-hour, and mode averages use the same entries-per-finished-race definition.
 - Total entrants per hour sums recorded entries for the selected reporting period.
 - Racerooms with fewer than two entrants are cancelled and are not available through the archive. The dashboard estimates their count under a uniform hourly-opening assumption. Let $F_h$ be observed finished rooms in hour $h$ and let $B_6$ be the median of the six busiest hourly counts. The central estimate is $\sum_h \max(0, B_6 - F_h)$, rounded to the nearest room.

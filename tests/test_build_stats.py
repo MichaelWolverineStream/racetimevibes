@@ -136,7 +136,7 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(by_mode["keys"]["race_count"], 2)
         self.assertEqual(by_mode["keys"]["average_racers"], 6)
         self.assertEqual(by_mode["unknown"]["race_count"], 1)
-        self.assertEqual(stats["schema_version"], 7)
+        self.assertEqual(stats["schema_version"], 8)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
         self.assertEqual(stats["diagnostics"]["excluded_by_status"], {"cancelled": 1})
@@ -247,7 +247,7 @@ class AggregationTests(unittest.TestCase):
             generated_at=self.generated_at,
         )
 
-        self.assertEqual(stats["schema_version"], 7)
+        self.assertEqual(stats["schema_version"], 8)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -300,6 +300,69 @@ class AggregationTests(unittest.TestCase):
                     period,
                     {"id": period_id, "label": label, "start": start, "end": end},
                 )
+
+    def test_month_period_spans_calendar_months(self):
+        expected = {
+            (2024, 2): ("2024-02", "Feb 2024", "2024-02-01", "2024-02-29", "2024-Q1"),
+            (2026, 4): ("2026-04", "Apr 2026", "2026-04-01", "2026-04-30", "2026-Q2"),
+            (2026, 12): ("2026-12", "Dec 2026", "2026-12-01", "2026-12-31", "2026-Q4"),
+        }
+        for (year, month), (month_id, label, start, end, quarter_id) in expected.items():
+            with self.subTest(year=year, month=month):
+                period = build_stats.month_period(
+                    datetime(year, month, 15, tzinfo=build_stats.SCHEDULE_TIMEZONE)
+                )
+                self.assertEqual(
+                    period,
+                    {
+                        "id": month_id,
+                        "label": label,
+                        "start": start,
+                        "end": end,
+                        "quarter_id": quarter_id,
+                    },
+                )
+
+    def test_monthly_turnout_covers_every_archive_month(self):
+        stats = build_stats.aggregate_races(
+            [
+                race("april", started_at="2025-04-20T16:00:00Z", entrants_count=4),
+                race("december", started_at="2025-12-31T20:00:00Z", entrants_count=5),
+                race("july", started_at="2026-07-01T04:00:00Z", entrants_count=8),
+            ],
+            generated_at=self.generated_at,
+        )
+
+        monthly = {item["id"]: item for item in stats["monthly"]}
+        expected_ids = [f"2025-{month:02d}" for month in range(4, 13)] + [
+            f"2026-{month:02d}" for month in range(1, 8)
+        ]
+        self.assertEqual(list(monthly), expected_ids)
+
+        self.assertEqual(monthly["2025-04"]["covered_day_count"], 11)
+        self.assertFalse(monthly["2025-04"]["is_complete"])
+        self.assertAlmostEqual(monthly["2025-04"]["entries_per_day"], 4 / 11)
+
+        self.assertEqual(monthly["2025-05"]["race_count"], 0)
+        self.assertIsNone(monthly["2025-05"]["average_racers"])
+        self.assertEqual(monthly["2025-05"]["entries_per_day"], 0)
+
+        self.assertTrue(monthly["2025-12"]["is_complete"])
+        self.assertEqual(monthly["2025-12"]["covered_day_count"], 31)
+        self.assertAlmostEqual(monthly["2025-12"]["entries_per_day"], 5 / 31)
+
+        self.assertEqual(monthly["2026-07"]["covered_day_count"], 1)
+        self.assertFalse(monthly["2026-07"]["is_complete"])
+        self.assertEqual(monthly["2026-07"]["entries_per_day"], 8)
+
+        self.assertEqual(
+            sum(item["race_count"] for item in stats["monthly"]),
+            stats["source"]["included_race_count"],
+        )
+        self.assertEqual(
+            sum(item["entrant_total"] for item in stats["monthly"]),
+            stats["source"]["included_entrant_count"],
+        )
 
     def test_aggregates_unique_players_without_serializing_identities(self):
         private_id = "private-player-id"
@@ -565,7 +628,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 7)
+        self.assertEqual(data["schema_version"], 8)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
@@ -581,6 +644,21 @@ class GeneratedDataTests(unittest.TestCase):
         self.assertEqual(
             sum(period["entrant_total"] for period in data["periods"]),
             source["included_entrant_count"],
+        )
+        self.assertEqual(
+            sum(month["race_count"] for month in data["monthly"]),
+            source["included_race_count"],
+        )
+        self.assertEqual(
+            sum(month["entrant_total"] for month in data["monthly"]),
+            source["included_entrant_count"],
+        )
+        month_numbers = [
+            int(month["id"][:4]) * 12 + int(month["id"][5:]) - 1
+            for month in data["monthly"]
+        ]
+        self.assertEqual(
+            month_numbers, list(range(month_numbers[0], month_numbers[-1] + 1))
         )
 
         for aggregate in [data, *data["periods"]]:

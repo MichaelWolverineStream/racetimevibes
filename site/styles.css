@@ -499,6 +499,17 @@ a:hover {
   margin-bottom: 24px;
 }
 
+.participation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* These headings sit directly under the panel heading, whose rule already divides them. */
+.participation-grid .heatmap-heading {
+  border-top: 0;
+}
+
 .chart-panel--decision,
 .chart-panel--community {
   margin-bottom: 24px;
@@ -1008,10 +1019,6 @@ a:hover {
   fill: var(--series);
 }
 
-.bar--muted {
-  fill: var(--series-muted);
-}
-
 .scatter-dot {
   stroke: none;
   fill-opacity: 0.75;
@@ -1123,6 +1130,51 @@ a:hover {
 .trend-band {
   fill: color-mix(in srgb, var(--series) 20%, transparent);
   stroke: none;
+}
+
+.turnout-line {
+  fill: none;
+  stroke: var(--series);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+/* The panel-coloured ring keeps each dot legible where it sits on the line. */
+.turnout-dot {
+  fill: var(--series);
+  stroke: var(--panel);
+  stroke-width: 2;
+  transition: r 120ms ease;
+}
+
+.turnout-hit {
+  fill: transparent;
+}
+
+.turnout-guide {
+  stroke: var(--line);
+  stroke-width: 1;
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart-mark:hover .turnout-guide,
+.chart-mark:focus .turnout-guide {
+  opacity: 1;
+}
+
+.chart-mark:focus .turnout-guide {
+  stroke: var(--focus);
+  stroke-width: 2;
+}
+
+.chart-mark:hover .turnout-dot,
+.chart-mark:focus .turnout-dot {
+  r: 6;
+}
+
+.period-highlight {
+  fill: color-mix(in srgb, var(--series) 8%, transparent);
 }
 
 .chart-mark:focus {
@@ -1706,7 +1758,8 @@ footer p {
     border-left: 0;
   }
 
-  .hourly-grid {
+  .hourly-grid,
+  .participation-grid {
     grid-template-columns: 1fr;
   }
 

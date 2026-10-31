@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="d9f6e330d34b">
+    <meta name="app-version" content="4cf9f40b5ba3">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=d9f6e330d34b">
-    <link rel="stylesheet" href="ui.css?v=d9f6e330d34b">
-    <link rel="stylesheet" href="feed.css?v=d9f6e330d34b">
-    <link rel="stylesheet" href="records.css?v=d9f6e330d34b">
-    <link rel="stylesheet" href="racer-extras.css?v=d9f6e330d34b">
-    <link rel="stylesheet" href="easter-eggs.css?v=d9f6e330d34b">
+    <link rel="stylesheet" href="styles.css?v=4cf9f40b5ba3">
+    <link rel="stylesheet" href="ui.css?v=4cf9f40b5ba3">
+    <link rel="stylesheet" href="feed.css?v=4cf9f40b5ba3">
+    <link rel="stylesheet" href="records.css?v=4cf9f40b5ba3">
+    <link rel="stylesheet" href="racer-extras.css?v=4cf9f40b5ba3">
+    <link rel="stylesheet" href="easter-eggs.css?v=4cf9f40b5ba3">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -239,11 +239,26 @@
               <p class="panel-index">06 / Participation</p>
               <h2>Turnout over time</h2>
             </div>
-            <p>Average racers per race</p>
+            <p>By calendar month</p>
           </header>
-          <div id="participation-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+          <div class="participation-grid">
+            <div>
+              <div class="heatmap-heading">
+                <h3>Average racers per race</h3>
+                <p>Finished races</p>
+              </div>
+              <div id="participation-racers-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+            </div>
+            <div>
+              <div class="heatmap-heading">
+                <h3>Race entries per day</h3>
+                <p>Calendar days</p>
+              </div>
+              <div id="participation-entries-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+            </div>
+          </div>
           <details class="data-details">
-            <summary>View period values</summary>
+            <summary>View monthly values</summary>
             <div id="participation-table" class="table-wrap"></div>
           </details>
         </article>
@@ -412,16 +427,16 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=d9f6e330d34b" defer></script>
-    <script src="racer-charts.js?v=d9f6e330d34b" defer></script>
-    <script src="store.js?v=d9f6e330d34b" defer></script>
-    <script src="ui.js?v=d9f6e330d34b" defer></script>
-    <script src="feed.js?v=d9f6e330d34b" defer></script>
-    <script src="records.js?v=d9f6e330d34b" defer></script>
-    <script src="racer-extras.js?v=d9f6e330d34b" defer></script>
-    <script src="easter-eggs.js?v=d9f6e330d34b" defer></script>
-    <script src="leaderboard.js?v=d9f6e330d34b" defer></script>
-    <script src="version-check.js?v=d9f6e330d34b" defer></script>
-    <script src="visitor-counter.js?v=d9f6e330d34b" defer></script>
+    <script src="app.js?v=4cf9f40b5ba3" defer></script>
+    <script src="racer-charts.js?v=4cf9f40b5ba3" defer></script>
+    <script src="store.js?v=4cf9f40b5ba3" defer></script>
+    <script src="ui.js?v=4cf9f40b5ba3" defer></script>
+    <script src="feed.js?v=4cf9f40b5ba3" defer></script>
+    <script src="records.js?v=4cf9f40b5ba3" defer></script>
+    <script src="racer-extras.js?v=4cf9f40b5ba3" defer></script>
+    <script src="easter-eggs.js?v=4cf9f40b5ba3" defer></script>
+    <script src="leaderboard.js?v=4cf9f40b5ba3" defer></script>
+    <script src="version-check.js?v=4cf9f40b5ba3" defer></script>
+    <script src="visitor-counter.js?v=4cf9f40b5ba3" defer></script>
   </body>
 </html>
