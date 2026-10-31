@@ -91,6 +91,12 @@ def _entrant_identity(entrant: JsonObject) -> tuple[str, str] | None:
     return user_id, name.strip()
 
 
+def _has_comment(entrant: JsonObject) -> bool:
+    """True for a comment that isn't blank, the ones the comments dataset keeps."""
+    text = entrant.get("comment")
+    return isinstance(text, str) and bool(text.strip())
+
+
 def _entrant_place(entrant: JsonObject, race_name: str) -> int | None:
     place = entrant.get("place")
     if place is None:
@@ -243,6 +249,7 @@ def build_participant_payload(
         entries = _race_entries(race, diagnostics)
         for user_id, name, *_rest in entries:
             names[user_id] = name
+        commenters: set[str] = set()
         for entrant in race["entrants"]:
             identity = _entrant_identity(entrant)
             if identity is None:
@@ -252,6 +259,8 @@ def build_participant_payload(
                 avatars[identity[0]] = avatar
             else:
                 avatars.pop(identity[0], None)
+            if _has_comment(entrant):
+                commenters.add(identity[0])
         staged.append(
             {
                 "r": race.get("name"),
@@ -261,6 +270,7 @@ def build_participant_payload(
                 "h": context["local_started_at"].hour,
                 "n": len(race["entrants"]),
                 "entries": entries,
+                "commenters": commenters,
             }
         )
 
@@ -297,6 +307,8 @@ def build_participant_payload(
                 (player_index[user_id], place, status_code, seconds)
                 for user_id, _name, place, status_code, seconds in row["entries"]
             ],
+            # Who left a comment, for the Yap badge; never published.
+            "c": {player_index[user_id] for user_id in row["commenters"]},
         }
         for row in staged
     ]

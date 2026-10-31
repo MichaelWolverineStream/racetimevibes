@@ -549,6 +549,22 @@ class SchemaThreeTests(unittest.TestCase):
         self.assertNotIn("secret", json.dumps(result))
         self.assertNotIn('"comment"', json.dumps(result))
 
+    def test_a_comment_that_is_not_blank_counts_toward_yap(self):
+        result = payload(
+            [
+                race(
+                    "chatty",
+                    entrants=[
+                        {**entrant("ana", place=1, finish_time="PT10M"), "comment": "gg"},
+                        {**entrant("ben", place=2, finish_time="PT11M"), "comment": "   "},
+                    ],
+                )
+            ]
+        )
+        progress = {player["id"]: player["progress"] for player in result["players"]}
+        self.assertEqual(progress["ana"]["yap"], 1)
+        self.assertEqual(progress["ben"]["yap"], 0)
+
 
 class GeneratedParticipantDataTests(unittest.TestCase):
     @classmethod
@@ -622,6 +638,8 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             highlights.GLITCHED_MODE,
             highlights.ENTRANCE_MODE,
             highlights.MYSTERY_MODE,
+            highlights.SPOILER_MODE,
+            highlights.INVERTED_MODE,
         ):
             self.assertIn(mode, self.participants["modes"])
         preset_names = {preset["n"] for preset in self.participants["presets"]}

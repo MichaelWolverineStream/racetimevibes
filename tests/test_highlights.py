@@ -20,7 +20,7 @@ def dq(player):
     return (player, None, 2, None)
 
 
-def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None):
+def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None, commenters=()):
     return {
         "r": "alttpr-ladder/test-race",
         "m": mode,
@@ -30,6 +30,7 @@ def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None):
         "n": len(entries) if n is None else n,
         "p": preset,
         "e": list(entries),
+        "c": set(commenters),
     }
 
 
@@ -70,6 +71,8 @@ def tags_of(result, race_index, kind):
 GLITCHED_MODES = ["mode0", highlights.GLITCHED_MODE]
 ENTRANCE_MODES = ["mode0", highlights.ENTRANCE_MODE]
 MYSTERY_MODES = ["mode0", highlights.MYSTERY_MODE]
+SPOILER_MODES = ["mode0", highlights.SPOILER_MODE]
+INVERTED_MODES = ["mode0", highlights.INVERTED_MODE]
 CASUAL_BOOTS = ({"m": 0, "n": highlights.CASUAL_BOOTS_PRESET}, {"m": 0, "n": "Open"})
 
 
@@ -435,38 +438,59 @@ class BadgeTests(unittest.TestCase):
         race = record([done(0, 1, 3000.0), done(1, 2, 3100.0)], n=16)
         self.assertEqual(run([race])["players"][0]["badges"]["big_game_hunter"], 0)
 
-    def test_god_route_beats_the_top_rated_from_outside_the_top_ten(self):
-        records = warmup([0, 2], 5) + [duel(1, 0, day=5)]
+    @staticmethod
+    def god_route_race(*, winner=1, margin=601.0, field=7, day=5, absent=()):
+        """Racers 0 to field - 1, minus any absent; winner leads second by margin seconds."""
+        others = [p for p in range(field) if p not in (winner, *absent)]
+        entries = [done(winner, 1, 3000.0)] + [
+            done(p, place, 3000.0 + margin + place - 2) for place, p in enumerate(others, start=2)
+        ]
+        return record(entries, day=day, n=field)
+
+    def test_god_route_wins_by_more_than_ten_minutes_in_a_field_of_seven(self):
+        records = warmup([0, 2], 5) + [self.god_route_race()]
         result = run(records, means={0: 3.0})
         self.assertEqual(result["players"][1]["badges"]["god_route"], 5)
-        self.assertEqual(tags_of(result, 5, "badge"), [["badge", 1, "god_route"]])
+        god_route_tags = [tag for tag in tags_of(result, 5, "badge") if tag[2] == "god_route"]
+        self.assertEqual(god_route_tags, [["badge", 1, "god_route"]])
 
-    def test_god_route_not_awarded_from_inside_the_top_ten(self):
-        records = warmup([0, 1], 5) + [duel(1, 0, day=5)]
-        result = run(records, means={0: 3.0, 1: 2.0})
-        self.assertNotIn("god_route", result["players"][1]["badges"])
+    def test_god_route_needs_more_than_ten_minutes(self):
+        records = warmup([0, 2], 5) + [self.god_route_race(margin=600.0)]
+        self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
 
-    def test_god_route_needs_a_finish_ahead_of_number_one(self):
-        records = warmup([0, 2], 5) + [duel(0, 1, day=5)]
-        result = run(records, means={0: 3.0})
-        self.assertNotIn("god_route", result["players"][1]["badges"])
+    def test_god_route_needs_a_field_of_seven(self):
+        records = warmup([0, 2], 5) + [self.god_route_race(field=6)]
+        self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
 
-    def test_god_route_any_finisher_beats_a_non_finisher(self):
-        records = warmup([0, 2], 5) + [record([dnf(0), done(1, 1, 3000.0)], day=5)]
-        result = run(records, means={0: 3.0})
-        self.assertEqual(result["players"][1]["badges"]["god_route"], 5)
+    def test_god_route_counts_anonymous_entrants(self):
+        race = record(
+            [done(1, 1, 3000.0), done(0, 2, 3601.0), done(2, 3, 3700.0)], day=5, n=7
+        )
+        records = warmup([0, 2], 5) + [race]
+        self.assertEqual(self.badges(records, player=1, means={0: 3.0})["god_route"], 5)
 
-    def test_god_route_ignores_inactive_number_one(self):
+    def test_god_route_not_awarded_to_the_fields_top_rated(self):
+        overall = warmup([0, 2], 5) + [self.god_route_race(winner=0)]
+        self.assertNotIn("god_route", self.badges(overall, player=0, means={0: 3.0, 2: 2.0}))
+        # Racer 0 is not in this race, so racer 2 is the field's top-rated.
+        in_field = warmup([0, 2], 5) + [self.god_route_race(winner=2, absent=(0,))]
+        self.assertNotIn("god_route", self.badges(in_field, player=2, means={0: 3.0, 2: 2.0}))
+
+    def test_god_route_awarded_when_no_entrant_is_ranked(self):
+        provisional = warmup([0, 2], 4) + [self.god_route_race(winner=0, day=4)]
+        self.assertEqual(self.badges(provisional, player=0, means={0: 3.0})["god_route"], 4)
+
+    def test_god_route_ignores_an_inactive_top_rated(self):
         late = 4 + highlights.RANKING_WINDOW_DAYS
-        active = warmup([0, 2], 5) + [duel(1, 0, day=late)]
-        inactive = warmup([0, 2], 5) + [duel(1, 0, day=late + 1)]
-        self.assertIn("god_route", run(active, means={0: 3.0})["players"][1]["badges"])
-        self.assertNotIn("god_route", run(inactive, means={0: 3.0})["players"][1]["badges"])
+        active = warmup([0, 2], 5) + [self.god_route_race(winner=0, day=late)]
+        inactive = warmup([0, 2], 5) + [self.god_route_race(winner=0, day=late + 1)]
+        self.assertNotIn("god_route", self.badges(active, means={0: 3.0, 2: 2.0}))
+        self.assertIn("god_route", self.badges(inactive, means={0: 3.0, 2: 2.0}))
 
-    def test_god_route_ignores_provisional_number_one(self):
-        records = warmup([0, 2], 4) + [duel(1, 0, day=4)]
-        result = run(records, means={0: 3.0})
-        self.assertNotIn("god_route", result["players"][1]["badges"])
+    def test_god_route_needs_a_timed_runner_up(self):
+        race = record([done(1, 1, 3000.0)] + [dnf(p) for p in (0, 2, 3, 4, 5, 6)], day=5)
+        records = warmup([0, 2], 5) + [race]
+        self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
 
     def test_glitched_tiers_count_finishes_in_the_glitched_mode(self):
         glitched = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in range(100)]
@@ -479,6 +503,45 @@ class BadgeTests(unittest.TestCase):
 
     def test_glitched_ignores_other_modes(self):
         self.assertNotIn("glitched", self.badges(solo_finishes(3), modes=GLITCHED_MODES))
+
+    def test_inverted_tiers_count_finishes_in_the_inverted_mode(self):
+        inverted = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in range(30)]
+        records = [record([dnf(0), done(1, 1, 3000.0)], mode=1)] + solo_finishes(5) + inverted
+        badges = self.badges(records, modes=INVERTED_MODES)
+        self.assertEqual(badges["the_upside_down"], 6)
+        self.assertEqual(badges["mirror_universe"], 35)
+        short = run(records[:-1], modes=INVERTED_MODES)["players"][0]
+        self.assertNotIn("mirror_universe", short["badges"])
+        self.assertEqual(short["progress"]["mirror_universe"], 29)
+
+    def test_mystery_tiers_count_finishes_in_the_mystery_mode(self):
+        mystery = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in range(30)]
+        records = [record([dnf(0), done(1, 1, 3000.0)], mode=1)] + solo_finishes(5) + mystery
+        badges = self.badges(records, modes=MYSTERY_MODES)
+        self.assertEqual(badges["i_like_it_here"], 15)
+        self.assertEqual(badges["bustin"], 35)
+        short = run(records[:15], modes=MYSTERY_MODES)["players"][0]
+        self.assertNotIn("i_like_it_here", short["badges"])
+        self.assertEqual(short["progress"]["i_like_it_here"], 9)
+
+    def test_what_counts_any_mystery_entry(self):
+        records = [record([done(0, 1, 3000.0)]), record([dnf(0), done(1, 1, 3000.0)], mode=1)]
+        self.assertEqual(self.badges(records, modes=MYSTERY_MODES)["what"], 1)
+        self.assertNotIn("what", self.badges(records[:1], modes=MYSTERY_MODES))
+
+    def test_driving_lesson_needs_a_spoiler_finish(self):
+        records = [
+            record([dnf(0), done(1, 1, 3000.0)], mode=1),
+            duel(1, 0, mode=0),
+            duel(1, 0, mode=1),
+        ]
+        self.assertEqual(self.badges(records, modes=SPOILER_MODES)["driving_lesson"], 2)
+        self.assertNotIn("driving_lesson", self.badges(records[:2], modes=SPOILER_MODES))
+
+    def test_cruisin_needs_a_spoiler_win(self):
+        records = [duel(1, 0, mode=1), duel(0, 1, mode=0), duel(0, 1, mode=1)]
+        self.assertEqual(self.badges(records, modes=SPOILER_MODES)["cruisin"], 2)
+        self.assertNotIn("cruisin", self.badges(records[:2], modes=SPOILER_MODES))
 
     def test_jet_seed_needs_a_casual_boots_finish_under_4200_seconds(self):
         def jet_seed(seconds, preset=0):
@@ -609,6 +672,47 @@ class BadgeTests(unittest.TestCase):
         self.assertNotIn("rando_sicko", result["players"][0]["badges"])
         self.assertEqual(result["players"][0]["progress"]["rando_sicko"], 4)
 
+    def test_touched_grass_needs_thirty_days_away_from_the_cutoff_on(self):
+        cutoff = (highlights.TOUCHED_GRASS_FROM - DAY_ONE).days
+        days = highlights.TOUCHED_GRASS_DAYS
+
+        def comeback(last_day, return_day):
+            records = [
+                record([done(0, 1, 3000.0)], day=last_day),
+                record([dnf(0), done(1, 1, 3000.0)], day=return_day),
+            ]
+            return self.badges(records).get("touched_grass")
+
+        self.assertEqual(comeback(cutoff, cutoff + days), 1)
+        self.assertIsNone(comeback(cutoff, cutoff + days - 1))
+        # Days before the cutoff don't count as away.
+        self.assertEqual(comeback(0, cutoff + days), 1)
+        self.assertIsNone(comeback(0, cutoff + days - 1))
+
+    def test_touched_grass_needs_an_earlier_race(self):
+        cutoff = (highlights.TOUCHED_GRASS_FROM - DAY_ONE).days
+        records = [record([done(0, 1, 3000.0)], day=cutoff + 60)]
+        self.assertNotIn("touched_grass", self.badges(records))
+
+    def test_yap_needs_eleven_commented_races_in_a_row(self):
+        def races(count):
+            return [record([done(0, 1, 3000.0)], day=day, commenters={0}) for day in range(count)]
+
+        self.assertNotIn("yap", self.badges(races(10)))
+        self.assertEqual(self.badges(races(11))["yap"], 10)
+
+    def test_yap_counts_a_dnf_and_resets_on_a_race_without_a_comment(self):
+        commented = [True] * 5 + [False] + [True] * 10
+        records = [
+            record([dnf(0), done(1, 1, 3000.0)], day=day, commenters={0} if said else ())
+            for day, said in enumerate(commented)
+        ]
+        result = run(records)
+        self.assertNotIn("yap", result["players"][0]["badges"])
+        self.assertEqual(result["players"][0]["progress"]["yap"], 10)
+        records.append(record([dnf(0), done(1, 1, 3000.0)], day=16, commenters={0}))
+        self.assertEqual(self.badges(records)["yap"], 16)
+
     def test_step_letter_is_alphabetical_in_place_order_ignoring_case(self):
         names = {0: "alice", 1: "Bob", 2: "carol", 3: "Dave", 4: "eve"}
         race = record([done(p, p + 1, 3000.0 + p) for p in range(5)])
@@ -631,6 +735,26 @@ class BadgeTests(unittest.TestCase):
         names = {p: "abcde"[p] for p in range(5)}
         race = record([done(p, p + 1, 3000.0 + p) for p in range(4)])
         self.assertNotIn("step_letter", run([race], names=names)["players"][0]["badges"])
+
+    def test_rettel_pets_is_reverse_alphabetical_in_place_order_ignoring_case(self):
+        names = {0: "eve", 1: "Dave", 2: "carol", 3: "Bob", 4: "alice"}
+        race = record([done(p, p + 1, 3000.0 + p) for p in range(5)])
+        result = run([race], names=names)
+        for player in range(5):
+            self.assertEqual(result["players"][player]["badges"]["rettel_pets"], 0)
+            self.assertNotIn("step_letter", result["players"][player]["badges"])
+        alphabetical = run([race], names={p: "abcde"[p] for p in range(5)})
+        self.assertNotIn("rettel_pets", alphabetical["players"][0]["badges"])
+
+    def test_rettel_pets_needs_a_full_field_of_five(self):
+        names = {p: "edcba"[p] for p in range(5)}
+        four = record([done(p, p + 1, 3000.0 + p) for p in range(4)])
+        with_dnf = record([done(p, p + 1, 3000.0 + p) for p in range(4)] + [dnf(4)])
+        anonymous = record([done(p, p + 1, 3000.0 + p) for p in range(5)], n=6)
+        for race in (four, with_dnf, anonymous):
+            result = run([race], names=names)
+            for player in range(5):
+                self.assertNotIn("rettel_pets", result["players"][player]["badges"])
 
     def test_badge_table_order(self):
         ids = [badge["id"] for badge in run([])["badges"]]
@@ -657,14 +781,24 @@ class BadgeTests(unittest.TestCase):
                 "glitched_10",
                 "glitched_30",
                 "glitched_100",
+                "the_upside_down",
+                "mirror_universe",
                 "jet_seed",
                 "jet_lag",
+                "driving_lesson",
+                "cruisin",
                 "entranced",
                 "entranced_weeks",
+                "what",
+                "i_like_it_here",
+                "bustin",
                 "both_ends",
                 "grocery_stick",
                 "rando_sicko",
+                "touched_grass",
+                "yap",
                 "step_letter",
+                "rettel_pets",
             ],
         )
 

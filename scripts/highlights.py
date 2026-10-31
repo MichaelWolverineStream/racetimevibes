@@ -32,6 +32,9 @@ OVER_174_NON_WINS = 175
 OMNIVORE_MODES = 7
 GLITCHED_MODE = "glitched"
 GLITCHED_TIERS = (1, 10, 30, 100)
+INVERTED_MODE = "inverted"
+INVERTED_TIERS = (1, 30)
+SPOILER_MODE = "spoiler"
 CASUAL_BOOTS_PRESET = "Casual Boots"
 JET_SEED_MAX_SECONDS = 4200
 JET_LAG_MIN_SECONDS = 6000
@@ -39,14 +42,19 @@ ENTRANCE_MODE = "entrance"
 ENTRANCED_DAYS = 5
 ENTRANCED_WEEKS = 20
 MYSTERY_MODE = "mystery"
+MYSTERY_TIERS = (10, 30)
 BOTH_ENDS_FAST_SECONDS = 1800
 BOTH_ENDS_SLOW_SECONDS = 7800
 MIDDLE_MIN_FIELD = 5
 RANDO_SICKO_FINISHES = 5
 STEP_LETTER_MIN_FIELD = 5
+TOUCHED_GRASS_DAYS = 30
+TOUCHED_GRASS_FROM = date(2026, 8, 1)
+YAP_COMMENTS = 11
 NIGHT_HOURS = range(0, 5)
 BIG_FIELD_SIZE = 16
-GOD_ROUTE_TOP = 10
+GOD_ROUTE_MIN_MARGIN = 600
+GOD_ROUTE_MIN_FIELD = 7
 RANKING_WINDOW_DAYS = 90
 PRESET_MIN_RACES = 8
 BEST_PRESET_MIN_FINISHES = 3
@@ -140,9 +148,13 @@ class _Player:
         "finishes",
         "wins",
         "glitched",
+        "mystery",
+        "inverted",
         "day",
         "day_finishes",
         "best_day_finishes",
+        "comment_streak",
+        "best_comment_streak",
         "mystery_fast",
         "mystery_slow",
         "entrance_days",
@@ -163,9 +175,13 @@ class _Player:
         self.finishes = 0
         self.wins = 0
         self.glitched = 0
+        self.mystery = 0
+        self.inverted = 0
         self.day = ""
         self.day_finishes = 0
         self.best_day_finishes = 0
+        self.comment_streak = 0
+        self.best_comment_streak = 0
         self.mystery_fast = False
         self.mystery_slow = False
         self.entrance_days = _CalendarRun()
@@ -194,11 +210,14 @@ class _Moment(NamedTuple):
     mode: str
     preset: str | None
     n: int
+    ordinal: int
+    last_ordinal: int | None
     snipers: set[int]
     sniped: set[int]
-    slayers: set[int]
+    god_route: set[int]
     middle: set[int]
     step_letter: set[int]
+    rettel_pets: set[int]
     retimed: set[int]
 
 
@@ -238,6 +257,14 @@ def _jet_lag(moment: _Moment) -> bool:
         and moment.seconds is not None
         and moment.seconds >= JET_LAG_MIN_SECONDS
     )
+
+
+def _touched_grass(moment: _Moment) -> bool:
+    """A return after a long break; days before TOUCHED_GRASS_FROM don't count as away."""
+    if moment.last_ordinal is None:
+        return False
+    away_since = max(moment.last_ordinal, TOUCHED_GRASS_FROM.toordinal())
+    return moment.ordinal - away_since >= TOUCHED_GRASS_DAYS
 
 
 # Table order: the order of locked badges on a racer page. A new badge is one row here, plus a state field if its rule needs a new count.
@@ -333,8 +360,9 @@ BADGES = (
     Badge(
         "god_route",
         "God Route",
-        f"Finish ahead of the top-rated racer while ranked outside the top {GOD_ROUTE_TOP}.",
-        earned=lambda m: m.player in m.slayers,
+        f"Win by more than {GOD_ROUTE_MIN_MARGIN // 60} minutes in a field of "
+        f"{GOD_ROUTE_MIN_FIELD} or more while not its top-rated racer.",
+        earned=lambda m: m.player in m.god_route,
     ),
     Badge(
         "big_game_hunter",
@@ -371,6 +399,20 @@ BADGES = (
         progress=lambda s: s.glitched,
     ),
     Badge(
+        "the_upside_down",
+        "The Upside Down",
+        f"Finish an {INVERTED_MODE} race.",
+        INVERTED_TIERS[0],
+        progress=lambda s: s.inverted,
+    ),
+    Badge(
+        "mirror_universe",
+        "Mirror Universe",
+        f"Finish {INVERTED_TIERS[1]} {INVERTED_MODE} races.",
+        INVERTED_TIERS[1],
+        progress=lambda s: s.inverted,
+    ),
+    Badge(
         "jet_seed",
         "Jet Seed",
         f"Finish a {CASUAL_BOOTS_PRESET} race in under {JET_SEED_MAX_SECONDS // 60} minutes.",
@@ -381,6 +423,18 @@ BADGES = (
         "Jet Lag",
         f"Win a {CASUAL_BOOTS_PRESET} race in {JET_LAG_MIN_SECONDS // 60} minutes or more.",
         earned=_jet_lag,
+    ),
+    Badge(
+        "driving_lesson",
+        "Driving Lesson",
+        f"Finish a {SPOILER_MODE} race.",
+        earned=lambda m: m.finisher and m.mode == SPOILER_MODE,
+    ),
+    Badge(
+        "cruisin",
+        "Cruisin'",
+        f"Win a {SPOILER_MODE} race.",
+        earned=lambda m: m.won and m.mode == SPOILER_MODE,
     ),
     Badge(
         "entranced",
@@ -395,6 +449,26 @@ BADGES = (
         f"Enter an {ENTRANCE_MODE} race in {ENTRANCED_WEEKS} weeks in a row.",
         ENTRANCED_WEEKS,
         progress=lambda s: s.entrance_weeks.best,
+    ),
+    Badge(
+        "what",
+        "What?",
+        f"Enter a {MYSTERY_MODE} race.",
+        earned=lambda m: m.mode == MYSTERY_MODE,
+    ),
+    Badge(
+        "i_like_it_here",
+        "I Like It Here",
+        f"Finish {MYSTERY_TIERS[0]} {MYSTERY_MODE} races.",
+        MYSTERY_TIERS[0],
+        progress=lambda s: s.mystery,
+    ),
+    Badge(
+        "bustin",
+        "BUSTIN'",
+        f"Finish {MYSTERY_TIERS[1]} {MYSTERY_MODE} races.",
+        MYSTERY_TIERS[1],
+        progress=lambda s: s.mystery,
     ),
     Badge(
         "both_ends",
@@ -417,11 +491,32 @@ BADGES = (
         progress=lambda s: s.best_day_finishes,
     ),
     Badge(
+        "touched_grass",
+        "Touched Grass",
+        f"Enter a race after {TOUCHED_GRASS_DAYS} or more days away, "
+        f"counting from {TOUCHED_GRASS_FROM.isoformat()}.",
+        earned=_touched_grass,
+    ),
+    Badge(
+        "yap",
+        "Yap",
+        f"Comment on {YAP_COMMENTS} races in a row.",
+        YAP_COMMENTS,
+        progress=lambda s: s.best_comment_streak,
+    ),
+    Badge(
         "step_letter",
         "Step Letter",
         f"Be in a race of {STEP_LETTER_MIN_FIELD} or more where everyone finished "
         "in alphabetical order.",
         earned=lambda m: m.player in m.step_letter,
+    ),
+    Badge(
+        "rettel_pets",
+        "Rettel Pets",
+        f"Be in a race of {STEP_LETTER_MIN_FIELD} or more where everyone finished "
+        "in reverse alphabetical order.",
+        earned=lambda m: m.player in m.rettel_pets,
     ),
 )
 
@@ -463,15 +558,6 @@ def _ranking_top(
     return [index for _mean, index in ranked]
 
 
-def _beats(a: tuple, b: tuple) -> bool:
-    """Leaderboard H2H rule: lower place wins, any finisher beats a non-finisher."""
-    a_finished = _is_finisher(a[1], a[2])
-    b_finished = _is_finisher(b[1], b[2])
-    if a_finished and b_finished:
-        return a[1] < b[1]
-    return a_finished and not b_finished
-
-
 def _middle_finisher(entries: list[Any], n: int) -> set[int]:
     """The finisher in the exact middle of an odd field, if one is identified."""
     if n < MIDDLE_MIN_FIELD or n % 2 == 0:
@@ -489,14 +575,16 @@ def _retimed(timed: list[Any]) -> set[int]:
     return tied
 
 
-def _step_letter_field(entries: list[Any], n: int, players: list[JsonObject]) -> set[int]:
-    """Every entrant, when all of a big enough field finished in alphabetical order."""
+def _alphabetical_field(
+    entries: list[Any], n: int, players: list[JsonObject], *, reverse: bool = False
+) -> set[int]:
+    """Every entrant, when all of a big enough field finished in alphabetical order (or reverse)."""
     if n < STEP_LETTER_MIN_FIELD or len(entries) != n:
         return set()
     if not all(_is_finisher(e[1], e[2]) for e in entries):
         return set()
     names = [players[e[0]]["name"].casefold() for e in sorted(entries, key=lambda e: e[1])]
-    if names != sorted(names):
+    if names != sorted(names, reverse=reverse):
         return set()
     return {e[0] for e in entries}
 
@@ -598,6 +686,7 @@ def compute(
         # Photo finish and blowout.
         snipers: set[int] = set()
         sniped: set[int] = set()
+        margin: float | None = None
         if (
             winner is not None
             and runner_up is not None
@@ -615,18 +704,19 @@ def compute(
             big_fields.append([ri, winner[0], n])
 
         # God Route: needs the pre-race ranking, so it runs before state updates.
-        slayers: set[int] = set()
-        entrant_ids = {e[0] for e in entries}
-        ranking = _ranking_top(states, race_ordinal)
-        if ranking and ranking[0] in entrant_ids:
-            number_one = next(e for e in entries if e[0] == ranking[0])
-            top_ten = set(ranking[:GOD_ROUTE_TOP])
-            for entry in entries:
-                if entry[0] not in top_ten and _beats(entry, number_one):
-                    slayers.add(entry[0])
+        god_route: set[int] = set()
+        if margin is not None and margin > GOD_ROUTE_MIN_MARGIN and n >= GOD_ROUTE_MIN_FIELD:
+            entrant_ids = {e[0] for e in entries}
+            top_rated = next(
+                (index for index in _ranking_top(states, race_ordinal) if index in entrant_ids),
+                None,
+            )
+            if top_rated != winner[0]:
+                god_route = {winner[0]}
 
         middle = _middle_finisher(entries, n)
-        step_letter = _step_letter_field(entries, n, players)
+        step_letter = _alphabetical_field(entries, n, players)
+        rettel_pets = _alphabetical_field(entries, n, players, reverse=True)
         retimed = _retimed(timed)
 
         # Per-entry updates, in entry order.
@@ -636,6 +726,7 @@ def compute(
                 state = states[player] = _Player()
             finisher = _is_finisher(place, status)
             won = finisher and place == 1
+            last_ordinal = state.last_ordinal if state.races else None
 
             state.races += 1
             if not state.dates or state.dates[-1] != rec["d"]:
@@ -646,6 +737,10 @@ def compute(
                 finishes_total += 1
                 if mode_name == GLITCHED_MODE:
                     state.glitched += 1
+                if mode_name == MYSTERY_MODE:
+                    state.mystery += 1
+                if mode_name == INVERTED_MODE:
+                    state.inverted += 1
                 if state.day != rec["d"]:
                     state.day = rec["d"]
                     state.day_finishes = 0
@@ -660,6 +755,8 @@ def compute(
             if mode_name == ENTRANCE_MODE:
                 state.entrance_days.step(race_ordinal)
                 state.entrance_weeks.step((race_ordinal - 1) // 7)
+            state.comment_streak = state.comment_streak + 1 if player in rec["c"] else 0
+            state.best_comment_streak = max(state.best_comment_streak, state.comment_streak)
             state.runs["win"].step(ri, won)
             state.runs["podium"].step(ri, finisher and place <= 3)
             state.runs["finish"].step(ri, finisher)
@@ -701,11 +798,14 @@ def compute(
                 mode_name,
                 preset_name,
                 n,
+                race_ordinal,
+                last_ordinal,
                 snipers,
                 sniped,
-                slayers,
+                god_route,
                 middle,
                 step_letter,
+                rettel_pets,
                 retimed,
             )
             for badge in BADGES:

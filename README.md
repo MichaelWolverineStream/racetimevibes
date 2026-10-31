@@ -164,7 +164,7 @@ $$\Omega = \sum_q \frac{\sigma_i^2}{c}(s - p) \qquad \Delta = \sum_q \frac{\sigm
 
 $$\mu_i \leftarrow \mu_i + \Omega \qquad \sigma_i^2 \leftarrow \max\big(\sigma_i^2 \cdot \max(1 - \Delta, \kappa),\ \sigma_{floor}^2\big)$$
 
-The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags, God Route, and the head-to-head "Win chance" column, and never uses points.
+The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags and the head-to-head "Win chance" column, and never uses points.
 
 ### Recency
 
@@ -236,7 +236,7 @@ Within a race, tags appear in the order record, first win, upset, photo, PB, mil
 
 ### Badges
 
-Each badge records the index of the race that unlocked it. Shares are of the 397 racers as of 2026-10-27.
+Each badge records the index of the race that unlocked it. Shares are of the 397 racers as of 2026-10-31.
 
 | Badge | Rule | Held by |
 |---|---|---|
@@ -251,27 +251,40 @@ Each badge records the index of the race that unlocked it. Shares are of the 397
 | >174 | Enter 175 races you don't win. | 3.8% |
 | Omnivore | Finish a race in 7 different modes. | 3.8% |
 | Sniper | Win by less than 5 seconds. | 7.1% |
-| Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.1% |
+| Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.3% |
 | RETIME | Finish less than 1 second from another racer. | 17% |
 | Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | 34% |
-| God Route | Finish ahead of the top-rated racer while ranked outside the top 10. | 19% |
+| God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. | 13% |
 | Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. | 13% |
 | Glitched | Finish a glitched race. | 10% |
 | Glitched! | Finish 10 glitched races. | 3.5% |
 | G1!tch3d!!! | Finish 30 glitched races. | 1.8% |
 | G%!#ch@d!#? | Finish 100 glitched races. | 0% |
+| The Upside Down | Finish an inverted race. | 31% |
+| Mirror Universe | Finish 30 inverted races. | 1.8% |
 | Jet Seed | Finish a Casual Boots race in under 70 minutes. | 9.1% |
 | Jet Lag | Win a Casual Boots race in 100 minutes or more. | 2.8% |
+| Driving Lesson | Finish a spoiler race. | 8.3% |
+| Cruisin' | Win a spoiler race. | 3.3% |
 | Entranced | Enter an entrance race on 5 days in a row. | 7.1% |
 | Entranced! | Enter an entrance race in 20 weeks in a row. | 2.8% |
+| What? | Enter a mystery race. | 30% |
+| I Like It Here | Finish 10 mystery races. | 4.5% |
+| BUSTIN' | Finish 30 mystery races. | 1.8% |
 | Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. | 0.3% |
 | Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. | 56% |
-| Rando Sicko | Finish 5 races in one day. | 0.3% |
+| Rando Sicko | Finish 5 races in one day. | 0.8% |
+| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. | 20% |
+| Yap | Comment on 11 races in a row. | 8.8% |
 | Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. | 2.3% |
+| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. | 1.3% |
 
 A badge is either a counter, which unlocks when a count reaches its target and fills its border as it progresses, or a one-race badge, which unlocks on a single result. On a racer page, earned badges come first in the order they were won, oldest first, and locked badges follow in table order. Hovering a badge shows the share of racers who hold it, to two significant digits, counted on the page from the current data. In the list below, a **finish** is status `done` with a place, a **day** is the race's Eastern Time date, a **week** runs Monday to Sunday, and the **field** is the race's entrant count, which includes DNFs and anonymous entrants.
 
-- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. CenturianV and BlazeIt count finishes. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode.
+- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. CenturianV and BlazeIt count finishes. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode, The Upside Down and Mirror Universe count finishes in the inverted mode, and I Like It Here and BUSTIN' count finishes in the mystery mode.
+- **What?:** any entry in the mystery mode counts, DNFs included.
+- **Yap:** the racer's own races in order, DNFs included, each with a comment that isn't blank, the same comments that `comments.json` publishes. A race without one ends the run. Only whether a comment exists reaches `highlights.py`; its text never enters `participants.json`.
+- **Touched Grass:** the racer needs an earlier race, and the gap since it is counted only from 2026-08-01, so a break that started before then counts from that date and the earliest unlock is 2026-08-31. Any entry counts as the return, DNFs included.
 - **Entranced and Entranced!:** any entry in the entrance mode counts, DNFs included, and several races on one day or in one week count once.
 - **Rando Sicko:** finishes only, counted per day.
 - **Sniper and Sniped!:** the photo tag's condition. Places 1 and 2 are both timed and the margin is under 5 seconds. Sniper goes to the winner and Sniped! to the runner-up.
@@ -280,12 +293,13 @@ A badge is either a counter, which unlocks when a count reaches its target and f
 - **Both Ends:** one mystery finish under 30 minutes and another over 130 minutes, in either order. It unlocks on the race that completes the pair.
 - **Grocery Stick:** the field is odd and at least 5, and the finisher whose place is the middle one, `(field + 1) / 2`, earns it.
 - **Step Letter:** the field is at least 5, every entrant is identified and finished, and the names in place order never decrease when compared without case. Every entrant earns it.
-- **God Route:** "top-rated" and "top 10" rank the racers by pre-race rating among those who are not provisional and raced in the previous 90 days. The rule applies when the top-rated racer is in the race, and "ahead" uses the leaderboard's pairing rule: a lower place wins, and any finisher beats a non-finisher.
+- **Rettel Pets:** Step Letter's rule with the names in place order never increasing.
+- **God Route:** places 1 and 2 are both timed and more than 10 minutes apart, using the exact times, and the field is at least 7. "Top-rated" is the entrant with the best pre-race rating among those who are not provisional and raced in the previous 90 days. When no entrant qualifies, the winner earns it.
 - **Omnivore:** needs 7 of the 8 modes, because requiring all 8 left 0.8% of racers holding it.
 
 Each badge ships an animated image and a still under `site/assets/badges/`. Earned badges animate, and locked badges show the grey still. To add or remove a badge, see [Badge_Guide.md](Badge_Guide.md).
 
-The badge art in `site/assets/badges/` includes [Twemoji](https://github.com/twitter/twemoji) graphics, licensed [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/), for Step Letter, BlazeIt, Both Ends, Grocery Stick and RETIME.
+The badge art in `site/assets/badges/` includes [Twemoji](https://github.com/twitter/twemoji) graphics, licensed [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/), for Step Letter, Rettel Pets, BlazeIt, Both Ends, Grocery Stick and RETIME.
 
 ### Streaks
 
