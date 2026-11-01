@@ -771,7 +771,7 @@ function leaderboardRows(modeId, range) {
   return rows;
 }
 
-function renderLeaderboard({ fromSearch = false } = {}) {
+function renderLeaderboard() {
   const container = document.querySelector("#leaderboard-table");
   renderModeToggle(
     document.querySelector("#leaderboard-mode-toggle"),
@@ -809,8 +809,6 @@ function renderLeaderboard({ fromSearch = false } = {}) {
   });
   document.querySelector("#leaderboard-from").value = range.start || "";
   document.querySelector("#leaderboard-to").value = range.end || "";
-  const renderFinishTimes = fromSearch ? renderLeaderboardFinishTimesSoon : renderLeaderboardFinishTimes;
-  renderFinishTimes(visible, leaderboardState.mode, range);
 
   if (!visible.length) {
     const empty = document.createElement("p");
@@ -1139,7 +1137,7 @@ async function loadParticipants() {
     ratingRankDeltaCache = null;
     ratingDeltaCache = null;
 
-    bindFilter("#leaderboard-search", leaderboardState, () => renderLeaderboard({ fromSearch: true }));
+    bindFilter("#leaderboard-search", leaderboardState, renderLeaderboard);
     bindFilter("#player-search", playerState, () => {
       if (currentView && currentView.kind === "player") {
         renderPlayerView(currentView.index);
@@ -1175,7 +1173,6 @@ async function loadParticipants() {
 
     renderLeaderboard();
     status.hidden = true;
-    document.querySelector("#finish-times").hidden = false;
     document.querySelector("#leaderboard-controls").hidden = false;
     route(true);
     window.addEventListener("hashchange", () => route(false));

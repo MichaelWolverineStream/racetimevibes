@@ -429,6 +429,14 @@ const Records = (() => {
         render: (cell, row) => cell.append(UI.time(row.preset.median_seconds)),
       },
       {
+        key: "gold",
+        label: "Gold median",
+        sortLabel: "median winning time",
+        defaultDirection: "asc",
+        sortValue: (row) => row.preset.median_win_seconds,
+        render: (cell, row) => cell.append(UI.time(row.preset.median_win_seconds)),
+      },
+      {
         key: "dnf",
         label: "DNF %",
         sortLabel: "DNF rate",
@@ -477,6 +485,31 @@ const Records = (() => {
     });
   }
 
+  function violinLegend() {
+    const legend = element("p", "violin-legend violin-legend--standalone");
+    legend.append(element("span", "line-key"), "Median ", element("span", "line-key line-key--gold"), "Gold median");
+    return legend;
+  }
+
+  // The mode's most-raced presets, one violin each; the presets table below lists them all.
+  function renderFinishTimes() {
+    const presets = participants.presets;
+    const inMode = presets.map((_, index) => index).filter((index) => presets[index].m === state.mode);
+    const charted = chartedPresets(inMode, (left, right) =>
+      presets[right].races - presets[left].races || presets[left].n.localeCompare(presets[right].n),
+    );
+    parts.violinNote.hidden = charted.length === inMode.length;
+    parts.violinNote.textContent = `Charting ${charted.length} of this mode's ${inMode.length} presets: the most raced among those with ${VIOLIN_MIN_PRESET_RACES}+ races, up to ${VIOLIN_SLOTS}. The table lists them all.`;
+    const modeName = modeLabel(participants.modes[state.mode]);
+    renderPresetViolins(parts.violin, charted, {
+      id: "records-violin",
+      highlightPlayer: null,
+      title: `${modeName} finish times by preset`,
+      description: "One violin per preset: each dot is one finish, the shape shows where finishes cluster, the bold line marks the median, and the gold line marks the median winning time.",
+      emptyText: `No preset in this mode has ${VIOLIN_MIN_PRESET_RACES}+ races.`,
+    });
+  }
+
   function renderModeScoped() {
     buildToggle(
       parts.toggle,
@@ -488,6 +521,7 @@ const Records = (() => {
       },
     );
     renderSummary();
+    renderFinishTimes();
     renderPresets();
   }
 
@@ -506,6 +540,9 @@ const Records = (() => {
     toolbar.appendChild(parts.toggle);
 
     parts.summary = element("div", "summary-strip records-summary");
+    parts.violinNote = element("p", "chart-note");
+    parts.violin = element("div", "chart-host chart-host--violin");
+    parts.violin.setAttribute("aria-live", "polite");
     parts.progress = element("div", "records-grid");
     parts.presets = element("div", "table-wrap table-wrap--leaderboard records-presets");
 
@@ -520,6 +557,9 @@ const Records = (() => {
       sectionHeading("By mode"),
       toolbar,
       parts.summary,
+      violinLegend(),
+      parts.violinNote,
+      parts.violin,
       parts.presets,
     );
     section.hidden = false;

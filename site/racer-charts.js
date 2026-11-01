@@ -1,5 +1,6 @@
-// Finish-time scatter, personal trend, and start-time heatmap for the leaderboard and racer pages,
-// plus the step-chart pieces shared by the record progression and the racer's rating.
+// Finish-time scatter, personal trend, and start-time heatmap for the racer pages, the preset violins
+// shared by the racer pages and the records, plus the step-chart pieces shared by the record
+// progression and the racer's rating.
 // Loaded between app.js and leaderboard.js. Nothing here touches the DOM at load time, so the
 // pure helpers can be exercised outside a browser.
 
@@ -84,10 +85,20 @@ const ALL_RACES = { start: null, end: null };
 const FINISH_CHART_HEIGHT = 360;
 const FINISH_CHART_MARGIN = { top: 20, right: 18, bottom: 46, left: 62 };
 const VIOLIN_CHART_HEIGHT = 500;
-const VIOLIN_CHART_MARGIN = { top: 20, right: 18, bottom: 64, left: 62 };
+// The bottom fits the tallest label block: swatch, two name lines, a mode line and the finish count,
+// so the plot keeps its height whichever labels a chart needs.
+const VIOLIN_CHART_MARGIN = { top: 20, right: 18, bottom: 92, left: 62 };
 const VIOLIN_MARK_MIN_HALF = 6;
-// Drawing every finish takes longer than a keystroke, so typed searches redraw the violins once typing pauses.
-const SEARCH_REDRAW_DELAY_MS = 120;
+// A preset needs this many races, by anyone, before its finishes are drawn as a shape.
+const VIOLIN_MIN_PRESET_RACES = 10;
+// Every preset chart has this many equal slots, so a violin is the same width in every chart.
+const VIOLIN_SLOTS = 8;
+// About 100px per slot plus margins; a narrower host scrolls sideways rather than squeezing the labels.
+const VIOLIN_MIN_WIDTH = 880;
+// Preset labels are measured on a canvas to wrap them. Must match .axis-label--mode in styles.css.
+const VIOLIN_LABEL_FONT_SIZE = "700 13px";
+const VIOLIN_LABEL_LINE_HEIGHT = 14;
+const VIOLIN_LABEL_GAP = 10;
 const TIME_TICK_STEPS_MINUTES = [5, 10, 15, 30, 60, 120];
 const MAX_TIME_INTERVALS = 6;
 // The full-size frame; a caller can pass its own, as the records small multiples do.
@@ -228,17 +239,6 @@ function quartiles(values) {
     median: middle,
     q3: upper.length ? median(upper) : middle,
   };
-}
-
-// Median winning time per mode from every timed 1st-place finish in the range; null for a mode with no wins.
-function goldMedians(range) {
-  const wins = participants.modes.map(() => []);
-  timedFinishes(range, () => true).forEach((finish) => {
-    if (finish.place === 1) {
-      wins[finish.m].push(finish.seconds);
-    }
-  });
-  return wins.map((seconds) => (seconds.length ? { median: median(seconds), wins: seconds.length } : null));
 }
 
 // Gaussian kernel density with Silverman's bandwidth, sampled across the observed range only.
@@ -585,10 +585,40 @@ function finishTrendChart(points, trend, { id, title, description, pbs = [] }, w
   return svg;
 }
 
-function violinPointLabel(finish) {
+function violinPointLabel(finish, groupLabel) {
   const race = participants.races[finish.raceIndex];
   const name = participants.players[finish.p].name;
-  return `${name} · ${modeLabel(participants.modes[finish.m])} · ${formatDuration(finish.seconds)} · ${ordinal(finish.place)} of ${finish.n} · ${formatRaceDate(race.d)}`;
+  return `${name} · ${groupLabel} · ${formatDuration(finish.seconds)} · ${ordinal(finish.place)} of ${finish.n} · ${formatRaceDate(race.d)}`;
+}
+
+let axisLabelContext = null;
+
+function axisLabelFont() {
+  return `${VIOLIN_LABEL_FONT_SIZE} ${getComputedStyle(document.documentElement).getPropertyValue("--body").trim()}`;
+}
+
+function ellipsizeLabel(context, text, maxWidth) {
+  if (context.measureText(text).width <= maxWidth) {
+    return text;
+  }
+  const characters = [...text];
+  while (characters.length && context.measureText(`${characters.join("").trimEnd()}…`).width > maxWidth) {
+    characters.pop();
+  }
+  return `${characters.join("").trimEnd()}…`;
+}
+
+// Splits a label into at most two lines that each fit maxWidth; whatever still doesn't fit ends in an ellipsis.
+function wrapAxisLabel(text, maxWidth) {
+  axisLabelContext ??= document.createElement("canvas").getContext("2d");
+  axisLabelContext.font = axisLabelFont();
+  const words = text.split(" ");
+  let first = words.shift();
+  while (words.length && axisLabelContext.measureText(`${first} ${words[0]}`).width <= maxWidth) {
+    first += ` ${words.shift()}`;
+  }
+  const lines = [first, ...(words.length ? [words.join(" ")] : [])];
+  return lines.map((line) => ellipsizeLabel(axisLabelContext, line, maxWidth));
 }
 
 // Half-length of a line drawn across a violin at a finish time. Outside the violin's range,
@@ -626,28 +656,27 @@ function violinMark({ center, halfLength, level, className, label }) {
   return group;
 }
 
-// One violin per mode on a shared time axis: density wash, every finish as a dot, a median mark,
-// and, when golds is given, the median winning time as a gold line.
-function violinChart(finishes, { id, emphasisMode, highlightPlayer, golds, title, description }, width) {
+// One violin per group on a shared time axis: density wash, every finish as a dot, a median mark,
+// and the median winning time as a gold line. The groups sit centred in VIOLIN_SLOTS equal slots.
+// Each group is { label, name, modeLine, color, indexes, median, gold }: indexes point into finishes,
+// gold is { median, wins } or null, and modeLine is null unless the chart mixes modes.
+function violinChart(finishes, groups, { id, highlightPlayer, title, description }, width) {
   const height = VIOLIN_CHART_HEIGHT;
   const margin = VIOLIN_CHART_MARGIN;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const plotBottom = margin.top + plotHeight;
-  const band = plotWidth / participants.modes.length;
+  const band = plotWidth / VIOLIN_SLOTS;
   const maxHalf = band * 0.4;
-  const indexesByMode = participants.modes.map(() => []);
-  finishes.forEach((finish, index) => indexesByMode[finish.m].push(index));
-  const shownGolds = participants.modes.map((_, modeIndex) =>
-    golds && indexesByMode[modeIndex].length ? golds[modeIndex] : null,
-  );
-  // Filtered racers can all be slower than the winners, so the gold lines widen the axis too.
-  const seconds = [
-    ...finishes.map((finish) => finish.seconds),
-    ...shownGolds.filter((gold) => gold !== null).map((gold) => gold.median),
-  ];
+  const firstSlot = (VIOLIN_SLOTS - groups.length) / 2;
+  const seconds = finishes.map((finish) => finish.seconds);
   const time = timeTicks(Math.min(...seconds), Math.max(...seconds));
   const y = (value) => plotBottom - ((value - time.min) / (time.max - time.min)) * plotHeight;
+  // Every label block in a chart shares its rows, so the finish counts line up.
+  const nameLines = groups.map((group) => wrapAxisLabel(group.name, band - VIOLIN_LABEL_GAP));
+  const nameRows = Math.max(...nameLines.map((lines) => lines.length));
+  const hasModeLine = groups.some((group) => group.modeLine !== null);
+  const labelRow = (row) => plotBottom + 32 + row * VIOLIN_LABEL_LINE_HEIGHT;
 
   const svg = svgElement("svg", {
     class: highlightPlayer === null ? "chart-svg" : "chart-svg chart-svg--faded",
@@ -663,19 +692,18 @@ function violinChart(finishes, { id, emphasisMode, highlightPlayer, golds, title
   );
   appendTimeAxis(svg, { time, y, margin, width, height });
 
-  const groups = [];
+  const violins = [];
   const labels = [];
-  participants.modes.forEach((modeName, modeIndex) => {
-    const indexes = indexesByMode[modeIndex];
+  groups.forEach((group, groupIndex) => {
+    const { indexes, median: medianSeconds, gold } = group;
     const values = indexes.map((index) => finishes[index].seconds);
-    const center = margin.left + band * (modeIndex + 0.5);
-    const color = `--violin-color: ${modeColor(modeName)}`;
-    const muted = emphasisMode !== null && modeIndex !== emphasisMode;
-    const group = svgElement("g", { class: muted ? "violin violin--muted" : "violin", style: color });
+    const center = margin.left + band * (firstSlot + groupIndex + 0.5);
+    const color = `--violin-color: ${group.color}`;
+    const violin = svgElement("g", { class: "violin", style: color });
     const profile = values.length ? densityProfile(values) : null;
     if (profile) {
       const edge = (sign) => profile.ys.map((value, step) => `${center + sign * (profile.densities[step] / profile.peak) * maxHalf},${y(value)}`);
-      group.append(svgElement("path", { class: "violin-wash", d: `M${edge(1).join("L")}L${edge(-1).reverse().join("L")}Z` }));
+      violin.append(svgElement("path", { class: "violin-wash", d: `M${edge(1).join("L")}L${edge(-1).reverse().join("L")}Z` }));
     }
     const dots = indexes.map((index) => {
       const finish = finishes[index];
@@ -689,60 +717,57 @@ function violinChart(finishes, { id, emphasisMode, highlightPlayer, golds, title
           cy: y(finish.seconds),
           r: highlighted ? 3.5 : 2,
           "data-i": index,
+          "data-g": groupIndex,
         }),
       };
     });
     // The highlighted racer is drawn last so the outlined dots stay on top.
-    group.append(...dots.filter((dot) => !dot.highlighted).map((dot) => dot.element));
-    group.append(...dots.filter((dot) => dot.highlighted).map((dot) => dot.element));
+    violin.append(...dots.filter((dot) => !dot.highlighted).map((dot) => dot.element));
+    violin.append(...dots.filter((dot) => dot.highlighted).map((dot) => dot.element));
     // Drawn before the median so the median stays on top when the two are close.
-    const gold = shownGolds[modeIndex];
     if (gold) {
-      group.append(
+      violin.append(
         violinMark({
           center,
           halfLength: violinHalfLength(profile, gold.median, maxHalf),
           level: y(gold.median),
           className: "violin-gold",
-          label: `${modeLabel(modeName)}: gold median ${formatDuration(gold.median)} from ${integerFormatter.format(gold.wins)} winning times`,
+          label: `${group.label}: gold median ${formatDuration(gold.median)} from ${integerFormatter.format(gold.wins)} winning times`,
         }),
       );
     }
-    if (values.length) {
+    if (values.length && medianSeconds !== null) {
       const stats = quartiles(values);
       const racers = new Set(indexes.map((index) => finishes[index].p)).size;
-      group.append(
+      violin.append(
         violinMark({
           center,
-          halfLength: violinHalfLength(profile, stats.median, maxHalf),
-          level: y(stats.median),
+          halfLength: violinHalfLength(profile, medianSeconds, maxHalf),
+          level: y(medianSeconds),
           className: "violin-median",
-          label: `${modeLabel(modeName)}: ${integerFormatter.format(values.length)} finishes by ${integerFormatter.format(racers)} racers; median ${formatDuration(stats.median)}; middle half ${formatDuration(stats.q1)}–${formatDuration(stats.q3)}`,
+          label: `${group.label}: ${integerFormatter.format(values.length)} finishes by ${integerFormatter.format(racers)} racers; median ${formatDuration(medianSeconds)}; middle half ${formatDuration(stats.q1)}–${formatDuration(stats.q3)}`,
         }),
       );
     }
-    groups.push(group);
+    violins.push(violin);
+    const label = (row, className, text) =>
+      svgElement("text", { class: `axis-label ${className}`, x: center, y: labelRow(row), "text-anchor": "middle" }, text);
     labels.push(
       svgElement("circle", { class: "violin-swatch", cx: center, cy: plotBottom + 12, r: 5, style: color }),
-      svgElement(
-        "text",
-        { class: "axis-label axis-label--mode", x: center, y: plotBottom + 32, "text-anchor": "middle" },
-        modeLabel(modeName).toUpperCase(),
-      ),
-      svgElement(
-        "text",
-        { class: "axis-label axis-label--sample", x: center, y: plotBottom + 46, "text-anchor": "middle" },
-        `${integerFormatter.format(values.length)} FINISHES`,
-      ),
+      ...nameLines[groupIndex].map((line, row) => label(row, "axis-label--mode", line)),
     );
+    if (hasModeLine) {
+      labels.push(label(nameRows, "axis-label--violin-mode", group.modeLine));
+    }
+    labels.push(label(nameRows + Number(hasModeLine), "axis-label--sample", `${integerFormatter.format(values.length)} FINISHES`));
   });
-  svg.append(...groups, ...labels);
+  svg.append(...violins, ...labels);
 
-  // One delegated handler: the main page draws thousands of dots.
+  // One delegated handler: a chart can draw thousands of dots.
   svg.addEventListener("mousemove", (event) => {
     const dot = event.target.closest("circle[data-i]");
     if (dot) {
-      showTooltip(dot, violinPointLabel(finishes[dot.dataset.i]), event);
+      showTooltip(dot, violinPointLabel(finishes[dot.dataset.i], groups[dot.dataset.g].label), event);
       return;
     }
     const summary = event.target.closest(".violin-summary");
@@ -826,29 +851,6 @@ function setNote(selector, text) {
   note.textContent = text ?? "";
 }
 
-function modeSummaryRows(finishes, golds) {
-  return participants.modes.map((modeName, modeIndex) => {
-    const inMode = finishes.filter((finish) => finish.m === modeIndex);
-    const gold = golds[modeIndex] ? formatDuration(golds[modeIndex].median) : "--";
-    if (!inMode.length) {
-      return [modeLabel(modeName), "0", "0", "--", "--", "--", "--", gold];
-    }
-    const seconds = inMode.map((finish) => finish.seconds);
-    const stats = quartiles(seconds);
-    return [
-      modeLabel(modeName),
-      integerFormatter.format(new Set(inMode.map((finish) => finish.p)).size),
-      integerFormatter.format(inMode.length),
-      formatDuration(stats.q1),
-      formatDuration(stats.median),
-      formatDuration(stats.q3),
-      formatDuration(Math.min(...seconds)),
-      gold,
-    ];
-  });
-}
-
-let pendingFinishTimes = null;
 const drawnChartKeys = new Map();
 
 // True when the host already shows this key, so a redraw that would change nothing (a table sort) can be skipped.
@@ -860,55 +862,95 @@ function isChartCurrent(host, key) {
   return false;
 }
 
-function renderLeaderboardFinishTimesSoon(visibleRows, modeId, range) {
-  clearTimeout(pendingFinishTimes);
-  pendingFinishTimes = setTimeout(() => renderLeaderboardFinishTimes(visibleRows, modeId, range), SEARCH_REDRAW_DELAY_MS);
+// The presets a violin chart shows: those with enough races for a shape, the first VIOLIN_SLOTS by the
+// caller's ranking, then laid out in mode order, which keeps neighbouring mode colours colour-blind safe.
+function chartedPresets(presetIndexes, compare) {
+  return presetIndexes
+    .filter((presetIndex) => participants.presets[presetIndex].races >= VIOLIN_MIN_PRESET_RACES)
+    .sort(compare)
+    .slice(0, VIOLIN_SLOTS)
+    .sort((left, right) => participants.presets[left].m - participants.presets[right].m);
 }
 
-function renderLeaderboardFinishTimes(visibleRows, modeId, range) {
-  clearTimeout(pendingFinishTimes);
-  const host = document.querySelector("#finish-violin-chart");
-  const table = document.querySelector("#finish-violin-table");
-  const showEmpty = (text) => {
-    mountChart(host, () => emptyMessage(text));
-    table.replaceChildren();
-  };
-  const racers = new Set(visibleRows.map((row) => row.p));
-  const key = [modeId, range.start, range.end, [...racers].sort((left, right) => left - right).join(",")].join("|");
+// One violin per charted preset, from every timed finish in the archive. The median and gold lines use
+// the published preset statistics, which come from exact times, so they match the presets table.
+function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, title, description, emptyText }) {
+  const key = [highlightPlayer, title, ...presetIndexes].join("|");
   if (isChartCurrent(host, key)) {
     return;
   }
-  if (!visibleRows.length) {
-    showEmpty("No racers match these filters.");
-    return;
-  }
-  const finishes = timedFinishes(range, (playerIndex) => racers.has(playerIndex));
+  const slots = new Map(presetIndexes.map((presetIndex, slot) => [presetIndex, slot]));
+  const finishes = timedFinishes(ALL_RACES, () => true).filter((finish) => slots.has(participants.races[finish.raceIndex].p));
   if (!finishes.length) {
-    showEmpty("No recorded finish times for these racers during the selected dates.");
+    mountChart(host, () => emptyMessage(emptyText));
     return;
   }
-  const emphasisMode = modeId === ALL_MODES ? null : modeIndexFor(modeId);
-  // Winners come from the whole field in range, so the benchmark holds still while racers are filtered.
-  const golds = goldMedians(range);
-  mountChart(host, (width) =>
-    violinChart(
-      finishes,
-      {
-        id: "finish-violin",
-        emphasisMode,
-        highlightPlayer: null,
-        golds,
-        title: "Finish times by mode",
-        description: "One violin per mode: each dot is one finish, the shape shows where finishes cluster, the bold line marks the median, and the gold line marks the median winning time.",
-      },
-      width,
-    ),
+  const indexesBySlot = presetIndexes.map(() => []);
+  finishes.forEach((finish, index) => indexesBySlot[slots.get(participants.races[finish.raceIndex].p)].push(index));
+  const mixesModes = new Set(presetIndexes.map((presetIndex) => participants.presets[presetIndex].m)).size > 1;
+  const groups = presetIndexes.map((presetIndex, slot) => {
+    const preset = participants.presets[presetIndex];
+    const modeName = participants.modes[preset.m];
+    const indexes = indexesBySlot[slot];
+    const wins = indexes.filter((index) => finishes[index].place === 1).length;
+    return {
+      label: `${modeLabel(modeName)} · ${preset.n}`,
+      name: preset.n,
+      modeLine: mixesModes ? modeLabel(modeName).toUpperCase() : null,
+      color: modeColor(modeName),
+      indexes,
+      median: preset.median_seconds,
+      gold: preset.median_win_seconds === null ? null : { median: preset.median_win_seconds, wins },
+    };
+  });
+  const draw = () =>
+    mountChart(host, (width) => violinChart(finishes, groups, { id, highlightPlayer, title, description }, width), VIOLIN_MIN_WIDTH);
+  draw();
+  // The labels are measured on a canvas, which measures a fallback font until the page font has loaded.
+  const font = axisLabelFont();
+  if (!document.fonts.check(font)) {
+    document.fonts
+      .load(font)
+      .then(() => {
+        if (drawnChartKeys.get(host) === key) {
+          draw();
+        }
+      })
+      .catch((error) => console.error("Could not load the violin label font.", error));
+  }
+}
+
+// The presets the racer entered most, in the picked mode or across all of them, with their finishes highlighted.
+function renderPlayerViolins(playerIndex, modeId) {
+  const name = participants.players[playerIndex].name;
+  const modeIndex = modeId === ALL_MODES ? null : modeIndexFor(modeId);
+  const entered = new Map();
+  raceIndexesByPlayer[playerIndex].forEach((raceIndex) => {
+    const race = participants.races[raceIndex];
+    if (race.p !== null && (modeIndex === null || race.m === modeIndex)) {
+      entered.set(race.p, (entered.get(race.p) ?? 0) + 1);
+    }
+  });
+  const presets = participants.presets;
+  const charted = chartedPresets([...entered.keys()], (left, right) =>
+    entered.get(right) - entered.get(left) ||
+    presets[right].races - presets[left].races ||
+    presets[left].n.localeCompare(presets[right].n),
   );
-  renderTable(
-    table,
-    ["Mode", "Racers", "Finishes", "Q1", "Median", "Q3", "Best", "Gold median"],
-    modeSummaryRows(finishes, golds),
+  const where = modeIndex === null ? "" : ` in ${modeLabel(modeId)}`;
+  setNote(
+    "#player-violin-note",
+    charted.length < entered.size
+      ? `Charting ${charted.length} of the ${entered.size} presets ${name} has entered${where}: the most entered among those with ${VIOLIN_MIN_PRESET_RACES}+ races, up to ${VIOLIN_SLOTS}.`
+      : null,
   );
+  renderPresetViolins(document.querySelector("#player-violin-chart"), charted, {
+    id: "player-violin",
+    highlightPlayer: playerIndex,
+    title: `${name}'s most-entered presets${where}`,
+    description: `Every finish in the presets ${name} has entered most${where}, with ${name}'s finishes highlighted, the bold line marking the median and the gold line the median winning time.`,
+    emptyText: `${name} has entered no preset${where} with ${VIOLIN_MIN_PRESET_RACES}+ races.`,
+  });
 }
 
 function renderPlayerFinishTable(own) {
@@ -986,7 +1028,7 @@ function renderPlayerCharts(playerIndex) {
   setNote(
     "#player-scatter-note",
     modeId === ALL_MODES
-      ? `Finish times aren't comparable across modes, so these charts show ${modeName}, ${name}'s most-raced mode. Pick a mode above to change it.`
+      ? `Finish times aren't comparable across modes, so the field and trend charts show ${modeName}, ${name}'s most-raced mode. Pick a mode above to change it.`
       : null,
   );
   const field = finishPoints(mode, ALL_RACES, () => true);
@@ -1029,25 +1071,8 @@ function renderPlayerCharts(playerIndex) {
         )
       : emptyMessage("No recorded finish times in this mode."),
   );
-  // The every-mode violin ignores the mode toggle, so it only redraws for a different racer.
-  const violinHost = document.querySelector("#player-violin-chart");
-  if (!isChartCurrent(violinHost, playerIndex)) {
-    const everyone = timedFinishes(ALL_RACES, () => true);
-    mountChart(violinHost, (width) =>
-      violinChart(
-        everyone,
-        {
-          id: "player-violin",
-          emphasisMode: null,
-          highlightPlayer: playerIndex,
-          golds: goldMedians(ALL_RACES),
-          title: `${name} in every mode`,
-          description: `Every finish in every mode, with ${name}'s finishes highlighted and the gold line marking the median winning time.`,
-        },
-        width,
-      ),
-    );
-  }
+  // Unlike the field and trend charts, the violins chart every mode under All modes.
+  renderPlayerViolins(playerIndex, modeId);
   renderPlayerFinishTable(own);
   showPbLegendKey(own.length > 0 && pbs.length > 0);
   renderPlayerHeatmap(playerIndex);

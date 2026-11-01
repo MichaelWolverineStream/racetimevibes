@@ -976,6 +976,7 @@ summary:focus-visible {
   font-size: 11px;
 }
 
+/* The size and weight must match VIOLIN_LABEL_FONT_SIZE in racer-charts.js, which wraps preset names. */
 .axis-label--mode {
   fill: var(--ink);
   font-size: 13px;
@@ -985,6 +986,13 @@ summary:focus-visible {
 .axis-label--sample {
   fill: var(--muted);
   font-size: 10px;
+}
+
+/* Names each violin's mode when a chart mixes modes, so colour is never the only cue. */
+.axis-label--violin-mode {
+  fill: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
 }
 
 .axis-label--period {
@@ -1106,10 +1114,6 @@ summary:focus-visible {
 
 .violin-summary .focus-ring {
   pointer-events: none;
-}
-
-.violin--muted {
-  opacity: 0.25;
 }
 
 .trend-dot {
