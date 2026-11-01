@@ -59,6 +59,7 @@ python3 scripts/avatar_mirror.py   # network: site/avatars/ ⇄ the avatars part
   - `comment_stats.py`: comments and the chest-count parser.
   - `avatar_mirror.py`: avatar file names, which observation is current, and the mirror into `site/avatars/`.
 - `mode_overlap.py` is a standalone analysis. The build never runs it.
+- `rating_lab.py` is a standalone analysis. The build never runs it. Its tuning reads races before 2026-01-01 only.
 - **Tests never use the network**, because API responses are mocked. After changing any build script, rebuild the data and include `site/data` in the change.
 - **A new race mode needs a colour slot** in `MODE_COLOR_SLOTS` (`site/racer-charts.js`). Without one it falls back to a muted grey. The order of `--mode-1..8` keeps neighbouring violins distinguishable for colour-blind viewers, so don't reorder them.
 

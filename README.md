@@ -212,7 +212,7 @@ racetime.gg runs TrueSkill with default parameters on finishing order only, ties
 
 ### Backtest
 
-`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The mode ratings are scored on the same pairs, each predicted from the two racers' ratings in the race's mode. The report also counts winners whose displayed points fell, overall and in their race's mode, and the median points a veteran (past their 50th race) moves per race.
+`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The mode ratings are scored on the same pairs, each predicted from the two racers' ratings in the race's mode. The report also counts winners whose displayed points fell, overall and in their race's mode, and the median points a veteran (past their 50th race) moves per race. Other algorithms are compared on the same pairs in Rating comparison.
 
 ```text
                                      pairs  accuracy  log loss
@@ -373,6 +373,120 @@ For a pair of modes A and B, look only at the months when both were on the sched
 - The score is an upper bound on the conflict. Racing both modes in a month does not prove a racer would want both slots on the same day. The bot never runs two modes at once, so the true forced choice cannot be observed.
 - Pairs are measured over different months, so a paused mode such as inverted is compared on the racers of its own era.
 
+## Rating comparison
+
+`scripts/rating_lab.py` compares other rating algorithms with the ladder rating, on the backtest's pairs and under the ladder's promises. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. Adopting a result is a separate change to `ladder_rating.py`.
+
+```bash
+python3 scripts/rating_lab.py --tune               # each candidate's setting, from races before 2026 (several minutes)
+python3 scripts/rating_lab.py --tune --family elo  # one candidate only
+python3 scripts/rating_lab.py                      # re-derive CHOSEN from --tune, then the comparison
+```
+
+### Candidates
+
+Every candidate reads placement only and is scored on exactly the pairs the backtest scores.
+
+| Candidate | What it is |
+|---|---|
+| Bradley-Terry full pair, retuned | The ladder rating with every parameter re-picked, plus field-size damping: a race's update is scaled by $(n-1)^{-\alpha}$ for $n$ entrants, so a 32-racer race no longer counts as 31 independent matches |
+| Thurstone-Mosteller full pair | Weng and Lin's Algorithm 3: the same pairs with a normal win chance |
+| Bradley-Terry partial pair | Algorithm 2: each place meets only the next place, and the last place meets every non-finisher |
+| Plackett-Luce | Algorithm 4: the whole finishing order at once, non-finishers tied last. Racers who share a place, and non-finishers, never count against each other |
+| Elo, multi-player | Every decided pair is an Elo game, with a K that falls over a racer's first races |
+
+Left out because they cannot keep the ladder's promises:
+- Glicko-2: ratings decay while a racer is away.
+- Whole-History Rating, TrueSkill Through Time and batch refits: ratings move when others race.
+- Additive drift: a winner can lose points.
+- Mode ratings seeded from the overall rating.
+
+TrueSkill is left out because Thurstone-Mosteller is its close approximation.
+
+### Rules
+
+All of these were fixed before any 2026 race was scored for a candidate.
+
+- **Promises.** A candidate is eligible only if, over the whole archive, overall and in every mode, it keeps all of these:
+  - no winner's points fall;
+  - every debut shows 1000;
+  - no state changes while a racer is away;
+  - finish times change nothing.
+
+  Mode ratings use the overall parameters.
+- **Tuning** reads races before 2026-01-01 only, and `tune` cuts there itself.
+  - It scores July to September and October to December 2025. The earlier months are warm-up, because everyone in them is new.
+  - A setting must move a veteran's points at least as much as the shipped rating does over those months, which is a median of 8. This keeps the livelier ladder.
+  - Among the lively settings within one standard error of the best, the simplest wins.
+  - A choice on a grid edge extends that axis and tunes again.
+  - Points are scaled per family, so that 400 points are about 10:1 odds under that family's own win chance.
+- **The comparison runs once.**
+  - The primary measure is 2026 pair log loss, paired against the shipped rating.
+  - The interval is the wider of a race bootstrap and an Eastern Time ISO-week bootstrap: 2,000 resamples, fixed seed.
+  - The p-value is the larger of the two, Holm-adjusted across the candidates.
+- **A change** needs all of these:
+  - eligibility;
+  - Holm significance;
+  - at least 0.003 better. That is about twice the 0.0017 that floor 3 gains over floor 4 over September to December 2025, the accuracy already traded for liveliness;
+  - better in both halves of 2026;
+  - no worse when each race counts once.
+
+  A new model must also beat the retuned ladder rating the same way; otherwise retuning is the simpler change.
+
+### How the candidates were tested
+
+- **Golden values.**
+  - The OpenSkill reference package, version 6.2.0, run once outside the repository, supplied exact results for Algorithms 2 to 4 on fixed races.
+  - Its configuration was first proved by reproducing `ladder_rating`'s own update to 1e-14.
+  - The candidates match those results to 1e-13.
+- **Fuzz tests** check the promises on thousands of random races and states, including shared wins, which the archive has never had.
+- **A known-truth simulation** checks that every candidate recovers a true skill order from simulated races.
+- **Harness tests** cover all of these:
+  - a coin flip scores ln 2;
+  - the shipped setting reproduces the backtest;
+  - tuning gives the same answer whatever 2026 holds;
+  - the promise checker catches each broken promise.
+- **An independent review** before the run found that Thurstone-Mosteller's points were scaled for a logistic win chance, so that 400 points meant 92:1. That held it to a stricter liveliness bar. It was fixed and re-tuned before 2026 was scored.
+
+### Result
+
+On the archive as of 2026-11-01: 47,576 pairs in 1,979 races from 2026-01-01. Δ is the change in log loss against shipped, below 0 is better, with its 95% interval.
+
+```text
+                       setting                          accuracy  log loss  Δ (95% CI)                  per race
+ladder rating, shipped β12 σ₀8 floor 4                     0.723    0.5414                                0.5380
+BT full pair, retuned  β8 σ₀12 floor 4 α½                  0.728    0.5341  -0.0074 (-0.0091, -0.0056)    0.5314
+TM full pair           β12 σ₀8 floor 3 α½                  0.728    0.5347  -0.0068 (-0.0088, -0.0048)    0.5324
+Elo, multi-player      K 128→24 over 10 races, α½          0.727    0.5368  -0.0046 (-0.0060, -0.0033)    0.5340
+Plackett-Luce          β6 σ₀8 floor 5                      0.716    0.5854  +0.0440 (+0.0361, +0.0517)    0.5761
+BT partial pair        β5 σ₀40 floor 4                     0.693    0.5875  +0.0461 (+0.0396, +0.0530)    0.5758
+racetime.gg score                                          0.695    0.5871  best-fit logistic, in-sample
+```
+
+- **Recommendation: retune the ladder rating to β 8, σ₀ 12, floor 4, with field-size damping α ½.**
+  - It is better in both halves of 2026: −0.0059 and −0.0090.
+  - It is better in every experience bucket and every field size.
+  - It is better in every mode with more than 300 pairs, except mystery, where it ties.
+  - The own-mode ratings improve too, from 0.5532 to 0.5465.
+- **Every candidate kept every promise.**
+- **No other family is worth switching to.**
+  - Thurstone-Mosteller ties the retuned rating: +0.0006 against it, interval (−0.0000, +0.0013).
+  - Elo trails the retuned rating by 0.0028.
+  - Plackett-Luce and partial pair do much worse. Partial pair rates only neighbouring places, so it ignores most of a race's pairs. Plackett-Luce's win chances are poorly calibrated: an expected calibration error of 0.070, against 0.020 for shipped.
+- **Retuning changes how points feel**, so weigh this before adopting it:
+  - A veteran's median move per race falls from 9 to 8 points over the whole archive.
+  - Their 90th-percentile move falls from 33 to 20, because damping shrinks the swings of big races.
+  - A veteran's DNF costs a median of 12 points instead of 14, and finishing last costs 9 instead of 6.
+  - The final standings stay close: Kendall's τ is 0.93 against shipped, and 9 of the top 10 are shared.
+
+### Limits
+
+- The shipped rating's 2026 score was public before this work; the candidates' 2026 scores were not.
+- **Grid extensions.**
+  - The first tuning run put every family on a grid edge, so the edge rule extended β down to 4, σ₀ to the range 4 to 14, the floor up to 8, and Elo's K values. All of this happened before 2026 was scored.
+  - Partial pair was extended three times. It stopped when the best ten settings were within 0.0001 of each other, although σ₀ = 40 still sits on the edge.
+- The archive has no tied places, so the tie rules are tested only on synthetic races.
+
 ## Dashboard sections
 
 The page runs top to bottom as: **01 Latest** (the newest results with their tags; expanding a race lists each entrant with their change in that race's mode rating), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. Records runs in three parts. **Across all modes** holds the record cards and streak boards. **Record progression** has a step chart per mode, three to a row, on one shared date axis with each mode's own time axis; each header shows the current record, and the chart draws the first recorded time hollow, each break filled, and the current record with a halo. **By mode** has a mode picker that drives the current-record summary strip, the finish-time violins of the mode's presets (see Finish times), and the presets table, whose Gold median column is the preset's median winning time. Only By mode follows the picker, and it opens on the most-raced mode. A racer page opens with a summary strip: Rank & Rating, Podiums, Record W-L-D, H2H Win Rate, Badges, Nemesis and Favourite Victim. Every tile covers all modes and the whole archive, whatever mode is selected. Nemesis and Favourite Victim are the opponents with the lowest and highest head-to-head win rate among those with at least five decisive meetings. Below the badges and personal bests sits the page's mode picker: everything above it covers all modes, and everything below it follows it. First comes the rating chart. Its heading gives the racer's rank and rating in the picked mode, overall under **All modes**, out of every racer rated there, marked provisional below 5 finishes there. The chart has one point per race day: the racer's rating in the picked mode after their last race that day. With a mode picked it covers only that mode's race days and takes the mode's colour. Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive; it draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line. Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar. Below the rating chart, the picker also drives the finish-time violins of the racer's presets, the racer presets table (see Finish times), and the head-to-head table, whose Win chance column always uses the overall rating. A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10); Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. Between the nav bar and Latest sits the top-rated banner (see Top-rated banner), which is hidden on racer pages too.
@@ -448,6 +562,7 @@ scripts/ladder_rating.py          Ladder rating model, overall and per mode, and
 scripts/highlights.py             Tags, badges, streaks, presets, records and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report
+scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating
 scripts/badge_images.py           Converts badge art to the standard WebP pair (needs ImageMagick 7)
 scripts/version_assets.py         Content versioning for the static assets
 tests/test_race_archive.py        Archive sync unit tests
@@ -458,6 +573,7 @@ tests/test_ladder_rating.py       Rating model unit tests
 tests/test_highlights.py          Tag, badge, streak and record unit tests
 tests/test_comment_stats.py       Comments dataset unit tests
 tests/test_mode_overlap.py        Mode overlap unit tests
+tests/test_rating_lab.py          Rating comparison: golden values, properties and statistics
 tests/test_site_globals.py        Checks that site scripts declare no clashing globals
 tests/test_badge_assets.py        Badge image pair checks
 tests/test_version_assets.py      Asset versioning unit tests
