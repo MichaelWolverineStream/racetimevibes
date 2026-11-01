@@ -37,7 +37,7 @@ const leaderboardState = {
   followedOnly: false,
   range: { preset: "all", start: null, end: null },
 };
-const playerState = { mode: ALL_MODES, sort: null, query: "", heatmapMetric: "h2h" };
+const playerState = { mode: ALL_MODES, sort: null, query: "", presetSort: null };
 
 function validateParticipants(data) {
   if (!data || data.schema_version !== PARTICIPANT_SCHEMA_VERSION) {
@@ -997,6 +997,7 @@ function renderPlayerView(playerIndex) {
   renderModeToggle(document.querySelector("#player-mode-toggle"), available, playerState.mode, (mode) => {
     playerState.mode = mode;
     playerState.sort = null;
+    playerState.presetSort = null;
     history.replaceState(null, "", playerHash(player.id, mode));
     renderPlayerView(playerIndex);
     renderPlayerCharts(playerIndex);
@@ -1074,6 +1075,7 @@ function showPlayer(playerIndex, modeId, isInitial) {
   playerState.mode = modeId;
   if (!wasPlayer || currentView.index !== playerIndex) {
     playerState.sort = null;
+    playerState.presetSort = null;
     playerState.query = "";
     document.querySelector("#player-search").value = "";
   }
@@ -1162,14 +1164,6 @@ async function loadParticipants() {
       }
     });
     bindRangeControls();
-    document.querySelectorAll("#player-heatmap-metric [data-metric]").forEach((button) => {
-      button.addEventListener("click", () => {
-        playerState.heatmapMetric = button.dataset.metric;
-        if (currentView && currentView.kind === "player") {
-          renderPlayerHeatmap(currentView.index);
-        }
-      });
-    });
 
     renderLeaderboard();
     status.hidden = true;

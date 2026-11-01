@@ -400,78 +400,14 @@ const Records = (() => {
     revealOnView(panels);
   }
 
-  function presetColumns() {
-    return [
-      {
-        key: "preset",
-        label: "Preset",
-        align: "left",
-        defaultDirection: "asc",
-        sortValue: (row) => row.preset.n,
-        render: (cell, row) => {
-          cell.appendChild(element("span", "records-preset-name", row.preset.n));
-          if (row.index === participants.hardest_preset) {
-            cell.append(" ", UI.tag("hardest", "Hardest", `Highest DNF rate among presets with ${participants.preset_min_races}+ races`));
-          }
-        },
-      },
-      {
-        key: "races",
-        label: "Races",
-        sortValue: (row) => row.preset.races,
-        render: (cell, row) => cell.append(String(row.preset.races)),
-      },
-      {
-        key: "median",
-        label: "Median time",
-        defaultDirection: "asc",
-        sortValue: (row) => row.preset.median_seconds,
-        render: (cell, row) => cell.append(UI.time(row.preset.median_seconds)),
-      },
-      {
-        key: "gold",
-        label: "Gold median",
-        sortLabel: "median winning time",
-        defaultDirection: "asc",
-        sortValue: (row) => row.preset.median_win_seconds,
-        render: (cell, row) => cell.append(UI.time(row.preset.median_win_seconds)),
-      },
-      {
-        key: "dnf",
-        label: "DNF %",
-        sortLabel: "DNF rate",
-        sortValue: (row) => row.preset.dnf_rate,
-        render: (cell, row) => cell.append(formatRate(row.preset.dnf_rate)),
-      },
-      {
-        key: "field",
-        label: "Avg racers",
-        sortValue: (row) => row.preset.mean_field,
-        render: (cell, row) => cell.append(row.preset.mean_field.toFixed(1)),
-      },
-      {
-        key: "fastest",
-        label: "Fastest",
-        sortLabel: "fastest time",
-        defaultDirection: "asc",
-        sortValue: (row) => (row.preset.best ? row.preset.best[1] : null),
-        render: (cell, row) => {
-          if (!row.preset.best) {
-            cell.append("--");
-            return;
-          }
-          const [player, seconds] = row.preset.best;
-          cell.append(UI.time(seconds), " ");
-          const link = element("a", "racer-link", participants.players[player].name);
-          link.href = playerHash(participants.players[player].id, ALL_MODES);
-          cell.appendChild(link);
-        },
-      },
-    ];
+  function fastestRacerLink([player]) {
+    const link = element("a", "racer-link", participants.players[player].name);
+    link.href = playerHash(participants.players[player].id, ALL_MODES);
+    return link;
   }
 
   function renderPresets() {
-    const columns = presetColumns();
+    const columns = presetColumns({ fastestLink: fastestRacerLink });
     const rows = participants.presets
       .map((preset, index) => ({ preset, index, rank: index }))
       .filter((row) => row.preset.m === state.mode);
@@ -544,7 +480,7 @@ const Records = (() => {
     parts.violin = element("div", "chart-host chart-host--violin");
     parts.violin.setAttribute("aria-live", "polite");
     parts.progress = element("div", "records-grid");
-    parts.presets = element("div", "table-wrap table-wrap--leaderboard records-presets");
+    parts.presets = element("div", "table-wrap table-wrap--leaderboard presets-table");
 
     const cards = element("div", "records-grid");
     cards.append(photoCard(), blowoutCard(), bigFieldCard(), mostRacesCard(), streaksCard(), rivalsCard());

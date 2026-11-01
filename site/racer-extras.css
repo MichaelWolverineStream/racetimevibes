@@ -188,17 +188,6 @@
   vector-effect: non-scaling-stroke;
 }
 
-.pb-line {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-}
-
-.line-key--pb {
-  border-top: 3px solid var(--gold);
-}
-
 @media (max-width: 620px) {
   .chart-panel--player .panel-heading {
     flex-direction: column;

@@ -691,9 +691,7 @@ summary:focus-visible {
 }
 
 .heatmap-heading p,
-.podium-legend,
-.violin-legend,
-.heatmap-legend {
+.violin-legend {
   margin: 0;
   color: var(--muted);
   font-size: var(--text-xs);
@@ -732,38 +730,16 @@ summary:focus-visible {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
-.heatmap-key--podium {
-  background: var(--gold);
-}
-
-.podium-key {
+/* An outlined dot, like the racer's own finishes in a violin chart. It leads its legend. */
+.racer-key {
   display: inline-block;
   width: 10px;
   height: 10px;
-  margin: 0 5px 0 12px;
+  margin: 0 5px 0 0;
+  border: 1px solid var(--ink);
   border-radius: 50%;
   vertical-align: -1px;
   background: var(--series-muted);
-}
-
-.podium-key--1 {
-  background: var(--cohort-1);
-}
-
-.podium-key--2 {
-  background: var(--cohort-2);
-}
-
-.podium-key--3 {
-  background: var(--cohort-3);
-}
-
-.podium-key--4 {
-  background: var(--cohort-4);
-}
-
-.podium-key--highlight {
-  border: 1px solid var(--ink);
 }
 
 .line-key {
@@ -794,17 +770,9 @@ summary:focus-visible {
   min-width: 100%;
 }
 
-.start-heatmap {
-  display: grid;
-  grid-template-columns: 110px repeat(4, minmax(110px, 1fr));
-  grid-auto-rows: 38px;
-  gap: 3px;
-}
-
 .heatmap-corner,
 .heatmap-hour,
-.heatmap-weekday,
-.heatmap-row-label {
+.heatmap-weekday {
   display: grid;
   align-items: center;
   color: var(--muted);
@@ -1022,45 +990,6 @@ summary:focus-visible {
   fill: var(--series);
 }
 
-.scatter-dot {
-  stroke: none;
-  fill-opacity: 0.75;
-}
-
-.scatter-dot--bin-0 {
-  fill: var(--series-muted);
-}
-
-.scatter-dot--bin-1 {
-  fill: var(--cohort-1);
-}
-
-.scatter-dot--bin-2 {
-  fill: var(--cohort-2);
-}
-
-.scatter-dot--bin-3 {
-  fill: var(--cohort-3);
-}
-
-.scatter-dot--bin-4 {
-  fill: var(--cohort-4);
-}
-
-.chart-svg--faded .scatter-dot {
-  opacity: 0.15;
-}
-
-.scatter-dot--highlight {
-  fill-opacity: 1;
-  stroke: var(--ink);
-  stroke-width: 1;
-}
-
-.chart-svg--faded .scatter-dot--highlight {
-  opacity: 1;
-}
-
 .violin-wash {
   fill: var(--violin-color);
   fill-opacity: 0.12;
@@ -1114,21 +1043,6 @@ summary:focus-visible {
 
 .violin-summary .focus-ring {
   pointer-events: none;
-}
-
-.trend-dot {
-  fill: var(--series);
-}
-
-.trend-line {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2;
-}
-
-.trend-band {
-  fill: color-mix(in srgb, var(--series) 20%, transparent);
-  stroke: none;
 }
 
 .turnout-line {
@@ -1701,9 +1615,9 @@ th[aria-sort="descending"] .sort-button::after {
   animation: none;
 }
 
-.player-charts__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+/* A long table scrolls its bottom padding out of view; keep its clipped edge off the opponent search below. */
+.player-charts .presets-table {
+  margin-bottom: 16px;
 }
 
 .player-summary .summary-item {
@@ -1828,10 +1742,6 @@ footer p {
 }
 
 @media (max-width: 980px) {
-  .player-charts__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .summary-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

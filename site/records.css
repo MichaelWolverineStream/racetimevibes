@@ -176,12 +176,13 @@
   text-decoration-color: var(--line);
 }
 
-.records-presets {
+/* The presets table under a violin chart, here and on the racer pages. */
+.presets-table {
   max-height: 480px;
   margin-top: 16px;
 }
 
-.records-presets th:first-child {
+.presets-table th:first-child {
   width: auto;
 }
 

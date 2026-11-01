@@ -1,89 +1,15 @@
-// Finish-time scatter, personal trend, and start-time heatmap for the racer pages, the preset violins
-// shared by the racer pages and the records, plus the step-chart pieces shared by the record
-// progression and the racer's rating.
+// The preset violins and presets table shared by the racer pages and the records, plus the
+// step-chart pieces shared by the record progression and the racer's rating.
 // Loaded between app.js and leaderboard.js. Nothing here touches the DOM at load time, so the
 // pure helpers can be exercised outside a browser.
 
 const DAY_MS = 86400000;
-const MIN_TREND_FINISHES = 3;
-// Two-sided 95% Student t critical values, keyed by degrees of freedom.
-const T_CRITICAL_95 = [
-  [1, 12.706], [2, 4.303], [3, 3.182], [4, 2.776], [5, 2.571], [6, 2.447],
-  [7, 2.365], [8, 2.306], [9, 2.262], [10, 2.228], [11, 2.201], [12, 2.179],
-  [13, 2.160], [14, 2.145], [15, 2.131], [16, 2.120], [17, 2.110], [18, 2.101],
-  [19, 2.093], [20, 2.086], [21, 2.080], [22, 2.074], [23, 2.069], [24, 2.064],
-  [25, 2.060], [26, 2.056], [27, 2.052], [28, 2.048], [29, 2.045], [30, 2.042],
-  [40, 2.021], [60, 2.000], [120, 1.980],
-];
 
 function dayNumber(isoDate) {
   return Date.parse(`${isoDate}T00:00:00Z`) / DAY_MS;
 }
 
-// Between tabulated rows, use the next lower degrees of freedom: its larger value keeps the band conservative.
-function tCritical95(df) {
-  if (!Number.isInteger(df) || df < 1) {
-    throw new RangeError(`Degrees of freedom must be a positive integer, got ${df}.`);
-  }
-  let value = T_CRITICAL_95[0][1];
-  for (const [tabulated, critical] of T_CRITICAL_95) {
-    if (tabulated > df) {
-      break;
-    }
-    value = critical;
-  }
-  return value;
-}
-
-// Least-squares fit of finish seconds on day number, with a 95% confidence band for the fitted mean.
-// Returns null below three finishes or when every finish falls on the same day.
-function linearTrend(points) {
-  const n = points.length;
-  if (n < MIN_TREND_FINISHES) {
-    return null;
-  }
-  const meanX = points.reduce((sum, point) => sum + point.day, 0) / n;
-  const meanY = points.reduce((sum, point) => sum + point.seconds, 0) / n;
-  let sxx = 0;
-  let sxy = 0;
-  points.forEach((point) => {
-    const dx = point.day - meanX;
-    sxx += dx * dx;
-    sxy += dx * (point.seconds - meanY);
-  });
-  if (sxx === 0) {
-    return null;
-  }
-  const slope = sxy / sxx;
-  const intercept = meanY - slope * meanX;
-  const sse = points.reduce((sum, point) => sum + (point.seconds - (intercept + slope * point.day)) ** 2, 0);
-  const s = Math.sqrt(sse / (n - 2));
-  const t = tCritical95(n - 2);
-  const predict = (day) => intercept + slope * day;
-  return {
-    slope,
-    intercept,
-    n,
-    meanX,
-    sxx,
-    s,
-    t,
-    predict,
-    band: (day) => {
-      const margin = t * s * Math.sqrt(1 / n + (day - meanX) ** 2 / sxx);
-      return { low: predict(day) - margin, high: predict(day) + margin };
-    },
-  };
-}
-
-// Upper podium count of each colour bin: 0, 1–2, 3–9, 10–24, 25+.
-const PODIUM_BIN_MAXIMA = [0, 2, 9, 24, Infinity];
-const START_BLOCK_HOURS = 6;
-const START_BLOCKS = [0, 6, 12, 18];
-const LIMITED_CELL_RACES = 3;
 const ALL_RACES = { start: null, end: null };
-const FINISH_CHART_HEIGHT = 360;
-const FINISH_CHART_MARGIN = { top: 20, right: 18, bottom: 46, left: 62 };
 const VIOLIN_CHART_HEIGHT = 500;
 // The bottom fits the tallest label block: swatch, two name lines, a mode line and the finish count,
 // so the plot keeps its height whichever labels a chart needs.
@@ -101,15 +27,7 @@ const VIOLIN_LABEL_LINE_HEIGHT = 14;
 const VIOLIN_LABEL_GAP = 10;
 const TIME_TICK_STEPS_MINUTES = [5, 10, 15, 30, 60, 120];
 const MAX_TIME_INTERVALS = 6;
-// The full-size frame; a caller can pass its own, as the records small multiples do.
-const FINISH_CHART_LAYOUT = {
-  height: FINISH_CHART_HEIGHT,
-  margin: FINISH_CHART_MARGIN,
-  axisTitles: true,
-  maxTimeIntervals: MAX_TIME_INTERVALS,
-};
 const MONTHLY_TICK_MIN_DAYS = 45;
-const BAND_SAMPLES = 40;
 // Each mode keeps one hue whatever the filters show; a mode missing here is drawn in gray.
 const MODE_COLOR_SLOTS = { entrance: 1, fun: 2, glitched: 3, inverted: 4, keys: 5, mystery: 6, simple: 7, spoiler: 8 };
 const DENSITY_SAMPLES = 64;
@@ -118,39 +36,16 @@ const STEP_DOT_RADIUS = 4;
 const STEP_CURRENT_RADIUS = 5;
 const STEP_HALO_RADIUS = 10;
 const STEP_HIT_RADIUS = 12;
+// The racer page's presets table opens like the one in Hall of records.
+const PLAYER_PRESET_SORT = { key: "races", direction: "desc" };
 
 const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" });
 const monthYearFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 const monthDayFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
-function podiumBin(count) {
-  return PODIUM_BIN_MAXIMA.findIndex((maximum) => count <= maximum);
-}
-
-function startBlockLabel(start) {
-  return `${compactHour(start)}–${compactHour((start + START_BLOCK_HOURS) % 24)}`;
-}
-
 function modeColor(modeName) {
   const slot = MODE_COLOR_SLOTS[modeName];
   return slot ? `var(--mode-${slot})` : "var(--series-muted)";
-}
-
-function mostRacedMode(raceIndexes, range) {
-  const counts = new Map();
-  raceIndexes.forEach((raceIndex) => {
-    const race = participants.races[raceIndex];
-    if (inRange(race, range)) {
-      counts.set(race.m, (counts.get(race.m) ?? 0) + 1);
-    }
-  });
-  let best = null;
-  counts.forEach((count, mode) => {
-    if (best === null || count > counts.get(best) || (count === counts.get(best) && mode < best)) {
-      best = mode;
-    }
-  });
-  return best;
 }
 
 function timedFinishes(range, includePlayer) {
@@ -168,44 +63,6 @@ function timedFinishes(range, includePlayer) {
     });
   });
   return finishes;
-}
-
-function finishPoints(modeIndex, range, includePlayer) {
-  const podiums = new Map(
-    computeBoardRows(modeIndex, range).map((row) => [row.p, row.first + row.second + row.third]),
-  );
-  return timedFinishes(range, includePlayer)
-    .filter((finish) => finish.m === modeIndex)
-    .map((finish) => ({ ...finish, bin: podiumBin(podiums.get(finish.p) ?? 0) }));
-}
-
-function startBlockGrid(playerIndex) {
-  const grid = participants.modes.map(() =>
-    START_BLOCKS.map(() => ({ races: 0, podiums: 0, wins: 0, losses: 0, draws: 0 })),
-  );
-  raceIndexesByPlayer[playerIndex].forEach((raceIndex) => {
-    const race = participants.races[raceIndex];
-    const cell = grid[race.m][Math.floor(race.h / START_BLOCK_HOURS)];
-    const subject = race.e.find((entry) => entry[0] === playerIndex);
-    cell.races += 1;
-    if (isFinisher(subject) && subject[1] <= 3) {
-      cell.podiums += 1;
-    }
-    race.e.forEach((entry) => {
-      if (entry === subject) {
-        return;
-      }
-      const outcome = compareEntries(subject, entry);
-      if (outcome > 0) {
-        cell.wins += 1;
-      } else if (outcome < 0) {
-        cell.losses += 1;
-      } else {
-        cell.draws += 1;
-      }
-    });
-  });
-  return grid;
 }
 
 function ordinal(place) {
@@ -337,23 +194,6 @@ function emptyMessage(text) {
   return message;
 }
 
-function pointLabel(point) {
-  const race = participants.races[point.raceIndex];
-  return `${participants.players[point.p].name} · ${formatDuration(point.seconds)} · ${ordinal(point.place)} of ${point.n} · ${formatRaceDate(race.d)}`;
-}
-
-function bindPointTooltip(svg, points) {
-  svg.addEventListener("mousemove", (event) => {
-    const dot = event.target.closest("circle[data-i]");
-    if (dot) {
-      showTooltip(dot, pointLabel(points[dot.dataset.i]), event);
-    } else {
-      hideTooltip();
-    }
-  });
-  svg.addEventListener("mouseleave", hideTooltip);
-}
-
 // Horizontal grid, clock labels, and the optional rotated title for the shared finish-time axis.
 function appendTimeAxis(svg, { time, y, margin, width, height, title = true }) {
   time.ticks.forEach((tick, index) => {
@@ -383,8 +223,9 @@ function appendTimeAxis(svg, { time, y, margin, width, height, title = true }) {
   );
 }
 
-// Shared frame for the finish-time charts: grid, time axis, date axis, and axis titles.
-function finishChartFrame({ id, className, title, description, width, points, xDomain, layout = FINISH_CHART_LAYOUT }) {
+// Shared frame for the finish-time step charts: grid, time axis, date axis, and axis titles.
+// layout is { height, margin, axisTitles, maxTimeIntervals }.
+function finishChartFrame({ id, className, title, description, width, points, xDomain, layout }) {
   const { height, margin, axisTitles, maxTimeIntervals } = layout;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
@@ -493,96 +334,6 @@ function stepMark({ cx, cy, kind, label, at }) {
   );
   bindTooltip(mark, label);
   return mark;
-}
-
-function finishScatterChart(points, { id, highlightPlayer, title, description, xDomain }, width) {
-  const { svg, x, y } = finishChartFrame({
-    id,
-    className: highlightPlayer === null ? "chart-svg" : "chart-svg chart-svg--faded",
-    title,
-    description,
-    width,
-    points,
-    xDomain,
-  });
-  const isHighlighted = (point) => point.p === highlightPlayer;
-  // Ascending bin keeps top racers on top; the highlighted racer is drawn last of all.
-  const order = points
-    .map((point, index) => index)
-    .sort((left, right) => {
-      const a = points[left];
-      const b = points[right];
-      return isHighlighted(a) - isHighlighted(b) || a.bin - b.bin;
-    });
-  svg.append(
-    ...order.map((index) => {
-      const point = points[index];
-      const highlighted = isHighlighted(point);
-      return svgElement("circle", {
-        class: `scatter-dot scatter-dot--bin-${point.bin}${highlighted ? " scatter-dot--highlight" : ""}`,
-        cx: x(point.day),
-        cy: y(point.seconds),
-        r: highlighted ? 3.5 : 2.5,
-        "data-i": index,
-      });
-    }),
-  );
-  bindPointTooltip(svg, points);
-  return svg;
-}
-
-function finishTrendChart(points, trend, { id, title, description, pbs = [] }, width) {
-  const days = points.map((point) => point.day);
-  const first = Math.min(...days);
-  const last = Math.max(...days);
-  const pad = Math.max(1, (last - first) * 0.03);
-  const { svg, x, y, clipPath } = finishChartFrame({
-    id,
-    className: "chart-svg",
-    title,
-    description,
-    width,
-    points,
-    xDomain: [first - pad, last + pad],
-  });
-  if (trend) {
-    const sampled = Array.from({ length: BAND_SAMPLES }, (_, index) => first + ((last - first) * index) / (BAND_SAMPLES - 1));
-    const edge = (day, value) => `${x(day)},${y(value)}`;
-    const polygon = [
-      ...sampled.map((day) => edge(day, trend.band(day).high)),
-      ...sampled.reverse().map((day) => edge(day, trend.band(day).low)),
-    ].join(" ");
-    // With few finishes the band can be far taller than the data; clip it rather than squash the dots.
-    const marks = svgElement("g", { "clip-path": clipPath });
-    marks.append(
-      svgElement("polygon", { class: "trend-band", points: polygon }),
-      svgElement("line", {
-        class: "trend-line",
-        x1: x(first),
-        x2: x(last),
-        y1: y(trend.predict(first)),
-        y2: y(trend.predict(last)),
-      }),
-    );
-    svg.append(marks);
-  }
-  if (pbs.length) {
-    // Step-after: each personal best holds until the next one, and the last runs to the final race.
-    const steps = pbs.map(([raceIndex, seconds]) => [dayNumber(participants.races[raceIndex].d), seconds]);
-    const d = steps
-      .map(([day, seconds], step) => (step ? `H${x(day)} V${y(seconds)}` : `M${x(day)} ${y(seconds)}`))
-      .concat(`H${x(last)}`)
-      .join(" ");
-    const line = svgElement("path", { class: "pb-line", d, "clip-path": clipPath });
-    svg.append(line);
-  }
-  svg.append(
-    ...points.map((point, index) =>
-      svgElement("circle", { class: "trend-dot", cx: x(point.day), cy: y(point.seconds), r: 3, "data-i": index }),
-    ),
-  );
-  bindPointTooltip(svg, points);
-  return svg;
 }
 
 function violinPointLabel(finish, groupLabel) {
@@ -781,70 +532,6 @@ function violinChart(finishes, groups, { id, highlightPlayer, title, description
   return svg;
 }
 
-function renderStartHeatmap(container, grid, metric) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "start-heatmap";
-  wrapper.setAttribute("role", "group");
-  wrapper.setAttribute("aria-label", "Races by mode and Eastern start time");
-
-  const corner = document.createElement("div");
-  corner.className = "heatmap-corner";
-  corner.textContent = "Eastern";
-  wrapper.append(corner);
-  START_BLOCKS.forEach((start) => {
-    const header = document.createElement("div");
-    header.className = "heatmap-hour";
-    header.textContent = startBlockLabel(start);
-    wrapper.append(header);
-  });
-
-  participants.modes.forEach((mode, modeIndex) => {
-    const rowLabel = document.createElement("div");
-    rowLabel.className = "heatmap-row-label";
-    rowLabel.textContent = modeLabel(mode).toUpperCase();
-    wrapper.append(rowLabel);
-
-    START_BLOCKS.forEach((start, blockIndex) => {
-      const { races, podiums, wins, losses, draws } = grid[modeIndex][blockIndex];
-      const h2h = winRate(wins, losses);
-      const podiumRate = races ? podiums / races : null;
-      const isLimited = races > 0 && races < LIMITED_CELL_RACES;
-      let token = null;
-      let alpha = 0;
-      if (races > 0 && metric === "h2h" && h2h !== null && h2h !== 0.5) {
-        token = h2h >= 0.5 ? "--positive" : "--negative";
-        alpha = 0.12 + (Math.abs(h2h - 0.5) / 0.5) * 0.63;
-      } else if (races > 0 && metric === "podium") {
-        token = "--gold";
-        alpha = podiumRate * 0.75;
-      }
-      if (isLimited) {
-        alpha *= 0.48;
-      }
-
-      const cell = document.createElement("div");
-      cell.className = "heatmap-cell";
-      if (isLimited) {
-        cell.classList.add("heatmap-cell--limited");
-      }
-      cell.tabIndex = 0;
-      cell.setAttribute("role", "img");
-      cell.style.backgroundColor = token
-        ? `color-mix(in srgb, var(${token}) ${Math.round(alpha * 100)}%, transparent)`
-        : "transparent";
-      cell.textContent = races === 0 ? "·" : integerFormatter.format(races);
-      const where = `${modeLabel(mode)}, ${fullHour(start)}–${fullHour((start + START_BLOCK_HOURS) % 24)}`;
-      const label = races === 0
-        ? `${where}: no races`
-        : `${where}: ${integerFormatter.format(races)} races; H2H ${formatRate(h2h)} (${integerFormatter.format(wins)} W, ${integerFormatter.format(losses)} L, ${integerFormatter.format(draws)} D); podiums ${integerFormatter.format(podiums)} (${formatRate(podiumRate)})`;
-      cell.setAttribute("aria-label", label);
-      bindTooltip(cell, label);
-      wrapper.append(cell);
-    });
-  });
-  container.replaceChildren(wrapper);
-}
-
 function setNote(selector, text) {
   const note = document.querySelector(selector);
   note.hidden = text === null;
@@ -920,28 +607,156 @@ function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, title, 
   }
 }
 
-// The presets the racer entered most, in the picked mode or across all of them, with their finishes highlighted.
-function renderPlayerViolins(playerIndex, modeId) {
-  const name = participants.players[playerIndex].name;
-  const modeIndex = modeId === ALL_MODES ? null : modeIndexFor(modeId);
-  const entered = new Map();
+// Columns of the presets table under each preset violin chart. A row is { preset, index, rank }: preset is
+// shaped like a participants.presets entry and index is its preset index. fastestLink(best) gives the node
+// after the fastest time, from best = [player, seconds, raceIndex]: the racer in Hall of records, the race
+// on a racer page. Mixing modes adds a Mode column, so color is never the only cue.
+function presetColumns({ showMode = false, fastestLink }) {
+  const modeColumn = {
+    key: "mode",
+    label: "Mode",
+    align: "left",
+    defaultDirection: "asc",
+    sortValue: (row) => modeLabel(participants.modes[row.preset.m]),
+    render: (cell, row) => {
+      const modeName = participants.modes[row.preset.m];
+      cell.append(UI.modeDot(modeName), " ", modeLabel(modeName));
+    },
+  };
+  return [
+    {
+      key: "preset",
+      label: "Preset",
+      align: "left",
+      defaultDirection: "asc",
+      sortValue: (row) => row.preset.n,
+      render: (cell, row) => {
+        const name = document.createElement("span");
+        name.className = "preset-name";
+        name.textContent = row.preset.n;
+        cell.appendChild(name);
+        if (row.index === participants.hardest_preset) {
+          cell.append(" ", UI.tag("hardest", "Hardest", `Highest DNF rate among presets with ${participants.preset_min_races}+ races`));
+        }
+      },
+    },
+    ...(showMode ? [modeColumn] : []),
+    {
+      key: "races",
+      label: "Races",
+      sortValue: (row) => row.preset.races,
+      render: (cell, row) => cell.append(String(row.preset.races)),
+    },
+    {
+      key: "median",
+      label: "Median time",
+      defaultDirection: "asc",
+      sortValue: (row) => row.preset.median_seconds,
+      render: (cell, row) => cell.append(UI.time(row.preset.median_seconds)),
+    },
+    {
+      key: "gold",
+      label: "Gold median",
+      sortLabel: "median winning time",
+      defaultDirection: "asc",
+      sortValue: (row) => row.preset.median_win_seconds,
+      render: (cell, row) => cell.append(UI.time(row.preset.median_win_seconds)),
+    },
+    {
+      key: "dnf",
+      label: "DNF %",
+      sortLabel: "DNF rate",
+      sortValue: (row) => row.preset.dnf_rate,
+      render: (cell, row) => cell.append(formatRate(row.preset.dnf_rate)),
+    },
+    {
+      key: "field",
+      label: "Avg racers",
+      sortValue: (row) => row.preset.mean_field,
+      render: (cell, row) => cell.append(row.preset.mean_field.toFixed(1)),
+    },
+    {
+      key: "fastest",
+      label: "Fastest",
+      sortLabel: "fastest time",
+      defaultDirection: "asc",
+      sortValue: (row) => (row.preset.best ? row.preset.best[1] : null),
+      render: (cell, row) => {
+        if (!row.preset.best) {
+          cell.append("--");
+          return;
+        }
+        cell.append(UI.time(row.preset.best[1]), " ", fastestLink(row.preset.best));
+      },
+    },
+  ];
+}
+
+// The racer's own results in each preset they entered, in one mode or, with modeIndex null, every mode.
+// Each value is shaped and defined like the preset statistics in scripts/highlights.py, over the racer's
+// entries only, so presetColumns can show them.
+function playerPresetStats(playerIndex, modeIndex) {
+  const tallies = new Map();
   raceIndexesByPlayer[playerIndex].forEach((raceIndex) => {
     const race = participants.races[raceIndex];
-    if (race.p !== null && (modeIndex === null || race.m === modeIndex)) {
-      entered.set(race.p, (entered.get(race.p) ?? 0) + 1);
+    if (race.p === null || (modeIndex !== null && race.m !== modeIndex)) {
+      return;
+    }
+    if (!tallies.has(race.p)) {
+      tallies.set(race.p, { races: 0, dnfs: 0, fields: 0, times: [], wins: [], best: null });
+    }
+    const tally = tallies.get(race.p);
+    const entry = race.e.find((item) => item[0] === playerIndex);
+    tally.races += 1;
+    tally.fields += race.n;
+    if (!isFinisher(entry)) {
+      tally.dnfs += 1;
+    } else if (entry[3] !== null) {
+      tally.times.push(entry[3]);
+      if (entry[1] === 1) {
+        tally.wins.push(entry[3]);
+      }
+      // Races arrive in date order, so on a tie the earliest best stands.
+      if (tally.best === null || entry[3] < tally.best[1]) {
+        tally.best = [playerIndex, entry[3], raceIndex];
+      }
     }
   });
+  const stats = new Map();
+  tallies.forEach((tally, presetIndex) => {
+    const preset = participants.presets[presetIndex];
+    stats.set(presetIndex, {
+      m: preset.m,
+      n: preset.n,
+      races: tally.races,
+      dnf_rate: tally.dnfs / tally.races,
+      median_seconds: tally.times.length ? Math.round(median(tally.times)) : null,
+      median_win_seconds: tally.wins.length ? Math.round(median(tally.wins)) : null,
+      mean_field: tally.fields / tally.races,
+      best: tally.best,
+    });
+  });
+  return stats;
+}
+
+// Most entered by the racer first, then most raced overall, then by name. The violins and the table share it.
+function playerPresetOrder(stats) {
   const presets = participants.presets;
-  const charted = chartedPresets([...entered.keys()], (left, right) =>
-    entered.get(right) - entered.get(left) ||
+  return (left, right) =>
+    stats.get(right).races - stats.get(left).races ||
     presets[right].races - presets[left].races ||
-    presets[left].n.localeCompare(presets[right].n),
-  );
-  const where = modeIndex === null ? "" : ` in ${modeLabel(modeId)}`;
+    presets[left].n.localeCompare(presets[right].n);
+}
+
+// The presets the racer entered most, in the picked mode or across all of them, with their finishes highlighted.
+function renderPlayerViolins(playerIndex, modeId, stats) {
+  const name = participants.players[playerIndex].name;
+  const charted = chartedPresets([...stats.keys()], playerPresetOrder(stats));
+  const where = modeId === ALL_MODES ? "" : ` in ${modeLabel(modeId)}`;
   setNote(
     "#player-violin-note",
-    charted.length < entered.size
-      ? `Charting ${charted.length} of the ${entered.size} presets ${name} has entered${where}: the most entered among those with ${VIOLIN_MIN_PRESET_RACES}+ races, up to ${VIOLIN_SLOTS}.`
+    charted.length < stats.size
+      ? `Charting ${charted.length} of the ${stats.size} presets ${name} has entered${where}: the most entered among those with ${VIOLIN_MIN_PRESET_RACES}+ races, up to ${VIOLIN_SLOTS}. The table lists them all.`
       : null,
   );
   renderPresetViolins(document.querySelector("#player-violin-chart"), charted, {
@@ -953,138 +768,41 @@ function renderPlayerViolins(playerIndex, modeId) {
   });
 }
 
-function renderPlayerFinishTable(own) {
-  const table = document.createElement("table");
-  const head = document.createElement("thead");
-  const headRow = document.createElement("tr");
-  ["Date", "Place", "Field", "Time", "CR", "CPH"].forEach((header) => {
-    const cell = document.createElement("th");
-    cell.scope = "col";
-    cell.textContent = header;
-    headRow.append(cell);
-  });
-  head.append(headRow);
-  const body = document.createElement("tbody");
-  [...own].sort((left, right) => right.raceIndex - left.raceIndex).forEach((point) => {
-    const race = participants.races[point.raceIndex];
-    const link = document.createElement("a");
-    link.href = `${RACE_ROOT}${race.r}`;
-    link.target = "_blank";
-    link.rel = "noreferrer";
-    link.textContent = formatRaceDate(race.d);
-    const row = document.createElement("tr");
-    const dateCell = document.createElement("td");
-    dateCell.append(link);
-    row.append(dateCell);
-    const time = typeof UI !== "undefined" ? UI.time(point.seconds) : formatDuration(point.seconds);
-    [ordinal(point.place), integerFormatter.format(point.n), time].forEach((value) => {
-      const cell = document.createElement("td");
-      cell.append(value);
-      row.append(cell);
-    });
-    const chestsCell = document.createElement("td");
-    const perHourCell = document.createElement("td");
-    row.append(chestsCell, perHourCell);
-    if (typeof UI !== "undefined") {
-      UI.comments().then((payload) => {
-        const pace = UI.chestPace(payload, race.r, participants.players[point.p].id, point.seconds);
-        if (pace) {
-          chestsCell.textContent = pace.chests;
-          perHourCell.textContent = pace.perHour;
-        }
-      });
-    }
-    body.append(row);
-  });
-  table.append(head, body);
-  document.querySelector("#player-finish-table").replaceChildren(table);
+function raceDateLink([, , raceIndex]) {
+  const race = participants.races[raceIndex];
+  const link = document.createElement("a");
+  link.href = `${RACE_ROOT}${race.r}`;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  link.textContent = formatRaceDate(race.d);
+  return link;
 }
 
-// The key is only shown while the trend chart actually draws a PB line.
-function showPbLegendKey(visible) {
-  const legend = document.querySelector("#player-view .violin-legend");
-  if (!legend) {
+// Every preset the racer entered, with their own results. A sort redraws only the table.
+function renderPlayerPresetTable(playerIndex, modeId, stats) {
+  const host = document.querySelector("#player-preset-table");
+  if (!stats.size) {
+    const where = modeId === ALL_MODES ? "" : ` in ${modeLabel(modeId)}`;
+    host.replaceChildren(emptyMessage(`${participants.players[playerIndex].name} has entered no preset${where}.`));
     return;
   }
-  let item = legend.querySelector(".line-key-item--pb");
-  if (!item) {
-    item = document.createElement("span");
-    item.className = "line-key-item--pb";
-    const key = document.createElement("span");
-    key.className = "line-key line-key--pb";
-    item.append(key, document.createTextNode("PB"));
-    legend.append(item);
-  }
-  item.hidden = !visible;
+  const rows = [...stats.keys()]
+    .sort(playerPresetOrder(stats))
+    .map((presetIndex, rank) => ({ preset: stats.get(presetIndex), index: presetIndex, rank }));
+  const columns = presetColumns({ showMode: modeId === ALL_MODES, fastestLink: raceDateLink });
+  const state = { sort: playerState.presetSort ?? PLAYER_PRESET_SORT };
+  renderSortableTable(host, columns, sortRows(rows, columns, state.sort), state, (column) => {
+    playerState.presetSort = nextSort(state, column);
+    renderPlayerPresetTable(playerIndex, modeId, stats);
+  });
 }
 
 function renderPlayerCharts(playerIndex) {
   const modeId = playerState.mode;
-  const name = participants.players[playerIndex].name;
-  const mode = modeId === ALL_MODES
-    ? mostRacedMode(raceIndexesByPlayer[playerIndex], ALL_RACES)
-    : modeIndexFor(modeId);
-  const modeName = modeLabel(participants.modes[mode]);
-  setNote(
-    "#player-scatter-note",
-    modeId === ALL_MODES
-      ? `Finish times aren't comparable across modes, so the field and trend charts show ${modeName}, ${name}'s most-raced mode. Pick a mode above to change it.`
-      : null,
-  );
-  const field = finishPoints(mode, ALL_RACES, () => true);
-  const own = field.filter((point) => point.p === playerIndex);
-  const trend = linearTrend(own);
-  document.querySelector("#player-legend-name").textContent = name;
-  document.querySelector("#player-legend-key").className = `podium-key podium-key--${own.length ? own[0].bin : 0} podium-key--highlight`;
-  const xDomain = [dayNumber(participants.races[0].d), dayNumber(participants.races.at(-1).d)];
-
-  mountChart(document.querySelector("#player-scatter-chart"), (width) =>
-    field.length
-      ? finishScatterChart(
-          field,
-          {
-            id: "player-scatter",
-            highlightPlayer: playerIndex,
-            title: `${name} against the field in ${modeName}`,
-            description: `Finish times for every racer in ${modeName}, with ${name}'s finishes highlighted.`,
-            xDomain,
-          },
-          width,
-        )
-      : emptyMessage("No recorded finish times in this mode."),
-  );
-  const pbs = participants.players[playerIndex].pbs[mode] || [];
-  mountChart(document.querySelector("#player-trend-chart"), (width) =>
-    own.length
-      ? finishTrendChart(
-          own,
-          trend,
-          {
-            id: "player-trend",
-            title: `${name}'s finish times in ${modeName}`,
-            description: trend
-              ? "Finish times with a linear trend line and its 95% confidence band."
-              : "Finish times by race date.",
-            pbs,
-          },
-          width,
-        )
-      : emptyMessage("No recorded finish times in this mode."),
-  );
-  // Unlike the field and trend charts, the violins chart every mode under All modes.
-  renderPlayerViolins(playerIndex, modeId);
-  renderPlayerFinishTable(own);
-  showPbLegendKey(own.length > 0 && pbs.length > 0);
-  renderPlayerHeatmap(playerIndex);
-}
-
-function renderPlayerHeatmap(playerIndex) {
-  const metric = playerState.heatmapMetric;
-  document.querySelectorAll("#player-heatmap-metric [data-metric]").forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.dataset.metric === metric));
-  });
-  document.querySelectorAll("#player-view [data-legend]").forEach((legend) => {
-    legend.hidden = legend.dataset.legend !== metric;
-  });
-  renderStartHeatmap(document.querySelector("#player-start-heatmap"), startBlockGrid(playerIndex), metric);
+  const stats = playerPresetStats(playerIndex, modeId === ALL_MODES ? null : modeIndexFor(modeId));
+  document.querySelector("#player-legend-name").textContent = participants.players[playerIndex].name;
+  renderPlayerViolins(playerIndex, modeId, stats);
+  if (typeof UI !== "undefined") {
+    renderPlayerPresetTable(playerIndex, modeId, stats);
+  }
 }
