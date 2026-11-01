@@ -36,8 +36,9 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - Python is stdlib-only, version 3.11 or newer.
    - The site is plain files.
    - ImageMagick 7 is needed only by `scripts/badge_images.py`.
-8. **Ladder rating invariants are tested across the whole archive:**
+8. **Ladder rating invariants are tested across the whole archive, for the overall rating and every mode rating:**
    - A winner's points never fall.
+   - Mode ratings use the overall parameters, untuned. Predictions (win chance, Upset, God Route) always use the overall rating.
    - Finish times never affect the rating.
    - `β` and `σ₀` were tuned on races before 2026-01-01, so that 2026 results stay out of sample. Do not retune on 2026 data. Use `python3 scripts/ladder_rating.py --backtest` to evaluate.
 9. **All dates, hours and day buckets are in `America/New_York` (Eastern Time).** The `ladder_test` mode is excluded from everything.
@@ -53,7 +54,7 @@ python3 scripts/avatar_mirror.py   # network: site/avatars/ ⇄ the avatars part
 
 - **Where the logic lives:**
   - `participant_stats.py`: the per-racer dataset.
-  - `ladder_rating.py`: the rating.
+  - `ladder_rating.py`: the overall rating and the per-mode ratings.
   - `highlights.py`: tags, badges, streaks, presets, records and facts, all in one chronological pass. Thresholds are constants at the top of the module.
   - `comment_stats.py`: comments and the chest-count parser.
   - `avatar_mirror.py`: avatar file names, which observation is current, and the mirror into `site/avatars/`.

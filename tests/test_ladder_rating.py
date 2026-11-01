@@ -10,11 +10,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DONE, DNF = 0, 1
 
 
-def record(entries, name="alttpr-ladder/race"):
+def record(entries, name="alttpr-ladder/race", mode=0, mode_name="open"):
     return {
         "r": name,
-        "m": 0,
-        "mode": "open",
+        "m": mode,
+        "mode": mode_name,
         "d": "2026-09-17",
         "h": 20,
         "n": len(entries),
@@ -164,6 +164,62 @@ class RatingResultTests(unittest.TestCase):
         self.assertEqual(ladder_rating.rate(races, 5), ladder_rating.rate(races, 5))
 
 
+class ModeRatingTests(unittest.TestCase):
+    def two_modes(self):
+        """Players 0-2 race mode 0 six times, then mode 1 twice; player 3 only races mode 1."""
+        races = [
+            record(finished([3000, 3300, 3600]), f"alttpr-ladder/open-{index}")
+            for index in range(6)
+        ]
+        races += [
+            record(
+                finished([3600, 3300, 3000, 3900]),
+                f"alttpr-ladder/entrance-{index}",
+                mode=1,
+                mode_name="entrance",
+            )
+            for index in range(2)
+        ]
+        return races
+
+    def test_each_mode_matches_rating_its_races_alone(self):
+        races = self.two_modes()
+        by_mode = ladder_rating.rate_by_mode(races, 4)
+        for mode in (0, 1):
+            indexes = [index for index, race in enumerate(races) if race["m"] == mode]
+            alone = ladder_rating.rate([races[index] for index in indexes], 4)
+            self.assertEqual(by_mode.players[mode], alone.players)
+            self.assertEqual([by_mode.post[index] for index in indexes], alone.post)
+            self.assertEqual([by_mode.pre[index] for index in indexes], alone.pre)
+        self.assertEqual(by_mode.params, ladder_rating.rate(races, 4).params)
+
+    def test_a_race_in_one_mode_leaves_another_mode_untouched(self):
+        races = self.two_modes()
+        before = ladder_rating.rate_by_mode(races[:6], 4)
+        after = ladder_rating.rate_by_mode(races, 4)
+        self.assertEqual(list(before.players), [0])
+        self.assertEqual(before.players[0], after.players[0])
+
+    def test_a_veteran_of_one_mode_debuts_at_1000_in_another(self):
+        races = self.two_modes()
+        by_mode = ladder_rating.rate_by_mode(races, 4)
+        self.assertNotEqual(by_mode.display(by_mode.post[5][0]), 1000)
+        for position in range(3):
+            self.assertEqual(by_mode.display(by_mode.pre[6][position]), 1000)
+
+    def test_provisional_is_per_mode(self):
+        by_mode = ladder_rating.rate_by_mode(self.two_modes(), 4)
+        self.assertFalse(by_mode.players[0][0].provisional)
+        self.assertEqual(by_mode.players[0][0].finishes, 6)
+        self.assertTrue(by_mode.players[1][0].provisional)
+        self.assertEqual(by_mode.players[1][0].finishes, 2)
+
+    def test_a_racer_has_no_rating_in_a_mode_they_never_raced(self):
+        by_mode = ladder_rating.rate_by_mode(self.two_modes(), 4)
+        self.assertIsNone(by_mode.players[0][3])
+        self.assertIsNotNone(by_mode.players[1][3])
+
+
 class ArchiveTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -171,6 +227,7 @@ class ArchiveTests(unittest.TestCase):
             REPO_ROOT / "archive"
         )
         cls.result = ladder_rating.rate(cls.records, cls.player_count)
+        cls.mode_result = ladder_rating.rate_by_mode(cls.records, cls.player_count)
         cls.report = ladder_rating.backtest(REPO_ROOT / "archive")
 
     def test_no_winner_ever_loses_points(self):
@@ -182,6 +239,25 @@ class ArchiveTests(unittest.TestCase):
                     self.assertGreaterEqual(
                         self.result.display(after), self.result.display(before), race["r"]
                     )
+
+    def test_no_winner_ever_loses_mode_points(self):
+        self.assertEqual(self.report.mode_winners, self.report.winners)
+        self.assertEqual(self.report.mode_winners_lost_points, 0)
+        result = self.mode_result
+        for race, pre, post in zip(self.records, result.pre, result.post):
+            for (_player, place, status, _seconds), before, after in zip(race["e"], pre, post):
+                if place == 1 and status == DONE:
+                    self.assertGreaterEqual(
+                        result.display(after), result.display(before), race["r"]
+                    )
+
+    def test_every_mode_debut_is_1000(self):
+        seen = set()
+        for race, pre in zip(self.records, self.mode_result.pre):
+            for (player, *_rest), state in zip(race["e"], pre):
+                if (player, race["m"]) not in seen:
+                    seen.add((player, race["m"]))
+                    self.assertEqual(self.mode_result.display(state), 1000)
 
     def test_every_newcomer_debuts_at_1000(self):
         seen = set()

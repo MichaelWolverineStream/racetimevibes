@@ -1,6 +1,6 @@
 # ALTTPR Step Ladder Race Signals
 
-A static infographic dashboard built from the public racetime.gg archive, from 2025-04-20, for the `alttpr-ladder` category. Beyond the schedule analytics it tracks racers: a ladder rating, personal bests, streaks, badges, records, and a feed of the latest results.
+A static infographic dashboard built from the public racetime.gg archive, from 2025-04-20, for the `alttpr-ladder` category. Beyond the schedule analytics it tracks racers: a ladder rating, overall and per mode, personal bests, streaks, badges, records, and a feed of the latest results.
 
 ## Requirements
 
@@ -18,7 +18,7 @@ python3 scripts/build_stats.py
 python3 scripts/avatar_mirror.py
 ```
 
-Refreshing has three steps. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes three datasets, all minified: the aggregate to `site/data/race-stats.json`; the per-racer dataset to `site/data/participants.json`, in which each race carries its Eastern Time date and start hour, its seed preset, and its derived tags, and each racer carries a rating, badges, streaks and personal bests; and the racers' post-race comments, each with the chest count parsed from it, to `site/data/comments.json`, which the page fetches after its first render so it never delays the board. Use `--archive` on either script to point at a different archive, and `--output`, `--participants-output` and `--comments-output` on `build_stats.py` to redirect each dataset.
+Refreshing has three steps. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes three datasets, all minified: the aggregate to `site/data/race-stats.json`; the per-racer dataset to `site/data/participants.json`, in which each race carries its Eastern Time date and start hour, its seed preset, and its derived tags, and each racer carries an overall rating and one for each mode they have raced, badges, streaks and personal bests; and the racers' post-race comments, each with the chest count parsed from it, to `site/data/comments.json`, which the page fetches after its first render so it never delays the board. Use `--archive` on either script to point at a different archive, and `--output`, `--participants-output` and `--comments-output` on `build_stats.py` to redirect each dataset.
 
 `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json`. It makes `site/avatars/` hold exactly those files, so the page serves every avatar from its own origin. For each racer it works out the URL behind the published file name from `archive/`. It downloads only the files the directory is missing, pausing 0.2 seconds between requests, and checks each one before keeping it: the first bytes must match a PNG, JPEG, GIF or WebP image that agrees with the file extension, and the file must be at most 2,000,000 bytes. It deletes every regular file in `site/avatars/` that `participants.json` does not name, so a racer's old picture goes when a new one arrives. A download or check that fails prints a `Warning:` line and the run continues; the file is tried again on the next run, and meanwhile the page shows the racer's monogram. The script ends with `Avatars: N downloaded, M removed, K failed.` and exits with 1 only if `participants.json` is unreadable or names a file the archive does not explain, in which case it asks you to run `build_stats.py` first. A normal run makes no requests; the first run makes one per racer with an avatar. Use `--participants`, `--archive` and `--output` to point it elsewhere.
 
@@ -114,8 +114,8 @@ You can still refresh by hand with the three commands above and commit `archive/
 ### Racer leaderboard
 
 - **Racetime.gg points are ignored entirely.** `score` and `score_change` are never published or used by any racer metric. The dashboard's rating is in-house (see Ladder rating); racetime.gg's recorded `score` is read in only one place, as the benchmark in the rating backtest.
-- By default the board is sorted by the ladder rating (see Ladder rating), highest first, with ties broken by name. The rating always covers all modes and the whole archive, whatever mode or dates are selected. There is no minimum-races cutoff. The number beside each racer is the row's position as shown, so it renumbers whenever a sort, filter or search changes the table.
-- While the board is sorted by rating, a ▲ or ▼ beside the number shows how far the racer has moved in the overall rating ranks over the last 7 days, and **NEW** marks a racer whose first race falls in that window. Rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's **Rank & Rating** tile and the **Your racers** sidebar use the same ranks.
+- By default the board is sorted by the ladder rating (see Ladder rating), highest first, with ties broken by name. The Rating column follows the selected mode: **All modes** shows the overall rating, and a mode shows each racer's rating in that mode (see Mode ratings). Either way it covers the whole archive, whatever dates are selected. There is no minimum-races cutoff. The number beside each racer is the row's position as shown, so it renumbers whenever a sort, filter or search changes the table.
+- While the board is sorted by rating, a ▲ or ▼ beside the number shows how far the racer has moved over the last 7 days in the ranks the Rating column shows: the overall ranks under **All modes**, else the selected mode's. **NEW** marks a racer who had no rating there 7 days ago: their first race, or their first race in the selected mode, falls in that window. Rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's **Rank & Rating** tile and the **Your racers** sidebar use the overall ranks.
 - The 1st, 2nd and 3rd columns count first, second, and third place finishes regardless of field size. Because a podium in a field of three is not a podium in a field of thirty, read them alongside the head-to-head win rate.
 - **Badges** counts the badges a racer has earned, across all modes and the whole archive.
 - A racer counts as finishing a race only when their entrant `status.value` is `done` **and** the API reports a `place`. Everything else counts toward DNF, except `dq`, which is tracked separately on the racer page.
@@ -162,7 +162,7 @@ Data freshness is build-time: the dashboard is at most one daily refresh behind 
 
 **Only placement counts.** Finish times are never read, because the game is volatile and a seed's luck says little about skill. A win by one second is worth the same as a win by an hour. Within a race, every pair of entrants is a small match: a finisher beats anyone placed behind them, any finisher beats a DNF or DQ, and two non-finishers, or two racers sharing a place, are skipped. Beat someone you were expected to lose to and the rating moves a lot; beat someone you were expected to beat and it barely moves. Newcomers move the most, because the ladder knows least about them.
 
-One rating covers every mode. **Winning never costs points**, and every newcomer shows exactly **1000** and climbs as the ladder gets to know them. **Your recent races matter most**: a race's weight halves after about 13 later races. Nothing decays while you are away.
+The overall rating covers every mode, and each mode also has a rating of its own (see Mode ratings). **Winning never costs points**, and every newcomer shows exactly **1000** and climbs as the ladder gets to know them. **Your recent races matter most**: a race's weight halves after about 13 later races. Nothing decays while you are away.
 
 ### Model
 
@@ -174,7 +174,7 @@ $$\Omega = \sum_q \frac{\sigma_i^2}{c}(s - p) \qquad \Delta = \sum_q \frac{\sigm
 
 $$\mu_i \leftarrow \mu_i + \Omega \qquad \sigma_i^2 \leftarrow \max\big(\sigma_i^2 \cdot \max(1 - \Delta, \kappa),\ \sigma_{floor}^2\big)$$
 
-The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags and the head-to-head "Win chance" column, and never uses points.
+The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags and the head-to-head "Win chance" column, and never uses points. Both always use the overall rating, even with a mode picked (see Mode ratings).
 
 ### Recency
 
@@ -194,29 +194,38 @@ $\beta$ and $\sigma_0$ were picked by log loss on races before 2026-01-01 only, 
 
 ### Points
 
-The displayed points are $1000 + s \cdot (\mu - k\sigma)$, the "conservative rating" idea from TrueSkill and Xbox levels. With $k = \mu_0 / \sigma_0 = 3.125$ a newcomer shows exactly 1000, and as $\sigma$ shrinks the points climb toward $\mu$. The scale $s = 400 / (\ln 10 \cdot \sqrt{2\sigma_{floor}^2 + 2\beta^2}) \approx 9.71$ makes 400 points about 10:1 odds between established racers, as in Elo. The pipeline publishes each racer's points, $\mu$ and $\sigma$ (4 decimal places), and every race entry's points after that race.
+The displayed points are $1000 + s \cdot (\mu - k\sigma)$, the "conservative rating" idea from TrueSkill and Xbox levels. With $k = \mu_0 / \sigma_0 = 3.125$ a newcomer shows exactly 1000, and as $\sigma$ shrinks the points climb toward $\mu$. The scale $s = 400 / (\ln 10 \cdot \sqrt{2\sigma_{floor}^2 + 2\beta^2}) \approx 9.71$ makes 400 points about 10:1 odds between established racers, as in Elo. The pipeline publishes each racer's points, $\mu$ and $\sigma$ (4 decimal places), overall and in each mode they have raced, and every race entry's points after that race, overall and in the race's mode.
 
 ### The guarantee
 
-A winner's points never fall. Every pair a winner is in is decided in their favour, so $\Omega > 0$ and $\mu$ rises; $\sigma$ never rises, so $\mu - k\sigma$ rises too, and rounding is monotone. Finish times have no effect at all. Tests enforce both across every archived race.
+A winner's points never fall. Every pair a winner is in is decided in their favour, so $\Omega > 0$ and $\mu$ rises; $\sigma$ never rises, so $\mu - k\sigma$ rises too, and rounding is monotone. Finish times have no effect at all. Tests enforce both across every archived race, for the overall rating and for every mode rating.
+
+### Mode ratings
+
+Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode.
+
+Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.541 against 0.553 (see Backtest). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and God Route's top-rated racer always use the overall rating.
 
 ### What racetime.gg does differently
 
-racetime.gg runs TrueSkill with default parameters on finishing order only, ties every DNF and DQ behind the last finisher, shows $\max(0, \mathrm{round}((\mu - 2\sigma) \cdot 100))$ so newcomers start at 833 and the score climbs with volume as $\sigma$ shrinks, and keeps one leaderboard per goal. Both ratings read placement only. The ladder rating rates all modes together, starts everyone at 1000, shows points on an Elo-style scale, and its floor keeps scores responsive.
+racetime.gg runs TrueSkill with default parameters on finishing order only, ties every DNF and DQ behind the last finisher, shows $\max(0, \mathrm{round}((\mu - 2\sigma) \cdot 100))$ so newcomers start at 833 and the score climbs with volume as $\sigma$ shrinks, and keeps one leaderboard per goal. Both ratings read placement only. The ladder rating rates all modes together and each mode on its own, starts everyone at 1000, shows points on an Elo-style scale, and its floor keeps scores responsive.
 
 ### Backtest
 
-`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The report also counts winners whose displayed points fell, and the median points a veteran (past their 50th race) moves per race.
+`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The mode ratings are scored on the same pairs, each predicted from the two racers' ratings in the race's mode. The report also counts winners whose displayed points fell, overall and in their race's mode, and the median points a veteran (past their 50th race) moves per race.
 
 ```text
                                      pairs  accuracy  log loss
 From 2026-01-01 (out of sample)
-  ladder rating                     46,247     0.722     0.543
-  racetime.gg recorded score        46,247     0.694     0.588  best-fit logistic, in-sample
+  ladder rating                     47,518     0.723     0.541
+  ladder rating, own mode only      47,518     0.716     0.553
+  racetime.gg recorded score        47,518     0.695     0.587  best-fit logistic, in-sample
 Before 2026-01-01 (tuning period)
   ladder rating                     26,796     0.703     0.562
+  ladder rating, own mode only      26,796     0.683     0.585
   racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
-Winners who lost points: 0 of 3,220
+Winners who lost points: 0 of 3,256
+Mode winners who lost points: 0 of 3,256
 Median veteran move per race (past race 50): 9 points
 ```
 
@@ -224,13 +233,14 @@ Median veteran move per race (past race 50): 9 points
 
 - A crushing win counts the same as a narrow one.
 - Experience is rewarded: a prodigy with few races sits below established racers until $\sigma$ shrinks.
+- A mode rating knows only its mode: a racer strong elsewhere starts a new mode at 1000 and climbs like any newcomer.
 - Early on, even a loss can add points, because uncertainty falls faster than skill.
 - Clearly weaker racers still drift down, because the number stays honest.
 - Predictions trail the old margin-based model slightly (73.3% against 72.2% of 2026 pairs), in exchange for no lost winners and scores that climb. They stay well ahead of racetime.gg's.
 
 ## Highlights
 
-`scripts/highlights.py` derives every tag, badge, streak, preset statistic and record in one chronological pass, and `participants.json` publishes the results. A **finisher** has status `done` and a `place`; a **timed** finisher also has a time. The **winner** is the identified entrant with place 1; where a winner is anonymous, winner-dependent tags are skipped. A racer is **provisional** at a point in time with fewer than 5 finishes before that race. Thresholds are constants at the top of the module.
+`scripts/highlights.py` derives every tag, badge, streak, preset statistic and record in one chronological pass, and `participants.json` publishes the results. A **finisher** has status `done` and a `place`; a **timed** finisher also has a time. The **winner** is the identified entrant with place 1; where a winner is anonymous, winner-dependent tags are skipped. A racer is **provisional** at a point in time with fewer than 5 finishes, in any mode, before that race. Every tag and badge that reads a rating reads the overall rating. Thresholds are constants at the top of the module.
 
 ### Race tags
 
@@ -238,7 +248,7 @@ Within a race, tags appear in the order record, first win, upset, photo, PB, mil
 
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
 - **First win:** the racer's first place-1 result in any mode.
-- **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite. 4.5% of races qualify.
+- **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite. 4.5% of races qualify.
 - **Photo finish:** places 1 and 2 are both timed finishers separated by less than 5 seconds. The margin uses the exact times.
 - **PB:** a strict improvement, in whole seconds, on the racer's previous best timed finish in the same mode. The first timed finish in a mode is the baseline and is not tagged.
 - **Milestone:** the racer's entry count, in any status, reaches 25, 50, 100, 250, 500 or 1000.
@@ -304,7 +314,7 @@ A badge is either a counter, which unlocks when a count reaches its target and f
 - **Grocery Stick:** the field is odd and at least 5, and the finisher whose place is the middle one, `(field + 1) / 2`, earns it.
 - **Step Letter:** the field is at least 5, every entrant is identified and finished, and the names in place order never decrease when compared without case. Every entrant earns it.
 - **Rettel Pets:** Step Letter's rule with the names in place order never increasing.
-- **God Route:** places 1 and 2 are both timed and more than 10 minutes apart, using the exact times, and the field is at least 7. "Top-rated" is the entrant with the best pre-race rating among those who are not provisional and raced in the previous 90 days. When no entrant qualifies, the winner earns it.
+- **God Route:** places 1 and 2 are both timed and more than 10 minutes apart, using the exact times, and the field is at least 7. "Top-rated" is the entrant with the best pre-race overall rating among those who are not provisional and raced in the previous 90 days. When no entrant qualifies, the winner earns it.
 - **Omnivore:** needs 7 of the 8 modes, because requiring all 8 left 0.8% of racers holding it.
 
 Each badge ships an animated image and a still under `site/assets/badges/`. Earned badges animate, and locked badges show the grey still. To add or remove a badge, see [Badge_Guide.md](Badge_Guide.md).
@@ -365,7 +375,7 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 ## Dashboard sections
 
-The page runs top to bottom as: **01 Latest** (the newest results with their tags), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. Records runs in three parts. **Across all modes** holds the record cards and streak boards. **Record progression** has a step chart per mode, three to a row, on one shared date axis with each mode's own time axis; each header shows the current record, and the chart draws the first recorded time hollow, each break filled, and the current record with a halo. **By mode** has a mode picker that drives the current-record summary strip, the finish-time violins of the mode's presets (see Finish times), and the presets table, whose Gold median column is the preset's median winning time. Only By mode follows the picker, and it opens on the most-raced mode. A racer page opens with a summary strip: Rank & Rating, Podiums, Record W-L-D, H2H Win Rate, Badges, Nemesis and Favourite Victim. Every tile covers all modes and the whole archive, whatever mode is selected. Nemesis and Favourite Victim are the opponents with the lowest and highest head-to-head win rate among those with at least five decisive meetings. Below the badges and personal bests, the rating chart has one point per race day: the racer's rating after their last race that day, across all modes. Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive; it draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line. Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar. Below the rating chart, the page's mode picker drives the finish-time violins of the racer's presets, the racer presets table (see Finish times), and the head-to-head table. A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10); Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages.
+The page runs top to bottom as: **01 Latest** (the newest results with their tags; expanding a race lists each entrant with their change in that race's mode rating), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. Records runs in three parts. **Across all modes** holds the record cards and streak boards. **Record progression** has a step chart per mode, three to a row, on one shared date axis with each mode's own time axis; each header shows the current record, and the chart draws the first recorded time hollow, each break filled, and the current record with a halo. **By mode** has a mode picker that drives the current-record summary strip, the finish-time violins of the mode's presets (see Finish times), and the presets table, whose Gold median column is the preset's median winning time. Only By mode follows the picker, and it opens on the most-raced mode. A racer page opens with a summary strip: Rank & Rating, Podiums, Record W-L-D, H2H Win Rate, Badges, Nemesis and Favourite Victim. Every tile covers all modes and the whole archive, whatever mode is selected. Nemesis and Favourite Victim are the opponents with the lowest and highest head-to-head win rate among those with at least five decisive meetings. Below the badges and personal bests sits the page's mode picker: everything above it covers all modes, and everything below it follows it. First comes the rating chart. Its heading gives the racer's rank and rating in the picked mode, overall under **All modes**, out of every racer rated there, marked provisional below 5 finishes there. The chart has one point per race day: the racer's rating in the picked mode after their last race that day. With a mode picked it covers only that mode's race days and takes the mode's colour. Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive; it draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line. Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar. Below the rating chart, the picker also drives the finish-time violins of the racer's presets, the racer presets table (see Finish times), and the head-to-head table, whose Win chance column always uses the overall rating. A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10); Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages.
 
 ### Share card
 
@@ -387,7 +397,7 @@ Like the summary strip, everything on the card covers all modes and the whole ar
   - The rating, labelled provisional below 5 finishes.
   - Under the rank, the 7-day rank movement as on the leaderboard: ▲, ▼ or new.
   - A racer without a rating shows Unrated.
-- **Rating line:** the rating chart's race-day step line, with the starting rating dashed and the current rating haloed.
+- **Rating line:** the overall rating's race-day step line, as the rating chart draws it under **All modes**, with the starting rating dashed and the current rating haloed.
   - The highest rating is marked **Peak** while the racer is below it. **All-time high** shows when they are on it.
   - The line needs two race days. Without it, the four numbers spread across the card.
 - **Numbers:** races, wins (first places), podiums and H2H win %, as on the leaderboard and the summary strip.
@@ -415,7 +425,7 @@ scripts/race_archive.py           Incremental sync of raw races, racer names and
 scripts/build_stats.py            Archive validation and aggregation
 scripts/participant_stats.py      Per-racer dataset: records, avatars, assembly of schema 3
 scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/
-scripts/ladder_rating.py          Ladder rating model and backtest
+scripts/ladder_rating.py          Ladder rating model, overall and per mode, and backtest
 scripts/highlights.py             Tags, badges, streaks, presets, records and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report

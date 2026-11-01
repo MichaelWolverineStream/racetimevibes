@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 8;
+const PARTICIPANT_SCHEMA_VERSION = 9;
 const ALL_MODES = "all";
 const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
@@ -22,9 +22,9 @@ let playerIndexById = new Map();
 let raceIndexesByPlayer = [];
 let badgeHolderCounts = new Map();
 let recordCache = new Map();
-let ratingRankCache = null;
-let ratingRankDeltaCache = null;
-let ratingDeltaCache = null;
+let ratingRankCache = new Map();
+let ratingRankDeltaCache = new Map();
+let modeRatingDeltaCache = null;
 let currentView = null;
 
 const DEFAULT_LEADERBOARD_SORT = { key: "rating", direction: "desc" };
@@ -68,6 +68,27 @@ function validateParticipants(data) {
     if (typeof player.rating === "number" && (typeof player.mu !== "number" || typeof player.sigma !== "number")) {
       throw new Error("Racer data contains an invalid rating.");
     }
+    const modeRatings = player.mode_ratings;
+    if (modeRatings === null || typeof modeRatings !== "object" || Array.isArray(modeRatings)) {
+      throw new Error("Racer data contains an invalid mode rating.");
+    }
+    Object.entries(modeRatings).forEach(([modeIndex, rating]) => {
+      const index = Number(modeIndex);
+      if (
+        !Number.isInteger(index) ||
+        String(index) !== modeIndex ||
+        index < 0 ||
+        index >= data.modes.length ||
+        rating === null ||
+        typeof rating !== "object" ||
+        !Number.isInteger(rating.rating) ||
+        typeof rating.mu !== "number" ||
+        typeof rating.sigma !== "number" ||
+        !Number.isInteger(rating.finishes)
+      ) {
+        throw new Error("Racer data contains an invalid mode rating.");
+      }
+    });
   });
   data.races.forEach((race) => {
     if (
@@ -84,8 +105,11 @@ function validateParticipants(data) {
       throw new Error("Racer data contains an invalid race record.");
     }
     race.e.forEach((entry) => {
-      if (!Array.isArray(entry) || entry.length < 5 || !Number.isInteger(entry[0]) || entry[0] < 0 || entry[0] >= data.players.length) {
+      if (!Array.isArray(entry) || entry.length < 6 || !Number.isInteger(entry[0]) || entry[0] < 0 || entry[0] >= data.players.length) {
         throw new Error("Racer data contains an out-of-range player index.");
+      }
+      if (typeof entry[5] !== "number") {
+        throw new Error("Racer data contains an invalid mode rating after a race.");
       }
     });
   });
@@ -238,42 +262,58 @@ function competitionRanks(ratings) {
   return new Map([...ratings].map(([playerIndex, rating]) => [playerIndex, firstRank.get(rating)]));
 }
 
-// Undefined for an unrated racer.
-function ratingRank(playerIndex) {
-  if (!ratingRankCache) {
-    const ratings = new Map();
-    participants.players.forEach((player, index) => {
-      if (typeof player.rating === "number") {
-        ratings.set(index, player.rating);
-      }
-    });
-    ratingRankCache = competitionRanks(ratings);
+// The racer's rating in the overall ladder or in one mode; null when unrated in scope.
+function ratingFor(player, modeId = ALL_MODES) {
+  if (modeId === ALL_MODES) {
+    return player.rating === null ? null : { rating: player.rating, mu: player.mu, sigma: player.sigma, finishes: player.finishes };
   }
-  return ratingRankCache.get(playerIndex);
+  return player.mode_ratings[modeIndexFor(modeId)] ?? null;
 }
 
-// Positive when the racer climbed the overall rating ranks over the last 7 days; "new" if they had not raced then.
+// Competition ranks of everyone rated overall or in one mode; its size is how many are rated.
+function ratingRanks(modeId = ALL_MODES) {
+  if (!ratingRankCache.has(modeId)) {
+    const ratings = new Map();
+    participants.players.forEach((player, index) => {
+      const rating = ratingFor(player, modeId);
+      if (rating) {
+        ratings.set(index, rating.rating);
+      }
+    });
+    ratingRankCache.set(modeId, competitionRanks(ratings));
+  }
+  return ratingRankCache.get(modeId);
+}
+
+// Undefined for a racer unrated in scope.
+function ratingRank(playerIndex, modeId = ALL_MODES) {
+  return ratingRanks(modeId).get(playerIndex);
+}
+
+// Positive when the racer climbed the rating ranks, overall or in one mode, over the last 7 days; "new" if they had no rating then.
 // A rating only moves when its racer races, so the rating on a past date is the one after their last race by then.
-function ratingRankDeltas() {
-  if (ratingRankDeltaCache) {
-    return ratingRankDeltaCache;
+function ratingRankDeltas(modeId = ALL_MODES) {
+  if (ratingRankDeltaCache.has(modeId)) {
+    return ratingRankDeltaCache.get(modeId);
   }
   const cutoff = shiftIsoDate(todayInZone(), -7);
+  const modeIndex = modeIndexFor(modeId);
+  const ratingIndex = modeIndex === null ? 4 : 5;
   const ratingsBefore = new Map();
   participants.races.forEach((race) => {
-    if (race.d > cutoff) {
+    if (race.d > cutoff || (modeIndex !== null && race.m !== modeIndex)) {
       return;
     }
     race.e.forEach((entry) => {
-      if (typeof entry[4] === "number") {
-        ratingsBefore.set(entry[0], entry[4]);
+      if (typeof entry[ratingIndex] === "number") {
+        ratingsBefore.set(entry[0], entry[ratingIndex]);
       }
     });
   });
   const ranksBefore = competitionRanks(ratingsBefore);
   const deltas = new Map();
   participants.players.forEach((player, playerIndex) => {
-    const rank = ratingRank(playerIndex);
+    const rank = ratingRank(playerIndex, modeId);
     if (rank === undefined) {
       return;
     }
@@ -284,23 +324,24 @@ function ratingRankDeltas() {
       deltas.set(playerIndex, previous - rank);
     }
   });
-  ratingRankDeltaCache = deltas;
+  ratingRankDeltaCache.set(modeId, deltas);
   return deltas;
 }
 
-// Rating change for one entry; a first race counts from the starting rating.
-function ratingDelta(raceIndex, entryIndex) {
-  if (!ratingDeltaCache) {
+// Change in the race's own mode rating for one entry; a racer's first race in a mode counts from the starting rating.
+function modeRatingDelta(raceIndex, entryIndex) {
+  if (!modeRatingDeltaCache) {
     const last = new Map();
-    ratingDeltaCache = participants.races.map((race) =>
+    modeRatingDeltaCache = participants.races.map((race) =>
       race.e.map((entry) => {
-        const previous = last.get(entry[0]);
-        last.set(entry[0], entry[4]);
-        return entry[4] - (previous === undefined ? participants.rating.base : previous);
+        const key = `${race.m}:${entry[0]}`;
+        const previous = last.get(key);
+        last.set(key, entry[5]);
+        return entry[5] - (previous === undefined ? participants.rating.base : previous);
       }),
     );
   }
-  return ratingDeltaCache[raceIndex][entryIndex];
+  return modeRatingDeltaCache[raceIndex][entryIndex];
 }
 
 function lastRaceDate(playerIndex, modeIndex) {
@@ -411,12 +452,13 @@ function winChance(subject, opponent) {
   return 1 / (1 + Math.exp(-(subject.mu - opponent.mu) / spread));
 }
 
-function ratingText(player) {
-  return player.rating === null ? "--" : String(player.rating);
+function ratingText(rating) {
+  return rating === null ? "--" : String(rating.rating);
 }
 
-function ratingTooltip() {
-  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 all modes`;
+function ratingTooltip(modeId = ALL_MODES) {
+  const scope = modeId === ALL_MODES ? "all modes" : `${modeLabel(modeId)} races only`;
+  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 ${scope}`;
 }
 
 function formatRaceDate(isoDate) {
@@ -482,7 +524,7 @@ function appendRacerLink(cell, player, modeId, rowNumber, rankDelta) {
     badge.textContent = integerFormatter.format(rowNumber);
     cell.appendChild(badge);
     if (rankDelta !== undefined) {
-      appendRankDelta(cell, ratingRank(playerIndexFor(player.id)), rankDelta);
+      appendRankDelta(cell, ratingRank(playerIndexFor(player.id), modeId), rankDelta);
     }
   }
   const link = document.createElement("a");
@@ -627,7 +669,7 @@ function matchesQuery(name, query) {
 
 function leaderboardColumns() {
   const { sort } = leaderboardState;
-  // Rank movement is in overall rating rank, so it only reads against the row order when sorted by rating.
+  // Rank movement is in the slice's rating rank, so it only reads against the row order when sorted by rating.
   const showRankMovement = sort.key === DEFAULT_LEADERBOARD_SORT.key && sort.direction === DEFAULT_LEADERBOARD_SORT.direction;
   return [
     {
@@ -638,7 +680,7 @@ function leaderboardColumns() {
       defaultDirection: "asc",
       sortValue: (row) => row.player.name.toLowerCase(),
       render: (cell, row, rowIndex) => {
-        const delta = showRankMovement ? ratingRankDeltas().get(row.p) : undefined;
+        const delta = showRankMovement ? ratingRankDeltas(leaderboardState.mode).get(row.p) : undefined;
         appendRacerLink(cell, row.player, leaderboardState.mode, rowIndex + 1, delta);
         if (typeof UI !== "undefined") {
           const star = UI.followStar(row.p);
@@ -651,14 +693,16 @@ function leaderboardColumns() {
       key: "rating",
       label: "Rating",
       sortLabel: "ladder rating",
-      tooltip: "Ladder rating · all modes, all time",
-      sortValue: (row) => row.player.rating,
+      tooltip: leaderboardState.mode === ALL_MODES
+        ? "Ladder rating · all modes, all time"
+        : `Ladder rating · ${modeLabel(leaderboardState.mode)} races, all time`,
+      sortValue: (row) => row.rating?.rating,
       render: (cell, row) => {
         const text = document.createElement("span");
         text.className = "rating-value";
-        text.textContent = ratingText(row.player);
-        if (row.player.rating !== null) {
-          bindTooltip(text, ratingTooltip());
+        text.textContent = ratingText(row.rating);
+        if (row.rating !== null) {
+          bindTooltip(text, ratingTooltip(leaderboardState.mode));
         }
         cell.appendChild(text);
       },
@@ -730,7 +774,7 @@ function leaderboardColumns() {
   ];
 }
 
-// Rows in rating order, highest first, unrated last; the players array is name-sorted, so its index breaks ties.
+// Rows in order of the slice's all-time rating (overall, or in the mode), highest first, unrated last; the players array is name-sorted, so its index breaks ties.
 function leaderboardRows(modeId, range) {
   const modeIndex = modeIndexFor(modeId);
   let boardRows;
@@ -751,6 +795,7 @@ function leaderboardRows(modeId, range) {
       rank: 0,
       p: row.p,
       player,
+      rating: ratingFor(player, modeId),
       lastRaceDate: lastRaceDate(row.p, modeIndex),
       races: row.races,
       first: row.first,
@@ -763,7 +808,7 @@ function leaderboardRows(modeId, range) {
       headToHeadRate: winRate(record.wins, record.losses),
     };
   });
-  const ratingOf = (row) => row.player.rating ?? -Infinity;
+  const ratingOf = (row) => row.rating?.rating ?? -Infinity;
   rows.sort((left, right) => ratingOf(right) - ratingOf(left) || left.p - right.p);
   rows.forEach((row, index) => {
     row.rank = index + 1;
@@ -957,7 +1002,7 @@ function headToHeadColumns(playerIndex) {
       key: "winChance",
       label: "Win chance",
       sortLabel: "chance of beating this opponent next time",
-      tooltip: "From current ratings",
+      tooltip: "From current overall ratings",
       sortValue: (row) => winChance(participants.players[playerIndex], row.player),
       render: (cell, row) => appendText(cell, formatRate(winChance(participants.players[playerIndex], row.player))),
     },
@@ -1001,6 +1046,7 @@ function renderPlayerView(playerIndex) {
     history.replaceState(null, "", playerHash(player.id, mode));
     renderPlayerView(playerIndex);
     renderPlayerCharts(playerIndex);
+    renderRacerRating(playerIndex);
   });
 
   const matchups = computeHeadToHead(playerIndex, playerState.mode).map((matchup) => ({
@@ -1070,6 +1116,13 @@ function renderRacerExtras(playerIndex) {
   }
 }
 
+// The rating chart follows the racer page's mode picker, so it redraws for a different mode too.
+function renderRacerRating(playerIndex) {
+  if (typeof RacerExtras !== "undefined") {
+    runFeature("RacerExtras.renderRating", () => RacerExtras.renderRating(playerIndex, playerState.mode));
+  }
+}
+
 function showPlayer(playerIndex, modeId, isInitial) {
   const wasPlayer = currentView && currentView.kind === "player";
   playerState.mode = modeId;
@@ -1089,6 +1142,7 @@ function showPlayer(playerIndex, modeId, isInitial) {
   }
   currentView = { kind: "player", index: playerIndex };
   renderRacerExtras(playerIndex);
+  renderRacerRating(playerIndex);
 }
 
 function showLeaderboard(isInitial) {
@@ -1135,9 +1189,9 @@ async function loadParticipants() {
     participants = data;
     buildIndexes(data);
     recordCache = new Map();
-    ratingRankCache = null;
-    ratingRankDeltaCache = null;
-    ratingDeltaCache = null;
+    ratingRankCache = new Map();
+    ratingRankDeltaCache = new Map();
+    modeRatingDeltaCache = null;
 
     bindFilter("#leaderboard-search", leaderboardState, renderLeaderboard);
     bindFilter("#player-search", playerState, () => {

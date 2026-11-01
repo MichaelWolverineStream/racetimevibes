@@ -22,7 +22,7 @@ except ImportError:
     import ladder_rating
 
 
-PARTICIPANT_SCHEMA_VERSION = 8
+PARTICIPANT_SCHEMA_VERSION = 9
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -207,6 +207,18 @@ def _leaderboard(
     return rows
 
 
+def _rating_fields(rating: ladder_rating.PlayerRating | None) -> JsonObject:
+    """Return the published rating fields; an unrated racer has no rating and 0 finishes."""
+    if rating is None:
+        return {"rating": None, "mu": None, "sigma": None, "finishes": 0}
+    return {
+        "rating": rating.rating,
+        "mu": rating.mu,
+        "sigma": rating.sigma,
+        "finishes": rating.finishes,
+    }
+
+
 def build_participant_payload(
     contexts: list[JsonObject],
     *,
@@ -309,6 +321,7 @@ def build_participant_payload(
     diagnostics["races_without_preset"] = sum(1 for record in records if record["p"] is None)
 
     ratings = ladder_rating.rate(records, len(players))
+    mode_ratings = ladder_rating.rate_by_mode(records, len(players))
     derived = highlights.compute(
         records, players=players, modes=modes, presets=presets, ratings=ratings
     )
@@ -317,10 +330,12 @@ def build_participant_payload(
         rating = ratings.players[index]
         if user_id in avatars:
             player["a"] = avatars[user_id]
-        player["rating"] = rating.rating if rating else None
-        player["mu"] = rating.mu if rating else None
-        player["sigma"] = rating.sigma if rating else None
-        player["finishes"] = rating.finishes if rating else 0
+        player.update(_rating_fields(rating))
+        player["mode_ratings"] = {
+            str(mode): _rating_fields(by_player[index])
+            for mode, by_player in mode_ratings.players.items()
+            if by_player[index] is not None
+        }
         player.update(derived["players"][index])
 
     races = []
@@ -333,10 +348,16 @@ def build_participant_payload(
             "n": record["n"],
             "p": record["p"],
             "e": [
-                [player, place, status_code, None if seconds is None else round(seconds), after]
-                for (player, place, status_code, seconds), after in zip(
-                    record["e"],
-                    (ratings.display(state) for state in ratings.post[index]),
+                [
+                    player,
+                    place,
+                    status_code,
+                    None if seconds is None else round(seconds),
+                    ratings.display(after),
+                    mode_ratings.display(mode_after),
+                ]
+                for (player, place, status_code, seconds), after, mode_after in zip(
+                    record["e"], ratings.post[index], mode_ratings.post[index]
                 )
             ],
         }

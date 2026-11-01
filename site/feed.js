@@ -261,15 +261,18 @@ const Feed = (() => {
   }
 
   function ratingDeltaNode(raceIndex, entryIndex) {
-    const delta = typeof ratingDelta === "function" ? ratingDelta(raceIndex, entryIndex) : null;
+    const delta = typeof modeRatingDelta === "function" ? modeRatingDelta(raceIndex, entryIndex) : null;
     if (delta === null || delta === undefined) {
       return null;
     }
     const rounded = Math.round(delta);
-    if (rounded === 0) {
-      return element("span", "trend trend--flat", "0");
-    }
-    return element("span", rounded > 0 ? "trend trend--up" : "trend trend--down", `${rounded > 0 ? "▲" : "▼"}${Math.abs(rounded)}`);
+    const node =
+      rounded === 0
+        ? element("span", "trend trend--flat", "0")
+        : element("span", rounded > 0 ? "trend trend--up" : "trend trend--down", `${rounded > 0 ? "▲" : "▼"}${Math.abs(rounded)}`);
+    const race = participants.races[raceIndex];
+    bindTooltip(node, `${modeLabel(participants.modes[race.m])} rating after this race: ${race.e[entryIndex][5]}`);
+    return node;
   }
 
   function entrantRow(race, raceIndex, entry, entryIndex) {

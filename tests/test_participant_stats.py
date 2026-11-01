@@ -555,19 +555,59 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 8)
+        self.assertEqual(result["schema_version"], 9)
         for player in result["players"]:
-            for key in ("rating", "mu", "sigma", "finishes", "badges", "progress",
-                        "pbs", "streaks", "best_preset"):
+            for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
+                        "progress", "pbs", "streaks", "best_preset"):
                 self.assertIn(key, player)
             self.assertNotIn("rd", player)
             self.assertNotIn("provisional", player)
         for race_row in result["races"]:
             for entry in race_row["e"]:
-                self.assertEqual(len(entry), 5)
+                self.assertEqual(len(entry), 6)
                 self.assertIsInstance(entry[4], int)
+                self.assertIsInstance(entry[5], int)
         self.assertEqual(result["races"][1]["p"], None)
         self.assertEqual(result["diagnostics"]["races_without_preset"], 1)
+
+    def test_mode_ratings_cover_only_the_modes_a_racer_raced(self):
+        result = payload(
+            [
+                placed_race("one", ["ana", "ben", "cid"], info="Step Ladder Series - [keys] - Open"),
+                placed_race(
+                    "two",
+                    ["ben", "ana"],
+                    started_at="2026-09-18T20:00:00.000Z",
+                    info="Step Ladder Series - [simple]",
+                ),
+                placed_race(
+                    "three",
+                    ["ana", "ben"],
+                    started_at="2026-09-19T20:00:00.000Z",
+                    info="Step Ladder Series - [simple]",
+                ),
+            ]
+        )
+        by_id = {player["id"]: player for player in result["players"]}
+        modes = {row["m"] for row in result["races"]}
+        self.assertEqual(len(modes), 2)
+        self.assertEqual(list(by_id["cid"]["mode_ratings"]), [str(result["races"][0]["m"])])
+        self.assertEqual(set(by_id["ana"]["mode_ratings"]), {str(mode) for mode in modes})
+        last = {}
+        for race_row in result["races"]:
+            for entry in race_row["e"]:
+                last[(entry[0], race_row["m"])] = entry[5]
+        index = {player["id"]: i for i, player in enumerate(result["players"])}
+        for player_id, player in by_id.items():
+            self.assertEqual(
+                list(player["mode_ratings"]), sorted(player["mode_ratings"], key=int)
+            )
+            for key, fields in player["mode_ratings"].items():
+                self.assertEqual(set(fields), {"rating", "mu", "sigma", "finishes"})
+                self.assertEqual(fields["rating"], last[(index[player_id], int(key))])
+        simple = str(result["races"][1]["m"])
+        self.assertEqual(by_id["ana"]["mode_ratings"][simple]["finishes"], 2)
+        self.assertEqual(by_id["ana"]["finishes"], 3)
 
     def test_presets_are_sorted_by_mode_then_name_and_indexed_by_races(self):
         result = payload(
@@ -675,7 +715,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 8)
+        self.assertEqual(self.participants["schema_version"], 9)
         for key in ("presets", "hardest_preset", "badges", "records", "facts", "rating"):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
@@ -733,13 +773,14 @@ class GeneratedParticipantDataTests(unittest.TestCase):
     def test_rating_after_is_an_int_on_every_entry(self):
         for race_row in self.participants["races"]:
             for entry in race_row["e"]:
-                self.assertEqual(len(entry), 5)
+                self.assertEqual(len(entry), 6)
                 self.assertIsInstance(entry[4], int)
+                self.assertIsInstance(entry[5], int)
 
     def test_every_player_has_the_rating_fields(self):
         for player in self.participants["players"]:
-            for key in ("rating", "mu", "sigma", "finishes", "badges", "progress",
-                        "pbs", "streaks", "best_preset"):
+            for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
+                        "progress", "pbs", "streaks", "best_preset"):
                 self.assertIn(key, player)
             self.assertNotIn("rd", player)
             self.assertNotIn("provisional", player)
@@ -764,6 +805,27 @@ class GeneratedParticipantDataTests(unittest.TestCase):
                 last[entry[0]] = entry[4]
         for index, player in enumerate(self.participants["players"]):
             self.assertEqual(player["rating"], last[index])
+
+    def test_every_mode_rating_matches_the_racers_last_entry_in_that_mode(self):
+        last = {}
+        raced = {}
+        for race_row in self.participants["races"]:
+            for entry in race_row["e"]:
+                last[(entry[0], race_row["m"])] = entry[5]
+                raced.setdefault(entry[0], set()).add(race_row["m"])
+        for index, player in enumerate(self.participants["players"]):
+            mode_ratings = player["mode_ratings"]
+            self.assertEqual(list(mode_ratings), [str(m) for m in sorted(raced.get(index, ()))])
+            for key, fields in mode_ratings.items():
+                self.assertEqual(fields["rating"], last[(index, int(key))])
+                self.assertGreaterEqual(
+                    fields["sigma"], self.participants["rating"]["sigma_floor"]
+                )
+
+    def test_mode_finishes_sum_to_the_overall_finishes(self):
+        for player in self.participants["players"]:
+            total = sum(fields["finishes"] for fields in player["mode_ratings"].values())
+            self.assertEqual(total, player["finishes"])
 
     def test_contains_no_sensitive_racetime_fields(self):
         serialized = (REPO_ROOT / "site" / "data" / "participants.json").read_text(

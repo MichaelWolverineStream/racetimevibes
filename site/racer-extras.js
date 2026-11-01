@@ -192,11 +192,17 @@ const RacerExtras = (() => {
 
   // One point per race day. Races are in chronological order, so the day's last rated entry
   // holds the rating the racer closed the day on.
-  function ratingDays(playerIndex) {
+  // For one mode, only that mode's races count and the rating is the racer's rating in the mode.
+  function ratingDays(playerIndex, modeId = ALL_MODES) {
     const days = [];
+    const modeIndex = modeIndexFor(modeId);
+    const ratingIndex = modeIndex === null ? 4 : 5;
     raceIndexesByPlayer[playerIndex].forEach((raceIndex) => {
       const race = participants.races[raceIndex];
-      const rating = race.e[entryOf(race, playerIndex)][4];
+      if (modeIndex !== null && race.m !== modeIndex) {
+        return;
+      }
+      const rating = race.e[entryOf(race, playerIndex)][ratingIndex];
       if (rating === null || rating === undefined) {
         return;
       }
@@ -239,10 +245,15 @@ const RacerExtras = (() => {
     return low > 0 && target - values[low - 1] < values[low] - target ? low - 1 : low;
   }
 
+  // The chart and heading title for the overall rating or one mode's.
+  function ratingTitle(modeId) {
+    return modeId === ALL_MODES ? "Rating" : `${modeLabel(modeId)} rating`;
+  }
+
   // A step line through each race day's closing rating, held to the archive's latest race as the
   // record charts hold a record. Only the first day and the current rating carry markers; the
   // pointer snaps to the nearest race day anywhere in the plot.
-  function ratingChart(days, name, width) {
+  function ratingChart(days, name, width, modeId) {
     const height = RATING_HEIGHT;
     const margin = RATING_MARGIN;
     const id = RATING_CHART_ID;
@@ -272,16 +283,21 @@ const RacerExtras = (() => {
       role: "img",
       "aria-labelledby": `${id}-title ${id}-description`,
     });
+    if (modeId !== ALL_MODES) {
+      svg.style.setProperty("--step-color", modeColor(modeId));
+    }
     const clip = svgElement("clipPath", { id: `${id}-plot` });
     clip.append(svgElement("rect", { x: margin.left, y: margin.top, width: plotWidth, height: plotHeight }));
     const defs = svgElement("defs");
     defs.append(clip);
+    const title = ratingTitle(modeId);
+    const scope = modeId === ALL_MODES ? "across all modes" : `in ${modeLabel(modeId)} races`;
     const span = days.length === 1
       ? `${current.rating} on ${formatRaceDate(current.date)}, their only race day`
       : `from ${first.rating} on ${formatRaceDate(first.date)} to ${current.rating} on ${formatRaceDate(current.date)}, over ${days.length} race days`;
     svg.append(
-      svgElement("title", { id: `${id}-title` }, "Rating"),
-      svgElement("desc", { id: `${id}-description` }, `${name}'s rating at the close of each race day, across all modes: ${span}.`),
+      svgElement("title", { id: `${id}-title` }, title),
+      svgElement("desc", { id: `${id}-description` }, `${name}'s rating at the close of each race day, ${scope}: ${span}.`),
       defs,
     );
     for (let tick = low; tick <= high; tick += step) {
@@ -347,7 +363,8 @@ const RacerExtras = (() => {
     return svg;
   }
 
-  // The chart draws itself in once per racer, the first time it scrolls into view. A redraw
+  // The chart draws itself in each time it is rebuilt for a racer or mode, the first time it scrolls
+  // into view; the observer unobserves after each reveal, so the next one observes again. A redraw
   // after that, as on resize, inserts finished nodes, so nothing replays.
   function revealRating(host) {
     if (!ratingObserver) {
@@ -362,12 +379,23 @@ const RacerExtras = (() => {
     ratingObserver.observe(host);
   }
 
-  function renderRating(playerIndex) {
-    const days = ratingDays(playerIndex);
-    const name = participants.players[playerIndex].name;
+  // The heading, standing line and chart follow the racer page's mode picker.
+  function renderRating(playerIndex, modeId = ALL_MODES) {
+    const player = participants.players[playerIndex];
+    const rating = ratingFor(player, modeId);
+    const rank = ratingRank(playerIndex, modeId);
+    document.querySelector("#player-rating-title").textContent = ratingTitle(modeId);
+    const standing = document.querySelector("#player-rating-standing");
+    standing.hidden = rating === null;
+    standing.textContent = rating === null
+      ? ""
+      : `#${integerFormatter.format(rank)} of ${integerFormatter.format(ratingRanks(modeId).size)} · ${rating.rating}${
+          rating.finishes < participants.rating.provisional_finishes ? " · provisional" : ""
+        }`;
+    const days = ratingDays(playerIndex, modeId);
     const host = document.querySelector("#player-rating-chart");
     revealRating(host);
-    mountChart(host, (width) => (days.length ? ratingChart(days, name, width) : emptyMessage("No rating yet.")));
+    mountChart(host, (width) => (days.length ? ratingChart(days, player.name, width, modeId) : emptyMessage("No rating yet.")));
   }
 
   function valueTile(label, ...value) {
@@ -413,7 +441,7 @@ const RacerExtras = (() => {
     const rating =
       rank === undefined
         ? valueTile("Rank & Rating", "--")
-        : valueTile("Rank & Rating", `#${integerFormatter.format(rank)}`, element("span", "summary-value__joiner", "with"), ratingText(player));
+        : valueTile("Rank & Rating", `#${integerFormatter.format(rank)}`, element("span", "summary-value__joiner", "with"), ratingText(ratingFor(player)));
     if (rank !== undefined) {
       bindTooltip(rating, ratingTooltip());
     }
@@ -436,9 +464,8 @@ const RacerExtras = (() => {
       renderSummary(playerIndex);
       renderBadges(playerIndex);
       renderPbs(playerIndex);
-      renderRating(playerIndex);
     }
   }
 
-  return { render, rivals, ratingDays };
+  return { render, renderRating, rivals, ratingDays };
 })();

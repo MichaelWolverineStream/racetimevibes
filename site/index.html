@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="58f5ac539021">
+    <meta name="app-version" content="d14eebd5ad7f">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=58f5ac539021">
-    <link rel="stylesheet" href="ui.css?v=58f5ac539021">
-    <link rel="stylesheet" href="feed.css?v=58f5ac539021">
-    <link rel="stylesheet" href="records.css?v=58f5ac539021">
-    <link rel="stylesheet" href="racer-extras.css?v=58f5ac539021">
-    <link rel="stylesheet" href="share-card.css?v=58f5ac539021">
-    <link rel="stylesheet" href="easter-eggs.css?v=58f5ac539021">
+    <link rel="stylesheet" href="styles.css?v=d14eebd5ad7f">
+    <link rel="stylesheet" href="ui.css?v=d14eebd5ad7f">
+    <link rel="stylesheet" href="feed.css?v=d14eebd5ad7f">
+    <link rel="stylesheet" href="records.css?v=d14eebd5ad7f">
+    <link rel="stylesheet" href="racer-extras.css?v=d14eebd5ad7f">
+    <link rel="stylesheet" href="share-card.css?v=d14eebd5ad7f">
+    <link rel="stylesheet" href="easter-eggs.css?v=d14eebd5ad7f">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -348,11 +348,6 @@
           <div id="player-summary" class="summary-strip player-summary"></div>
           <div id="player-badges" class="player-badges"></div>
           <div id="player-pbs" class="player-pbs"></div>
-          <div class="heatmap-heading">
-            <h3>Rating</h3>
-            <p><span class="line-key line-key--start"></span>Starting rating</p>
-          </div>
-          <div id="player-rating-chart" class="chart-host chart-host--scatter step-chart-host" aria-live="polite"></div>
           <div class="leaderboard-controls">
             <div
               id="player-mode-toggle"
@@ -361,6 +356,14 @@
               aria-label="Choose a race mode"
             ></div>
           </div>
+          <div class="heatmap-heading">
+            <div class="rating-heading">
+              <h3 id="player-rating-title">Rating</h3>
+              <p id="player-rating-standing" class="rating-standing" hidden></p>
+            </div>
+            <p><span class="line-key line-key--start"></span>Starting rating</p>
+          </div>
+          <div id="player-rating-chart" class="chart-host chart-host--scatter step-chart-host" aria-live="polite"></div>
           <section class="player-charts" aria-labelledby="player-finish-title">
             <div class="heatmap-heading">
               <h3 id="player-finish-title">Finish times</h3>
@@ -403,17 +406,17 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=58f5ac539021" defer></script>
-    <script src="racer-charts.js?v=58f5ac539021" defer></script>
-    <script src="store.js?v=58f5ac539021" defer></script>
-    <script src="ui.js?v=58f5ac539021" defer></script>
-    <script src="feed.js?v=58f5ac539021" defer></script>
-    <script src="records.js?v=58f5ac539021" defer></script>
-    <script src="racer-extras.js?v=58f5ac539021" defer></script>
-    <script src="share-card.js?v=58f5ac539021" defer></script>
-    <script src="easter-eggs.js?v=58f5ac539021" defer></script>
-    <script src="leaderboard.js?v=58f5ac539021" defer></script>
-    <script src="version-check.js?v=58f5ac539021" defer></script>
-    <script src="visitor-counter.js?v=58f5ac539021" defer></script>
+    <script src="app.js?v=d14eebd5ad7f" defer></script>
+    <script src="racer-charts.js?v=d14eebd5ad7f" defer></script>
+    <script src="store.js?v=d14eebd5ad7f" defer></script>
+    <script src="ui.js?v=d14eebd5ad7f" defer></script>
+    <script src="feed.js?v=d14eebd5ad7f" defer></script>
+    <script src="records.js?v=d14eebd5ad7f" defer></script>
+    <script src="racer-extras.js?v=d14eebd5ad7f" defer></script>
+    <script src="share-card.js?v=d14eebd5ad7f" defer></script>
+    <script src="easter-eggs.js?v=d14eebd5ad7f" defer></script>
+    <script src="leaderboard.js?v=d14eebd5ad7f" defer></script>
+    <script src="version-check.js?v=d14eebd5ad7f" defer></script>
+    <script src="visitor-counter.js?v=d14eebd5ad7f" defer></script>
   </body>
 </html>

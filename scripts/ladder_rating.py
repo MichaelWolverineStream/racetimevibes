@@ -5,8 +5,11 @@ The model in plain words
 ------------------------
 Only placement counts. Finish times are never read, so a win by one second and
 a win by an hour are worth the same. Every racer has a skill estimate (a mean
-mu) and an uncertainty (sigma). A newcomer starts at mu 25, sigma 8. One rating
-covers every mode.
+mu) and an uncertainty (sigma). A newcomer starts at mu 25, sigma 8. The overall
+rating covers every mode. Each mode also has its own rating (`rate_by_mode`):
+the same model and parameters on that mode's races alone, so a racer debuts at
+the starting rating in every mode. Predictions use the overall rating, which
+predicts results inside a mode better than the mode's own rating does.
 
 Within a race, every pair of entrants is a small match. A finisher with a
 better place beats one with a worse place, and any finisher beats a DNF, DQ or
@@ -42,7 +45,8 @@ parameters on finishing order only, ties every DNF and DQ behind the last
 finisher, and shows max(0, round((mu - 2 sigma) * 100)), so newcomers start at
 833 and the score climbs with volume as sigma shrinks. It keeps one leaderboard
 per goal. This model also reads placement only, but it shows a different
-scale, rates all modes together, and never lets a winner lose points.
+scale, rates all modes together as well as each mode alone, and never lets a
+winner lose points.
 
 Backtest and tuning
 -------------------
@@ -51,9 +55,11 @@ before each race, predicts every decisive entrant pair: finishers by place, and
 a finisher beats a non-finisher; two non-finishers are skipped. racetime.gg is
 scored from the pre-race `score` each entrant carried, which the archive stores
 (833 when missing). Its log loss uses the best-fit logistic curve on the score
-gap, fitted on the same pairs, which flatters it. The report also counts
-winners whose displayed points fell (the guarantee says none) and the median
-points a veteran (past their 50th race) moves per race.
+gap, fitted on the same pairs, which flatters it. The mode ratings are scored on
+the same pairs, each predicted from the two racers' ratings in the race's mode.
+The report also counts winners whose displayed points fell, overall and in
+their race's mode (the guarantee says none), and the median points a veteran
+(past their 50th race) moves per race.
 
 BETA and SIGMA0 were picked by log loss on races before OUT_OF_SAMPLE_START
 only (the archive starts 2025-04-20), over BETA in {8, 10, 12} and SIGMA0 in
@@ -63,16 +69,19 @@ about -13, over a calmer floor that predicts a little better. Accuracy and log
 loss therefore trail the old margin model slightly, in exchange for no lost
 winners.
 
-Result on the archive as of 2026-10-27:
+Result on the archive as of 2026-11-01:
 
                                          pairs  accuracy  log loss
     From 2026-01-01 (out of sample)
-      ladder rating                     46,247     0.722     0.543
-      racetime.gg recorded score        46,247     0.694     0.588  best-fit logistic, in-sample
+      ladder rating                     47,518     0.723     0.541
+      ladder rating, own mode only      47,518     0.716     0.553
+      racetime.gg recorded score        47,518     0.695     0.587  best-fit logistic, in-sample
     Before 2026-01-01 (tuning period)
       ladder rating                     26,796     0.703     0.562
+      ladder rating, own mode only      26,796     0.683     0.585
       racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
-    Winners who lost points: 0 of 3,220
+    Winners who lost points: 0 of 3,256
+    Mode winners who lost points: 0 of 3,256
     Median veteran move per race (past race 50): 9 points
 """
 
@@ -144,15 +153,14 @@ class PlayerRating:
 
 
 @dataclass(frozen=True)
-class RatingResult:
-    """Per-entry states before and after each race, plus each racer's final rating.
+class _Ratings:
+    """Per-entry states before and after each race, and the points formula.
 
     States are `(mean, variance)` in skill units, where a higher mean is better.
     """
 
     pre: list[list[State]]
     post: list[list[State]]
-    players: list[PlayerRating | None]
     params: JsonObject
 
     def display(self, state: State) -> int:
@@ -164,6 +172,25 @@ class RatingResult:
     def win_chance(self, a: State, b: State) -> float:
         """Return the chance that a racer in state `a` beats one in state `b`."""
         return _win_chance(a, b, self.params["beta"])
+
+
+@dataclass(frozen=True)
+class RatingResult(_Ratings):
+    """One rating across every mode, plus each racer's final rating."""
+
+    players: list[PlayerRating | None]
+
+
+@dataclass(frozen=True)
+class ModeRatings(_Ratings):
+    """Each mode rated on its own races alone, with the same model and parameters.
+
+    `pre` and `post` line up with the input records, and hold each entry's state
+    in that race's own mode. `players` maps a mode index to every racer's final
+    rating in that mode, or None for a racer who never raced it.
+    """
+
+    players: dict[int, list[PlayerRating | None]]
 
 
 def _update_race(
@@ -194,6 +221,22 @@ def _update_race(
         shrunk = max(variance_i * max(1 - delta, kappa), floor_variance)
         states[i][0] = mean_i + omega
         states[i][1] = min(variance_i, shrunk)
+
+
+def _params(*, beta: float, sigma0: float, sigma_floor: float, kappa: float) -> JsonObject:
+    """Return the published parameters, shared by the overall and the mode ratings."""
+    return {
+        "model": "bradley-terry",
+        "base": BASE,
+        "scale": SCALE,
+        "k": MU0 / sigma0,
+        "mu0": MU0,
+        "beta": beta,
+        "sigma0": sigma0,
+        "sigma_floor": sigma_floor,
+        "kappa": kappa,
+        "provisional_finishes": PROVISIONAL_FINISHES,
+    }
 
 
 def rate(
@@ -235,18 +278,7 @@ def rate(
             if _is_finisher(place, status):
                 finishes[player] += 1
 
-    params = {
-        "model": "bradley-terry",
-        "base": BASE,
-        "scale": SCALE,
-        "k": MU0 / sigma0,
-        "mu0": MU0,
-        "beta": beta,
-        "sigma0": sigma0,
-        "sigma_floor": sigma_floor,
-        "kappa": kappa,
-        "provisional_finishes": PROVISIONAL_FINISHES,
-    }
+    params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa)
     result = RatingResult(pre=pre, post=post, players=[], params=params)
     players = [
         None
@@ -261,6 +293,41 @@ def rate(
         for player in range(player_count)
     ]
     return RatingResult(pre=pre, post=post, players=players, params=params)
+
+
+def rate_by_mode(
+    records: list[JsonObject],
+    player_count: int,
+    *,
+    beta: float = BETA,
+    sigma0: float = SIGMA0,
+    sigma_floor: float = SIGMA_FLOOR,
+    kappa: float = KAPPA,
+) -> ModeRatings:
+    """Rate every racer separately in each mode, over chronological C1 race records.
+
+    Each mode is `rate` run on that mode's races alone, so a racer debuts at the
+    starting rating in every mode they enter.
+    """
+    pre: list[list[State]] = [[] for _ in records]
+    post: list[list[State]] = [[] for _ in records]
+    players: dict[int, list[PlayerRating | None]] = {}
+    for mode in sorted({record["m"] for record in records}):
+        indexes = [index for index, record in enumerate(records) if record["m"] == mode]
+        result = rate(
+            [records[index] for index in indexes],
+            player_count,
+            beta=beta,
+            sigma0=sigma0,
+            sigma_floor=sigma_floor,
+            kappa=kappa,
+        )
+        for index, race_pre, race_post in zip(indexes, result.pre, result.post):
+            pre[index] = race_pre
+            post[index] = race_post
+        players[mode] = result.players
+    params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa)
+    return ModeRatings(pre=pre, post=post, players=players, params=params)
 
 
 @dataclass(frozen=True)
@@ -329,7 +396,7 @@ def _logistic_slope(gaps: list[float]) -> float:
 
 def _score_pairs(
     records: list[JsonObject],
-    result: RatingResult,
+    result: _Ratings,
     scores: list[list[int]],
     selected: list[int],
 ) -> tuple[PairScore, PairScore]:
@@ -431,10 +498,14 @@ class BacktestReport:
     tuning: tuple[PairScore, PairScore]
     winners: int
     winners_lost_points: int
+    mode_evaluation: PairScore  # the per-mode rating, on the same pairs as `evaluation`
+    mode_tuning: PairScore
+    mode_winners: int
+    mode_winners_lost_points: int
     veteran_move: float | None  # median absolute points moved per race past the VETERAN_RACES-th
 
 
-def _points_behaviour(records: list[JsonObject], result: RatingResult) -> tuple[int, int, float | None]:
+def _points_behaviour(records: list[JsonObject], result: _Ratings) -> tuple[int, int, float | None]:
     """Return (winners, winners whose points fell, median veteran move)."""
     races = Counter()
     winners = 0
@@ -463,14 +534,20 @@ def backtest(archive_dir: Path | None = None) -> BacktestReport:
     """
     records, player_count, scores = _backtest_records(archive_dir)
     result = rate(records, player_count)
+    mode_result = rate_by_mode(records, player_count)
     tuning = [index for index, record in enumerate(records) if record["d"] < OUT_OF_SAMPLE_START]
     evaluation = [index for index, record in enumerate(records) if record["d"] >= OUT_OF_SAMPLE_START]
     winners, lost, veteran_move = _points_behaviour(records, result)
+    mode_winners, mode_lost, _mode_veteran_move = _points_behaviour(records, mode_result)
     return BacktestReport(
         evaluation=_score_pairs(records, result, scores, evaluation),
         tuning=_score_pairs(records, result, scores, tuning),
         winners=winners,
         winners_lost_points=lost,
+        mode_evaluation=_score_pairs(records, mode_result, scores, evaluation)[0],
+        mode_tuning=_score_pairs(records, mode_result, scores, tuning)[0],
+        mode_winners=mode_winners,
+        mode_winners_lost_points=mode_lost,
         veteran_move=veteran_move,
     )
 
@@ -478,13 +555,14 @@ def backtest(archive_dir: Path | None = None) -> BacktestReport:
 def _format_report(report: BacktestReport) -> str:
     lines = [f"{'':34}{'pairs':>8}{'accuracy':>10}{'log loss':>10}"]
     sections = (
-        (report.evaluation, f"From {OUT_OF_SAMPLE_START} (out of sample)"),
-        (report.tuning, f"Before {OUT_OF_SAMPLE_START} (tuning period)"),
+        (report.evaluation, report.mode_evaluation, f"From {OUT_OF_SAMPLE_START} (out of sample)"),
+        (report.tuning, report.mode_tuning, f"Before {OUT_OF_SAMPLE_START} (tuning period)"),
     )
-    for (ours, racetime), title in sections:
+    for (ours, racetime), mode_score, title in sections:
         lines.append(title)
         for label, score, note in (
             ("ladder rating", ours, ""),
+            ("ladder rating, own mode only", mode_score, ""),
             ("racetime.gg recorded score", racetime, "  best-fit logistic, in-sample"),
         ):
             lines.append(
@@ -493,6 +571,10 @@ def _format_report(report: BacktestReport) -> str:
             )
     lines.append(
         f"Winners who lost points: {report.winners_lost_points:,} of {report.winners:,}"
+    )
+    lines.append(
+        f"Mode winners who lost points: {report.mode_winners_lost_points:,} "
+        f"of {report.mode_winners:,}"
     )
     move = "n/a" if report.veteran_move is None else f"{report.veteran_move:g}"
     lines.append(f"Median veteran move per race (past race {VETERAN_RACES}): {move} points")
