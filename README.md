@@ -15,9 +15,12 @@ The data builder and web page have no third-party runtime dependencies.
 ```bash
 python3 scripts/race_archive.py
 python3 scripts/build_stats.py
+python3 scripts/avatar_mirror.py
 ```
 
-Refreshing has two steps. `race_archive.py` saves new raw race records from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes three datasets, all minified: the aggregate to `site/data/race-stats.json`; the per-racer dataset to `site/data/participants.json`, in which each race carries its Eastern Time date and start hour, its seed preset, and its derived tags, and each racer carries a rating, badges, streaks and personal bests; and the racers' post-race comments, each with the chest count parsed from it, to `site/data/comments.json`, which the page fetches after its first render so it never delays the board. Use `--archive` on either script to point at a different archive, and `--output`, `--participants-output` and `--comments-output` on `build_stats.py` to redirect each dataset.
+Refreshing has three steps. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/`. `build_stats.py` then builds the dashboard datasets from that archive alone; it makes no network requests. It atomically writes three datasets, all minified: the aggregate to `site/data/race-stats.json`; the per-racer dataset to `site/data/participants.json`, in which each race carries its Eastern Time date and start hour, its seed preset, and its derived tags, and each racer carries a rating, badges, streaks and personal bests; and the racers' post-race comments, each with the chest count parsed from it, to `site/data/comments.json`, which the page fetches after its first render so it never delays the board. Use `--archive` on either script to point at a different archive, and `--output`, `--participants-output` and `--comments-output` on `build_stats.py` to redirect each dataset.
+
+`avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json`. It makes `site/avatars/` hold exactly those files, so the page serves every avatar from its own origin. For each racer it works out the URL behind the published file name from `archive/`. It downloads only the files the directory is missing, pausing 0.2 seconds between requests, and checks each one before keeping it: the first bytes must match a PNG, JPEG, GIF or WebP image that agrees with the file extension, and the file must be at most 2,000,000 bytes. It deletes every regular file in `site/avatars/` that `participants.json` does not name, so a racer's old picture goes when a new one arrives. A download or check that fails prints a `Warning:` line and the run continues; the file is tried again on the next run, and meanwhile the page shows the racer's monogram. The script ends with `Avatars: N downloaded, M removed, K failed.` and exits with 1 only if `participants.json` is unreadable or names a file the archive does not explain, in which case it asks you to run `build_stats.py` first. A normal run makes no requests; the first run makes one per racer with an avatar. Use `--participants`, `--archive` and `--output` to point it elsewhere.
 
 ### The race archive
 
@@ -27,7 +30,7 @@ Refreshing has two steps. `race_archive.py` saves new raw race records from race
 {"schema_version": 1, "fetched_at": "2026-10-27T10:59:46Z", "race": {"name": "alttpr-ladder/dazzling-matt-4030", "...": "..."}}
 ```
 
-The archive covers every race in the category from 2025-04-20; the builder drops only the `ladder_test` mode. `archive/racer-names.json` maps each racer's stable user ID to their current display name. Every archive file is minified JSON: no whitespace between tokens, and one trailing newline.
+The archive covers every race in the category from 2025-04-20; the builder drops only the `ladder_test` mode. `archive/racer-names.json` maps each racer's stable user ID to their current display name. `archive/racer-avatars.json` maps it to the avatar URL (or `null`) the category leaderboards last showed for them, with the time the sync first saw that value. Every archive file is minified JSON: no whitespace between tokens, and one trailing newline.
 
 The listing is sorted by completion time, newest first, 100 races per page. A sync reads it backwards from page one and stops once it passes a horizon. The horizon is one day before the newest archived race, or the oldest archived race still waiting for a moderator to record it, whichever is earlier. On a normal day that is one request for page one plus one for the category leaderboards. With an empty archive the sync reads every page, so the first run is a full backfill of about 33 requests. Transient network failures are retried with bounded backoff, and the sync checks completion-time ordering and race names before writing anything.
 
@@ -37,9 +40,11 @@ If the archive ever holds fewer races than the API reports, the sync reads every
 
 User IDs are stable, but display names can change, and each race file keeps the name a racer had when it was fetched. Each sync merges the names from the category leaderboards into `racer-names.json`; the leaderboards cover nearly every racer with a recorded race. The dashboard shows a racer under that name, or, if they have no entry, under the name on their most recent race.
 
+Avatars work the same way but never cost a request. The leaderboards response already carries each ranked racer's current avatar, so each sync merges it into `racer-avatars.json` as `[avatar URL or null, first-seen time]`, where the time is when the sync received the leaderboards. A user the leaderboards list without an `avatar` field is left as they were, not cleared. A racer's entry keeps its time while the value stays the same, entries are never removed, and the file is rewritten only when a value is added or changes, so an ordinary sync leaves it untouched. A racer who uploads a new picture gets a new URL, so the change is picked up at the next sync even if they have not raced. A change and a revert to the same file name within a single sync interval goes unnoticed.
+
 ### Privacy
 
-`race-stats.json` is anonymous: entrant user IDs are used only as in-memory deduplication keys, and the file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields. `participants.json` publishes each racer's public display name and stable user ID because a leaderboard requires them, plus the filename of their racetime.gg avatar, taken from their most recent race and kept only if it is hosted on `https://racetime.gg/media/`. `comments.json` publishes the raw post-race comments of included races, stripped and capped at 500 characters, keyed by race name and user ID, each with the chest count parsed from it, or `null`. The page loads avatar images directly from racetime.gg with `referrerpolicy="no-referrer"`, so racetime.gg sees a viewer's IP address when avatars are shown. Full names, discriminators, pronouns, flair, Twitch fields and racetime.gg points and score fields remain unpublished.
+`race-stats.json` is anonymous: entrant user IDs are used only as in-memory deduplication keys, and the file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields. `participants.json` publishes each racer's public display name and stable user ID because a leaderboard requires them, plus the file name of their mirrored avatar. That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus the URL's lowercase extension, for example `3f9ac01d2e7b8a64.jpg`. A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`; the name carries nothing from the upload's own file name. The avatar follows the racer's most recently observed profile: the category leaderboards each sync, else their latest race file among the races the dashboard includes, so never a `ladder_test` race, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none. `comments.json` publishes the raw post-race comments of included races, stripped and capped at 500 characters, keyed by race name and user ID, each with the chest count parsed from it, or `null`. `site/avatars/` holds copies of exactly the files `participants.json` names, raster images only, and the page serves avatars from there, so a viewer's browser never contacts racetime.gg for them. The copies are byte for byte, so any metadata an upload carries, such as a JPEG's EXIF block, is served as racetime.gg serves it. A replaced or removed avatar leaves `site/avatars/` but stays in the repository's git history. Full names, discriminators, pronouns, flair, Twitch fields and racetime.gg points and score fields remain unpublished.
 
 `archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
 
@@ -82,9 +87,9 @@ The published URL is <https://michaelwolverinestream.github.io/racetimevibes/>. 
 
 ## Scheduled data refresh
 
-The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py` and then `scripts/build_stats.py` three times daily, at 02:17, 10:17 and 18:17 UTC. It can also be started manually from **Actions > Update race data**. Whenever the sync added or refreshed race files, it commits `archive/` to `main` as `YYYY-MM-DD data`. When anything other than `generated_at` differs in the dashboard datasets, the same commit includes `site/data`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows. Runs that find nothing new commit nothing, and a failed sync or build commits nothing.
+The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py` and `scripts/avatar_mirror.py` three times daily, at 02:17, 10:17 and 18:17 UTC. It can also be started manually from **Actions > Update race data**. Whenever the sync added or refreshed race files, it commits `archive/` to `main` as `YYYY-MM-DD data`. When anything other than `generated_at` differs in the dashboard datasets, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows. Runs that find nothing new commit nothing, and a failed sync, build or mirror commits nothing.
 
-You can still refresh by hand with the two commands above and commit `archive/` and `site/data`. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run both scripts again.
+You can still refresh by hand with the three commands above and commit `archive/`, `site/data` and `site/avatars`. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py` and `build_stats.py` again, then `avatar_mirror.py`.
 
 ## Metric definitions
 
@@ -362,22 +367,54 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 The page runs top to bottom as: **01 Latest** (the newest results with their tags), **02 Racers** (the leaderboard, with the rating column), **03 Records** (the hall of records), **04-10** the analytics panels (schedule, participation, and finish times), and a page per racer with their rating, badges, personal bests, and charts. Records runs in three parts. **Across all modes** holds the record cards and streak boards. **Record progression** has a step chart per mode, three to a row, on one shared date axis with each mode's own time axis; each header shows the current record, and the chart draws the first recorded time hollow, each break filled, and the current record with a halo. **By mode** has a mode picker that drives the current-record summary strip and the presets table. Only By mode follows the picker, and it opens on the most-raced mode. A racer page opens with a summary strip: Rank & Rating, Podiums, Record W-L-D, H2H Win Rate, Badges, Nemesis and Favourite Victim. Every tile covers all modes and the whole archive, whatever mode is selected. Nemesis and Favourite Victim are the opponents with the lowest and highest head-to-head win rate among those with at least five decisive meetings. Below the badges and personal bests, the rating chart has one point per race day: the racer's rating after their last race that day, across all modes. Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive; it draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line. Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar. A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10); Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages.
 
+### Share card
+
+The **Share** button beside **Follow** on a racer page opens a panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. The panel offers four actions:
+
+- **Copy image**, where the browser can write images to the clipboard.
+- **Download**, named `<name>-step-ladder-<data date>.png`.
+- **Share…**, where the browser can share files, mostly on phones.
+- **Copy link**, the racer page's address.
+
+Like the summary strip, everything on the card covers all modes and the whole archive.
+
+- **Identity:**
+  - The avatar, or the page's tinted letter when the racer has none.
+  - The name, shrunk and then shortened to fit.
+  - The month of the racer's first race.
+- **Standing:**
+  - The rating rank, out of all rated racers.
+  - The rating, labelled provisional below 5 finishes.
+  - Under the rank, the 7-day rank movement as on the leaderboard: ▲, ▼ or new.
+  - A racer without a rating shows Unrated.
+- **Rating line:** the rating chart's race-day step line, with the starting rating dashed and the current rating haloed.
+  - The highest rating is marked **Peak** while the racer is below it. **All-time high** shows when they are on it.
+  - The line needs two race days. Without it, the four numbers spread across the card.
+- **Numbers:** races, wins (first places), podiums and H2H win %, as on the leaderboard and the summary strip.
+- **Badges:** earned badges only, rarest first by holder count. Badges held by equally many racers keep the order they were won.
+  - The row holds 15 tiles. With more than 15 badges, the last tile reads +N for the rest.
+  - The rarest badge is named with its holder share.
+  - A racer with no badges sees instead the locked counter badge with the largest share of its target done, with a progress bar. With no progress anywhere, the card says "No badges yet".
+- **Nemesis:** the racer page's Nemesis, with the racer's W–L against them. Favourite Victim is left off, so a shared card never singles out a racer the sharer beats.
+- **Footer:** the site name and address, and the date of the data snapshot in Eastern Time.
+
 ## Tests
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
 
-Tests use mocked API responses and do not require network access.
+Tests use mocked API responses and do not require network access. The avatar tests include a check that every file in the committed `site/avatars/` is named by the committed `participants.json` and is a valid raster image. A named file that is missing does not fail it, so an avatar that racetime.gg stops serving cannot block a deploy.
 
 The suite also rebuilds all three datasets from the committed `archive/` and fails if they differ from the committed `site/data` files, ignoring `generated_at`. After changing `scripts/build_stats.py`, `scripts/participant_stats.py` or any module they call, run `python3 scripts/build_stats.py` and commit the result.
 
 ## Project layout
 
 ```text
-scripts/race_archive.py           Incremental sync of raw races and racer names
+scripts/race_archive.py           Incremental sync of raw races, racer names and avatar observations
 scripts/build_stats.py            Archive validation and aggregation
 scripts/participant_stats.py      Per-racer dataset: records, avatars, assembly of schema 3
+scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/
 scripts/ladder_rating.py          Ladder rating model and backtest
 scripts/highlights.py             Tags, badges, streaks, presets, records and facts
 scripts/comment_stats.py          Racer comments dataset
@@ -385,6 +422,7 @@ scripts/mode_overlap.py           Mode overlap analysis and report
 scripts/badge_images.py           Converts badge art to the standard WebP pair (needs ImageMagick 7)
 scripts/version_assets.py         Content versioning for the static assets
 tests/test_race_archive.py        Archive sync unit tests
+tests/test_avatar_mirror.py       Avatar naming, precedence and mirror unit tests
 tests/test_build_stats.py         Pipeline unit tests
 tests/test_participant_stats.py   Racer dataset unit tests
 tests/test_ladder_rating.py       Rating model unit tests
@@ -398,9 +436,11 @@ tests/test_version_assets.py      Asset versioning unit tests
 .github/workflows/update-data.yml Scheduled archive sync, data build, commit, and deploy
 archive/races/                    Raw race records, one file per race
 archive/racer-names.json          Current racer display names
+archive/racer-avatars.json        Last observed leaderboard avatar of each racer
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
 site/data/comments.json           Generated racer comments, loaded lazily
+site/avatars/                     Mirrored avatar images, one for each avatar participants.json names
 site/version.json                 Generated content version manifest
 site/index.html                   Static dashboard document
 site/app.js                       Native SVG chart rendering
@@ -411,6 +451,7 @@ site/ui.js, ui.css                Shared avatars, speech bubbles, tags, badges, 
 site/feed.js, feed.css            Latest results feed
 site/records.js, records.css      Hall of records
 site/racer-extras.js, .css        Racer page summary strip, badges, personal bests, and rating chart
+site/share-card.js, .css          Racer share card: a 600 x 300 PNG drawn in the browser
 site/easter-eggs.js, .css         Hidden extras
 site/version-check.js             Reloads the page when a new version ships
 site/styles.css                   Responsive visual system

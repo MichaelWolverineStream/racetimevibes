@@ -9,16 +9,18 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
 
 1. **Never hand-edit generated files. Regenerate them, and expect the tests to check.**
    - **Datasets:** `site/data/*.json` comes from `python3 scripts/build_stats.py`. `test_matches_a_rebuild_from_the_archive` rebuilds them from `archive/` and fails on any difference, ignoring `generated_at`.
+   - **Avatars:** `site/avatars/` comes from `python3 scripts/avatar_mirror.py`, run after `build_stats.py`. Never add, edit or delete a file there by hand.
    - **Asset stamps:** the `?v=` tokens in `site/index.html` and `site/version.json` come from `python3 scripts/version_assets.py`. Run it after any change to `site/` HTML, CSS or JS. A test fails if the stamp is stale.
-2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds, and commits `archive/` and `site/data` as `YYYY-MM-DD data`.
+2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds, mirrors avatars, and commits `archive/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`.
    - Pull before you start.
-   - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py` and `build_stats.py`.
+   - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `build_stats.py` and `avatar_mirror.py`.
 3. **`archive/` is a verbatim mirror of the racetime.gg API.**
    - Never edit it by hand.
    - Never move or copy any of it into `site/`. It holds full user profiles and comments, and it is deliberately never deployed.
 4. **Publish only what the privacy contract allows** (README › Privacy). Any new field in a published dataset must fit it.
    - `race-stats.json` is anonymous: no IDs, names or entrant arrays.
-   - `participants.json` may carry only display names, stable user IDs and avatar filenames, and only from `racetime.gg/media/`.
+   - `participants.json` may carry only display names, stable user IDs and mirrored avatar file names. A name is the hash of a `racetime.gg/media/` raster URL plus its extension.
+   - `site/avatars/` holds exactly the files `participants.json` names, as validated raster images.
    - `comments.json` carries comments capped at 500 characters.
    - Never publish full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
 5. **Each dataset's schema version is set in Python and checked in JS. Bump both sides together.** The page refuses data whose version doesn't match, and shows "could not be loaded".
@@ -46,6 +48,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
 ```bash
 python3 scripts/race_archive.py    # network: incremental sync into archive/
 python3 scripts/build_stats.py     # offline: archive/ → site/data/{race-stats,participants,comments}.json
+python3 scripts/avatar_mirror.py   # network: site/avatars/ ⇄ the avatars participants.json names
 ```
 
 - **Where the logic lives:**
@@ -53,6 +56,7 @@ python3 scripts/build_stats.py     # offline: archive/ → site/data/{race-stats
   - `ladder_rating.py`: the rating.
   - `highlights.py`: tags, badges, streaks, presets, records and facts, all in one chronological pass. Thresholds are constants at the top of the module.
   - `comment_stats.py`: comments and the chest-count parser.
+  - `avatar_mirror.py`: avatar file names, which observation is current, and the mirror into `site/avatars/`.
 - `mode_overlap.py` is a standalone analysis. The build never runs it.
 - **Tests never use the network**, because API responses are mocked. After changing any build script, rebuild the data and include `site/data` in the change.
 - **A new race mode needs a colour slot** in `MODE_COLOR_SLOTS` (`site/racer-charts.js`). Without one it falls back to a muted grey. The order of `--mode-1..8` keeps neighbouring violins distinguishable for colour-blind viewers, so don't reorder them.
@@ -75,12 +79,13 @@ The scripts are classic `<script defer>` files that share one global scope. They
 
 - **`app.js`** is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, and formatters such as `formatModeName`.
 - **`leaderboard.js`** owns the data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
-- **`ui.js`** exposes `UI`: `avatar`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `dialogBox`, `time`, `comments`.
-- **The private `element(tag, className, text)` copies** in `ui.js`, `feed.js`, `records.js` and `racer-extras.js` are deliberate. Sharing one would need either a dependency at load time or renaming about 140 call sites.
+- **`ui.js`** exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
+- **The private `element(tag, className, text)` copies** in `ui.js`, `feed.js`, `records.js`, `racer-extras.js` and `share-card.js` are deliberate. Sharing one would need either a dependency at load time or renaming about 140 call sites.
 
 ### Modals and events
 
 - **Modals use `holdModal(close)` in `ui.js`.** It makes `main` and `footer` inert, closes on Escape, and restores focus.
+- **A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`.** It returns `{ panel, close }`: an open, focused box holding only its close button, already following the close order below. The badge panel and the share card use it.
 - **Close a modal in exactly this order:**
   1. Remove its nodes.
   2. Clear `openDialog`.

@@ -87,6 +87,22 @@ def run_sync(archive_dir, page_loader, names=None):
         )
 
 
+MISSING = object()
+
+
+def avatar_leaderboards(*users):
+    """Leaderboards whose users are (id, avatar) pairs; MISSING leaves the avatar key out."""
+    payload = leaderboards()
+    payload["leaderboards"][0]["rankings"] = [
+        {
+            "user": {"id": user_id, "name": user_id}
+            | ({} if avatar is MISSING else {"avatar": avatar})
+        }
+        for user_id, avatar in users
+    ]
+    return payload
+
+
 class ArchiveTestCase(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
@@ -100,10 +116,16 @@ class ArchiveTestCase(unittest.TestCase):
         )
 
 
+def response_body(mocked_urlopen):
+    """Return the mock that stands in for the response urlopen yields."""
+    return mocked_urlopen.return_value.__enter__.return_value
+
+
 class FetchTests(unittest.TestCase):
-    @patch.object(race_archive.json, "load", return_value={"races": []})
     @patch.object(race_archive, "urlopen")
-    def test_fetch_requests_entrant_details(self, mocked_urlopen, _json_load):
+    def test_fetch_requests_entrant_details(self, mocked_urlopen):
+        response_body(mocked_urlopen).read.return_value = b'{"races": []}'
+
         race_archive.fetch_page(3)
 
         request = mocked_urlopen.call_args.args[0]
@@ -111,13 +133,12 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(query["page"], ["3"])
         self.assertEqual(query["per_page"], ["100"])
         self.assertEqual(query["show_entrants"], ["true"])
+        self.assertEqual(request.get_header("Accept"), "application/json")
 
     @patch.object(race_archive.time, "sleep")
-    @patch.object(race_archive.json, "load", return_value={"races": []})
     @patch.object(race_archive, "urlopen")
-    def test_fetch_retries_connection_resets(
-        self, mocked_urlopen, _json_load, mocked_sleep
-    ):
+    def test_fetch_retries_connection_resets(self, mocked_urlopen, mocked_sleep):
+        response_body(mocked_urlopen).read.return_value = b'{"races": []}'
         mocked_urlopen.side_effect = [ConnectionResetError(), mocked_urlopen.return_value]
 
         self.assertEqual(race_archive.fetch_page(1), {"races": []})
@@ -127,17 +148,44 @@ class FetchTests(unittest.TestCase):
     @patch.object(race_archive.time, "sleep")
     @patch.object(race_archive, "urlopen")
     def test_fetch_retries_truncated_responses(self, mocked_urlopen, _sleep):
-        with patch.object(
-            race_archive.json,
-            "load",
-            side_effect=[IncompleteRead(b"{", 10), {"leaderboards": []}],
-        ):
-            self.assertEqual(race_archive.fetch_leaderboards(), {"leaderboards": []})
+        response_body(mocked_urlopen).read.side_effect = [
+            IncompleteRead(b"{", 10),
+            b'{"leaderboards": []}',
+        ]
+
+        self.assertEqual(race_archive.fetch_leaderboards(), {"leaderboards": []})
 
         self.assertEqual(
             mocked_urlopen.call_args.args[0].full_url, race_archive.LEADERBOARDS_URL
         )
         self.assertEqual(mocked_urlopen.call_count, 2)
+
+    @patch.object(race_archive, "urlopen")
+    def test_get_bytes_sends_the_accept_header_and_returns_the_body(self, mocked_urlopen):
+        response_body(mocked_urlopen).read.return_value = b"\x89PNG"
+
+        body = race_archive._get_bytes("https://example.test/a.png", "Avatar", "image/png")
+
+        self.assertEqual(body, b"\x89PNG")
+        request = mocked_urlopen.call_args.args[0]
+        self.assertEqual(request.get_header("Accept"), "image/png")
+        self.assertEqual(request.get_header("User-agent"), race_archive.USER_AGENT)
+
+    @patch.object(race_archive, "urlopen")
+    def test_get_bytes_with_a_limit_reads_at_most_one_byte_more(self, mocked_urlopen):
+        response_body(mocked_urlopen).read.return_value = b"\x89PNG"
+
+        race_archive._get_bytes("https://example.test/a.png", "Avatar", "image/png", limit=10)
+
+        response_body(mocked_urlopen).read.assert_called_once_with(11)
+
+    @patch.object(race_archive, "urlopen")
+    def test_get_json_rejects_invalid_and_non_object_json(self, mocked_urlopen):
+        for body in (b"{", b"[]"):
+            with self.subTest(body=body):
+                response_body(mocked_urlopen).read.return_value = body
+                with self.assertRaises(race_archive.ArchiveError):
+                    race_archive.fetch_leaderboards()
 
 
 class ListingValidationTests(ArchiveTestCase):
@@ -483,6 +531,161 @@ class RacerNameTests(ArchiveTestCase):
             with self.subTest(payload=payload):
                 with self.assertRaises(race_archive.ArchiveError):
                     race_archive.sync_racer_names(self.archive_dir, payload)
+
+
+class RacerAvatarTests(ArchiveTestCase):
+    FIRST = datetime(2026, 10, 1, 12, tzinfo=UTC)
+    SECOND = datetime(2026, 10, 2, 12, tzinfo=UTC)
+    FIRST_TEXT = "2026-10-01T12:00:00Z"
+    SECOND_TEXT = "2026-10-02T12:00:00Z"
+    A = "https://racetime.gg/media/a.png"
+    B = "https://racetime.gg/media/b.png"
+
+    def sync_avatars(self, *users, now=None):
+        return race_archive.sync_racer_avatars(
+            self.archive_dir, avatar_leaderboards(*users), now or self.FIRST
+        )
+
+    def test_missing_file_is_an_empty_map(self):
+        self.assertEqual(race_archive.load_racer_avatars(self.archive_dir), {})
+
+    def test_adds_new_racers_with_the_time_they_were_first_seen(self):
+        counts = self.sync_avatars(("u1", self.A), ("u2", self.B))
+
+        self.assertEqual(counts, (2, 0))
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir),
+            {"u1": [self.A, self.FIRST_TEXT], "u2": [self.B, self.FIRST_TEXT]},
+        )
+
+    def test_unchanged_avatar_keeps_its_first_seen_time_and_is_not_rewritten(self):
+        self.sync_avatars(("u1", self.A))
+        path = self.archive_dir / race_archive.RACER_AVATARS_FILE
+        before = path.stat().st_mtime_ns
+
+        with patch.object(race_archive, "write_json_atomic") as mocked_write:
+            counts = self.sync_avatars(("u1", self.A), now=self.SECOND)
+
+        self.assertEqual(counts, (0, 0))
+        mocked_write.assert_not_called()
+        self.assertEqual(path.stat().st_mtime_ns, before)
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir),
+            {"u1": [self.A, self.FIRST_TEXT]},
+        )
+
+    def test_changed_avatar_updates_value_and_time(self):
+        self.sync_avatars(("u1", self.A), ("u2", self.A))
+
+        counts = self.sync_avatars(("u1", self.B), ("u2", self.A), now=self.SECOND)
+
+        self.assertEqual(counts, (0, 1))
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir),
+            {"u1": [self.B, self.SECOND_TEXT], "u2": [self.A, self.FIRST_TEXT]},
+        )
+
+    def test_records_null_for_a_racer_without_an_avatar_or_a_removed_one(self):
+        self.sync_avatars(("u1", self.A), ("u2", None))
+
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir)["u2"], [None, self.FIRST_TEXT]
+        )
+        counts = race_archive.sync_racer_avatars(
+            self.archive_dir, avatar_leaderboards(("u1", None)), self.SECOND
+        )
+
+        self.assertEqual(counts, (0, 1))
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir)["u1"], [None, self.SECOND_TEXT]
+        )
+
+    def test_a_user_without_an_avatar_key_is_skipped_not_cleared(self):
+        self.sync_avatars(("u1", self.A))
+
+        counts = self.sync_avatars(("u1", MISSING), ("u2", MISSING), now=self.SECOND)
+
+        self.assertEqual(counts, (0, 0))
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir), {"u1": [self.A, self.FIRST_TEXT]}
+        )
+
+    def test_keeps_racers_absent_from_the_leaderboards(self):
+        self.sync_avatars(("u1", self.A), ("u2", self.B))
+
+        self.sync_avatars(("u1", self.A), ("u3", self.B), now=self.SECOND)
+
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir),
+            {
+                "u1": [self.A, self.FIRST_TEXT],
+                "u2": [self.B, self.FIRST_TEXT],
+                "u3": [self.B, self.SECOND_TEXT],
+            },
+        )
+
+    def test_file_is_minified_with_sorted_keys(self):
+        self.sync_avatars(("u2", self.B), ("u1", None))
+
+        text = (self.archive_dir / race_archive.RACER_AVATARS_FILE).read_text(encoding="utf-8")
+
+        self.assertEqual(
+            text,
+            f'{{"u1":[null,"{self.FIRST_TEXT}"],"u2":["{self.B}","{self.FIRST_TEXT}"]}}\n',
+        )
+
+    def test_rejects_malformed_files(self):
+        path = self.archive_dir / race_archive.RACER_AVATARS_FILE
+        path.parent.mkdir(parents=True)
+        for text in ("{", "[]", '{"u1":"a.png"}', '{"u1":[1,"2026-10-01T12:00:00Z"]}', '{"u1":[null,"soon"]}'):
+            with self.subTest(text=text):
+                path.write_text(text, encoding="utf-8")
+                with self.assertRaises(race_archive.ArchiveError):
+                    race_archive.load_racer_avatars(self.archive_dir)
+
+    def test_sync_reads_the_leaderboards_once_and_records_avatars(self):
+        calls = []
+
+        def loader():
+            calls.append(1)
+            return avatar_leaderboards(("u1", self.A))
+
+        with patch.object(race_archive.time, "sleep"):
+            summary = race_archive.sync(
+                self.archive_dir,
+                page_loader=Listing([race("one", ended_days_ago=1)]),
+                leaderboards_loader=loader,
+                clock=lambda: NOW,
+            )
+
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(summary["added_avatar_count"], 1)
+        self.assertEqual(summary["changed_avatar_count"], 0)
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir),
+            {"u1": [self.A, "2026-10-27T12:00:00Z"]},
+        )
+
+
+    def test_sync_stamps_avatars_when_the_leaderboards_arrive(self):
+        fetched = []
+
+        def loader():
+            fetched.append(1)
+            return avatar_leaderboards(("u1", self.A))
+
+        # The clock reads FIRST until the leaderboards are fetched, then SECOND.
+        with patch.object(race_archive.time, "sleep"):
+            race_archive.sync(
+                self.archive_dir,
+                page_loader=Listing([race("one", ended_days_ago=1)]),
+                leaderboards_loader=loader,
+                clock=lambda: self.SECOND if fetched else self.FIRST,
+            )
+
+        self.assertEqual(
+            race_archive.load_racer_avatars(self.archive_dir), {"u1": [self.A, self.SECOND_TEXT]}
+        )
 
 
 class CommittedArchiveTests(unittest.TestCase):

@@ -15,15 +15,14 @@ from typing import Any
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import participant_stats`.
 try:
-    from scripts import highlights, ladder_rating
+    from scripts import avatar_mirror, highlights, ladder_rating
 except ImportError:
+    import avatar_mirror
     import highlights
     import ladder_rating
 
 
-PARTICIPANT_SCHEMA_VERSION = 7
-AVATAR_ORIGIN = "https://racetime.gg/media/"
-AVATAR_FILENAME = re.compile(r"^[\w.-]+$")
+PARTICIPANT_SCHEMA_VERSION = 8
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -60,16 +59,6 @@ def parse_finish_time(value: str | None) -> int | None:
     """Convert an ISO 8601 duration into whole seconds."""
     seconds = parse_finish_seconds(value)
     return None if seconds is None else round(seconds)
-
-
-def _avatar_filename(entrant: JsonObject) -> str | None:
-    """Return the avatar's filename when it is hosted on racetime.gg/media, else None."""
-    user = entrant.get("user")
-    url = user.get("avatar") if isinstance(user, dict) else None
-    if not isinstance(url, str) or not url.startswith(AVATAR_ORIGIN):
-        return None
-    filename = url.removeprefix(AVATAR_ORIGIN)
-    return filename if AVATAR_FILENAME.match(filename) else None
 
 
 def _status_value(entrant: JsonObject) -> str:
@@ -226,11 +215,15 @@ def build_participant_payload(
     timezone_name: str,
     generated_at: datetime | None = None,
     current_names: Mapping[str, str] | None = None,
+    envelopes: list[JsonObject] | None = None,
+    avatar_observations: Mapping[str, list[str | None]] | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
 
     A racer is shown under their name in `current_names` when present, otherwise
-    under the name on their most recent race.
+    under the name on their most recent race. Their avatar is the file name that
+    `avatar_mirror.mirror_name` gives their most recently observed avatar URL, taken
+    from every archived race file in `envelopes` and from `avatar_observations`.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -242,7 +235,6 @@ def build_participant_payload(
     )
 
     names: dict[str, str] = {}
-    avatars: dict[str, str] = {}
     staged: list[JsonObject] = []
     for context in ordered:
         race = context["race"]
@@ -254,11 +246,6 @@ def build_participant_payload(
             identity = _entrant_identity(entrant)
             if identity is None:
                 continue
-            avatar = _avatar_filename(entrant)
-            if avatar:
-                avatars[identity[0]] = avatar
-            else:
-                avatars.pop(identity[0], None)
             if _has_comment(entrant):
                 commenters.add(identity[0])
         staged.append(
@@ -279,6 +266,13 @@ def build_participant_payload(
     for user_id, name in (current_names or {}).items():
         if user_id in names:
             names[user_id] = name
+
+    avatars = {
+        user_id: avatar_mirror.mirror_name(url)
+        for user_id, url in avatar_mirror.current_avatar_urls(
+            envelopes or [], avatar_observations or {}
+        ).items()
+    }
 
     ordered_players = sorted(names.items(), key=lambda item: (item[1].casefold(), item[0]))
     players = [{"id": user_id, "name": name} for user_id, name in ordered_players]

@@ -44,6 +44,8 @@ jobs:
         run: python3 scripts/race_archive.py
       - name: Build data
         run: python3 scripts/build_stats.py
+      - name: Mirror avatars
+        run: python3 scripts/avatar_mirror.py
       - name: Detect changes
         id: changes
         # generated_at differs on every run, so ignore it when deciding whether the site changed.
@@ -72,6 +74,12 @@ jobs:
               new.pop("generated_at", None)
               site = site or old != new
 
+          # The mirror holds copies of the avatars participants.json names.
+          site = site or bool(subprocess.run(
+              ["git", "status", "--porcelain", "--", "site/avatars"],
+              check=True, capture_output=True, text=True,
+          ).stdout.strip())
+
           archive = bool(subprocess.run(
               ["git", "status", "--porcelain", "--", "archive"],
               check=True, capture_output=True, text=True,
@@ -89,7 +97,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # Leave out site files whose only change is generated_at.
           if [ "${{ steps.changes.outputs.site }}" != "true" ]; then git checkout -- site/data; fi
-          git add archive site/data
+          git add archive site/data site/avatars
           git commit -m "$(date -u +%F) data"
           git pull --rebase origin main
           git push origin HEAD:main

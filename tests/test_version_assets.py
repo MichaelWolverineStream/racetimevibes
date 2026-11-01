@@ -18,6 +18,7 @@ INDEX_TEMPLATE = """<!doctype html>
     <link rel="stylesheet" href="feed.css">
     <link rel="stylesheet" href="records.css">
     <link rel="stylesheet" href="racer-extras.css">
+    <link rel="stylesheet" href="share-card.css">
     <link rel="stylesheet" href="easter-eggs.css">
   </head>
   <body>
@@ -28,6 +29,7 @@ INDEX_TEMPLATE = """<!doctype html>
     <script src="feed.js" defer></script>
     <script src="records.js" defer></script>
     <script src="racer-extras.js" defer></script>
+    <script src="share-card.js" defer></script>
     <script src="easter-eggs.js" defer></script>
     <script src="leaderboard.js" defer></script>
     <script src="version-check.js" defer></script>

@@ -5,7 +5,7 @@ import unittest
 from datetime import UTC, datetime
 from pathlib import Path
 
-from scripts import build_stats, highlights, participant_stats
+from scripts import avatar_mirror, build_stats, highlights, participant_stats
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -53,7 +53,9 @@ def placed_race(name, order, **kwargs):
     return race(name, entrants=entrants, **kwargs)
 
 
-def payload(races, current_names=None):
+def payload(races, current_names=None, avatar_observations=None):
+    # Each race file was fetched when its race ended.
+    envelopes = [{"fetched_at": item["ended_at"], "race": item} for item in races]
     return participant_stats.build_participant_payload(
         build_stats.included_race_contexts(races),
         source_url=SOURCE_URL,
@@ -61,6 +63,8 @@ def payload(races, current_names=None):
         timezone_name=build_stats.SCHEDULE_TIMEZONE_NAME,
         generated_at=GENERATED_AT,
         current_names=current_names,
+        envelopes=envelopes,
+        avatar_observations=avatar_observations,
     )
 
 
@@ -462,6 +466,7 @@ class SchemaThreeTests(unittest.TestCase):
             race(
                 "early",
                 started_at="2026-03-01T20:00:00.000Z",
+                ended_at="2026-03-01T22:00:00.000Z",
                 entrants=[
                     with_avatar("ana", "https://racetime.gg/media/old.png"),
                     with_avatar("ben", "https://evil.example/x.png"),
@@ -470,6 +475,7 @@ class SchemaThreeTests(unittest.TestCase):
             race(
                 "late",
                 started_at="2026-03-02T20:00:00.000Z",
+                ended_at="2026-03-02T22:00:00.000Z",
                 entrants=[
                     with_avatar("ana", "https://racetime.gg/media/new-1.jpg"),
                     with_avatar("ben", "https://racetime.gg/media/../x.png"),
@@ -477,16 +483,65 @@ class SchemaThreeTests(unittest.TestCase):
             ),
         ]
 
-    def test_avatar_comes_from_the_latest_race_and_must_be_on_origin(self):
+    @staticmethod
+    def avatars(result):
+        return {player["name"]: player.get("a") for player in result["players"]}
+
+    def test_avatar_is_the_mirror_name_of_the_latest_race_avatar(self):
         result = payload(self.avatar_races())
-        avatars = {player["name"]: player.get("a") for player in result["players"]}
-        self.assertEqual(avatars, {"ana": "new-1.jpg", "ben": None})
+        self.assertEqual(
+            self.avatars(result),
+            {
+                "ana": avatar_mirror.mirror_name("https://racetime.gg/media/new-1.jpg"),
+                "ben": None,
+            },
+        )
+        self.assertRegex(self.avatars(result)["ana"], r"^[0-9a-f]{16}\.jpg$")
 
     def test_off_origin_latest_avatar_drops_an_older_one(self):
         races = self.avatar_races()
         races[1]["entrants"][0]["user"]["avatar"] = "https://evil.example/x.png"
         result = payload(races)
         self.assertNotIn("a", next(p for p in result["players"] if p["id"] == "ana"))
+
+    def test_a_newer_leaderboard_observation_beats_the_latest_race(self):
+        url = "https://racetime.gg/media/fresh.png"
+        result = payload(
+            self.avatar_races(), avatar_observations={"ana": [url, "2026-03-05T00:00:00Z"]}
+        )
+        self.assertEqual(self.avatars(result)["ana"], avatar_mirror.mirror_name(url))
+
+    def test_an_older_leaderboard_observation_loses_to_the_latest_race(self):
+        url = "https://racetime.gg/media/stale.png"
+        result = payload(
+            self.avatar_races(), avatar_observations={"ana": [url, "2026-03-01T00:00:00Z"]}
+        )
+        self.assertEqual(
+            self.avatars(result)["ana"],
+            avatar_mirror.mirror_name("https://racetime.gg/media/new-1.jpg"),
+        )
+
+    def test_a_newer_null_observation_removes_the_avatar(self):
+        result = payload(
+            self.avatar_races(), avatar_observations={"ana": [None, "2026-03-05T00:00:00Z"]}
+        )
+        self.assertIsNone(self.avatars(result)["ana"])
+
+    def test_percent_encoded_avatar_is_published(self):
+        races = self.avatar_races()
+        races[1]["entrants"][1]["user"]["avatar"] = (
+            "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg"
+        )
+        self.assertRegex(self.avatars(payload(races))["ben"], r"^[0-9a-f]{16}\.jpg$")
+
+    def test_observations_for_unknown_racers_add_no_player(self):
+        result = payload(
+            self.avatar_races(),
+            avatar_observations={
+                "ghost": ["https://racetime.gg/media/g.png", "2026-03-05T00:00:00Z"]
+            },
+        )
+        self.assertEqual({player["id"] for player in result["players"]}, {"ana", "ben"})
 
     def test_payload_has_rating_fields_and_int_rating_after(self):
         result = payload(
@@ -500,7 +555,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 7)
+        self.assertEqual(result["schema_version"], 8)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "badges", "progress",
                         "pbs", "streaks", "best_preset"):
@@ -620,7 +675,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 7)
+        self.assertEqual(self.participants["schema_version"], 8)
         for key in ("presets", "hardest_preset", "badges", "records", "facts", "rating"):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
@@ -645,8 +700,8 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         preset_names = {preset["n"] for preset in self.participants["presets"]}
         self.assertIn(highlights.CASUAL_BOOTS_PRESET, preset_names)
 
-    def test_avatars_are_bare_filenames(self):
-        pattern = re.compile(r"^[\w.-]+$")
+    def test_avatars_are_mirror_names(self):
+        pattern = re.compile(r"^[0-9a-f]{16}\.(png|jpg|jpeg|gif|webp)$")
         for player in self.participants["players"]:
             if "a" in player:
                 self.assertRegex(player["a"], pattern)

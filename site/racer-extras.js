@@ -129,6 +129,7 @@ const RacerExtras = (() => {
   function renderHeading(playerIndex) {
     document.querySelector("#player-avatar").replaceChildren(UI.avatar(playerIndex, 64));
     renderFollow(playerIndex);
+    document.querySelector("#player-share").replaceChildren(ShareCard.button(playerIndex));
     renderQuote(playerIndex);
   }
 
@@ -439,5 +440,5 @@ const RacerExtras = (() => {
     }
   }
 
-  return { render };
+  return { render, rivals, ratingDays };
 })();

@@ -29,6 +29,7 @@ USER_AGENT = "racetimevibes/1.0 (+static infographic data builder)"
 ARCHIVE_DIR = Path(__file__).resolve().parents[1] / "archive"
 RACES_DIRECTORY = "races"
 RACER_NAMES_FILE = "racer-names.json"
+RACER_AVATARS_FILE = "racer-avatars.json"
 ARCHIVE_SCHEMA_VERSION = 1
 
 # Moderators record finished races in batches, usually within two days. Until then
@@ -50,20 +51,17 @@ class ArchiveError(RuntimeError):
     """Raised when race data cannot be archived or the archive is invalid."""
 
 
-def _get_json(url: str, label: str) -> JsonObject:
-    """Fetch one JSON object with bounded retries for transient failures."""
-    request = Request(
-        url,
-        headers={"Accept": "application/json", "User-Agent": USER_AGENT},
-    )
+def _get_bytes(url: str, label: str, accept: str, limit: int | None = None) -> bytes:
+    """Fetch one response body with bounded retries for transient failures.
+
+    With a limit, at most limit + 1 bytes are read, so the caller can reject a longer body.
+    """
+    request = Request(url, headers={"Accept": accept, "User-Agent": USER_AGENT})
 
     for attempt in range(1, NETWORK_ATTEMPTS + 1):
         try:
             with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-                payload = json.load(response)
-            if not isinstance(payload, dict):
-                raise ArchiveError(f"{label} returned a non-object JSON response")
-            return payload
+                return response.read() if limit is None else response.read(limit + 1)
         except HTTPError as error:
             is_transient = error.code == 429 or 500 <= error.code < 600
             if not is_transient or attempt == NETWORK_ATTEMPTS:
@@ -71,12 +69,22 @@ def _get_json(url: str, label: str) -> JsonObject:
         except (URLError, TimeoutError, ConnectionError, HTTPException) as error:
             if attempt == NETWORK_ATTEMPTS:
                 raise ArchiveError(f"{label} could not be fetched: {error}") from error
-        except json.JSONDecodeError as error:
-            raise ArchiveError(f"{label} returned invalid JSON") from error
 
         time.sleep(2 ** (attempt - 1))
 
     raise AssertionError("network retry loop exited unexpectedly")
+
+
+def _get_json(url: str, label: str) -> JsonObject:
+    """Fetch one JSON object with bounded retries for transient failures."""
+    body = _get_bytes(url, label, "application/json")
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError as error:
+        raise ArchiveError(f"{label} returned invalid JSON") from error
+    if not isinstance(payload, dict):
+        raise ArchiveError(f"{label} returned a non-object JSON response")
+    return payload
 
 
 def fetch_page(page: int) -> JsonObject:
@@ -217,6 +225,36 @@ def load_racer_names(archive_dir: Path = ARCHIVE_DIR) -> dict[str, str]:
     return names
 
 
+def load_racer_avatars(
+    archive_dir: Path = ARCHIVE_DIR,
+) -> dict[str, list[str | None]]:
+    """Return each racer's last observed leaderboard avatar and when it was first seen.
+
+    Maps a user ID to [avatar URL or None, first-seen timestamp].
+    """
+    path = archive_dir / RACER_AVATARS_FILE
+    if not path.exists():
+        return {}
+    try:
+        avatars = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ArchiveError(f"{path} is not valid JSON") from error
+    if not isinstance(avatars, dict):
+        raise ArchiveError(f"{path} is not a map of user IDs to avatar observations")
+    for observation in avatars.values():
+        if (
+            not isinstance(observation, list)
+            or len(observation) != 2
+            or not (observation[0] is None or isinstance(observation[0], str))
+        ):
+            raise ArchiveError(f"{path} is not a map of user IDs to avatar observations")
+        try:
+            parse_timestamp(observation[1], "first-seen time")
+        except ValueError as error:
+            raise ArchiveError(f"{path} has an observation without a valid time") from error
+    return avatars
+
+
 def _envelope(race: JsonObject, fetched_at: datetime) -> JsonObject:
     return {
         "schema_version": ARCHIVE_SCHEMA_VERSION,
@@ -321,6 +359,50 @@ def sync_racer_names(archive_dir: Path, leaderboards: JsonObject) -> tuple[int, 
     return added, renamed
 
 
+def _leaderboard_avatars(payload: JsonObject) -> dict[str, str | None]:
+    """Return each ranked racer's avatar URL, or None; the shape was checked for names.
+
+    A user object without an avatar key says nothing about the avatar, so it is skipped
+    rather than read as a removed one.
+    """
+    avatars: dict[str, str | None] = {}
+    for board in payload["leaderboards"]:
+        for ranking in board["rankings"]:
+            user = ranking["user"]
+            if "avatar" not in user:
+                continue
+            avatar = user["avatar"]
+            avatars[user["id"]] = avatar if isinstance(avatar, str) and avatar else None
+    return avatars
+
+
+def sync_racer_avatars(
+    archive_dir: Path, leaderboards: JsonObject, now: datetime
+) -> tuple[int, int]:
+    """Merge leaderboard avatars into the racer avatar map.
+
+    A racer's entry keeps the time its value was first seen, so it is only written
+    when the value is new or has changed, and entries are never removed. The file is
+    rewritten only when something was added or changed. Returns how many racers were
+    added and how many changed their avatar.
+    """
+    _leaderboard_names(leaderboards)  # Rejects a malformed payload before it is read.
+    current = _leaderboard_avatars(leaderboards)
+    avatars = load_racer_avatars(archive_dir)
+    seen_at = _format_timestamp(now)
+    added = sum(user_id not in avatars for user_id in current)
+    changed = sum(
+        user_id in avatars and avatars[user_id][0] != avatar
+        for user_id, avatar in current.items()
+    )
+    if added or changed:
+        for user_id, avatar in current.items():
+            if user_id not in avatars or avatars[user_id][0] != avatar:
+                avatars[user_id] = [avatar, seen_at]
+        write_json_atomic(dict(sorted(avatars.items())), archive_dir / RACER_AVATARS_FILE)
+    return added, changed
+
+
 def sync(
     archive_dir: Path = ARCHIVE_DIR,
     *,
@@ -328,7 +410,7 @@ def sync(
     leaderboards_loader: LeaderboardsLoader | None = None,
     clock: Clock | None = None,
 ) -> JsonObject:
-    """Archive new races, refresh unsettled ones, and update racer names.
+    """Archive new races, refresh unsettled ones, and update racer names and avatars.
 
     A race file is written when the race is first seen, rewritten while the race is
     unsettled and its data changes, and never touched once it is settled.
@@ -377,7 +459,13 @@ def sync(
         write_json_atomic(_envelope(race, fetched_at), race_path(archive_dir, race["name"]))
 
     time.sleep(REQUEST_DELAY_SECONDS)
-    added_names, renamed_names = sync_racer_names(archive_dir, load_leaderboards())
+    leaderboards = load_leaderboards()
+    # Read after the fetch: the leaderboards are never older than this run's race pages.
+    leaderboards_seen_at = read_clock()
+    added_names, renamed_names = sync_racer_names(archive_dir, leaderboards)
+    added_avatars, changed_avatars = sync_racer_avatars(
+        archive_dir, leaderboards, leaderboards_seen_at
+    )
 
     return {
         "page_count": page_count,
@@ -389,6 +477,8 @@ def sync(
         "api_count": api_count,
         "added_name_count": added_names,
         "renamed_name_count": renamed_names,
+        "added_avatar_count": added_avatars,
+        "changed_avatar_count": changed_avatars,
     }
 
 
@@ -422,6 +512,10 @@ def main() -> int:
     print(
         f"Racer names: {summary['added_name_count']} added, "
         f"{summary['renamed_name_count']} renamed."
+    )
+    print(
+        f"Racer avatars: {summary['added_avatar_count']} added, "
+        f"{summary['changed_avatar_count']} changed."
     )
     for name in summary["vanished"]:
         print(

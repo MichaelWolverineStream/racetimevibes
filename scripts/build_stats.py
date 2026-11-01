@@ -508,6 +508,13 @@ def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] 
     }, None
 
 
+def included_envelopes(envelopes: list[JsonObject]) -> list[JsonObject]:
+    """Return the archive envelopes whose races pass the dashboard filters."""
+    return [
+        envelope for envelope in envelopes if classify_race(envelope["race"])[0] is not None
+    ]
+
+
 def included_race_contexts(races: list[JsonObject]) -> list[JsonObject]:
     """Return the context for every race that passes the dashboard filters."""
     contexts = []
@@ -639,7 +646,8 @@ def build(
     participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
     comments_output_path: Path = COMMENTS_OUTPUT_PATH,
 ) -> tuple[JsonObject, JsonObject, JsonObject]:
-    races = [envelope["race"] for envelope in race_archive.load_races(archive_dir)]
+    envelopes = race_archive.load_races(archive_dir)
+    races = [envelope["race"] for envelope in envelopes]
     if not races:
         raise DataError(
             f"Archive {archive_dir} has no races; run scripts/race_archive.py first"
@@ -654,6 +662,8 @@ def build(
         timezone_name=SCHEDULE_TIMEZONE_NAME,
         generated_at=generated_at,
         current_names=race_archive.load_racer_names(archive_dir),
+        envelopes=included_envelopes(envelopes),
+        avatar_observations=race_archive.load_racer_avatars(archive_dir),
     )
     comments = comment_stats.build_comments_payload(
         contexts, generated_at=generated_at

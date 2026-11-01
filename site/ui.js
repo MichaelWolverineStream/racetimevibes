@@ -1,4 +1,5 @@
-const AVATAR_BASE_URL = "https://racetime.gg/media/";
+// Mirrored from racetime.gg by scripts/avatar_mirror.py, so canvases can draw them.
+const AVATAR_BASE_URL = "avatars/";
 const COMMENTS_URL = "data/comments.json";
 const DIALOG_DEFAULT_MS = 3000;
 const SPEECH_AVATAR_SIZES = { hero: 56, compact: 28 };
@@ -42,9 +43,14 @@ const UI = (() => {
     return (hash % MONOGRAM_TINTS) + 1;
   }
 
+  // The first code point, so a name that opens with an emoji keeps it whole.
+  function monogramLetter(name) {
+    return (Array.from(name.trim())[0] || "?").toUpperCase();
+  }
+
   function monogram(name, size) {
     const className = `ui-avatar__monogram ui-avatar__monogram--tint-${monogramTint(name)}`;
-    const tile = element("span", className, (name.trim().charAt(0) || "?").toUpperCase());
+    const tile = element("span", className, monogramLetter(name));
     tile.style.fontSize = `${Math.round(size * 0.55)}px`;
     return tile;
   }
@@ -67,7 +73,6 @@ const UI = (() => {
     image.alt = "";
     image.loading = "lazy";
     image.decoding = "async";
-    image.referrerPolicy = "no-referrer";
     image.addEventListener("error", () => image.replaceWith(monogram(name, size)));
     image.src = url;
     wrapper.appendChild(image);
@@ -310,24 +315,26 @@ const UI = (() => {
     };
   }
 
-  function badgePanel(definition) {
+  // A centred box over a scrim, holding only its close button; the caller appends the content.
+  // The box keeps the badge panel's class names, because the badge panel was its first user.
+  function modalPanel({ className = "", labelledBy, onClose = null }) {
     if (openDialog) {
       openDialog.close();
     }
-    const titleId = `ui-badge-panel-title-${definition.id}`;
     const backdrop = element("div", "ui-badge-panel-backdrop");
-    const panel = element("div", "ui-badge-panel");
+    const panel = element("div", ["ui-badge-panel", className].filter(Boolean).join(" "));
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "true");
-    panel.setAttribute("aria-labelledby", titleId);
+    panel.setAttribute("aria-labelledby", labelledBy);
     let closed = false;
 
+    // onClose runs last, once openDialog is cleared and focus is restored.
     function close() {
       if (closed) {
         return;
       }
       closed = true;
-      // A holder's tooltip would outlive its link, which is removed before mouseleave can fire.
+      // A tooltip bound inside the panel would outlive its element, which is removed before mouseleave can fire.
       hideTooltip();
       panel.remove();
       backdrop.remove();
@@ -335,7 +342,30 @@ const UI = (() => {
         openDialog = null;
       }
       release();
+      if (onClose) {
+        onClose();
+      }
     }
+
+    const closeButton = element("button", "ui-badge-panel__close", "×");
+    closeButton.type = "button";
+    closeButton.setAttribute("aria-label", "Close");
+    closeButton.addEventListener("click", close);
+
+    const handle = { element: panel, close };
+    backdrop.addEventListener("click", close);
+    panel.append(closeButton);
+    document.body.append(backdrop, panel);
+    openDialog = handle;
+    const release = holdModal(close);
+    hideTooltip();
+    closeButton.focus();
+    return { panel, close };
+  }
+
+  function badgePanel(definition) {
+    const titleId = `ui-badge-panel-title-${definition.id}`;
+    const { panel, close } = modalPanel({ labelledBy: titleId });
 
     const holders = [];
     participants.players.forEach((player, playerIndex) => {
@@ -344,11 +374,6 @@ const UI = (() => {
       }
     });
     holders.sort((a, b) => a.raceIndex - b.raceIndex || a.playerIndex - b.playerIndex);
-
-    const closeButton = element("button", "ui-badge-panel__close", "×");
-    closeButton.type = "button";
-    closeButton.setAttribute("aria-label", "Close");
-    closeButton.addEventListener("click", close);
 
     const tile = element("span", "ui-badge__tile");
     tile.appendChild(badgeArt(definition, true));
@@ -380,15 +405,8 @@ const UI = (() => {
       body = element("p", "ui-badge-panel__empty", "Nobody has earned this badge yet.");
     }
 
-    const handle = { element: panel, close };
-    backdrop.addEventListener("click", close);
-    panel.append(closeButton, header, body);
-    document.body.append(backdrop, panel);
-    openDialog = handle;
-    const release = holdModal(close);
-    hideTooltip();
-    closeButton.focus();
-    return handle;
+    panel.append(header, body);
+    return { element: panel, close };
   }
 
   function dialogBox(text, { modal = false, onClose = null, duration = DIALOG_DEFAULT_MS } = {}) {
@@ -480,5 +498,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, speech, tag, modeDot, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, dialogBox, comments, chestPace, relativeDay };
+  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, modalPanel, dialogBox, comments, chestPace, relativeDay };
 })();

@@ -1,0 +1,120 @@
+.player-share {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  margin: 0 0 7px 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: 800 var(--text-xs)/1.2 var(--body);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.player-share:hover {
+  color: var(--accent-strong);
+}
+
+.player-share:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.player-share svg {
+  flex: none;
+}
+
+/* Wide enough to show the 600px card at its exported size. */
+.share-card-panel {
+  width: min(680px, 100vw - 32px);
+  max-height: min(90vh, 640px);
+  overflow: auto;
+}
+
+.share-card__hint,
+.share-card__placeholder,
+.share-card__status {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.share-card__hint {
+  padding-right: 28px;
+}
+
+.share-card__frame {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 2 / 1;
+  margin-inline: auto;
+}
+
+.share-card__frame--pending {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+
+.share-card__preview {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.share-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.share-card__action {
+  min-height: 36px;
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--accent);
+  cursor: pointer;
+  font: 800 var(--text-xs)/1 var(--body);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.share-card__action:hover {
+  border-color: var(--accent);
+}
+
+.share-card__action--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-fill);
+}
+
+.share-card__action--primary:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+}
+
+.share-card__action:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.share-card__status {
+  min-height: 1.3em;
+}
+
+@media (max-width: 620px) {
+  .share-card-panel {
+    padding: 16px;
+  }
+
+  .share-card__action {
+    flex: 1 1 auto;
+  }
+}
