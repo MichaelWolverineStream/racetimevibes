@@ -40,7 +40,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - A winner's points never fall.
    - Mode ratings use the overall parameters, untuned. Predictions (win chance, Upset, God Route) always use the overall rating.
    - Finish times never affect the rating.
-   - `β` and `σ₀` were tuned on races before 2026-01-01, so that 2026 results stay out of sample. Do not retune on 2026 data. Use `python3 scripts/ladder_rating.py --backtest` to evaluate.
+   - `β`, `σ₀` and the field-size damping `α` were tuned by `scripts/rating_lab.py` on races before 2026-01-01, so that 2026 results stay out of sample. Do not retune on 2026 data. Use `python3 scripts/ladder_rating.py --backtest` to evaluate.
 9. **All dates, hours and day buckets are in `America/New_York` (Eastern Time).** The `ladder_test` mode is excluded from everything.
 10. **Frontend scripts share one global scope.** No script may touch another script's globals while it loads; see below.
 

@@ -162,49 +162,52 @@ Data freshness is build-time: the dashboard is at most one daily refresh behind 
 
 **Only placement counts.** Finish times are never read, because the game is volatile and a seed's luck says little about skill. A win by one second is worth the same as a win by an hour. Within a race, every pair of entrants is a small match: a finisher beats anyone placed behind them, any finisher beats a DNF or DQ, and two non-finishers, or two racers sharing a place, are skipped. Beat someone you were expected to lose to and the rating moves a lot; beat someone you were expected to beat and it barely moves. Newcomers move the most, because the ladder knows least about them.
 
-The overall rating covers every mode, and each mode also has a rating of its own (see Mode ratings). **Winning never costs points**, and every newcomer shows exactly **1000** and climbs as the ladder gets to know them. **Your recent races matter most**: a race's weight halves after about 13 later races. Nothing decays while you are away.
+The overall rating covers every mode, and each mode also has a rating of its own (see Mode ratings). **Winning never costs points**, and every newcomer shows exactly **1000** and climbs as the ladder gets to know them. **Your recent races matter most**: a race's weight halves after about 14 later races of five racers. A big race moves you less than its number of opponents suggests, because its results all share the same racers. Nothing decays while you are away.
 
 ### Model
 
-This is the Bayesian Bradley-Terry "full pair" model of Weng and Lin (2011), the method behind OpenSkill. Each racer has a skill $\mu$ and an uncertainty $\sigma$, and a newcomer starts at $\mu_0 = 25$, $\sigma_0 = 8$. For every racer $i$, sum over the opponents $q$ they have a decisive pair with, all from the pre-race states, so the update is simultaneous:
+This is the Bayesian Bradley-Terry "full pair" model of Weng and Lin (2011), the method behind OpenSkill. Each racer has a skill $\mu$ and an uncertainty $\sigma$, and a newcomer starts at $\mu_0 = 25$, $\sigma_0 = 12$. For every racer $i$, sum over the opponents $q$ they have a decisive pair with, all from the pre-race states, so the update is simultaneous:
 
 $$c = \sqrt{\sigma_i^2 + \sigma_q^2 + 2\beta^2} \qquad p = \frac{1}{1 + e^{(\mu_q - \mu_i)/c}} \qquad s = 1 \text{ (ahead)},\ 0 \text{ (behind)}$$
 
 $$\Omega = \sum_q \frac{\sigma_i^2}{c}(s - p) \qquad \Delta = \sum_q \frac{\sigma_i}{c} \cdot \frac{\sigma_i^2}{c^2}\, p(1-p)$$
 
-$$\mu_i \leftarrow \mu_i + \Omega \qquad \sigma_i^2 \leftarrow \max\big(\sigma_i^2 \cdot \max(1 - \Delta, \kappa),\ \sigma_{floor}^2\big)$$
+$$d = (n - 1)^{-\alpha} \qquad \mu_i \leftarrow \mu_i + d\,\Omega \qquad \sigma_i^2 \leftarrow \max\big(\sigma_i^2 \cdot \max(1 - d\,\Delta, \kappa),\ \sigma_{floor}^2\big)$$
+
+$d$ damps a race of $n$ entrants by its size. Every pair counts as a match, but a race's pairs share their racers, so they are not independent results: without $d$ a 32-racer race would count as 31 of them, and with $\alpha = \tfrac12$ it counts about as much as 6.
 
 The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags and the head-to-head "Win chance" column, and never uses points. Both always use the overall rating, even with a mode picked (see Mode ratings).
 
 ### Recency
 
-Uncertainty shrinks with every race but never below $\sigma_{floor}$. The floor keeps every race's update above a minimum size, so old races fade by **race count**, not by the calendar: a race's weight halves after about 13 later races, and a racer who is away keeps their points.
+Uncertainty shrinks with every race but never below $\sigma_{floor}$. The floor keeps every race's update above a minimum size, so old races fade by **race count**, not by the calendar, and a racer who is away keeps their points. For a racer at the floor against evenly matched opponents, a race's weight halves after about $\ln 2 / g$ later races of $n$ entrants, where $g = (n-1)^{1-\alpha}\, \sigma_{floor}^2 / \big(4(2\sigma_{floor}^2 + 2\beta^2)\big)$: about 14 races of 5 entrants, 28 of 2 and 5 of 32. Before damping it was the same 14 races of 5, but 55 of 2, and under 2 of 32, so one big race could all but overwrite a rating.
 
 ### Parameters and tuning
 
 | Parameter | Value | Meaning |
 |---|---|---|
-| $\beta$ | 12 | per-match performance noise |
-| $\sigma_0$ | 8 | a newcomer's starting uncertainty |
+| $\beta$ | 8 | per-match performance noise |
+| $\sigma_0$ | 12 | a newcomer's starting uncertainty |
 | $\sigma_{floor}$ | 4 | uncertainty never shrinks below this |
+| $\alpha$ | ½ | field-size damping: a race's update is scaled by $(n-1)^{-\alpha}$ |
 | $\kappa$ | 1e-4 | smallest share of its variance a racer keeps after a race |
 | $\mu_0$ | 25 | a newcomer's starting skill |
 
-$\beta$ and $\sigma_0$ were picked by log loss on races before 2026-01-01 only, over $\beta \in \{8, 10, 12\}$ and $\sigma_0 \in \{6, 8\}$. The floor was not tuned for accuracy: it was set to 4 by choice, for a "livelier" ladder. A veteran's win is worth about +14 points and last place or a DNF about -13. A calmer floor predicts a little better but feels stuck. 2026 races were never used for tuning, so the comparison below is out of sample.
+$\beta$, $\sigma_0$ and $\alpha$ were picked by `scripts/rating_lab.py` from races before 2026-01-01 only, among settings whose veterans move at least as much as the previous rating's ($\beta = 12$, $\sigma_0 = 8$, no damping), and then compared with four other algorithms on 2026 races, once (see Rating comparison). The floor was not tuned for accuracy: it was set to 4 by choice, for a "livelier" ladder. A calmer floor predicts a little better but feels stuck. A veteran's median win is worth +10 points, finishing last in a race without DNFs -9, and a DNF -12. 2026 races were never used for tuning, so the comparison below is out of sample.
 
 ### Points
 
-The displayed points are $1000 + s \cdot (\mu - k\sigma)$, the "conservative rating" idea from TrueSkill and Xbox levels. With $k = \mu_0 / \sigma_0 = 3.125$ a newcomer shows exactly 1000, and as $\sigma$ shrinks the points climb toward $\mu$. The scale $s = 400 / (\ln 10 \cdot \sqrt{2\sigma_{floor}^2 + 2\beta^2}) \approx 9.71$ makes 400 points about 10:1 odds between established racers, as in Elo. The pipeline publishes each racer's points, $\mu$ and $\sigma$ (4 decimal places), overall and in each mode they have raced, and every race entry's points after that race, overall and in the race's mode.
+The displayed points are $1000 + s \cdot (\mu - k\sigma)$, the "conservative rating" idea from TrueSkill and Xbox levels. With $k = \mu_0 / \sigma_0 \approx 2.083$ a newcomer shows exactly 1000, and as $\sigma$ shrinks the points climb toward $\mu$. The scale $s = 400 / (\ln 10 \cdot \sqrt{2\sigma_{floor}^2 + 2\beta^2}) \approx 13.73$ makes 400 points about 10:1 odds between established racers, as in Elo. The pipeline publishes each racer's points, $\mu$ and $\sigma$ (4 decimal places), overall and in each mode they have raced, and every race entry's points after that race, overall and in the race's mode.
 
 ### The guarantee
 
-A winner's points never fall. Every pair a winner is in is decided in their favour, so $\Omega > 0$ and $\mu$ rises; $\sigma$ never rises, so $\mu - k\sigma$ rises too, and rounding is monotone. Finish times have no effect at all. Tests enforce both across every archived race, for the overall rating and for every mode rating.
+A winner's points never fall. Every pair a winner is in is decided in their favour, so $\Omega > 0$, and $d > 0$, so $\mu$ rises; $\sigma$ never rises, so $\mu - k\sigma$ rises too, and rounding is monotone. Finish times have no effect at all. Tests enforce both across every archived race, for the overall rating and for every mode rating.
 
 ### Mode ratings
 
 Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode.
 
-Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.541 against 0.553 (see Backtest). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and God Route's top-rated racer always use the overall rating.
+Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.534 against 0.547 (see Backtest). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and God Route's top-rated racer always use the overall rating.
 
 ### What racetime.gg does differently
 
@@ -217,16 +220,16 @@ racetime.gg runs TrueSkill with default parameters on finishing order only, ties
 ```text
                                      pairs  accuracy  log loss
 From 2026-01-01 (out of sample)
-  ladder rating                     47,518     0.723     0.541
-  ladder rating, own mode only      47,518     0.716     0.553
-  racetime.gg recorded score        47,518     0.695     0.587  best-fit logistic, in-sample
+  ladder rating                     47,576     0.728     0.534
+  ladder rating, own mode only      47,576     0.720     0.547
+  racetime.gg recorded score        47,576     0.695     0.587  best-fit logistic, in-sample
 Before 2026-01-01 (tuning period)
-  ladder rating                     26,796     0.703     0.562
-  ladder rating, own mode only      26,796     0.683     0.585
+  ladder rating                     26,796     0.707     0.555
+  ladder rating, own mode only      26,796     0.687     0.580
   racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
-Winners who lost points: 0 of 3,256
-Mode winners who lost points: 0 of 3,256
-Median veteran move per race (past race 50): 9 points
+Winners who lost points: 0 of 3,258
+Mode winners who lost points: 0 of 3,258
+Median veteran move per race (past race 50): 8 points
 ```
 
 ### Trade-offs
@@ -236,7 +239,8 @@ Median veteran move per race (past race 50): 9 points
 - A mode rating knows only its mode: a racer strong elsewhere starts a new mode at 1000 and climbs like any newcomer.
 - Early on, even a loss can add points, because uncertainty falls faster than skill.
 - Clearly weaker racers still drift down, because the number stays honest.
-- Predictions trail the old margin-based model slightly (73.3% against 72.2% of 2026 pairs), in exchange for no lost winners and scores that climb. They stay well ahead of racetime.gg's.
+- A big race moves a rating less than its number of opponents suggests. Damping trades the swing of a large field for steadier, more accurate ratings.
+- Predictions trail the old margin-based model slightly (73.3% against 72.8% of 2026 pairs), in exchange for no lost winners and scores that climb. They stay well ahead of racetime.gg's.
 
 ## Highlights
 
@@ -248,7 +252,7 @@ Within a race, tags appear in the order record, first win, upset, photo, PB, mil
 
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
 - **First win:** the racer's first place-1 result in any mode.
-- **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite. 4.5% of races qualify.
+- **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite. 3.7% of races qualify.
 - **Photo finish:** places 1 and 2 are both timed finishers separated by less than 5 seconds. The margin uses the exact times.
 - **PB:** a strict improvement, in whole seconds, on the racer's previous best timed finish in the same mode. The first timed finish in a mode is the baseline and is not tagged.
 - **Milestone:** the racer's entry count, in any status, reaches 25, 50, 100, 250, 500 or 1000.
@@ -375,7 +379,7 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 ## Rating comparison
 
-`scripts/rating_lab.py` compares other rating algorithms with the ladder rating, on the backtest's pairs and under the ladder's promises. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. Adopting a result is a separate change to `ladder_rating.py`.
+`scripts/rating_lab.py` compares other rating algorithms with the ladder rating, on the backtest's pairs and under the ladder's promises. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. Its recommendation, the retune below, was adopted on 2026-11-01. Throughout this section, **shipped** means the rating it was compared with ($\beta = 12$, $\sigma_0 = 8$, floor 4, no damping), which the lab keeps as its baseline so the comparison stays reproducible.
 
 ```bash
 python3 scripts/rating_lab.py --tune               # each candidate's setting, from races before 2026 (several minutes)
@@ -463,7 +467,7 @@ BT partial pair        β5 σ₀40 floor 4                     0.693    0.5875  
 racetime.gg score                                          0.695    0.5871  best-fit logistic, in-sample
 ```
 
-- **Recommendation: retune the ladder rating to β 8, σ₀ 12, floor 4, with field-size damping α ½.**
+- **Recommendation: retune the ladder rating to β 8, σ₀ 12, floor 4, with field-size damping α ½.** Adopted on 2026-11-01. The production backtest reproduces the retuned line exactly.
   - It is better in both halves of 2026: −0.0059 and −0.0090.
   - It is better in every experience bucket and every field size.
   - It is better in every mode with more than 300 pairs, except mystery, where it ties.

@@ -47,6 +47,9 @@ Result on the archive as of 2026-11-01, run once with CHOSEN frozen:
     BT partial pair   47,576     0.693    0.5875  +0.0461 (+0.0396, +0.0530)
     Every candidate kept every promise, overall and in every mode.
     Recommendation: retune to beta 8, sigma0 12, floor 4, alpha 0.5.
+
+The retune was adopted: `ladder_rating` now runs the retuned setting, and
+SHIPPED keeps the rating it was compared with.
 """
 
 from __future__ import annotations
@@ -156,11 +159,6 @@ def by_mode(
     return Result(pre, post, result.win_chance, result.display)
 
 
-def _damping(entries: list[Any], alpha: float) -> float:
-    """Return the scale of one race's update, (entrants - 1) ** -alpha; 1 with alpha 0."""
-    return max(len(entries) - 1, 1) ** -alpha
-
-
 LOGISTIC_TEN_TO_ONE = math.log(10)  # the skill gap, in units of c, that a logistic chance makes 10:1
 NORMAL_TEN_TO_ONE = NormalDist().inv_cdf(10 / 11)  # the same gap under a normal chance
 
@@ -195,31 +193,14 @@ def _bradley_terry_full(
     alpha: float,
     kappa: float = KAPPA,
 ) -> None:
-    """`ladder_rating._update_race`, with the update scaled by `_damping`.
+    """The ladder rating's own update, which took its damping from this comparison.
 
-    With alpha 0 it is the shipped update, operation for operation. Damping
-    multiplies a winner's positive omega by a positive number, so a winner's
-    mean still rises and the guarantee holds.
+    Damping multiplies a winner's positive omega by a positive number, so a
+    winner's mean still rises and the guarantee holds.
     """
-    damping = _damping(entries, alpha)
-    old = [(mean, variance) for mean, variance in states]
-    floor_variance = sigma_floor * sigma_floor
-    for i, (mean_i, variance_i) in enumerate(old):
-        omega = 0.0
-        delta = 0.0
-        for q, (mean_q, variance_q) in enumerate(old):
-            if q == i:
-                continue
-            score = ladder_rating._outcome(entries[i], entries[q])
-            if score is None:
-                continue
-            c = math.sqrt(variance_i + variance_q + 2 * beta * beta)
-            chance = 1 / (1 + math.exp((mean_q - mean_i) / c))
-            omega += variance_i / c * (score - chance)
-            delta += math.sqrt(variance_i) / c * variance_i / (c * c) * chance * (1 - chance)
-        shrunk = max(variance_i * max(1 - damping * delta, kappa), floor_variance)
-        states[i][0] = mean_i + damping * omega
-        states[i][1] = min(variance_i, shrunk)
+    ladder_rating._update_race(
+        states, entries, beta=beta, sigma_floor=sigma_floor, kappa=kappa, alpha=alpha
+    )
 
 
 def rate_bradley_terry_full(
@@ -294,7 +275,7 @@ def _thurstone_mosteller(
     delta is a sum of w >= 0 terms because v(x) + x >= 0, so no variance rises.
     Damping is positive and leaves both signs alone.
     """
-    damping = _damping(entries, alpha)
+    damping = ladder_rating._damping(entries, alpha)
     old = [(mean, variance) for mean, variance in states]
     omegas = [0.0] * len(old)
     deltas = [0.0] * len(old)
@@ -374,7 +355,7 @@ def _bradley_terry_partial(
     every term of omega is (1 - chance) > 0 or absent, and every term of delta
     is chance * (1 - chance) >= 0. A race with no decided pair changes nothing.
     """
-    damping = _damping(entries, alpha)
+    damping = ladder_rating._damping(entries, alpha)
     old = [(mean, variance) for mean, variance in states]
     omegas = [0.0] * len(old)
     deltas = [0.0] * len(old)
@@ -434,7 +415,7 @@ def _plackett_luce(
     sum of r * (1 - r) >= 0. Without the view a stronger co-winner's omega
     could go negative.
     """
-    damping = _damping(entries, alpha)
+    damping = ladder_rating._damping(entries, alpha)
     old = [(mean, variance) for mean, variance in states]
     ranks = [
         place if ladder_rating._is_finisher(place, status) else math.inf for _player, place, status, _seconds in entries
@@ -508,7 +489,7 @@ def _elo(
     never falls: their pairs are wins or undecided, each adds K * (1 - E) with E
     below 1, and K and the damping are positive.
     """
-    damping = _damping(entries, alpha)
+    damping = ladder_rating._damping(entries, alpha)
     old = [(rating, races) for rating, races in states]
     for i, (rating_i, races_i) in enumerate(old):
         surprise = 0.0
@@ -565,12 +546,10 @@ class Family:
         return settings
 
 
-SHIPPED = {
-    "beta": ladder_rating.BETA,
-    "sigma0": ladder_rating.SIGMA0,
-    "sigma_floor": ladder_rating.SIGMA_FLOOR,
-    "alpha": 0.0,
-}
+# The ladder rating as shipped when this comparison ran, before the retune it
+# recommended: the baseline every delta is measured against. It is written out,
+# not read from `ladder_rating`, so the comparison stays reproducible.
+SHIPPED = {"beta": 12.0, "sigma0": 8.0, "sigma_floor": 4.0, "alpha": 0.0}
 # Pre-registered as beta 8-20, sigma0 6-10 and floor 2-6. The first tuning run
 # chose beta 8, sigma0 6 and 10, and floor 6, all grid edges, so the edge rule
 # extended them before any later race was scored.

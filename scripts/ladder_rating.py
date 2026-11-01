@@ -5,7 +5,7 @@ The model in plain words
 ------------------------
 Only placement counts. Finish times are never read, so a win by one second and
 a win by an hour are worth the same. Every racer has a skill estimate (a mean
-mu) and an uncertainty (sigma). A newcomer starts at mu 25, sigma 8. The overall
+mu) and an uncertainty (sigma). A newcomer starts at mu 25, sigma 12. The overall
 rating covers every mode. Each mode also has its own rating (`rate_by_mode`):
 the same model and parameters on that mode's races alone, so a racer debuts at
 the starting rating in every mode. Predictions use the overall rating, which
@@ -20,10 +20,16 @@ upsets and newcomers move the most. This is the Bayesian Bradley-Terry
 "full pair" model of Weng and Lin (2011), the method behind OpenSkill. All
 racers in a race are updated at once from their pre-race states.
 
+A race's pairs share their racers, so they are not independent results. The
+whole update of a race is damped by (entrants - 1) ** -ALPHA: with ALPHA 0.5 a
+32-racer race counts about as much as 6 independent results, not 31.
+
 Recency comes from race count, not the calendar. Uncertainty shrinks with every
 race but never below SIGMA_FLOOR, which keeps every race's update above a
-minimum: a race's weight halves after about 13 later races. Nothing decays
-while a racer is away.
+minimum. For a racer at the floor against evenly matched opponents, a race's
+weight halves after about ln 2 / g later races, where g = (n - 1) ** (1 - ALPHA)
+* floor^2 / (4 (2 floor^2 + 2 BETA^2)) for races of n entrants: about 14 races
+of 5 entrants, 28 of 2 and 5 of 32. Nothing decays while a racer is away.
 
 The displayed points are BASE + SCALE * (mu - K * sigma), the "conservative
 rating" of TrueSkill and Xbox levels. K is MU0 / SIGMA0, so every newcomer
@@ -35,8 +41,9 @@ Points are never used to predict.
 The guarantee
 -------------
 A winner's points never fall. Every pair a winner is in is decided in their
-favour, so their mean rises; sigma never rises, so mu - K * sigma rises too, and
-rounding is monotone. Finish times have no effect at all. Tests enforce both.
+favour, so their mean rises, and damping scales that rise by a positive number;
+sigma never rises, so mu - K * sigma rises too, and rounding is monotone. Finish
+times have no effect at all. Tests enforce both.
 
 Why not racetime.gg's rating
 ----------------------------
@@ -61,28 +68,28 @@ The report also counts winners whose displayed points fell, overall and in
 their race's mode (the guarantee says none), and the median points a veteran
 (past their 50th race) moves per race.
 
-BETA and SIGMA0 were picked by log loss on races before OUT_OF_SAMPLE_START
-only (the archive starts 2025-04-20), over BETA in {8, 10, 12} and SIGMA0 in
-{6, 8}. SIGMA_FLOOR was not tuned for accuracy: the user chose a "livelier"
-ladder, where a veteran's win is worth about +14 points and last place or a DNF
-about -13, over a calmer floor that predicts a little better. Accuracy and log
-loss therefore trail the old margin model slightly, in exchange for no lost
-winners.
+BETA, SIGMA0 and ALPHA were picked by `rating_lab.py` from races before
+OUT_OF_SAMPLE_START only (the archive starts 2025-04-20), among settings whose
+veterans move at least as much as the previous rating's (BETA 12, SIGMA0 8, no
+damping), and then compared with four other algorithms on 2026 races, once.
+SIGMA_FLOOR was not tuned for accuracy: the user chose a "livelier" ladder over
+a calmer floor that predicts a little better. A veteran's median win is worth
++10 points, finishing last in a race without DNFs -9, and a DNF -12.
 
 Result on the archive as of 2026-11-01:
 
                                          pairs  accuracy  log loss
     From 2026-01-01 (out of sample)
-      ladder rating                     47,518     0.723     0.541
-      ladder rating, own mode only      47,518     0.716     0.553
-      racetime.gg recorded score        47,518     0.695     0.587  best-fit logistic, in-sample
+      ladder rating                     47,576     0.728     0.534
+      ladder rating, own mode only      47,576     0.720     0.547
+      racetime.gg recorded score        47,576     0.695     0.587  best-fit logistic, in-sample
     Before 2026-01-01 (tuning period)
-      ladder rating                     26,796     0.703     0.562
-      ladder rating, own mode only      26,796     0.683     0.585
+      ladder rating                     26,796     0.707     0.555
+      ladder rating, own mode only      26,796     0.687     0.580
       racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
-    Winners who lost points: 0 of 3,256
-    Mode winners who lost points: 0 of 3,256
-    Median veteran move per race (past race 50): 9 points
+    Winners who lost points: 0 of 3,258
+    Mode winners who lost points: 0 of 3,258
+    Median veteran move per race (past race 50): 8 points
 """
 
 from __future__ import annotations
@@ -96,9 +103,10 @@ from pathlib import Path
 from typing import Any
 
 
-BETA = 12.0  # per-match performance noise, in skill units
-SIGMA0 = 8.0  # a newcomer's starting uncertainty
+BETA = 8.0  # per-match performance noise, in skill units
+SIGMA0 = 12.0  # a newcomer's starting uncertainty
 SIGMA_FLOOR = 4.0  # uncertainty never shrinks below this
+ALPHA = 0.5  # field-size damping: a race's update is scaled by (entrants - 1) ** -ALPHA
 KAPPA = 1e-4  # smallest share of its variance a racer keeps after one race
 MU0 = 25.0  # a newcomer's starting skill
 BASE = 1000
@@ -193,6 +201,11 @@ class ModeRatings(_Ratings):
     players: dict[int, list[PlayerRating | None]]
 
 
+def _damping(entries: list[Any], alpha: float) -> float:
+    """Return the scale of one race's update, (entrants - 1) ** -alpha; 1 with alpha 0."""
+    return max(len(entries) - 1, 1) ** -alpha
+
+
 def _update_race(
     states: list[list[float]],
     entries: list[Any],
@@ -200,8 +213,15 @@ def _update_race(
     beta: float,
     sigma_floor: float,
     kappa: float,
+    alpha: float,
 ) -> None:
-    """Update the `[mean, variance]` states in place, every racer from the pre-race states."""
+    """Update the `[mean, variance]` states in place, every racer from the pre-race states.
+
+    Every pair counts as a match, but a race's pairs share their racers, so the
+    whole update is damped by the field size: without it a 32-racer race would
+    count as 31 independent results.
+    """
+    damping = _damping(entries, alpha)
     old = [(mean, variance) for mean, variance in states]
     floor_variance = sigma_floor * sigma_floor
     for i, (mean_i, variance_i) in enumerate(old):
@@ -218,12 +238,12 @@ def _update_race(
             omega += variance_i / c * (score - chance)
             delta += math.sqrt(variance_i) / c * variance_i / (c * c) * chance * (1 - chance)
         # Uncertainty only ever shrinks, and not below the floor.
-        shrunk = max(variance_i * max(1 - delta, kappa), floor_variance)
-        states[i][0] = mean_i + omega
+        shrunk = max(variance_i * max(1 - damping * delta, kappa), floor_variance)
+        states[i][0] = mean_i + damping * omega
         states[i][1] = min(variance_i, shrunk)
 
 
-def _params(*, beta: float, sigma0: float, sigma_floor: float, kappa: float) -> JsonObject:
+def _params(*, beta: float, sigma0: float, sigma_floor: float, kappa: float, alpha: float) -> JsonObject:
     """Return the published parameters, shared by the overall and the mode ratings."""
     return {
         "model": "bradley-terry",
@@ -235,6 +255,7 @@ def _params(*, beta: float, sigma0: float, sigma_floor: float, kappa: float) -> 
         "sigma0": sigma0,
         "sigma_floor": sigma_floor,
         "kappa": kappa,
+        "alpha": alpha,
         "provisional_finishes": PROVISIONAL_FINISHES,
     }
 
@@ -247,6 +268,7 @@ def rate(
     sigma0: float = SIGMA0,
     sigma_floor: float = SIGMA_FLOOR,
     kappa: float = KAPPA,
+    alpha: float = ALPHA,
 ) -> RatingResult:
     """Rate every racer over chronological C1 race records.
 
@@ -269,7 +291,7 @@ def rate(
         players = [entry[0] for entry in entries]
         pre.append([(means[player], variances[player]) for player in players])
         states = [[means[player], variances[player]] for player in players]
-        _update_race(states, entries, beta=beta, sigma_floor=sigma_floor, kappa=kappa)
+        _update_race(states, entries, beta=beta, sigma_floor=sigma_floor, kappa=kappa, alpha=alpha)
         post.append([(mean, variance) for mean, variance in states])
 
         for (player, place, status, _seconds), (mean, variance) in zip(entries, states):
@@ -278,7 +300,7 @@ def rate(
             if _is_finisher(place, status):
                 finishes[player] += 1
 
-    params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa)
+    params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa, alpha=alpha)
     result = RatingResult(pre=pre, post=post, players=[], params=params)
     players = [
         None
@@ -303,6 +325,7 @@ def rate_by_mode(
     sigma0: float = SIGMA0,
     sigma_floor: float = SIGMA_FLOOR,
     kappa: float = KAPPA,
+    alpha: float = ALPHA,
 ) -> ModeRatings:
     """Rate every racer separately in each mode, over chronological C1 race records.
 
@@ -321,12 +344,13 @@ def rate_by_mode(
             sigma0=sigma0,
             sigma_floor=sigma_floor,
             kappa=kappa,
+            alpha=alpha,
         )
         for index, race_pre, race_post in zip(indexes, result.pre, result.post):
             pre[index] = race_pre
             post[index] = race_post
         players[mode] = result.players
-    params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa)
+    params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa, alpha=alpha)
     return ModeRatings(pre=pre, post=post, players=players, params=params)
 
 

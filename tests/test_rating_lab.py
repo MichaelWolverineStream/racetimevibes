@@ -73,42 +73,34 @@ def score(pairs, loss):
 
 
 class ReplayTests(unittest.TestCase):
-    def test_the_shipped_setting_reproduces_ladder_rating(self):
+    """The retune this comparison recommended was adopted, so its setting must be the ladder rating."""
+
+    def adopted(self):
+        return rating_lab.CHOSEN[rating_lab.RETUNED]
+
+    def test_the_adopted_setting_is_the_ladder_rating(self):
         races = mixed_league()
-        shipped = ladder_rating.rate(races, 7)
-        lab = rating_lab.rate_shipped(races, 7)
-        self.assertEqual(lab.pre, shipped.pre)
-        self.assertEqual(lab.post, shipped.post)
+        ladder = ladder_rating.rate(races, 7)
+        lab = rating_lab.rate_bradley_terry_full(races, 7, **self.adopted())
+        self.assertEqual(lab.pre, ladder.pre)
+        self.assertEqual(lab.post, ladder.post)
         for race in lab.post:
             for state in race:
-                self.assertEqual(lab.display(state), shipped.display(state))
-                self.assertEqual(lab.win_chance(state, race[0]), shipped.win_chance(state, race[0]))
+                self.assertEqual(lab.display(state), ladder.display(state))
+                self.assertEqual(lab.win_chance(state, race[0]), ladder.win_chance(state, race[0]))
 
-    def test_by_mode_reproduces_ladder_rating_by_mode(self):
+    def test_the_adopted_setting_is_the_ladder_rating_by_mode(self):
         races = mixed_league()
-        shipped = ladder_rating.rate_by_mode(races, 7)
-        lab = rating_lab.by_mode(rating_lab.rate_bradley_terry_full, races, 7, **rating_lab.SHIPPED)
-        self.assertEqual((lab.pre, lab.post), (shipped.pre, shipped.post))
+        ladder = ladder_rating.rate_by_mode(races, 7)
+        lab = rating_lab.by_mode(rating_lab.rate_bradley_terry_full, races, 7, **self.adopted())
+        self.assertEqual((lab.pre, lab.post), (ladder.pre, ladder.post))
 
-    def test_alpha_zero_is_the_shipped_update_operation_for_operation(self):
-        rng = random.Random(11)
-        for size in (2, 3, 7, 16):
-            entries = finished(range(size - 1)) + [dnf(size - 1)]
-            states = [[rng.uniform(-20, 70), rng.uniform(16, 64)] for _ in range(size)]
-            ours = [list(state) for state in states]
-            rating_lab._bradley_terry_full(ours, entries, beta=12.0, sigma_floor=4.0, alpha=0.0)
-            ladder_rating._update_race(states, entries, beta=12.0, sigma_floor=4.0, kappa=ladder_rating.KAPPA)
-            self.assertEqual(ours, states)
-
-    def test_damping_scales_the_update_by_the_field_size(self):
-        entries = finished(range(5))
-        start = [[25.0, 64.0] for _ in range(5)]
-        plain = [list(state) for state in start]
-        damped = [list(state) for state in start]
-        rating_lab._bradley_terry_full(plain, entries, beta=12.0, sigma_floor=0.0, alpha=0.0)
-        rating_lab._bradley_terry_full(damped, entries, beta=12.0, sigma_floor=0.0, alpha=1.0)
-        for before, full, scaled in zip(start, plain, damped):
-            self.assertAlmostEqual(scaled[0] - before[0], (full[0] - before[0]) / 4, places=12)
+    def test_the_baseline_is_the_rating_before_the_retune(self):
+        races = mixed_league()
+        before = ladder_rating.rate(races, 7, beta=12.0, sigma0=8.0, sigma_floor=4.0, alpha=0.0)
+        baseline = rating_lab.rate_shipped(races, 7)
+        self.assertEqual((baseline.pre, baseline.post), (before.pre, before.post))
+        self.assertNotEqual(baseline.post, ladder_rating.rate(races, 7).post)
 
     def test_the_display_scale_follows_the_setting(self):
         display = rating_lab._weng_lin_display(beta=12.0, sigma0=8.0, sigma_floor=4.0)
@@ -786,10 +778,12 @@ class DecisionTests(unittest.TestCase):
 
 
 class ArchiveTests(unittest.TestCase):
-    def test_the_shipped_setting_reproduces_the_backtest(self):
+    def test_the_adopted_setting_reproduces_the_backtest(self):
         records, player_count, _scores = ladder_rating._backtest_records(REPO_ROOT / "archive")
         report = ladder_rating.backtest(REPO_ROOT / "archive")
-        result = rating_lab.rate_shipped(records, player_count)
+        result = rating_lab.rate_bradley_terry_full(
+            records, player_count, **rating_lab.CHOSEN[rating_lab.RETUNED]
+        )
         for period, (ours, _racetime) in (
             ([i for i, r in enumerate(records) if r["d"] >= rating_lab.OUT_OF_SAMPLE_START], report.evaluation),
             ([i for i, r in enumerate(records) if r["d"] < rating_lab.OUT_OF_SAMPLE_START], report.tuning),

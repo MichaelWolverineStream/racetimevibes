@@ -9,6 +9,26 @@ from scripts import ladder_rating
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DONE, DNF = 0, 1
 
+# One update from these (mu, sigma) pre-states, listed in finishing order, by openskill 6.2.0's
+# BradleyTerryFull with beta 12, kappa 1e-4 and tau 0: (mu, sigma^2) after the race. Generated
+# outside the repository; the same values come from tests/test_rating_lab.py's golden races.
+GOLDEN_RACES = [
+    [(25.0, 8.0), (25.0, 8.0)],
+    [(31.5, 5.2), (40.0, 4.5), (18.0, 7.9)],
+    [(22.0, 6.0), (35.0, 4.2), (28.0, 7.0), (10.0, 5.5), (45.0, 4.8)],
+    [(25.0, 4.5), (22.0, 4.9), (31.0, 5.3), (16.0, 5.7), (37.0, 6.1), (10.0, 6.5), (43.0, 6.9), (4.0, 7.300000000000001), (49.0, 7.7)],
+    [(3.5, 5.0), (6.600000000000001, 5.199999999999999), (9.699999999999996, 5.4), (12.799999999999997, 5.6), (15.899999999999999, 5.8), (19.0, 6.0), (22.099999999999998, 6.2), (25.2, 6.4), (28.3, 6.6), (31.4, 6.8), (34.5, 7.0), (37.6, 7.2), (40.7, 7.4), (43.8, 7.6), (46.9, 7.8), (50.0, 8.0)],
+    [(0.0, 6.5), (60.0, 4.1), (30.0, 5.0), (-10.0, 7.5), (75.0, 4.3)],
+]
+GOLDEN_BRADLEY_TERRY_FULL = [
+    [(26.568929081105473, 63.03450518085817), (23.431070918894527, 63.03450518085817)],
+    [(32.87011908791643, 26.778079777992346), (39.57531961092996, 20.13135695141036), (16.146534492525067, 60.68749731194608)],
+    [(26.53683064940736, 34.99002672790589), (35.557211676994946, 17.461610453157537), (28.026414530616762, 46.83371773696584), (10.087966515476616, 29.711485510180843), (41.28922153315085, 22.749325210667013)],
+    [(29.48007962877167, 19.756743829930496), (26.377571359269332, 23.270511892870694), (33.15316272543612, 27.01542427182095), (19.425134141052055, 31.028998708172963), (34.70551410692683, 35.21268721227322), (11.234179994991344, 39.74434270325757), (33.84670010679288, 44.3392160636341), (1.511742425967891, 49.457886881296744), (30.369041216728547, 54.46110292978387)],
+    [(18.643722044409138, 23.826130915295877), (20.78669302659439, 25.5225184430325), (22.611753720557154, 27.23451374374872), (24.101526701458678, 28.960017293678373), (25.24126285971751, 30.699333209610987), (26.01906800806335, 32.45549868155635), (26.426025626452457, 34.23448412671785), (26.45621203851286, 36.04524078971757), (26.106605401734008, 37.8995775320407), (25.376893887492898, 39.81185482553355), (24.26919193542492, 41.798493670781305), (22.787677107346326, 43.87731177897722), (20.938164124317126, 46.06671854982526), (18.727636918727864, 48.38482149377), (16.163763261537294, 50.848515199926126), (13.254418765960303, 53.47263450059052)],
+    [(7.0726490708841805, 41.55114236097477), (59.954741338588484, 16.731167253532114), (30.08699404209417, 24.78338024094367), (-8.551824473284668, 55.06647698371106), (71.41418406179584, 18.412802533339665)],
+]
+
 
 def record(entries, name="alttpr-ladder/race", mode=0, mode_name="open"):
     return {
@@ -124,6 +144,39 @@ class RatingUpdateTests(unittest.TestCase):
         result = ladder_rating.rate([record([(0, 1, DONE, 3000.0), dnf(1)])], 2)
         self.assertGreater(move(result, 0, 0), 0)
 
+    def test_without_damping_the_update_matches_the_openskill_reference(self):
+        for race, expected in zip(GOLDEN_RACES, GOLDEN_BRADLEY_TERRY_FULL):
+            states = [[mu, sigma * sigma] for mu, sigma in race]
+            entries = [(player, place, DONE, None) for place, player in enumerate(range(len(race)), start=1)]
+            ladder_rating._update_race(
+                states, entries, beta=12.0, sigma_floor=0.0, kappa=ladder_rating.KAPPA, alpha=0.0
+            )
+            for (mean, variance), (golden_mean, golden_variance) in zip(states, expected):
+                self.assertAlmostEqual(mean, golden_mean, places=9)
+                self.assertAlmostEqual(variance, golden_variance, places=9)
+
+    def test_damping_scales_a_race_by_its_field_size(self):
+        for size in (2, 5, 17):
+            entries = finished([3000 + 60 * place for place in range(size)])
+            start = [[25.0, 64.0] for _ in range(size)]
+            plain = [list(state) for state in start]
+            damped = [list(state) for state in start]
+            common = {"beta": ladder_rating.BETA, "sigma_floor": 0.0, "kappa": ladder_rating.KAPPA}
+            ladder_rating._update_race(plain, entries, alpha=0.0, **common)
+            ladder_rating._update_race(damped, entries, alpha=ladder_rating.ALPHA, **common)
+            scale = (size - 1) ** -ladder_rating.ALPHA
+            for before, full, scaled in zip(start, plain, damped):
+                self.assertAlmostEqual(scaled[0] - before[0], scale * (full[0] - before[0]), places=12)
+                self.assertAlmostEqual(
+                    1 - scaled[1] / before[1], scale * (1 - full[1] / before[1]), places=12
+                )
+
+    def test_the_published_rating_is_damped(self):
+        entries = finished([3000, 3300, 3600, 3900, 4200])
+        damped = ladder_rating.rate([record(entries)], 5)
+        undamped = ladder_rating.rate([record(entries)], 5, alpha=0.0)
+        self.assertAlmostEqual(move(damped, 0, 0), move(undamped, 0, 0) / 2, places=12)
+
 
 class RatingResultTests(unittest.TestCase):
     def test_win_chances_are_complementary_and_favour_the_higher_mean(self):
@@ -137,12 +190,13 @@ class RatingResultTests(unittest.TestCase):
         params = ladder_rating.rate(league(1), 5).params
         self.assertEqual(
             set(params),
-            {"model", "base", "scale", "k", "mu0", "beta", "sigma0", "sigma_floor", "kappa",
+            {"model", "base", "scale", "k", "mu0", "beta", "sigma0", "sigma_floor", "kappa", "alpha",
              "provisional_finishes"},
         )
         self.assertEqual(params["model"], "bradley-terry")
-        self.assertAlmostEqual(params["k"], 3.125)
-        self.assertAlmostEqual(params["scale"], 9.7111, places=3)
+        self.assertEqual(params["alpha"], 0.5)
+        self.assertAlmostEqual(params["k"], 25 / 12)
+        self.assertAlmostEqual(params["scale"], 13.7336, places=3)
 
     def test_a_rating_is_provisional_below_five_finishes(self):
         result = ladder_rating.rate(league(4), 5)
