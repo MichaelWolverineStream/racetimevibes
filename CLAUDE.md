@@ -3,7 +3,7 @@
 This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 - Python scripts in `scripts/` sync raw races into `archive/` and build JSON datasets into `site/data/`.
 - `site/` is a no-build HTML/CSS/JS page, deployed to GitHub Pages.
-- `README.md` is the full spec. `Badge_Guide.md` explains how to add or remove a badge.
+- `README.md` is the full spec. `Badge_Guide.md` explains how to add or remove a badge. `Analyses.md` documents the standalone analyses: mode overlap and the rating comparison.
 
 ## The most important rules
 

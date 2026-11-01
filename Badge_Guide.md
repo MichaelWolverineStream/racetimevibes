@@ -23,7 +23,7 @@ Each `Badge` row has exactly one rule:
 - **Counter badge:** `progress=` takes a `_Player` and returns the best value so far, such as a best run or a total. The badge unlocks when that value reaches `target`. Until then, a target above 1 shows a progress border.
 - **One-race badge:** `earned=` takes a `_Moment` and returns `True` when that single result earns the badge.
 
-Badges are recomputed from the whole archive on every build and are never taken away. A new badge therefore goes to every racer who already qualifies. The feed's "New badges" panel shows only unlocks from races in the last 7 days, so it doesn't fill up with old results.
+Badges are recomputed from the whole archive on every build and are never taken away. A new badge therefore goes to every racer who already qualifies. The sidebar's "Latest badges" panel lists the 12 most recent unlocks, newest race first, so a new badge's old unlocks appear there only if they are among those 12.
 
 ## Add a badge
 
