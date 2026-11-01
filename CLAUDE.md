@@ -71,7 +71,7 @@ The scripts are classic `<script defer>` files that share one global scope. They
 - **Use another script's globals only inside functions that run later**: render, init or event handlers. Never use them at a file's top level, or at the top level of an IIFE body.
   - Why: if `const X = (() => …)()` throws, `X` can never be read again. Even `typeof X !== "undefined"` then throws. The `typeof Feed`, `typeof Records` and `typeof RacerExtras` checks in `leaderboard.js` would take down `loadParticipants`.
 - **Module shape:**
-  - A feature with an API is `const Name = (() => { …; return { … }; })();`. Examples: `UI`, `Feed`, `Records`, `RacerExtras`, `EasterEggs`, `Store`, `Following`.
+  - A feature with an API is `const Name = (() => { …; return { … }; })();`. Examples: `UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `EasterEggs`, `Store`, `Following`.
   - A self-running script is a bare `(() => { … })();`. Examples: `version-check.js`, `visitor-counter.js`.
   - Declare at the top level only helpers meant to be shared.
   - `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
@@ -80,6 +80,7 @@ The scripts are classic `<script defer>` files that share one global scope. They
 
 - **`app.js`** is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, and formatters such as `formatModeName`.
 - **`leaderboard.js`** owns the data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
+  - `ratingCategories()` is the one definition of a rating category: overall plus every mode except `unknown`. The top-rated banner and the featured daily racer both use it.
 - **`ui.js`** exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
 - **The private `element(tag, className, text)` copies** in `ui.js`, `feed.js`, `records.js`, `racer-extras.js` and `share-card.js` are deliberate. Sharing one would need either a dependency at load time or renaming about 140 call sites.
 

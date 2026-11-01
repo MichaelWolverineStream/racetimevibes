@@ -444,7 +444,8 @@
 }
 
 .feed-racer__meta,
-.feed-racer__streak {
+.feed-racer__streak,
+.feed-racer__note {
   margin: 2px 0 0;
   font-size: var(--text-xs);
 }
@@ -456,6 +457,11 @@
 .feed-racer__streak {
   color: var(--gold-ink);
   font-weight: 800;
+}
+
+.feed-racer__note {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .feed-fact {

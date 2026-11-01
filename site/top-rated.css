@@ -1,0 +1,196 @@
+/* Top-rated banner */
+
+.top-rated {
+  position: relative;
+  margin-top: 24px;
+  padding: 14px 14px 8px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  animation: arrive 500ms 140ms ease-out both;
+}
+
+/* A gold tab riding the top border, so the tiles get the whole row. */
+.top-rated__title {
+  position: absolute;
+  top: -12px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 3px 10px 2px;
+  border-radius: var(--radius);
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: var(--text-sm);
+  line-height: 1.2;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Overflow-x clips vertically too, so the top padding leaves room for the crowns. */
+.top-rated__list {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 0 2px;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-color: var(--line) transparent;
+}
+
+/* Tiles */
+
+/* Tiles size to their names and never squeeze them; a row too wide for the screen scrolls instead. */
+.top-rated__tile {
+  --tile-bg: var(--paper);
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px 5px 8px;
+  border-left: 3px solid var(--tile-color);
+  border-radius: var(--radius);
+  background: var(--tile-bg);
+}
+
+.top-rated__tile--overall {
+  --tile-bg: color-mix(in srgb, var(--gold) 14%, var(--panel));
+  background:
+    linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.75) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
+    var(--tile-bg);
+  animation: top-rated-shine 1200ms 700ms ease-out both;
+}
+
+.top-rated__tile--overall .top-rated__rating {
+  color: var(--gold-ink);
+}
+
+/* Avatars and crown */
+
+.top-rated__avatars {
+  position: relative;
+  display: flex;
+  flex: none;
+}
+
+.top-rated__avatars .ui-avatar {
+  box-shadow: 0 0 0 2px var(--tile-bg), 0 0 0 4px var(--tile-color);
+}
+
+.top-rated__avatars .ui-avatar + .ui-avatar {
+  margin-left: -12px;
+}
+
+.top-rated__crown {
+  position: absolute;
+  top: -11px;
+  left: -8px;
+  z-index: 1;
+  width: 20px;
+  height: 14px;
+  transform: rotate(-20deg);
+  pointer-events: none;
+}
+
+.top-rated__crown path {
+  fill: var(--gold);
+  stroke: var(--gold-ink);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.top-rated__tile:hover .top-rated__crown,
+.top-rated__tile:focus-within .top-rated__crown {
+  animation: top-rated-wiggle 600ms ease-in-out;
+}
+
+.top-rated__crown--title {
+  position: static;
+  width: 16px;
+  height: 11px;
+  transform: none;
+}
+
+.top-rated__crown--title path {
+  fill: var(--on-fill);
+}
+
+/* Text */
+
+.top-rated__text {
+  display: grid;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.top-rated__label {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Only an unusually long name truncates, and it does so itself: overflow on this line would clip the links' focus rings. */
+.top-rated__names {
+  display: flex;
+  font-size: var(--text-sm);
+  white-space: pre;
+}
+
+.top-rated__names .racer-link {
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-rated__more {
+  flex: none;
+  color: var(--muted);
+}
+
+.top-rated__rating {
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* With the highlight 2.5 times the tile's width, 200% parks it off the left edge and -100% off the right. */
+@keyframes top-rated-shine {
+  from {
+    background-position: 200% 0, 0 0;
+  }
+  to {
+    background-position: -100% 0, 0 0;
+  }
+}
+
+@keyframes top-rated-wiggle {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+  25% {
+    transform: rotate(-34deg);
+  }
+  75% {
+    transform: rotate(-8deg);
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 620px) {
+  .top-rated {
+    padding: 14px 10px 6px;
+  }
+}

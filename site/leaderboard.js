@@ -1,5 +1,7 @@
 const PARTICIPANT_SCHEMA_VERSION = 9;
 const ALL_MODES = "all";
+// Races with a missing or malformed mode prefix; a bucket, not a category.
+const UNKNOWN_MODE = "unknown";
 const DONE_STATUS = 0;
 const TREND_WINDOW = 5;
 const TREND_THRESHOLD = 0.05;
@@ -290,27 +292,36 @@ function ratingRank(playerIndex, modeId = ALL_MODES) {
   return ratingRanks(modeId).get(playerIndex);
 }
 
-// Positive when the racer climbed the rating ranks, overall or in one mode, over the last 7 days; "new" if they had no rating then.
+// The scopes the top-rated banner crowns and the featured racer avoids: the overall ladder and every named mode.
+function ratingCategories() {
+  return [ALL_MODES, ...participants.modes.filter((modeId) => modeId !== UNKNOWN_MODE)];
+}
+
+// Competition ranks as they stood at the end of `lastDate`, overall or in one mode.
 // A rating only moves when its racer races, so the rating on a past date is the one after their last race by then.
-function ratingRankDeltas(modeId = ALL_MODES) {
-  if (ratingRankDeltaCache.has(modeId)) {
-    return ratingRankDeltaCache.get(modeId);
-  }
-  const cutoff = shiftIsoDate(todayInZone(), -7);
+function ratingRanksThrough(modeId, lastDate) {
   const modeIndex = modeIndexFor(modeId);
   const ratingIndex = modeIndex === null ? 4 : 5;
-  const ratingsBefore = new Map();
+  const ratings = new Map();
   participants.races.forEach((race) => {
-    if (race.d > cutoff || (modeIndex !== null && race.m !== modeIndex)) {
+    if (race.d > lastDate || (modeIndex !== null && race.m !== modeIndex)) {
       return;
     }
     race.e.forEach((entry) => {
       if (typeof entry[ratingIndex] === "number") {
-        ratingsBefore.set(entry[0], entry[ratingIndex]);
+        ratings.set(entry[0], entry[ratingIndex]);
       }
     });
   });
-  const ranksBefore = competitionRanks(ratingsBefore);
+  return competitionRanks(ratings);
+}
+
+// Positive when the racer climbed the rating ranks, overall or in one mode, over the last 7 days; "new" if they had no rating then.
+function ratingRankDeltas(modeId = ALL_MODES) {
+  if (ratingRankDeltaCache.has(modeId)) {
+    return ratingRankDeltaCache.get(modeId);
+  }
+  const ranksBefore = ratingRanksThrough(modeId, shiftIsoDate(todayInZone(), -7));
   const deltas = new Map();
   participants.players.forEach((player, playerIndex) => {
     const rank = ratingRank(playerIndex, modeId);
@@ -1224,6 +1235,9 @@ async function loadParticipants() {
     document.querySelector("#leaderboard-controls").hidden = false;
     route(true);
     window.addEventListener("hashchange", () => route(false));
+    if (typeof TopRated !== "undefined") {
+      runFeature("TopRated.init", () => TopRated.init());
+    }
     if (typeof Feed !== "undefined") {
       runFeature("Feed.init", () => Feed.init());
     }

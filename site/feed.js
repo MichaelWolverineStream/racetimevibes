@@ -7,6 +7,8 @@ const Feed = (() => {
   const HERO_WINDOW_DAYS = 30;
   const HERO_MAX_LENGTH = 180;
   const NEW_BADGE_LIMIT = 12;
+  const FEATURED_WINDOW_DAYS = 14;
+  const FEATURED_TOP_RANKS = 3;
   const STATUS_DNF = 1;
   const STATUS_DQ = 2;
   const SUMMARY_TAGS = [
@@ -567,7 +569,7 @@ const Feed = (() => {
     return [placeText(race, entry), modeLabel(modeName(race)), UI.relativeDay(race.d)].join(" · ");
   }
 
-  function racerCard(playerIndex, deltas) {
+  function racerCard(playerIndex, deltas, note = null) {
     const card = element("div", "feed-racer");
     card.appendChild(UI.avatar(playerIndex, 32));
     const body = element("div", "feed-racer__body");
@@ -586,6 +588,9 @@ const Feed = (() => {
     if (streaks.length) {
       body.appendChild(element("p", "feed-racer__streak", streaks.join(" · ")));
     }
+    if (note) {
+      body.appendChild(element("p", "feed-racer__note", note));
+    }
     card.appendChild(body);
     return card;
   }
@@ -600,6 +605,72 @@ const Feed = (() => {
       indexes.forEach((playerIndex) => section.appendChild(racerCard(playerIndex, deltas)));
     }
     host.replaceChildren(section);
+  }
+
+  // Candidates come from races before today, so the pick holds all day as new results arrive;
+  // it moves on only if the featured racer climbs into a top 3 today.
+  function featuredRacer() {
+    const today = todayInZone();
+    const through = shiftIsoDate(today, -1);
+    const from = shiftIsoDate(today, -FEATURED_WINDOW_DAYS);
+    const latestHighlight = new Map();
+    participants.races.forEach((race, raceIndex) => {
+      if (race.d >= from && race.d <= through) {
+        (race.t || []).forEach((tag) => latestHighlight.set(tag[1], { tag, raceIndex }));
+      }
+    });
+    const categories = ratingCategories();
+    const inTopRanks = (rankMaps, playerIndex) => rankMaps.some((ranks) => ranks.get(playerIndex) <= FEATURED_TOP_RANKS);
+    const ranksThrough = categories.map((modeId) => ratingRanksThrough(modeId, through));
+    const candidates = [...latestHighlight.keys()]
+      .filter((playerIndex) => !inTopRanks(ranksThrough, playerIndex))
+      .sort((left, right) => left - right);
+    if (!candidates.length) {
+      return null;
+    }
+    const ranksNow = categories.map((modeId) => ratingRanks(modeId));
+    const start = fnv1a(`featured ${today}`) % candidates.length;
+    for (let step = 0; step < candidates.length; step += 1) {
+      const playerIndex = candidates[(start + step) % candidates.length];
+      if (!inTopRanks(ranksNow, playerIndex)) {
+        return { playerIndex, ...latestHighlight.get(playerIndex) };
+      }
+    }
+    return null;
+  }
+
+  function highlightLabel(tag, race) {
+    switch (tag[0]) {
+      case "badge":
+        return `Unlocked ${badgeDefinition(tag[2]).label}`;
+      case "first_win":
+        return "First win";
+      case "pb":
+        return `${modeLabel(modeName(race))} PB`;
+      case "record":
+        return `${modeLabel(modeName(race))} record`;
+      case "upset":
+        return "Upset win";
+      case "photo":
+        return "Won a photo finish";
+      case "milestone":
+        return `${ordinal(tag[2])} race`;
+      default:
+        return "New highlight";
+    }
+  }
+
+  function renderFeatured(host) {
+    const featured = featuredRacer();
+    if (!featured) {
+      return;
+    }
+    const race = participants.races[featured.raceIndex];
+    const note = `★ ${highlightLabel(featured.tag, race)} · ${UI.relativeDay(race.d)}`;
+    const deltas = typeof ratingRankDeltas === "function" ? ratingRankDeltas() : new Map();
+    const section = sidebarSection("Featured daily racer");
+    section.appendChild(racerCard(featured.playerIndex, deltas, note));
+    host.appendChild(section);
   }
 
   function renderFact(host) {
@@ -659,6 +730,7 @@ const Feed = (() => {
     const sidebar = document.getElementById("updates-sidebar-body");
     const racersHost = element("div", "feed-side-racers");
     sidebar.appendChild(racersHost);
+    renderFeatured(sidebar);
     renderFact(sidebar);
     renderNewBadges(sidebar);
     const rerender = () => renderYourRacers(racersHost);
