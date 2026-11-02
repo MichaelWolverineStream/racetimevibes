@@ -5,7 +5,7 @@ import unittest
 from datetime import UTC, datetime
 from pathlib import Path
 
-from scripts import avatar_mirror, build_stats, highlights, participant_stats
+from scripts import avatar_mirror, build_stats, highlights, participant_stats, pokemon_avatars
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -53,7 +53,7 @@ def placed_race(name, order, **kwargs):
     return race(name, entrants=entrants, **kwargs)
 
 
-def payload(races, current_names=None, avatar_observations=None):
+def payload(races, current_names=None, avatar_observations=None, bios=None, pokemon=None):
     # Each race file was fetched when its race ended.
     envelopes = [{"fetched_at": item["ended_at"], "race": item} for item in races]
     return participant_stats.build_participant_payload(
@@ -65,6 +65,8 @@ def payload(races, current_names=None, avatar_observations=None):
         current_names=current_names,
         envelopes=envelopes,
         avatar_observations=avatar_observations,
+        bios=bios,
+        pokemon=pokemon,
     )
 
 
@@ -682,6 +684,92 @@ class SchemaThreeTests(unittest.TestCase):
         self.assertNotIn('"ana"', json.dumps(result))
 
 
+class PokemonAvatarTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.catalogue = pokemon_avatars.load_catalogue()
+
+    @staticmethod
+    def races():
+        """ana has a racetime.gg avatar; ben and cid have none. cid races first."""
+        def with_avatar(user_id, place, avatar=None):
+            return entrant(
+                user_id,
+                place=place,
+                finish_time=f"PT{10 + place}M",
+                user={"id": user_id, "name": user_id, "avatar": avatar},
+            )
+
+        return [
+            race(
+                "early",
+                started_at="2026-03-01T20:00:00.000Z",
+                ended_at="2026-03-01T22:00:00.000Z",
+                entrants=[
+                    with_avatar("ana", 1, "https://racetime.gg/media/ana.png"),
+                    with_avatar("cid", 2),
+                ],
+            ),
+            race(
+                "late",
+                started_at="2026-03-02T20:00:00.000Z",
+                ended_at="2026-03-02T22:00:00.000Z",
+                entrants=[
+                    with_avatar("ben", 1),
+                    with_avatar("ana", 2, "https://racetime.gg/media/ana.png"),
+                ],
+            ),
+        ]
+
+    def avatars(self, bios=None):
+        result = payload(self.races(), bios=bios or {}, pokemon=self.catalogue)
+        return {player["id"]: player.get("a") for player in result["players"]}
+
+    def test_racers_without_an_avatar_get_distinct_random_pokemon(self):
+        avatars = self.avatars()
+        self.assertEqual(
+            avatars["ana"], avatar_mirror.mirror_name("https://racetime.gg/media/ana.png")
+        )
+        for user_id in ("ben", "cid"):
+            with self.subTest(user_id=user_id):
+                self.assertIsNotNone(pokemon_avatars.sprite_path(avatars[user_id]))
+        self.assertNotEqual(avatars["ben"], avatars["cid"])
+
+    def test_a_favourite_replaces_a_racetime_avatar(self):
+        bios = {"ana": ["My favourite pokemon is: Pikachu", "2026-03-03T00:00:00Z"]}
+        self.assertEqual(self.avatars(bios)["ana"], "pokemon-25.png")
+
+    def test_racers_are_ordered_by_their_first_race_then_id(self):
+        bios = {"ben": ["fav pokemon: unown", "2026-03-03T00:00:00Z"]}
+        expected = pokemon_avatars.assign(
+            ["ana", "cid", "ben"], {"ana"}, bios, self.catalogue
+        )
+        avatars = self.avatars(bios)
+        self.assertEqual({user_id: avatars[user_id] for user_id in expected}, expected)
+        self.assertTrue(avatars["ben"].startswith("pokemon-201"))
+
+    def test_without_a_catalogue_no_pokemon_is_given(self):
+        result = payload(self.races())
+        avatars = {player["id"]: player.get("a") for player in result["players"]}
+        self.assertEqual(
+            avatars,
+            {
+                "ana": avatar_mirror.mirror_name("https://racetime.gg/media/ana.png"),
+                "ben": None,
+                "cid": None,
+            },
+        )
+
+    def test_bio_text_is_never_published(self):
+        bios = {"cid": ["Secret plans. My favourite pokemon is Mew", "2026-03-03T00:00:00Z"]}
+        result = payload(self.races(), bios=bios, pokemon=self.catalogue)
+        self.assertNotIn("Secret plans", json.dumps(result))
+        self.assertEqual(
+            {player["id"]: player.get("a") for player in result["players"]}["cid"],
+            "pokemon-151.png",
+        )
+
+
 class GeneratedParticipantDataTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -761,10 +849,10 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         preset_names = {preset["n"] for preset in self.participants["presets"]}
         self.assertIn(highlights.CASUAL_BOOTS_PRESET, preset_names)
 
-    def test_avatars_are_mirror_names(self):
+    def test_avatars_are_mirror_names_or_sprites(self):
         pattern = re.compile(r"^[0-9a-f]{16}\.(png|jpg|jpeg|gif|webp)$")
         for player in self.participants["players"]:
-            if "a" in player:
+            if "a" in player and pokemon_avatars.sprite_path(player["a"]) is None:
                 self.assertRegex(player["a"], pattern)
 
     def test_no_comment_key_anywhere(self):

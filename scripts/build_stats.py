@@ -17,11 +17,19 @@ from zoneinfo import ZoneInfo
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import build_stats`.
 try:
-    from scripts import comment_stats, participant_stats, race_archive
+    from scripts import (
+        comment_stats,
+        participant_stats,
+        pokemon_avatars,
+        race_archive,
+        racer_bios,
+    )
 except ImportError:
     import comment_stats
     import participant_stats
+    import pokemon_avatars
     import race_archive
+    import racer_bios
 
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
@@ -645,6 +653,7 @@ def build(
     output_path: Path = OUTPUT_PATH,
     participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
     comments_output_path: Path = COMMENTS_OUTPUT_PATH,
+    pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
 ) -> tuple[JsonObject, JsonObject, JsonObject]:
     envelopes = race_archive.load_races(archive_dir)
     races = [envelope["race"] for envelope in envelopes]
@@ -664,6 +673,8 @@ def build(
         current_names=race_archive.load_racer_names(archive_dir),
         envelopes=included_envelopes(envelopes),
         avatar_observations=race_archive.load_racer_avatars(archive_dir),
+        bios=racer_bios.load_racer_bios(archive_dir),
+        pokemon=pokemon_avatars.load_catalogue(pokemon_dir),
     )
     comments = comment_stats.build_comments_payload(
         contexts, generated_at=generated_at
@@ -700,6 +711,12 @@ def parse_args() -> argparse.Namespace:
         default=COMMENTS_OUTPUT_PATH,
         help=f"racer comments JSON path (default: {COMMENTS_OUTPUT_PATH})",
     )
+    parser.add_argument(
+        "--pokemon",
+        type=Path,
+        default=pokemon_avatars.POKEMON_DIR,
+        help=f"Pokémon sprites and pokédex (default: {pokemon_avatars.POKEMON_DIR})",
+    )
     return parser.parse_args()
 
 
@@ -711,10 +728,12 @@ def main() -> int:
             args.output,
             args.participants_output,
             args.comments_output,
+            args.pokemon,
         )
     except (
         DataError,
         race_archive.ArchiveError,
+        pokemon_avatars.PokedexError,
         participant_stats.ParticipantDataError,
         comment_stats.CommentDataError,
     ) as error:

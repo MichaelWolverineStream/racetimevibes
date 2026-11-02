@@ -15,11 +15,12 @@ from typing import Any
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import participant_stats`.
 try:
-    from scripts import avatar_mirror, highlights, ladder_rating
+    from scripts import avatar_mirror, highlights, ladder_rating, pokemon_avatars
 except ImportError:
     import avatar_mirror
     import highlights
     import ladder_rating
+    import pokemon_avatars
 
 
 PARTICIPANT_SCHEMA_VERSION = 10
@@ -229,6 +230,8 @@ def build_participant_payload(
     current_names: Mapping[str, str] | None = None,
     envelopes: list[JsonObject] | None = None,
     avatar_observations: Mapping[str, list[str | None]] | None = None,
+    bios: Mapping[str, list[str | None]] | None = None,
+    pokemon: pokemon_avatars.Catalogue | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
 
@@ -236,6 +239,9 @@ def build_participant_payload(
     under the name on their most recent race. Their avatar is the file name that
     `avatar_mirror.mirror_name` gives their most recently observed avatar URL, taken
     from every archived race file in `envelopes` and from `avatar_observations`.
+    Given a Pokémon `pokemon` catalogue, `pokemon_avatars.assign` replaces it with the
+    favourite Pokémon their entry in `bios` names, or gives a racer without one a
+    random Pokémon; racers are ordered by their first included race, then user ID.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -247,12 +253,14 @@ def build_participant_payload(
     )
 
     names: dict[str, str] = {}
+    first_race: dict[str, int] = {}
     staged: list[JsonObject] = []
-    for context in ordered:
+    for race_number, context in enumerate(ordered):
         race = context["race"]
         entries = _race_entries(race, diagnostics)
         for user_id, name, *_rest in entries:
             names[user_id] = name
+            first_race.setdefault(user_id, race_number)
         commenters: set[str] = set()
         for entrant in race["entrants"]:
             identity = _entrant_identity(entrant)
@@ -285,6 +293,9 @@ def build_participant_payload(
             envelopes or [], avatar_observations or {}
         ).items()
     }
+    if pokemon is not None:
+        order = sorted(names, key=lambda user_id: (first_race[user_id], user_id))
+        avatars.update(pokemon_avatars.assign(order, set(avatars), bios or {}, pokemon))
 
     ordered_players = sorted(names.items(), key=lambda item: (item[1].casefold(), item[0]))
     players = [{"id": user_id, "name": name} for user_id, name in ordered_players]

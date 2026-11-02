@@ -21,6 +21,13 @@ name: Update race data
         description: "Reason for manually triggering the workflow"
         required: false
         default: "Webhook Trigger"
+  # update-bios.yml calls this workflow once a day with sync-bios set.
+  workflow_call:
+    inputs:
+      sync-bios:
+        description: "Also mirror the bios of racers who raced since their bio was last checked"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -42,6 +49,9 @@ jobs:
           python-version: "3.12"
       - name: Sync race archive
         run: python3 scripts/race_archive.py
+      - name: Sync racer bios
+        if: inputs.sync-bios
+        run: python3 scripts/racer_bios.py
       - name: Build data
         run: python3 scripts/build_stats.py
       - name: Mirror avatars

@@ -1,0 +1,19 @@
+name: Update racer bios
+
+"on":
+  schedule:
+    # Once a day, between the even-hour data runs.
+    - cron: "47 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+# No concurrency group here: the called workflow's own update-data group queues this run
+# behind any data update, and the same group in the caller would deadlock it.
+jobs:
+  update:
+    uses: ./.github/workflows/update-data.yml
+    with:
+      sync-bios: true

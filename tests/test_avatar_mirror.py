@@ -6,7 +6,7 @@ from contextlib import redirect_stderr
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts import avatar_mirror, race_archive
+from scripts import avatar_mirror, pokemon_avatars, race_archive
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -214,6 +214,10 @@ class MirrorTests(unittest.TestCase):
         self.archive_dir = self.root / "archive"
         self.output_dir = self.root / "avatars"
         self.participants_path = self.root / "participants.json"
+        self.pokemon_dir = self.root / "pokemon"
+        self.pokemon_dir.mkdir()
+        (self.pokemon_dir / "25.png").write_bytes(PNG + b"pikachu")
+        (self.pokemon_dir / "201-b.png").write_bytes(PNG + b"unown")
         sleeper = patch.object(avatar_mirror.time, "sleep")
         self.sleep = sleeper.start()
         self.addCleanup(sleeper.stop)
@@ -250,6 +254,7 @@ class MirrorTests(unittest.TestCase):
                 self.archive_dir,
                 self.output_dir,
                 loader=self.loader,
+                pokemon_dir=self.pokemon_dir,
             )
         return summary, stderr.getvalue()
 
@@ -265,7 +270,7 @@ class MirrorTests(unittest.TestCase):
 
         summary, _ = self.run_mirror()
 
-        self.assertEqual(summary, {"downloaded": 1, "removed": 0, "failed": 0})
+        self.assertEqual(summary, {"downloaded": 1, "copied": 0, "removed": 0, "failed": 0})
         self.assertEqual(self.requested, [self.URL_B])
         self.assertEqual((self.output_dir / existing).read_bytes(), PNG + b"kept")
         self.assertEqual(
@@ -281,7 +286,7 @@ class MirrorTests(unittest.TestCase):
 
         summary, _ = self.run_mirror()
 
-        self.assertEqual(summary, {"downloaded": 0, "removed": 0, "failed": 0})
+        self.assertEqual(summary, {"downloaded": 0, "copied": 0, "removed": 0, "failed": 0})
         self.assertEqual(self.requested, [])
 
     def test_paces_downloads(self):
@@ -336,7 +341,7 @@ class MirrorTests(unittest.TestCase):
         self.publish({"u1": self.URL_B})
         summary, _ = self.run_mirror()
 
-        self.assertEqual(summary, {"downloaded": 1, "removed": 1, "failed": 0})
+        self.assertEqual(summary, {"downloaded": 1, "copied": 0, "removed": 1, "failed": 0})
         self.assertEqual(self.files(), [avatar_mirror.mirror_name(self.URL_B)])
 
     def test_a_removed_avatar_is_pruned(self):
@@ -347,7 +352,7 @@ class MirrorTests(unittest.TestCase):
         self.publish({"u1": None})
         summary, _ = self.run_mirror()
 
-        self.assertEqual(summary, {"downloaded": 0, "removed": 1, "failed": 0})
+        self.assertEqual(summary, {"downloaded": 0, "copied": 0, "removed": 1, "failed": 0})
         self.assertEqual(self.files(), [])
 
     def test_rejects_files_that_are_not_the_claimed_image(self):
@@ -358,7 +363,7 @@ class MirrorTests(unittest.TestCase):
 
         summary, warnings = self.run_mirror()
 
-        self.assertEqual(summary, {"downloaded": 1, "removed": 0, "failed": 2})
+        self.assertEqual(summary, {"downloaded": 1, "copied": 0, "removed": 0, "failed": 2})
         self.assertEqual(self.files(), [avatar_mirror.mirror_name(self.URL_C)])
         self.assertEqual(warnings.count("Warning:"), 2)
 
@@ -369,7 +374,7 @@ class MirrorTests(unittest.TestCase):
 
         summary, warnings = self.run_mirror()
 
-        self.assertEqual(summary, {"downloaded": 1, "removed": 0, "failed": 1})
+        self.assertEqual(summary, {"downloaded": 1, "copied": 0, "removed": 0, "failed": 1})
         self.assertIn("Warning: Avatar failed with HTTP 404", warnings)
         self.assertEqual(self.files(), [avatar_mirror.mirror_name(self.URL_B)])
 
@@ -399,6 +404,78 @@ class MirrorTests(unittest.TestCase):
                     self.run_mirror()
         self.assertEqual(self.requested, [])
 
+    def test_copies_pokemon_sprites_without_a_request_or_a_pause(self):
+        self.archive({"u1": self.URL_A, "u2": None})
+        self.publish({"u1": "pokemon-25.png", "u2": "pokemon-201-b.png"})
+
+        summary, _ = self.run_mirror()
+
+        self.assertEqual(summary, {"downloaded": 0, "copied": 2, "removed": 0, "failed": 0})
+        self.assertEqual(self.requested, [])
+        self.sleep.assert_not_called()
+        self.assertEqual(self.files(), ["pokemon-201-b.png", "pokemon-25.png"])
+        self.assertEqual(
+            (self.output_dir / "pokemon-25.png").read_bytes(),
+            (self.pokemon_dir / "25.png").read_bytes(),
+        )
+
+    def test_downloads_and_copies_side_by_side(self):
+        self.archive({"u1": self.URL_A, "u2": None})
+        self.publish({"u1": self.URL_A, "u2": "pokemon-25.png"})
+        self.run_mirror()
+
+        summary, _ = self.run_mirror()
+
+        self.assertEqual(summary, {"downloaded": 0, "copied": 0, "removed": 0, "failed": 0})
+        self.assertEqual(
+            self.files(), sorted([avatar_mirror.mirror_name(self.URL_A), "pokemon-25.png"])
+        )
+
+    def test_a_changed_sprite_replaces_its_copy(self):
+        self.archive({"u1": None})
+        self.publish({"u1": "pokemon-25.png"})
+        self.run_mirror()
+
+        (self.pokemon_dir / "25.png").write_bytes(PNG + b"better pikachu")
+        summary, _ = self.run_mirror()
+
+        self.assertEqual(summary, {"downloaded": 0, "copied": 1, "removed": 0, "failed": 0})
+        self.assertEqual(
+            (self.output_dir / "pokemon-25.png").read_bytes(), PNG + b"better pikachu"
+        )
+
+    def test_a_pokemon_replaced_by_a_racetime_avatar_is_pruned(self):
+        self.archive({"u1": self.URL_A})
+        self.publish({"u1": "pokemon-25.png"})
+        self.run_mirror()
+
+        self.publish({"u1": self.URL_A})
+        summary, _ = self.run_mirror()
+
+        self.assertEqual(summary, {"downloaded": 1, "copied": 0, "removed": 1, "failed": 0})
+        self.assertEqual(self.files(), [avatar_mirror.mirror_name(self.URL_A)])
+
+    def test_a_sprite_that_is_not_a_png_is_skipped_with_a_warning(self):
+        self.archive({"u1": None})
+        (self.pokemon_dir / "25.png").write_bytes(b"<html>not a png</html>")
+        self.publish({"u1": "pokemon-25.png"})
+
+        summary, warnings = self.run_mirror()
+
+        self.assertEqual(summary, {"downloaded": 0, "copied": 0, "removed": 0, "failed": 1})
+        self.assertIn("Warning:", warnings)
+        self.assertEqual(self.files(), [])
+
+    def test_raises_when_participants_names_a_sprite_that_does_not_exist(self):
+        self.archive({"u1": None})
+        for name in ("pokemon-26.png", "pokemon-../25.png", "pokemon-25.PNG"):
+            with self.subTest(name=name):
+                self.publish({"u1": name})
+                with self.assertRaisesRegex(
+                    avatar_mirror.AvatarMirrorError, "participants.json is stale"
+                ):
+                    self.run_mirror()
+
     def test_stale_input_removes_nothing(self):
         self.archive({"u1": self.URL_B})
         self.publish({"u1": self.URL_A})
@@ -425,6 +502,7 @@ class MirrorTests(unittest.TestCase):
             "--participants", str(self.participants_path),
             "--archive", str(self.archive_dir),
             "--output", str(self.output_dir),
+            "--pokemon", str(self.pokemon_dir),
         ]
         with patch("sys.argv", ["avatar_mirror.py", *arguments]):
             with redirect_stderr(io.StringIO()) as stderr:
@@ -435,7 +513,9 @@ class MirrorTests(unittest.TestCase):
         with patch("sys.argv", ["avatar_mirror.py", *arguments]):
             with patch("builtins.print") as mocked_print:
                 self.assertEqual(avatar_mirror.main(), 0)
-        mocked_print.assert_called_with("Avatars: 0 downloaded, 0 removed, 0 failed.")
+        mocked_print.assert_called_with(
+            "Avatars: 0 downloaded, 0 copied, 0 removed, 0 failed."
+        )
 
 
 class CommittedAvatarTests(unittest.TestCase):
@@ -455,6 +535,16 @@ class CommittedAvatarTests(unittest.TestCase):
                 self.assertTrue(
                     avatar_mirror.is_raster(path.read_bytes(), path.suffix.removeprefix("."))
                 )
+
+    def test_every_mirrored_pokemon_is_a_copy_of_its_sprite(self):
+        avatar_dir = REPO_ROOT / "site" / "avatars"
+        if not avatar_dir.exists():
+            self.skipTest("no avatars are mirrored yet")
+        for path in avatar_dir.glob(f"{pokemon_avatars.AVATAR_PREFIX}*"):
+            with self.subTest(file=path.name):
+                sprite = pokemon_avatars.sprite_path(path.name)
+                self.assertIsNotNone(sprite)
+                self.assertEqual(path.read_bytes(), sprite.read_bytes())
 
 
 if __name__ == "__main__":

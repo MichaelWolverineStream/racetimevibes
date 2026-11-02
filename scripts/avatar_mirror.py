@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Mirror the racer avatars that participants.json names into site/avatars/."""
+"""Mirror the racer avatars that participants.json names into site/avatars/.
+
+racetime.gg avatars are downloaded; Pokémon avatars are copied from assets/pokemon/.
+"""
 
 from __future__ import annotations
 
@@ -17,8 +20,9 @@ from typing import Any
 
 # Supports both `python3 scripts/avatar_mirror.py` and `from scripts import avatar_mirror`.
 try:
-    from scripts import race_archive
+    from scripts import pokemon_avatars, race_archive
 except ImportError:
+    import pokemon_avatars
     import race_archive
 
 
@@ -158,12 +162,14 @@ def mirror(
     output_dir: Path = OUTPUT_DIR,
     *,
     loader: Loader | None = None,
+    pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
 ) -> dict[str, int]:
     """Make output_dir hold exactly the avatar files participants.json names.
 
-    Only missing files are downloaded. A file that fails to download or validate is
-    skipped with a warning and retried on the next run. Returns the counts of files
-    downloaded, removed and failed.
+    A Pokémon avatar is copied from its sprite in pokemon_dir when the copy is missing
+    or differs; any other avatar is downloaded only when missing. A file that fails to
+    download or validate is skipped with a warning and retried on the next run. Returns
+    the counts of files downloaded, copied, removed and failed.
     """
     # build_stats imports this module via participant_stats, so import it at call time.
     try:
@@ -177,7 +183,13 @@ def mirror(
     urls = current_avatar_urls(envelopes, race_archive.load_racer_avatars(archive_dir))
 
     wanted: dict[str, str] = {}
+    sprites: dict[str, Path] = {}
     for user_id, name in published.items():
+        # A Pokémon avatar's name says which sprite it is; the archive need not explain it.
+        sprite = pokemon_avatars.sprite_path(name, pokemon_dir)
+        if sprite is not None:
+            sprites[name] = sprite
+            continue
         url = urls.get(user_id)
         if url is None or mirror_name(url) != name:
             raise AvatarMirrorError(
@@ -215,13 +227,43 @@ def mirror(
         _write_atomic(data, output_dir / name)
         downloaded += 1
 
+    copied = 0
+    for name, sprite in sorted(sprites.items()):
+        try:
+            data = sprite.read_bytes()
+            # A local read is cheap, so a copy is replaced whenever its sprite changed.
+            if name in present and (output_dir / name).read_bytes() == data:
+                continue
+        except OSError as error:
+            print(
+                f"Warning: {sprite} could not be read: {error}; skipping {name}.",
+                file=sys.stderr,
+            )
+            failed += 1
+            continue
+        if not is_raster(data, "png"):
+            print(
+                f"Warning: {sprite} is not a PNG image; skipping {name}.", file=sys.stderr
+            )
+            failed += 1
+            continue
+        _write_atomic(data, output_dir / name)
+        copied += 1
+
     removed = 0
     for path in output_dir.iterdir():
-        if path.name not in wanted and (path.is_symlink() or path.is_file()):
+        if path.name not in wanted and path.name not in sprites and (
+            path.is_symlink() or path.is_file()
+        ):
             path.unlink()
             removed += 1
 
-    return {"downloaded": downloaded, "removed": removed, "failed": failed}
+    return {
+        "downloaded": downloaded,
+        "copied": copied,
+        "removed": removed,
+        "failed": failed,
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -244,18 +286,26 @@ def parse_args() -> argparse.Namespace:
         default=OUTPUT_DIR,
         help=f"avatar directory (default: {OUTPUT_DIR})",
     )
+    parser.add_argument(
+        "--pokemon",
+        type=Path,
+        default=pokemon_avatars.POKEMON_DIR,
+        help=f"Pokémon sprite directory (default: {pokemon_avatars.POKEMON_DIR})",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     try:
-        summary = mirror(args.participants, args.archive, args.output)
+        summary = mirror(
+            args.participants, args.archive, args.output, pokemon_dir=args.pokemon
+        )
     except (AvatarMirrorError, race_archive.ArchiveError) as error:
         print(f"Avatar mirror failed: {error}", file=sys.stderr)
         return 1
     print(
-        f"Avatars: {summary['downloaded']} downloaded, "
+        f"Avatars: {summary['downloaded']} downloaded, {summary['copied']} copied, "
         f"{summary['removed']} removed, {summary['failed']} failed."
     )
     return 0

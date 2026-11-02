@@ -21,8 +21,8 @@ Other documents:
 ### Requirements
 
 - Python 3.11 or newer
-- A network connection when refreshing the data
-- ImageMagick 7, only for `scripts/badge_images.py`, which converts badge art
+- A network connection when refreshing the data, including the optional bio sync
+- ImageMagick 7, only for `scripts/badge_images.py`, which converts badge art, and `scripts/pokemon_images.py`, which fits Pokémon sprites to the avatar frame
 
 The data builder and web page have no third-party runtime dependencies.
 
@@ -30,6 +30,7 @@ The data builder and web page have no third-party runtime dependencies.
 
 ```bash
 python3 scripts/race_archive.py       # sync new races from racetime.gg into archive/ (network)
+python3 scripts/racer_bios.py         # optional: mirror racers' profile bios into archive/ (network)
 python3 scripts/build_stats.py        # build site/data/*.json from archive/ (offline)
 python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/ (network)
 python3 scripts/version_assets.py     # restamp the asset URLs after editing site/
@@ -39,17 +40,19 @@ python3 -m http.server 8000 -d site   # preview at http://localhost:8000
 
 ### Refreshing the data
 
-A refresh is the first three commands above, in that order:
+A refresh is the race sync, the build and the mirror, in that order, with the optional bio sync between the race sync and the build:
 
 1. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/` (see [The race archive](#the-race-archive)).
-2. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)).
-3. `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
+2. `racer_bios.py` saves the profile bios of racers who raced since their bio was last checked into `archive/racer-bios.json` (see [Bios](#bios)). It reads the races `race_archive.py` just saved, so it runs after it and before `build_stats.py`, which turns the bios into Pokémon avatars (see [Pokémon avatars](#pokémon-avatars)). The scheduled job runs it once a day.
+3. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)).
+4. `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
 
 Options:
 
-- `--archive` on `race_archive.py` or `build_stats.py` points at a different archive.
+- `--archive` on `race_archive.py`, `racer_bios.py` or `build_stats.py` points at a different archive.
 - `--output`, `--participants-output` and `--comments-output` on `build_stats.py` redirect each dataset.
 - `--participants`, `--archive` and `--output` on `avatar_mirror.py` point it elsewhere.
+- `--pokemon` on `build_stats.py`, `avatar_mirror.py` and `pokemon_avatars.py` points at a different directory of Pokémon sprites and pokédex. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites the pokédex (see [Pokémon avatars](#pokémon-avatars)).
 
 ### Previewing the site
 
@@ -75,6 +78,8 @@ Tests use mocked API responses and do not require network access.
 
 - The suite rebuilds all three datasets from the committed `archive/` and fails if they differ from the committed `site/data` files, ignoring `generated_at`. After changing `scripts/build_stats.py`, `scripts/participant_stats.py` or any module they call, run `python3 scripts/build_stats.py` and commit the result.
 - The avatar tests include a check that every file in the committed `site/avatars/` is named by the committed `participants.json` and is a valid raster image. A named file that is missing does not fail it, so an avatar that racetime.gg stops serving cannot block a deploy.
+- Another check requires every `pokemon-*` file in the committed `site/avatars/` to be a byte-for-byte copy of its sprite in `assets/pokemon/`.
+- The Pokémon tests check the committed `assets/pokemon/`: every file but `pokedex.json` is a PNG named `<pokédex number>.png` or `<number>-<variant>.png` for a Pokémon in the pokédex, every species from 1 to 1025 has a sprite, and there is no `0.png`. Every sprite is also a square palette PNG at least 256 pixels on a side, as `pokemon_images.py` writes it.
 
 ### Deployment
 
@@ -91,15 +96,21 @@ For the first deployment:
 
 #### Scheduled data refresh
 
-The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**.
+The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**. It also accepts a `sync-bios` input, off by default, that adds a `scripts/racer_bios.py` step right after the race sync.
 
 - Whenever the sync added or refreshed race files, it commits `archive/` to `main` as `YYYY-MM-DD data`.
 - When anything other than `generated_at` differs in the dashboard datasets, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows.
 - Runs that find nothing new commit nothing, and a failed sync, build or mirror commits nothing.
 
+The workflow in `.github/workflows/update-bios.yml` runs once a day, at 05:47 UTC, between the even-hour data runs. It can also be started manually from **Actions > Update racer bios**. It does nothing itself: it calls `update-data.yml` with `sync-bios` on, so a bio run is a data run that also syncs bios, with the same build, mirror, commit and deploy steps.
+
+- The bios sync before the build, so a new favourite Pokémon reaches `participants.json` in the same run.
+- `update-bios.yml` sets no `concurrency` group on purpose. The called workflow's `update-data` group already queues a bio run behind any data run in progress. The same group on the caller would hold it while the callee waits for it, and the run would deadlock.
+- GitHub keeps only one waiting run per group, so a data run that starts waiting behind the same run cancels a waiting bio run. Nothing is lost: a racer stays due until their profile is checked, so the next day's run catches up.
+
 #### Refreshing by hand
 
-You can still refresh by hand with the three refresh commands and commit `archive/`, `site/data` and `site/avatars`. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py` and `build_stats.py` again, then `avatar_mirror.py`.
+You can still refresh by hand with the three refresh commands and commit `archive/`, `site/data` and `site/avatars`. Running `racer_bios.py` by hand is optional: without it, `build_stats.py` uses the bios already in `archive/racer-bios.json`, and the daily job brings them up to date. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py` and `build_stats.py` again, then `avatar_mirror.py`.
 
 ### Project layout
 
@@ -107,16 +118,22 @@ You can still refresh by hand with the three refresh commands and commit `archiv
 scripts/race_archive.py           Incremental sync of raw races, racer names and avatar observations
 scripts/build_stats.py            Archive validation and aggregation
 scripts/participant_stats.py      Per-racer dataset: records, avatars and assembly
-scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/
+scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/, including Pokémon sprite copies
+scripts/pokemon_avatars.py        Favourite Pokémon from bios, random Pokémon, sprite paths and the pokédex refresh
+scripts/racer_bios.py             Sync of racers' profile bios into archive/racer-bios.json, and its loader
 scripts/ladder_rating.py          Ladder rating model, overall and per mode, and backtest
 scripts/highlights.py             Tags, badges, streaks, presets, records, claims and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report (see Analyses.md)
 scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating (see Analyses.md)
 scripts/badge_images.py           Converts badge art to the standard WebP pair (needs ImageMagick 7)
+scripts/pokemon_images.py         Fits Pokémon sprites to the avatar frame (needs ImageMagick 7)
 scripts/version_assets.py         Content versioning for the static assets
 tests/test_race_archive.py        Archive sync unit tests
-tests/test_avatar_mirror.py       Avatar naming, precedence and mirror unit tests
+tests/test_avatar_mirror.py       Avatar naming, precedence and mirror unit tests, including Pokémon copies
+tests/test_pokemon_avatars.py     Phrase and name matching, assignment, sprite paths and the committed sprites
+tests/test_racer_bios.py          Bio extraction, who is due, sync pacing and failure handling
+tests/test_pokemon_images.py      Sprite framing geometry and PNG header checks
 tests/test_build_stats.py         Pipeline unit tests
 tests/test_participant_stats.py   Racer dataset unit tests
 tests/test_ladder_rating.py       Rating model unit tests
@@ -129,9 +146,12 @@ tests/test_badge_assets.py        Badge image pair checks
 tests/test_version_assets.py      Asset versioning unit tests
 .github/workflows/pages.yml       Test and deploy to GitHub Pages
 .github/workflows/update-data.yml Scheduled archive sync, data build, commit, and deploy
+.github/workflows/update-bios.yml Daily run of update-data.yml with the bio sync on
 archive/races/                    Raw race records, one file per race
 archive/racer-names.json          Current racer display names
 archive/racer-avatars.json        Last observed leaderboard avatar of each racer
+archive/racer-bios.json           Profile bio of each racer checked, with the time it was checked
+assets/pokemon/                   Pokémon sprites and pokedex.json, committed and never deployed
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
 site/data/comments.json           Generated racer comments, loaded lazily
@@ -179,6 +199,7 @@ Everything in this part is computed by the Python scripts in `scripts/` and publ
 - The archive covers every race in the category from 2025-04-20; the builder drops only the `ladder_test` mode.
 - `archive/racer-names.json` maps each racer's stable user ID to their current display name.
 - `archive/racer-avatars.json` maps it to the avatar URL (or `null`) the category leaderboards last showed for them, with the time the sync first saw that value.
+- `archive/racer-bios.json` maps it to `[bio text or null, checked-at time]`, written by `racer_bios.py`, not by the race sync (see [Bios](#bios)).
 - Every archive file is minified JSON: no whitespace between tokens, and one trailing newline.
 
 What the archive contains, and why it is never deployed, is under [Privacy](#privacy).
@@ -202,6 +223,19 @@ Avatars work the same way but never cost a request. The leaderboards response al
 - The file is rewritten only when a value is added or changes, so an ordinary sync leaves it untouched.
 - A racer who uploads a new picture gets a new URL, so the change is picked up at the next sync even if they have not raced. A change and a revert to the same file name within a single sync interval goes unnoticed.
 
+#### Bios
+
+A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, and in no JSON API, so `racer_bios.py` reads the page's HTML. It stores the text of the first `<p class="bio">`, links included, stripped and cut to 2,000 characters, the length the field allows. A profile with no bio, or an empty one, is stored as `null`. Entries are `[bio text or null, checked-at time]`, in UTC, sorted by user ID.
+
+- **Who is due:** a racer of an included race (see [Definitions](#definitions)) with no stored entry, or who entered an included race that finished after the time of their entry. A racer who has not raced since their bio was checked costs nothing, so a normal daily run fetches only the racers who raced that day.
+- **Pacing:** one request per racer, 1 second apart, with the same bounded retries as the race sync. A page is read up to 1,000,000 bytes, and a longer one is a failure.
+- **A 404** means a hidden or deleted profile. It is stored as `null`, so the racer is not asked for again until they race again.
+- **A failure** is any other HTTP error, network error, oversized page, or user ID that is not letters and digits (never put into a URL). It prints a `Warning:` line and keeps the racer's old entry, so they are due again on the next run.
+- **Early stop:** after 5 failures in a row the run stops with a warning, because racetime.gg is refusing profile pages. The racers not yet reached stay due. A success resets the count. The script still exits 0, so the rest of the refresh goes on with the bios it has.
+- **Challenge pages:** a page without a `user-profile` block, such as a challenge or error page, is a failure. It never becomes a stored `null` bio.
+- **The file** is rewritten only when at least one racer was checked, so a run that finds nobody due changes nothing.
+- The script ends with `Bios: N checked, K failed; M name a favourite Pokémon.`, where `M` counts the stored bios that name one (see [Pokémon avatars](#pokémon-avatars)). It exits with 1 only if the archive cannot be read. If the pokédex cannot be read, it prints a `Warning:` line and leaves the count out, because the bios are already saved.
+
 ### Published datasets
 
 `build_stats.py` builds three datasets from the archive and writes each one atomically, minified:
@@ -222,8 +256,62 @@ Avatars work the same way but never cost a request. The leaderboards response al
 - It downloads only the files the directory is missing, pausing 0.2 seconds between requests. A normal run makes no requests; the first run makes one per racer with an avatar.
 - It checks each download before keeping it: the first bytes must match a PNG, JPEG, GIF or WebP image that agrees with the file extension, and the file must be at most 2,000,000 bytes.
 - It deletes every file or symlink in `site/avatars/` that `participants.json` does not name, so a racer's old picture goes when a new one arrives.
-- A download or check that fails prints a `Warning:` line and the run continues; the file is tried again on the next run, and meanwhile the page shows the racer's monogram.
-- The script ends with `Avatars: N downloaded, M removed, K failed.` It exits with 1 only if the archive cannot be read, or if `participants.json` is unreadable or names a file the archive does not explain, in which case it asks you to run `build_stats.py` first.
+- It copies a Pokémon avatar from `assets/pokemon/` instead, with no request (see [Pokémon avatars](#pokémon-avatars)). The sprite `pokemon-201-b.png` comes from `201-b.png`. A file is copied only if the directory is missing it or holds a copy that differs from the sprite, and only if the sprite is a PNG image. A local read is cheap, so every run compares the copies, and a replaced sprite reaches `site/avatars/` on the next run.
+- A download or check that fails prints a `Warning:` line and the run continues; the file is tried again on the next run, and meanwhile the page shows the racer's monogram. A sprite that cannot be read or is not a PNG fails the same way.
+- The script ends with `Avatars: N downloaded, C copied, M removed, K failed.` It exits with 1 only if the archive cannot be read, or if `participants.json` is unreadable or names a file the archive does not explain, in which case it asks you to run `build_stats.py` first. A `pokemon-` name with no sprite in `assets/pokemon/` counts as such a file, so it is treated like a stale `participants.json`.
+
+### Pokémon avatars
+
+A racer's avatar can be a Pokémon. The Pokémon is the racer's favourite, if their bio names one, or else a random one. `scripts/pokemon_avatars.py` makes both choices, and `build_stats.py` publishes the result as the racer's avatar file name in `participants.json`.
+
+**Precedence.** For each racer, in this order:
+
+1. A favourite Pokémon named in their bio, even when they have a racetime.gg avatar.
+2. Their racetime.gg avatar, when they have one that can be mirrored (see [Privacy](#privacy)).
+3. A random Pokémon.
+
+Nobody is left without an avatar when `assets/pokemon/` has sprites.
+
+**The phrase.** The bio is read from `archive/racer-bios.json` (see [Bios](#bios)). The text is lowercased, accents are removed, and `♀` and `♂` become `f` and `m`. Each line is cut into words of letters and digits, so punctuation, such as the colon in "favourite pokemon: Mew", is ignored.
+
+- A phrase is two words next to each other on one line. The first is favourite-like and the second Pokémon-like.
+- A word is favourite-like if it is `fav` or `fave`, or at least 0.8 similar to `favourite` or `favorite`. It is Pokémon-like if it is `pkmn`, or at least 0.8 similar to `pokemon`. Similarity is the ratio of Python's `difflib.SequenceMatcher`, set as `PHRASE_WORD_CUTOFF`.
+- "My" is not required, and neither is anything before the phrase.
+- The words after the phrase are the name. One linking word, `is`, `s` (as in "pokemon's"), `are` or `was`, is skipped first.
+- The name is on the same line as the phrase. The name never continues onto the next line.
+- Hits are tried in text order, line by line. The first hit whose name resolves wins. A hit whose name resolves to nothing is skipped, and a later hit can still win.
+
+**The name.** At most 4 words (`NAME_MAX_WORDS`) after the phrase are used, so "pikachu is the best" still resolves. The name is tried as the first 4 words, then the first 3, 2 and 1, longest first. Names come from the pokédex's two lists: Pokémon, including alternate forms such as `charizard-mega-x` (ids from 10001), and species, such as `deoxys`. A name only counts if its id has a sprite.
+
+1. **Exact:** a candidate matches if its words joined without spaces equal a name with its hyphens removed, or if its words, in any order, equal a name's hyphen-separated parts. This is tried at every length before any fuzzy match, so an exact short name beats a fuzzy longer one. If both keys match, the lower id wins.
+2. **Fuzzy:** otherwise, the candidate is compared, words sorted, with every name, again with its parts sorted. A name needs a similarity of at least 0.85 (`NAME_CUTOFF`), which keeps ordinary words such as "starter", "unknown" or "zard" from fuzzing to Stantler, Unown or Zarude. The best similarity wins and a tie goes to the lower id. The longest candidate with any name at or above the cutoff wins.
+
+So `Mr. Mime` and `mrmime` give Mr. Mime, `Mega Charizard X` gives `charizard-mega-x`, `Pikachuu` gives Pikachu, and `Deoxys` gives Deoxys.
+
+**Assignment.** `assign` takes the racers in a fixed order: by the position of their first included race, then by user ID. It makes two passes.
+
+1. **Favourites:** each racer whose bio names a Pokémon gets it.
+2. **Random:** each other racer without a racetime.gg avatar gets a random base Pokémon, picked from the 1,025 species, that is, ids 1 to 1025 and never an alternate form. It is one of those the fewest racers already use. Racers who take a favourite count as users of its exact id, and so do those earlier in this pass. A favourite alternate form, such as `charizard-mega-x`, therefore does not take its base species out of the random pass. Ties are broken by a ranking from the SHA-256 of `<user id>/<pokédex number>`, lowest first, so the pick is fixed per racer.
+
+A Pokémon can have several sprites, such as the Unown letters. The racer gets the sprite file, favourite or random, that the fewest racers use, with the same tie-break from the SHA-256 of `<user id>/<file name>`. A published name is `pokemon-` plus the file name, for example `pokemon-201-b.png`. There is no limit on how many racers share a Pokémon: once every one is in use, the least used are picked. If `assets/pokemon/` has no species, nobody gets a random Pokémon.
+
+**Stability.** The order depends only on racers' first races, so a new racer joins at the end, and a new racer who gets a random Pokémon changes nobody else's avatar. The one exception is a race that reaches the archive after a later-starting race: a new racer whose first race started before another racer's first race sorts ahead of them. A random pick is the racer's best-ranked Pokémon among the least used when their turn comes, so it changes only when what came before their turn changes:
+
+- a favourite is added, changed or removed, or
+- a racer earlier in the order enters or leaves the random pass, by gaining or losing a racetime.gg avatar or a favourite.
+
+Either can take a racer's Pokémon, or free one they rank higher. A favourite Pokémon changes only when the bio does, but its sprite can change when another racer earlier in the order starts or stops favouring the same Pokémon.
+
+**The pokédex.** `assets/pokemon/` is committed and never deployed. It holds 1,537 sprites, named `<pokédex number>.png` or `<number>-<variant>.png`, and `pokedex.json`, which maps ids to names for `pokemon` (1,351 entries) and `species` (1,025). Only `site/avatars/` is deployed, with copies of the sprites in use. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites `pokedex.json` from PokeAPI. It follows the `next` links of PokeAPI's `/pokemon/` and `/pokemon-species/` lists and fails, writing nothing, if a list is incomplete, changes while it is read, or links outside PokeAPI. CI never runs it. A new generation also needs its sprites added to `assets/pokemon/`.
+
+**The sprites.** The committed sprites are processed copies of 96 × 96 originals, which live in `_tmp_assets/pokemon/` and are not committed. `python3 scripts/pokemon_images.py` converts every original whose name is a sprite name, so the `0.png` placeholder is skipped, and never touches `pokedex.json`. Run `avatar_mirror.py` afterwards so `site/avatars/` gets the new copies. For each sprite it:
+
+1. Trims the transparent margin.
+2. Centres the creature in a square whose side is its longest side divided by 0.875 (`FILL_RATIO`), so every creature fills 7/8 of the frame, with a 1/16 margin on each side, however small it was drawn.
+3. Scales the square up by the smallest whole factor that makes it at least 256 pixels on a side (`MIN_SIDE`), with nearest-neighbour sampling, so the pixel art stays exact. 256 is four times the 64-pixel racer-page avatar, so every avatar on the page, up to 3× screens and the 72-pixel share card, scales the sprite down.
+4. Writes a palette PNG.
+
+Running it again on its own output changes nothing, because the factor is then 1.
 
 ### Privacy
 
@@ -231,14 +319,15 @@ Avatars work the same way but never cost a request. The leaderboards response al
 - **`participants.json`** publishes each racer's public display name and stable user ID, because a leaderboard requires them, plus the file name of their mirrored avatar.
   - That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus the URL's lowercase extension, for example `3f9ac01d2e7b8a64.jpg`. It carries nothing from the upload's own file name.
   - A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and `%`, as in percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`.
-  - The avatar follows the racer's most recently observed profile: the category leaderboards each sync, or their latest race file among the races the dashboard includes, so never a `ladder_test` race, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none.
+  - The avatar follows the racer's most recently observed profile: the category leaderboards each sync, or their latest race file among the races the dashboard includes, so never a `ladder_test` race, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none, unless a Pokémon fills in (see [Pokémon avatars](#pokémon-avatars)).
+  - A Pokémon avatar's name is `pokemon-` plus a sprite file name, `pokemon-<pokédex number>[-<variant>].png`, for example `pokemon-201-b.png`. It reveals only which Pokémon the racer has, which comes from their public bio or from a random pick. Bio text is never published.
 - **`comments.json`** publishes the raw post-race comments of included races, stripped and capped at 500 characters, keyed by race name and user ID, each with the chest count parsed from it, or `null`.
 - **`site/avatars/`** holds copies of exactly the files `participants.json` names, raster images only. The page serves avatars from there, so a viewer's browser never contacts racetime.gg for them.
   - The copies are byte for byte, so any metadata an upload carries, such as a JPEG's EXIF block, is served as racetime.gg serves it.
   - A replaced or removed avatar leaves `site/avatars/` but stays in the repository's git history.
 - **Never published:** full names, discriminators, pronouns, flair, Twitch fields and racetime.gg points and score fields.
 
-`archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
+`archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It also holds racers' public profile bios, verbatim from their racetime.gg profile pages. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
 
 ### Definitions
 
