@@ -336,7 +336,7 @@ A winner's points never fall. Every pair a winner is in is decided in their favo
 
 Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode.
 
-Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.534 against 0.546 (see [Backtest](#backtest)). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and God Route's top-rated racer always use the overall rating.
+Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.534 against 0.546 (see [Backtest](#backtest)). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and the top-rated racer of God Route and Upsetti always use the overall rating.
 
 #### What racetime.gg does differently
 
@@ -399,6 +399,7 @@ Each badge records the index of the race that unlocked it. Shares are of the 398
 |---|---|---|
 | First Blood | Win a race. | 56% |
 | Hat Trick | Win 3 races in a row, in the racer's own sequence. | 15% |
+| Hummers | Win 6 races in a row. | 2.5% |
 | OkDudeLucksack | Win 9 races in a row. | 0.8% |
 | No Dodge | Finish 10 races in a row. | 47% |
 | More No Dodge | Finish 40 races in a row. | 11% |
@@ -407,11 +408,14 @@ Each badge records the index of the race that unlocked it. Shares are of the 398
 | BlazeIt | Finish 420 races. | 0% |
 | >174 | Enter 175 races you don't win. | 3.8% |
 | Omnivore | Finish a race in 7 different modes. | 4.5% |
+| Apex Predator | Win a race in 7 different modes. | 2.0% |
 | Sniper | Win by less than 5 seconds. | 7.0% |
 | Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.3% |
 | RETIME | Finish less than 1 second from another racer. | 17% |
 | Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | 34% |
 | God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. | 13% |
+| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. | 3.3% |
+| BigBrain | Win by 15 minutes or more in a field of 9 or more. | 5.0% |
 | Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. | 13% |
 | Glitched | Finish a glitched race. | 10% |
 | Glitched! | Finish 10 glitched races. | 3.5% |
@@ -454,7 +458,10 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 - **Rettel Pets:** Step Letter's rule with the names in place order never increasing.
 - **Names for Step Letter and Rettel Pets:** each entrant's name as archived with that race, normally within hours of it, not their current name, so a later rename never adds or removes either badge. The archive was first filled in bulk on 2026-10-27, so earlier races carry the names racers had on that date.
 - **God Route:** places 1 and 2 are both timed and more than 10 minutes apart, using the exact times, and the field is at least 7. "Top-rated" is the entrant with the best pre-race overall rating among those who are not provisional and raced in the previous 90 days. When no entrant qualifies, the winner earns it.
+- **Upsetti:** places 1 and 2 are both timed and at least 10 minutes apart, using the exact times, the field is at least 7, and place 2 is the top-rated entrant, as defined for God Route. When no entrant qualifies, or the top-rated entrant finishes elsewhere or doesn't finish, nobody earns it. Unlike God Route's "more than", exactly 10 minutes is enough.
+- **BigBrain:** places 1 and 2 are both timed and at least 15 minutes apart, using the exact times, and the field is at least 9. Ratings play no part.
 - **Omnivore:** needs 7 of the 8 modes, because requiring all 8 left 0.8% of racers holding it.
+- **Apex Predator:** Omnivore's rule for wins: a win in 7 different modes.
 
 Each badge ships an animated image and a still under `site/assets/badges/`. To add or remove a badge, see [Badge_Guide.md](Badge_Guide.md).
 

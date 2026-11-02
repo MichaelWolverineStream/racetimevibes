@@ -23,6 +23,7 @@ PHOTO_MAX_MARGIN = 5.0
 RETIME_MAX_GAP = 1.0
 MILESTONES = (25, 50, 100, 250, 500, 1000)
 HAT_TRICK_WINS = 3
+HUMMERS_WINS = 6
 LUCKSACK_WINS = 9
 NO_DODGE_FINISHES = 10
 MORE_NO_DODGE_FINISHES = 40
@@ -32,6 +33,7 @@ CENTURIAN_FINISHES = 105
 BLAZE_IT_FINISHES = 420
 OVER_174_NON_WINS = 175
 OMNIVORE_MODES = 7
+APEX_PREDATOR_MODES = 7
 GLITCHED_MODE = "glitched"
 GLITCHED_TIERS = (1, 10, 30, 100)
 INVERTED_MODE = "inverted"
@@ -58,6 +60,10 @@ BIG_FIELD_SIZE = 16
 BLOWOUT_MIN_FIELD = 5
 GOD_ROUTE_MIN_MARGIN = 600
 GOD_ROUTE_MIN_FIELD = 7
+UPSETTI_MIN_MARGIN = 600
+UPSETTI_MIN_FIELD = 7
+BIG_BRAIN_MIN_MARGIN = 900
+BIG_BRAIN_MIN_FIELD = 9
 RANKING_WINDOW_DAYS = 90
 PRESET_MIN_RACES = 8
 BEST_PRESET_MIN_FINISHES = 3
@@ -188,6 +194,7 @@ class _Player:
         "entrance_days",
         "entrance_weeks",
         "modes_done",
+        "modes_won",
         "best_by_mode",
         "pbs",
         "badges",
@@ -216,6 +223,7 @@ class _Player:
         self.entrance_days = _CalendarRun()
         self.entrance_weeks = _CalendarRun()
         self.modes_done: set[int] = set()
+        self.modes_won: set[int] = set()
         self.best_by_mode: dict[int, int] = {}
         self.pbs: dict[int, list[list[int]]] = {}
         self.badges: dict[str, int] = {}
@@ -245,6 +253,8 @@ class _Moment(NamedTuple):
     snipers: set[int]
     sniped: set[int]
     god_route: set[int]
+    upsetti: set[int]
+    big_brain: set[int]
     middle: set[int]
     step_letter: set[int]
     rettel_pets: set[int]
@@ -308,6 +318,13 @@ BADGES = (
         progress=_best_run("win"),
     ),
     Badge(
+        "hummers",
+        "Hummers",
+        f"Win {HUMMERS_WINS} races in a row.",
+        HUMMERS_WINS,
+        progress=_best_run("win"),
+    ),
+    Badge(
         "ok_dude_lucksack",
         "OkDudeLucksack",
         f"Win {LUCKSACK_WINS} races in a row.",
@@ -364,6 +381,13 @@ BADGES = (
         progress=lambda s: len(s.modes_done),
     ),
     Badge(
+        "apex_predator",
+        "Apex Predator",
+        f"Win a race in {APEX_PREDATOR_MODES} different modes.",
+        APEX_PREDATOR_MODES,
+        progress=lambda s: len(s.modes_won),
+    ),
+    Badge(
         "sniper",
         "Sniper",
         f"Win by less than {PHOTO_MAX_MARGIN:g} seconds.",
@@ -393,6 +417,20 @@ BADGES = (
         f"Win by more than {GOD_ROUTE_MIN_MARGIN // 60} minutes in a field of "
         f"{GOD_ROUTE_MIN_FIELD} or more while not its top-rated racer.",
         earned=lambda m: m.player in m.god_route,
+    ),
+    Badge(
+        "upsetti",
+        "Upsetti",
+        f"Finish 2nd, {UPSETTI_MIN_MARGIN // 60} minutes or more behind the winner, in a field of "
+        f"{UPSETTI_MIN_FIELD} or more as its top-rated racer.",
+        earned=lambda m: m.player in m.upsetti,
+    ),
+    Badge(
+        "big_brain",
+        "BigBrain",
+        f"Win by {BIG_BRAIN_MIN_MARGIN // 60} minutes or more in a field of "
+        f"{BIG_BRAIN_MIN_FIELD} or more.",
+        earned=lambda m: m.player in m.big_brain,
     ),
     Badge(
         "big_game_hunter",
@@ -594,6 +632,15 @@ def _ranking_top(
     return [index for _mean, index in ranked]
 
 
+def _top_rated(states: dict[int, _Player], race_ordinal: int, entries: list[Any]) -> int | None:
+    """The race's top-rated entrant by `_ranking_top`, if any entrant is ranked."""
+    entrant_ids = {e[0] for e in entries}
+    return next(
+        (index for index in _ranking_top(states, race_ordinal) if index in entrant_ids),
+        None,
+    )
+
+
 def _middle_finisher(entries: list[Any], n: int) -> set[int]:
     """The finisher in the exact middle of an odd field, if one is identified."""
     if n < MIDDLE_MIN_FIELD or n % 2 == 0:
@@ -651,9 +698,10 @@ def compute(
     big_fields: list[list[Any]] = []
     tag_counts: Counter[str] = Counter()
 
-    # Omnivore asks for fewer modes when the data has fewer than its target.
+    # Omnivore and Apex Predator ask for fewer modes when the data has fewer than their target.
     targets = {badge.id: badge.target for badge in BADGES}
     targets["omnivore"] = min(OMNIVORE_MODES, len(modes))
+    targets["apex_predator"] = min(APEX_PREDATOR_MODES, len(modes))
 
     preset_rows = [
         {"races": 0, "entries": 0, "bad": 0, "times": [], "wins": [], "fields": 0, "best": None}
@@ -724,9 +772,10 @@ def compute(
                         )
                         upsets += 1
 
-        # Photo finish and blowout.
+        # Photo finish, blowout and BigBrain.
         snipers: set[int] = set()
         sniped: set[int] = set()
+        big_brain: set[int] = set()
         margin: float | None = None
         if (
             winner is not None
@@ -740,21 +789,22 @@ def compute(
                 photos.append([ri, winner[0], runner_up[0], margin])
                 snipers = {winner[0]}
                 sniped = {runner_up[0]}
+            if n >= BIG_BRAIN_MIN_FIELD and margin >= BIG_BRAIN_MIN_MARGIN:
+                big_brain = {winner[0]}
             if n >= BLOWOUT_MIN_FIELD:
                 blowouts.append([ri, winner[0], runner_up[0], margin])
         if winner is not None and n >= BIG_FIELD_SIZE:
             big_fields.append([ri, winner[0], n])
 
-        # God Route: needs the pre-race ranking, so it runs before state updates.
+        # God Route and Upsetti need the pre-race ranking, so they run before state updates.
         god_route: set[int] = set()
         if margin is not None and margin > GOD_ROUTE_MIN_MARGIN and n >= GOD_ROUTE_MIN_FIELD:
-            entrant_ids = {e[0] for e in entries}
-            top_rated = next(
-                (index for index in _ranking_top(states, race_ordinal) if index in entrant_ids),
-                None,
-            )
-            if top_rated != winner[0]:
+            if _top_rated(states, race_ordinal, entries) != winner[0]:
                 god_route = {winner[0]}
+        upsetti: set[int] = set()
+        if margin is not None and margin >= UPSETTI_MIN_MARGIN and n >= UPSETTI_MIN_FIELD:
+            if _top_rated(states, race_ordinal, entries) == runner_up[0]:
+                upsetti = {runner_up[0]}
 
         middle = _middle_finisher(entries, n)
         step_letter = _alphabetical_field(entries, n, rec["names"])
@@ -799,6 +849,7 @@ def compute(
                 if state.wins == 0:
                     tags["first_win"].append(["first_win", player])
                 state.wins += 1
+                state.modes_won.add(mode)
             if mode_name == ENTRANCE_MODE:
                 state.entrance_days.step(race_ordinal)
                 state.entrance_weeks.step((race_ordinal - 1) // 7)
@@ -851,6 +902,8 @@ def compute(
                 snipers,
                 sniped,
                 god_route,
+                upsetti,
+                big_brain,
                 middle,
                 step_letter,
                 rettel_pets,

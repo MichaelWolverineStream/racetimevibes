@@ -342,6 +342,10 @@ class BadgeTests(unittest.TestCase):
         self.assertNotIn("ok_dude_lucksack", self.badges([duel(0, 1)] * 8))
         self.assertEqual(self.badges([duel(0, 1)] * 9)["ok_dude_lucksack"], 8)
 
+    def test_hummers_needs_six_wins_in_a_row(self):
+        self.assertNotIn("hummers", self.badges([duel(0, 1)] * 5))
+        self.assertEqual(self.badges([duel(0, 1)] * 6)["hummers"], 5)
+
     def test_no_dodge_tiers_need_consecutive_finishes(self):
         self.assertNotIn("no_dodge", self.badges(solo_finishes(9)))
         self.assertEqual(self.badges(solo_finishes(10))["no_dodge"], 9)
@@ -411,6 +415,24 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(result["players"][0]["progress"]["omnivore"], 1)
         self.assertEqual(result["players"][1]["badges"]["omnivore"], 1)
 
+    def test_apex_predator_needs_a_win_in_seven_modes(self):
+        modes = [f"mode{i}" for i in range(8)]
+        records = [duel(0, 1, mode=i) for i in range(7)]
+        records.insert(3, duel(1, 0, mode=7))
+        result = run(records[:7], modes=modes)
+        self.assertNotIn("apex_predator", result["players"][0]["badges"])
+        self.assertEqual(result["players"][0]["progress"]["apex_predator"], 6)
+        self.assertEqual(self.badges(records, modes=modes)["apex_predator"], 7)
+
+    def test_apex_predator_target_is_capped_by_the_mode_count(self):
+        records = [duel(0, 1, mode=0), duel(1, 0, mode=1), duel(0, 1, mode=1)]
+        result = run(records, mode_count=2)
+        definition = next(b for b in result["badges"] if b["id"] == "apex_predator")
+        self.assertEqual(definition["target"], 2)
+        self.assertEqual(result["players"][0]["badges"]["apex_predator"], 2)
+        self.assertNotIn("apex_predator", result["players"][1]["badges"])
+        self.assertEqual(result["players"][1]["progress"]["apex_predator"], 1)
+
     def test_sniper_wins_by_under_five_seconds(self):
         self.assertEqual(self.badges([duel(0, 1, margin=4.99)])["sniper"], 0)
         self.assertNotIn("sniper", self.badges([duel(0, 1, margin=5.0)]))
@@ -465,7 +487,7 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(run([race])["players"][0]["badges"]["big_game_hunter"], 0)
 
     @staticmethod
-    def god_route_race(*, winner=1, margin=601.0, field=7, day=5, absent=()):
+    def margin_race(*, winner=1, margin=601.0, field=7, day=5, absent=()):
         """Racers 0 to field - 1, minus any absent; winner leads second by margin seconds."""
         others = [p for p in range(field) if p not in (winner, *absent)]
         entries = [done(winner, 1, 3000.0)] + [
@@ -474,18 +496,18 @@ class BadgeTests(unittest.TestCase):
         return record(entries, day=day, n=field)
 
     def test_god_route_wins_by_more_than_ten_minutes_in_a_field_of_seven(self):
-        records = warmup([0, 2], 5) + [self.god_route_race()]
+        records = warmup([0, 2], 5) + [self.margin_race()]
         result = run(records, means={0: 3.0})
         self.assertEqual(result["players"][1]["badges"]["god_route"], 5)
         god_route_tags = [tag for tag in tags_of(result, 5, "badge") if tag[2] == "god_route"]
         self.assertEqual(god_route_tags, [["badge", 1, "god_route"]])
 
     def test_god_route_needs_more_than_ten_minutes(self):
-        records = warmup([0, 2], 5) + [self.god_route_race(margin=600.0)]
+        records = warmup([0, 2], 5) + [self.margin_race(margin=600.0)]
         self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
 
     def test_god_route_needs_a_field_of_seven(self):
-        records = warmup([0, 2], 5) + [self.god_route_race(field=6)]
+        records = warmup([0, 2], 5) + [self.margin_race(field=6)]
         self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
 
     def test_god_route_counts_anonymous_entrants(self):
@@ -496,20 +518,20 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(self.badges(records, player=1, means={0: 3.0})["god_route"], 5)
 
     def test_god_route_not_awarded_to_the_fields_top_rated(self):
-        overall = warmup([0, 2], 5) + [self.god_route_race(winner=0)]
+        overall = warmup([0, 2], 5) + [self.margin_race(winner=0)]
         self.assertNotIn("god_route", self.badges(overall, player=0, means={0: 3.0, 2: 2.0}))
         # Racer 0 is not in this race, so racer 2 is the field's top-rated.
-        in_field = warmup([0, 2], 5) + [self.god_route_race(winner=2, absent=(0,))]
+        in_field = warmup([0, 2], 5) + [self.margin_race(winner=2, absent=(0,))]
         self.assertNotIn("god_route", self.badges(in_field, player=2, means={0: 3.0, 2: 2.0}))
 
     def test_god_route_awarded_when_no_entrant_is_ranked(self):
-        provisional = warmup([0, 2], 4) + [self.god_route_race(winner=0, day=4)]
+        provisional = warmup([0, 2], 4) + [self.margin_race(winner=0, day=4)]
         self.assertEqual(self.badges(provisional, player=0, means={0: 3.0})["god_route"], 4)
 
     def test_god_route_ignores_an_inactive_top_rated(self):
         late = 4 + highlights.RANKING_WINDOW_DAYS
-        active = warmup([0, 2], 5) + [self.god_route_race(winner=0, day=late)]
-        inactive = warmup([0, 2], 5) + [self.god_route_race(winner=0, day=late + 1)]
+        active = warmup([0, 2], 5) + [self.margin_race(winner=0, day=late)]
+        inactive = warmup([0, 2], 5) + [self.margin_race(winner=0, day=late + 1)]
         self.assertNotIn("god_route", self.badges(active, means={0: 3.0, 2: 2.0}))
         self.assertIn("god_route", self.badges(inactive, means={0: 3.0, 2: 2.0}))
 
@@ -517,6 +539,58 @@ class BadgeTests(unittest.TestCase):
         race = record([done(1, 1, 3000.0)] + [dnf(p) for p in (0, 2, 3, 4, 5, 6)], day=5)
         records = warmup([0, 2], 5) + [race]
         self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
+
+    def test_upsetti_top_rated_finishes_second_ten_minutes_behind(self):
+        records = warmup([0, 2], 5) + [self.margin_race(margin=600.0)]
+        result = run(records, means={0: 3.0})
+        self.assertEqual(result["players"][0]["badges"]["upsetti"], 5)
+        upsetti_tags = [tag for tag in tags_of(result, 5, "badge") if tag[2] == "upsetti"]
+        self.assertEqual(upsetti_tags, [["badge", 0, "upsetti"]])
+
+    def test_upsetti_needs_ten_minutes(self):
+        records = warmup([0, 2], 5) + [self.margin_race(margin=599.0)]
+        self.assertNotIn("upsetti", self.badges(records, means={0: 3.0}))
+
+    def test_upsetti_needs_a_field_of_seven(self):
+        records = warmup([0, 2], 5) + [self.margin_race(margin=600.0, field=6)]
+        self.assertNotIn("upsetti", self.badges(records, means={0: 3.0}))
+
+    def test_upsetti_needs_the_top_rated_in_second_place(self):
+        race = record(
+            [done(1, 1, 3000.0), done(2, 2, 3700.0), done(0, 3, 3800.0)]
+            + [done(p, p + 1, 3900.0 + p) for p in range(3, 7)],
+            day=5,
+        )
+        records = warmup([0, 2], 5) + [race]
+        self.assertNotIn("upsetti", self.badges(records, player=0, means={0: 3.0}))
+        self.assertNotIn("upsetti", self.badges(records, player=2, means={0: 3.0}))
+
+    def test_upsetti_not_awarded_for_a_top_rated_dnf(self):
+        race = record(
+            [done(1, 1, 3000.0), dnf(0)] + [done(p, p, 3700.0 + p) for p in range(2, 7)],
+            day=5,
+        )
+        records = warmup([0, 2], 5) + [race]
+        for player in range(7):
+            self.assertNotIn("upsetti", self.badges(records, player=player, means={0: 3.0}))
+
+    def test_upsetti_goes_to_the_top_rated_in_the_field(self):
+        # Racer 0 is not in this race, so racer 2 is the field's top-rated.
+        records = warmup([0, 2], 5) + [self.margin_race(margin=600.0, absent=(0,))]
+        self.assertEqual(self.badges(records, player=2, means={0: 3.0, 2: 2.0})["upsetti"], 5)
+
+    def test_big_brain_wins_by_fifteen_minutes_in_a_field_of_nine(self):
+        self.assertEqual(
+            self.badges([self.margin_race(margin=900.0, field=9, day=0)], player=1)["big_brain"], 0
+        )
+        self.assertNotIn(
+            "big_brain", self.badges([self.margin_race(margin=899.0, field=9, day=0)], player=1)
+        )
+
+    def test_big_brain_needs_a_field_of_nine(self):
+        self.assertNotIn(
+            "big_brain", self.badges([self.margin_race(margin=900.0, field=8, day=0)], player=1)
+        )
 
     def test_glitched_tiers_count_finishes_in_the_glitched_mode(self):
         glitched = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in range(100)]
@@ -809,6 +883,7 @@ class BadgeTests(unittest.TestCase):
             [
                 "first_blood",
                 "hat_trick",
+                "hummers",
                 "ok_dude_lucksack",
                 "no_dodge",
                 "more_no_dodge",
@@ -817,11 +892,14 @@ class BadgeTests(unittest.TestCase):
                 "blaze_it",
                 "over_174",
                 "omnivore",
+                "apex_predator",
                 "sniper",
                 "sniped",
                 "retime",
                 "palindrome",
                 "god_route",
+                "upsetti",
+                "big_brain",
                 "big_game_hunter",
                 "glitched",
                 "glitched_10",
