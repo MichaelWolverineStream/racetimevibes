@@ -381,6 +381,8 @@ Median veteran move per race (past race 50): 8 points
 
 Within a race, tags appear in the order record, first win, upset, photo, PB, milestone, badge.
 
+Each kind has its own colour, and so does the Hardest preset tag. The colour fills the tag's dot and outlines its pill. The colours stay distinct from each other under colour-blind simulation, and every tag names its kind, so colour is never the only cue.
+
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
 - **First win:** the racer's first place-1 result in any mode.
 - **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite. 3.7% of races qualify.

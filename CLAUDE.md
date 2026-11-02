@@ -111,7 +111,7 @@ The scripts are classic `<script defer>` files that share one global scope. They
 
 Tokens live on `:root` in `styles.css`:
 - colours
-- data roles: `--series`, `--mode-*`, `--cohort-*`
+- data roles: `--series`, `--mode-*`, `--cohort-*`, `--tag-*`
 - the type scale: `--text-*`
 - `--shadow` and `--scrim`
 - the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`
@@ -121,6 +121,7 @@ Rules for using them:
 - A comment that mentions an overlay layer names the token, not a number.
 - **`--radius` is only for surfaces and controls.** Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - **Mode colours mean modes.** Don't use `--mode-*` for anything else.
+- **Tag colours mean tag kinds.** Each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new kind needs its own, checked against the others for colour-blind separation.
 
 ### Global rules
 

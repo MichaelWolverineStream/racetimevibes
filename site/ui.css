@@ -151,12 +151,14 @@
   text-decoration: underline;
 }
 
+/* Each kind sets --kind-color, which colours both the dot and the border. */
 .ui-tag {
+  --kind-color: var(--series);
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 2px 8px 2px 6px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--kind-color);
   border-radius: 999px;
   background: var(--panel);
   color: var(--ink);
@@ -167,7 +169,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--series);
+  background: var(--kind-color);
 }
 
 .ui-tag__label {
@@ -176,27 +178,36 @@
   line-height: 1.3;
 }
 
-.ui-tag--pb .ui-tag__dot {
-  background: var(--accent);
+.ui-tag--record {
+  --kind-color: var(--tag-record);
 }
 
-.ui-tag--record .ui-tag__dot,
-.ui-tag--first_win .ui-tag__dot {
-  background: var(--gold);
+.ui-tag--first_win {
+  --kind-color: var(--tag-first-win);
 }
 
-.ui-tag--photo .ui-tag__dot {
-  background: var(--positive);
+.ui-tag--upset {
+  --kind-color: var(--tag-upset);
 }
 
-.ui-tag--upset .ui-tag__dot,
-.ui-tag--hardest .ui-tag__dot {
-  background: var(--red);
+.ui-tag--photo {
+  --kind-color: var(--tag-photo);
 }
 
-.ui-tag--milestone .ui-tag__dot,
-.ui-tag--badge .ui-tag__dot {
-  background: var(--series);
+.ui-tag--pb {
+  --kind-color: var(--tag-pb);
+}
+
+.ui-tag--milestone {
+  --kind-color: var(--tag-milestone);
+}
+
+.ui-tag--badge {
+  --kind-color: var(--tag-badge);
+}
+
+.ui-tag--hardest {
+  --kind-color: var(--tag-hardest);
 }
 
 .ui-tag--new {
