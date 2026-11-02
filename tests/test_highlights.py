@@ -1,6 +1,7 @@
 import math
 import unittest
 from datetime import date, timedelta
+from unittest import mock
 
 from scripts import highlights
 
@@ -1025,12 +1026,156 @@ class OutputTests(unittest.TestCase):
         self.assertEqual(first, run(records)["facts"])
         self.assertGreaterEqual(len(first), 8)
         for fact in first:
-            self.assertTrue(fact.endswith("."), fact)
-            self.assertTrue(any(char.isdigit() for char in fact), fact)
-        self.assertIn("The closest photo finish was 0.50 seconds, with P0 edging out P1.", first)
-        self.assertIn("The mode0 record is 1:23:21, held by P0.", first)
-        self.assertIn("P0 raced on 3 days in a row, from 2026-03-01 to 2026-03-03.", first)
-        self.assertIn("3 finish times read the same both ways, like 1:23:21.", first)
+            self.assertEqual(len(fact), 3, fact)
+            self.assertTrue(all(isinstance(part, str) for part in fact), fact)
+            self.assertTrue(any(char.isdigit() for char in fact[1]), fact)
+            self.assertTrue("".join(fact).endswith("."), fact)
+        sentences = ["".join(fact) for fact in first]
+        self.assertIn("The closest photo finish was 0.50 seconds, with P0 edging out P1.", sentences)
+        self.assertIn("The Mode0 record is 1:23:21, held by P0.", sentences)
+        self.assertIn("P0 raced on 3 days in a row, from Mar 1, 2026 to Mar 3, 2026.", sentences)
+        self.assertIn("3 finish times read the same both ways, like 1:23:21.", sentences)
+        photo = next(fact for fact in first if fact[0].startswith("The closest photo"))
+        self.assertEqual(photo[1], "0.50")
+
+    def test_a_name_with_digits_leaves_the_headline_alone(self):
+        records = [duel(0, 1, day=i) for i in range(3)]
+        facts = run(records, names={0: "Steinchen89"})["facts"]
+        self.assertIn(["Steinchen89 and P1 have shared ", "3", " races."], facts)
+
+    def test_unknown_mode_is_left_out_of_mode_facts(self):
+        records = [duel(0, 1, mode=1, day=i) for i in range(3)]
+        result = run(records, modes=["mode0", highlights.UNKNOWN_MODE])
+        sentences = ["".join(fact) for fact in result["facts"]]
+        self.assertFalse(any("record is" in sentence for sentence in sentences))
+        self.assertFalse(any("Unknown" in sentence for sentence in sentences))
+
+    def test_mode_label_capitalises_and_spaces_the_raw_id(self):
+        self.assertEqual(highlights.mode_label("entrance"), "Entrance")
+        self.assertEqual(highlights.mode_label("ladder_x"), "Ladder x")
+
+    def test_blowout_fact_uses_the_biggest_winning_margin(self):
+        race = record(
+            [done(0, 1, 3000.0), done(1, 2, 5500.0), dnf(2), dnf(3), dnf(4)]
+        )
+        facts = run([race])["facts"]
+        self.assertIn(
+            ["P0 beat P1 by ", "0:41:40", ", the biggest winning margin yet."], facts
+        )
+
+    def test_win_streak_fact(self):
+        facts = run([duel(0, 1, day=i) for i in range(3)])["facts"]
+        self.assertIn(["P0 won ", "3", " races in a row."], facts)
+
+    def test_comeback_fact_needs_a_long_enough_break(self):
+        long_break = run([duel(0, 1, day=0), duel(0, 1, day=40)])["facts"]
+        self.assertIn(["P0 came back after ", "40", " days away."], long_break)
+        days = highlights.TOUCHED_GRASS_DAYS - 1
+        short_break = run([duel(0, 1, day=0), duel(0, 1, day=days)])["facts"]
+        self.assertFalse(any(fact[2].endswith(" days away.") for fact in short_break))
+
+    def test_busiest_weekday_fact(self):
+        # 2026-03-01 is a Sunday, so day 6 is a Saturday.
+        records = [duel(0, 1, day=6), duel(0, 1, day=6), duel(0, 1, day=0)]
+        facts = run(records)["facts"]
+        self.assertIn(["Saturday is the busiest day of the week, with ", "2", " races."], facts)
+
+    def test_biggest_upset_fact(self):
+        records = warmup([0, 1, 2], 5) + [UpsetTests().upset_race()]
+        facts = run(records, means={0: 2.0})["facts"]
+        self.assertIn(
+            ["P1 had a ", "11.9%", " win chance against P0 and won, the biggest upset yet."],
+            facts,
+        )
+
+
+def claim_inputs(count, stats=None, badges=None):
+    """Zeroed racer stats, with overrides, for `count` racers; badges maps racer to badge ids."""
+    states = {index: highlights._Player() for index in range(count)}
+    holders = {badge.id: 0 for badge in highlights.BADGES}
+    for index, ids in (badges or {}).items():
+        states[index].badges = {badge_id: 0 for badge_id in ids}
+        for badge_id in ids:
+            holders[badge_id] += 1
+    table = {kind: {index: 0 for index in states} for kind in highlights.CLAIM_KINDS}
+    for kind, values in (stats or {}).items():
+        table[kind].update(values)
+    return table, states, holders
+
+
+class ClaimTests(unittest.TestCase):
+    def claims(self, count, stats=None, badges=None):
+        return highlights._claims(*claim_inputs(count, stats, badges))
+
+    def test_rarest_badge_wins_when_it_has_the_lowest_count(self):
+        badges = {0: ["first_blood", "sniper"], 1: ["first_blood"], 2: ["first_blood"]}
+        stats = {"wins": {0: 5, 1: 5, 2: 5}}
+        self.assertEqual(self.claims(40, stats, badges)[0], ["badge", "sniper", 1])
+
+    def test_a_stat_ranks_ahead_of_a_badge_on_equal_counts(self):
+        stats = {"wins": {0: 3}}
+        self.assertEqual(self.claims(20, stats, {0: ["sniper"]})[0], ["wins", 3, 1])
+
+    def test_stat_count_is_the_racers_at_or_above_the_value(self):
+        stats = {"wins": {0: 9, 1: 7, 2: 7, 3: 3}}
+        claims = self.claims(40, stats)
+        self.assertEqual(claims[0], ["wins", 9, 1])
+        self.assertEqual(claims[1], ["wins", 7, 3])
+        self.assertEqual(claims[2], ["wins", 7, 3])
+        self.assertEqual(claims[3], ["wins", 3, 4])
+
+    def test_no_claim_above_ten_percent_of_racers(self):
+        two = {"wins": {0: 5, 1: 5}}
+        three = {"wins": {0: 5, 1: 5, 2: 5}}
+        self.assertEqual(self.claims(20, two)[0], ["wins", 5, 2])
+        self.assertIsNone(self.claims(20, three)[0])
+        self.assertIsNone(self.claims(20, {}, {0: ["first_blood"], **{i: ["first_blood"] for i in range(1, 5)}})[0])
+
+    def test_values_below_two_never_claim(self):
+        self.assertIsNone(self.claims(20, {"wins": {0: 1}})[0])
+
+    def test_equal_counts_go_to_the_earlier_kind(self):
+        stats = {"races": {0: 4}, "wins": {0: 3}, "night": {0: 9}}
+        self.assertEqual(self.claims(20, stats)[0], ["wins", 3, 1])
+
+    def test_a_racer_who_never_raced_has_no_claim(self):
+        result = run([duel(0, 1)])
+        self.assertIsNone(result["players"][5]["claim"])
+        self.assertTrue(all("claim" in player for player in result["players"]))
+
+    def test_a_claim_flows_into_the_players(self):
+        # Forty identified racers, so one winner of two races is within the top ten percent.
+        crowd = [done(p, p + 1, 3000.0 + 10 * p) for p in range(40)]
+        result = run([record(crowd, day=0), record(crowd, day=1)])
+        self.assertEqual(result["players"][0]["claim"], ["wins", 2, 1])
+
+    def test_longest_break(self):
+        self.assertEqual(highlights._longest_break([]), 0)
+        self.assertEqual(highlights._longest_break(["2026-03-01"]), 0)
+        dates = ["2026-03-01", "2026-03-03", "2026-03-04", "2026-04-10"]
+        self.assertEqual(highlights._longest_break(dates), 37)
+
+    def test_racer_stats_cover_every_claim_kind(self):
+        records = [
+            duel(0, 1, day=0, hour=2),
+            duel(0, 1, day=1, hour=2, first_seconds=3000.0),
+            duel(1, 2, day=9),
+        ]
+        with mock.patch.object(
+            highlights, "_racer_stats", wraps=highlights._racer_stats
+        ) as spy:
+            run(records)
+        stats = highlights._racer_stats(*spy.call_args.args)
+        self.assertEqual(tuple(stats), highlights.CLAIM_KINDS)
+        self.assertEqual(stats["wins"], {0: 2, 1: 1, 2: 0})
+        self.assertEqual(stats["races"], {0: 2, 1: 3, 2: 1})
+        self.assertEqual(stats["night"], {0: 2, 1: 2, 2: 0})
+        self.assertEqual(stats["opponents"], {0: 1, 1: 2, 2: 1})
+        # Both racers beat their own first time on day 1; P2 has only a baseline.
+        self.assertEqual(stats["pbs"], {0: 1, 1: 1, 2: 0})
+        self.assertEqual(stats["daily"], {0: 2, 1: 2, 2: 1})
+        self.assertEqual(stats["comeback"], {0: 1, 1: 8, 2: 0})
+
 
     def test_format_duration(self):
         self.assertEqual(highlights.format_duration(5001), "1:23:21")

@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 9;
+const PARTICIPANT_SCHEMA_VERSION = 10;
 const ALL_MODES = "all";
 // Races with a missing or malformed mode prefix; a bucket, not a category.
 const UNKNOWN_MODE = "unknown";

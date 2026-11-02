@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import bisect
 import statistics
 from collections import Counter, defaultdict
 from collections.abc import Callable
@@ -62,9 +63,27 @@ BEST_PRESET_MIN_FINISHES = 3
 BOARD_BEST = 10
 BOARD_TOP = 10
 FACT_RECORD_MODES = 3
+UNKNOWN_MODE = "unknown"
+MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+CLAIM_MIN_VALUE = 2
+CLAIM_MAX_SHARE = 0.1
 
 DONE_STATUS_CODE = 0
 STREAK_KINDS = ("win", "podium", "finish")
+# The order breaks ties between stats; a badge claim comes after every stat.
+CLAIM_KINDS = (
+    "wins",
+    "win_streak",
+    "podium_streak",
+    "finish_streak",
+    "races",
+    "daily",
+    "pbs",
+    "opponents",
+    "night",
+    "comeback",
+)
 TAG_KINDS = ("record", "first_win", "upset", "photo", "pb", "milestone", "badge")
 
 BADGE_IMAGE_DIR = "assets/badges"
@@ -81,6 +100,12 @@ def is_palindrome_time(seconds: float) -> bool:
     whole = round(seconds)
     digits = f"{whole // 3600}{whole % 3600 // 60:02d}{whole % 60:02d}"
     return digits == digits[::-1]
+
+
+def mode_label(mode: str) -> str:
+    """Display text for a raw mode id. Must match `formatModeName` in site/app.js."""
+    words = mode.replace("_", " ")
+    return words[:1].upper() + words[1:]
 
 
 def format_duration(seconds: float) -> str:
@@ -169,6 +194,7 @@ class _Player:
         "preset_times",
         "mean",
         "last_ordinal",
+        "night_finishes",
     )
 
     def __init__(self) -> None:
@@ -196,6 +222,7 @@ class _Player:
         self.preset_times: dict[int, list[float]] = defaultdict(list)
         self.mean: float | None = None
         self.last_ordinal = 0
+        self.night_finishes = 0
 
 
 class _Moment(NamedTuple):
@@ -629,6 +656,7 @@ def compute(
     night_finishes = 0
     finishes_total = 0
     upsets = 0
+    alphabetical_races = 0
 
     for ri, rec in enumerate(records):
         entries = rec["e"]
@@ -719,6 +747,8 @@ def compute(
         middle = _middle_finisher(entries, n)
         step_letter = _alphabetical_field(entries, n, players)
         rettel_pets = _alphabetical_field(entries, n, players, reverse=True)
+        if step_letter:
+            alphabetical_races += 1
         retimed = _retimed(timed)
 
         # Per-entry updates, in entry order.
@@ -750,6 +780,7 @@ def compute(
                 state.best_day_finishes = max(state.best_day_finishes, state.day_finishes)
                 if rec["h"] in NIGHT_HOURS:
                     night_finishes += 1
+                    state.night_finishes += 1
             if won:
                 if state.wins == 0:
                     tags["first_win"].append(["first_win", player])
@@ -952,6 +983,11 @@ def compute(
         for badge_id in state.badges:
             holders[badge_id] += 1
 
+    stats = _racer_stats(states, daily, pair_counts)
+    claims = _claims(stats, states, holders)
+    for index, player in enumerate(player_out):
+        player["claim"] = claims.get(index)
+
     result = {
         "race_tags": race_tags,
         "players": player_out,
@@ -990,6 +1026,8 @@ def compute(
         palindrome_example=palindrome_example,
         night_finishes=night_finishes,
         finishes_total=finishes_total,
+        alphabetical_races=alphabetical_races,
+        stats=stats,
     )
     return result
 
@@ -1007,7 +1045,63 @@ def _empty_player() -> JsonObject:
             "finish": dict(empty),
         },
         "best_preset": None,
+        "claim": None,
     }
+
+
+def _longest_break(dates: list[str]) -> int:
+    """The most days between two consecutive race days; 0 under two dates (the Touched Grass measure)."""
+    ordinals = [date.fromisoformat(d).toordinal() for d in dates]
+    return max((b - a for a, b in zip(ordinals, ordinals[1:])), default=0)
+
+
+def _racer_stats(
+    states: dict[int, _Player],
+    daily: dict[int, tuple[list[Any], list[Any]]],
+    pair_counts: Counter[tuple[int, int]],
+) -> dict[str, dict[int, int]]:
+    """One number per racer for each claim kind; the facts and the claims both read it."""
+    opponents: dict[int, set[int]] = defaultdict(set)
+    for a, b in pair_counts:
+        opponents[a].add(b)
+        opponents[b].add(a)
+    runs = {kind: _best_run(kind) for kind in STREAK_KINDS}
+    return {
+        "wins": {i: s.wins for i, s in states.items()},
+        "win_streak": {i: runs["win"](s) for i, s in states.items()},
+        "podium_streak": {i: runs["podium"](s) for i, s in states.items()},
+        "finish_streak": {i: runs["finish"](s) for i, s in states.items()},
+        "races": {i: s.races for i, s in states.items()},
+        "daily": {i: daily[i][0][0] for i in states},
+        "pbs": {i: sum(len(steps) - 1 for steps in s.pbs.values()) for i, s in states.items()},
+        "opponents": {i: len(opponents[i]) for i in states},
+        "night": {i: s.night_finishes for i, s in states.items()},
+        "comeback": {i: _longest_break(s.dates) for i, s in states.items()},
+    }
+
+
+def _claims(
+    stats: dict[str, dict[int, int]],
+    states: dict[int, _Player],
+    holders: dict[str, int],
+) -> dict[int, list[Any] | None]:
+    """Each racer's rarest accomplishment as [kind, value, count], or None when none is rare enough."""
+    ranked = {kind: sorted(stats[kind].values()) for kind in CLAIM_KINDS}
+    badge_order = {badge.id: position for position, badge in enumerate(BADGES)}
+    claims: dict[int, list[Any] | None] = {}
+    for index, state in states.items():
+        options: list[tuple[int, int, list[Any]]] = []
+        for position, kind in enumerate(CLAIM_KINDS):
+            value = stats[kind][index]
+            if value >= CLAIM_MIN_VALUE:
+                count = len(ranked[kind]) - bisect.bisect_left(ranked[kind], value)
+                options.append((count, position, [kind, value, count]))
+        if state.badges:
+            rarest = min(state.badges, key=lambda b: (holders[b], badge_order[b]))
+            options.append((holders[rarest], len(CLAIM_KINDS), ["badge", rarest, holders[rarest]]))
+        best = min(options, key=lambda option: option[:2], default=None)
+        claims[index] = best[2] if best and best[0] <= CLAIM_MAX_SHARE * len(states) else None
+    return claims
 
 
 def _progress(state: _Player, targets: dict[str, int]) -> dict[str, int]:
@@ -1061,30 +1155,56 @@ def _facts(
     palindrome_example: float | None,
     night_finishes: int,
     finishes_total: int,
-) -> list[str]:
+    alphabetical_races: int,
+    stats: dict[str, dict[int, int]],
+) -> list[list[str]]:
+    """Sentences as [before, headline, after]; the page highlights the headline."""
+
     def name(index: int) -> str:
         return players[index]["name"]
 
-    def plural(count: int, noun: str) -> str:
-        return f"{count:,} {noun}" if count == 1 else f"{count:,} {noun}s"
+    def count(n: int) -> str:
+        return f"{n:,}"
 
-    facts: list[str] = []
+    def noun(n: int, word: str) -> str:
+        return word if n == 1 else word + "s"
+
+    def day(iso: str) -> str:
+        when = date.fromisoformat(iso)
+        return f"{MONTHS[when.month - 1]} {when.day}, {when.year}"
+
+    def leader(kind: str) -> tuple[int, int] | None:
+        """The racer with the highest value for a stat, ties to the lowest index."""
+        values = stats[kind]
+        if not values:
+            return None
+        index = max(values, key=lambda i: (values[i], -i))
+        return index, values[index]
+
+    facts: list[list[str]] = []
     if records and total_seconds:
+        hours = round(total_seconds / 3600)
         facts.append(
-            f"Racers have spent {round(total_seconds / 3600):,} hours finishing "
-            f"{plural(len(records), 'race')}."
+            [
+                "Racers have spent ",
+                count(hours),
+                f" {noun(hours, 'hour')} finishing {count(len(records))} {noun(len(records), 'race')}.",
+            ]
         )
 
     photo = result["records"]["photo"]
     if photo:
         _ri, winner, runner_up, margin = photo[0]
         facts.append(
-            f"The closest photo finish was {margin:.2f} seconds, "
-            f"with {name(winner)} edging out {name(runner_up)}."
+            [
+                "The closest photo finish was ",
+                f"{margin:.2f}",
+                f" seconds, with {name(winner)} edging out {name(runner_up)}.",
+            ]
         )
 
     by_races = sorted(
-        range(len(modes)),
+        (m for m in range(len(modes)) if modes[m] != UNKNOWN_MODE),
         key=lambda m: (-sum(1 for r in records if r["m"] == m), m),
     )
     for m in by_races[:FACT_RECORD_MODES]:
@@ -1092,7 +1212,11 @@ def _facts(
         if steps:
             _ri, holder, seconds = steps[-1]
             facts.append(
-                f"The {modes[m]} record is {format_duration(seconds)}, held by {name(holder)}."
+                [
+                    f"The {mode_label(modes[m])} record is ",
+                    format_duration(seconds),
+                    f", held by {name(holder)}.",
+                ]
             )
 
     if daily:
@@ -1101,59 +1225,262 @@ def _facts(
         )
         if best[0] > 1:
             facts.append(
-                f"{name(index)} raced on {plural(best[0], 'day')} in a row, "
-                f"from {best[1]} to {best[2]}."
+                [
+                    f"{name(index)} raced on ",
+                    count(best[0]),
+                    f" {noun(best[0], 'day')} in a row, from {day(best[1])} to {day(best[2])}.",
+                ]
             )
 
     finish_board = result["records"]["streaks"]["finish"]["best"]
     if finish_board:
         index, length, *_rest = finish_board[0]
-        facts.append(f"{name(index)} finished {plural(length, 'race')} in a row.")
+        facts.append(
+            [f"{name(index)} finished ", count(length), f" {noun(length, 'race')} in a row."]
+        )
 
     rivals = result["records"]["rivals"]
     if rivals:
-        a, b, count = rivals[0]
-        facts.append(f"{name(a)} and {name(b)} have shared {plural(count, 'race')}.")
+        a, b, shared = rivals[0]
+        facts.append(
+            [f"{name(a)} and {name(b)} have shared ", count(shared), f" {noun(shared, 'race')}."]
+        )
 
     if palindromes:
+        verb = "reads" if palindromes == 1 else "read"
         facts.append(
-            f"{plural(palindromes, 'finish time')} read the same both ways, "
-            f"like {format_duration(palindrome_example)}."
+            [
+                "",
+                count(palindromes),
+                f" finish {noun(palindromes, 'time')} {verb} the same both ways, "
+                f"like {format_duration(palindrome_example)}.",
+            ]
         )
 
     hardest = result["hardest_preset"]
     if hardest is not None:
         row = result["preset_stats"][hardest]
-        label = presets[hardest]["n"]
         facts.append(
-            f"The {label} preset is the hardest, with {row['dnf_rate'] * 100:.0f}% "
-            f"of entrants failing to finish."
+            [
+                f"The {presets[hardest]['n']} preset is the hardest, with ",
+                f"{row['dnf_rate'] * 100:.0f}%",
+                " of entrants failing to finish.",
+            ]
         )
 
     big = result["records"]["big_field"]
     if big:
         _ri, winner, size = big[0]
-        facts.append(f"{name(winner)} won the biggest field yet, {size} entrants.")
+        facts.append([f"{name(winner)} won the biggest field yet, ", count(size), " entrants."])
 
     omnivores = result["diagnostics"]["badge_holders"]["omnivore"]
     if omnivores:
         facts.append(
-            f"{plural(omnivores, 'racer')} {'has' if omnivores == 1 else 'have'} finished a race in "
-            f"{min(OMNIVORE_MODES, len(modes))} different modes."
+            [
+                "",
+                count(omnivores),
+                f" {noun(omnivores, 'racer')} {'has' if omnivores == 1 else 'have'} finished "
+                f"races in {min(OMNIVORE_MODES, len(modes))} or more modes.",
+            ]
         )
 
     if day_races:
-        day, count = min(day_races.items(), key=lambda item: (-item[1], item[0]))
-        facts.append(f"The busiest day was {day}, with {plural(count, 'race')}.")
+        busiest, races = min(day_races.items(), key=lambda item: (-item[1], item[0]))
+        facts.append(
+            [f"The busiest day was {day(busiest)}, with ", count(races), f" {noun(races, 'race')}."]
+        )
 
     if finishes_total and night_finishes:
         facts.append(
-            f"{night_finishes / finishes_total * 100:.0f}% of finishes come from races "
-            f"starting between midnight and 5 AM ET."
+            [
+                "",
+                f"{night_finishes / finishes_total * 100:.0f}%",
+                " of finishes come from races starting between midnight and 5 AM ET.",
+            ]
         )
 
     most = result["records"]["most_races"]
     if most:
-        facts.append(f"{name(most[0][0])} has entered {plural(most[0][1], 'race')}.")
+        facts.append(
+            [f"{name(most[0][0])} has entered ", count(most[0][1]), f" {noun(most[0][1], 'race')}."]
+        )
+
+    blowouts = result["records"]["blowouts"]
+    if blowouts and blowouts[0][3] > 0:
+        _ri, winner, runner_up, margin = blowouts[0]
+        facts.append(
+            [
+                f"{name(winner)} beat {name(runner_up)} by ",
+                format_duration(margin),
+                ", the biggest winning margin yet.",
+            ]
+        )
+
+    for kind, middle in (("win", " won "), ("podium", " finished on the podium ")):
+        board = result["records"]["streaks"][kind]["best"]
+        if board and board[0][1] >= 2:
+            index, length, *_rest = board[0]
+            facts.append(
+                [f"{name(index)}{middle}", count(length), f" {noun(length, 'race')} in a row."]
+            )
+
+    top = leader("wins")
+    if top and top[1] > 0:
+        facts.append([f"{name(top[0])} has won ", count(top[1]), f" {noun(top[1], 'race')}."])
+
+    mode_wins: Counter[tuple[int, int]] = Counter(
+        (entry[0], record["m"])
+        for record in records
+        if modes[record["m"]] != UNKNOWN_MODE
+        for entry in record["e"]
+        if entry[1] == 1 and _is_finisher(entry[1], entry[2])
+    )
+    if mode_wins:
+        (index, m), wins = min(mode_wins.items(), key=lambda item: (-item[1], *item[0]))
+        facts.append(
+            [
+                f"{name(index)} has won ",
+                count(wins),
+                f" {mode_label(modes[m])} {noun(wins, 'race')}.",
+            ]
+        )
+
+    upsets = [tag for tags in result["race_tags"] for tag in tags if tag[0] == "upset"]
+    if upsets:
+        # Tags are in race order, so the first of equal chances is the earliest race.
+        _kind, winner, favourite, chance = min(upsets, key=lambda tag: tag[3])
+        facts.append(
+            [
+                f"{name(winner)} had a ",
+                f"{chance:.1f}%",
+                f" win chance against {name(favourite)} and won, the biggest upset yet.",
+            ]
+        )
+
+    record_breaks = Counter(
+        tag[1] for tags in result["race_tags"] for tag in tags if tag[0] == "record"
+    )
+    if record_breaks:
+        index = max(record_breaks, key=lambda i: (record_breaks[i], -i))
+        times = record_breaks[index]
+        facts.append(
+            [
+                f"{name(index)} has broken a mode record ",
+                count(times),
+                f" {noun(times, 'time')}.",
+            ]
+        )
+
+    if records:
+        latest = max(date.fromisoformat(r["d"]).toordinal() for r in records)
+        standing: list[tuple[int, int, list[Any]]] = []
+        for m, mode_records in enumerate(result["records"]["modes"]):
+            steps = mode_records["steps"]
+            if modes[m] == UNKNOWN_MODE or not steps:
+                continue
+            age = latest - date.fromisoformat(records[steps[-1][0]]["d"]).toordinal()
+            if age >= 1:
+                standing.append((age, m, steps[-1]))
+        if standing:
+            age, m, (_ri, holder, seconds) = min(standing, key=lambda row: (-row[0], row[1]))
+            facts.append(
+                [
+                    f"The {mode_label(modes[m])} record has stood for ",
+                    count(age),
+                    f" {noun(age, 'day')}, since {name(holder)} ran {format_duration(seconds)}.",
+                ]
+            )
+
+    top = leader("opponents")
+    if top and top[1] > 0:
+        facts.append(
+            [
+                f"{name(top[0])} has raced against ",
+                count(top[1]),
+                f" different {noun(top[1], 'racer')}.",
+            ]
+        )
+
+    if states:
+        index = max(states, key=lambda i: (len(states[i].badges), -i))
+        if states[index].badges:
+            facts.append(
+                [f"{name(index)} holds ", count(len(states[index].badges)), f" of the {len(BADGES)} badges."]
+            )
+
+    holders = result["diagnostics"]["badge_holders"]
+    unlocked = [badge for badge in BADGES if holders[badge.id] > 0]
+    if unlocked:
+        rarest = min(unlocked, key=lambda badge: holders[badge.id])  # min keeps table order on ties
+        held = holders[rarest.id]
+        facts.append(
+            [
+                "Only ",
+                count(held),
+                f" {noun(held, 'racer')} {'holds' if held == 1 else 'hold'} {rarest.label}.",
+            ]
+        )
+
+    top = leader("night")
+    if top and top[1] > 0:
+        facts.append(
+            [
+                f"{name(top[0])} has finished ",
+                count(top[1]),
+                f" {noun(top[1], 'race')} that started between midnight and 5 AM ET.",
+            ]
+        )
+
+    top = leader("comeback")
+    if top and top[1] >= TOUCHED_GRASS_DAYS:
+        facts.append(
+            [f"{name(top[0])} came back after ", count(top[1]), f" {noun(top[1], 'day')} away."]
+        )
+
+    weekdays = Counter(WEEKDAYS[date.fromisoformat(r["d"]).weekday()] for r in records)
+    if weekdays:
+        weekday, races = min(
+            weekdays.items(), key=lambda item: (-item[1], WEEKDAYS.index(item[0]))
+        )
+        facts.append(
+            [
+                f"{weekday} is the busiest day of the week, with ",
+                count(races),
+                f" {noun(races, 'race')}.",
+            ]
+        )
+
+    if alphabetical_races:
+        verb = "has" if alphabetical_races == 1 else "have"
+        facts.append(
+            [
+                "",
+                count(alphabetical_races),
+                f" {noun(alphabetical_races, 'race')} {verb} finished in perfect alphabetical order.",
+            ]
+        )
+
+    slow = [
+        index
+        for index, row in enumerate(result["preset_stats"])
+        if row["races"] >= PRESET_MIN_RACES and row["median_win_seconds"]
+    ]
+    if slow:
+        index = max(
+            slow, key=lambda i: (result["preset_stats"][i]["median_win_seconds"], -i)
+        )
+        facts.append(
+            [
+                f"{presets[index]['n']} has the slowest median winning time, ",
+                format_duration(result["preset_stats"][index]["median_win_seconds"]),
+                ".",
+            ]
+        )
+
+    winners = sum(1 for state in states.values() if state.wins > 0)
+    if winners:
+        facts.append(
+            ["", count(winners), f" of {count(len(states))} racers have won a race."]
+        )
 
     return facts

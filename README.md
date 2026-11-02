@@ -109,7 +109,7 @@ scripts/build_stats.py            Archive validation and aggregation
 scripts/participant_stats.py      Per-racer dataset: records, avatars and assembly
 scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/
 scripts/ladder_rating.py          Ladder rating model, overall and per mode, and backtest
-scripts/highlights.py             Tags, badges, streaks, presets, records and facts
+scripts/highlights.py             Tags, badges, streaks, presets, records, claims and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report (see Analyses.md)
 scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating (see Analyses.md)
@@ -209,7 +209,7 @@ Avatars work the same way but never cost a request. The leaderboards response al
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the schedule and participation panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks and personal bests. |
+| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks, personal bests and a claim to fame. |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
 `race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](#avatar-mirror)). What each of these may contain is fixed by [Privacy](#privacy).
@@ -375,7 +375,7 @@ Median veteran move per race (past race 50): 8 points
 
 ### Highlights
 
-`scripts/highlights.py` derives every tag, badge, streak, preset statistic and record in one chronological pass, and `participants.json` publishes the results. Finishers, timed finishers, the winner and provisional racers are as defined under [Definitions](#definitions); where a winner is anonymous, winner-dependent tags are skipped. Every tag and badge that reads a rating reads the overall rating. Thresholds are constants at the top of the module.
+`scripts/highlights.py` derives every tag, badge, streak, preset statistic, record, claim to fame and fact in one chronological pass, and `participants.json` publishes the results. Finishers, timed finishers, the winner and provisional racers are as defined under [Definitions](#definitions); where a winner is anonymous, winner-dependent tags are skipped. Every tag and badge that reads a rating reads the overall rating. Thresholds are constants at the top of the module.
 
 #### Race tags
 
@@ -477,7 +477,24 @@ Presets are named as defined under [Definitions](#definitions). Statistics are r
 - **Most races:** the 10 racers with the most entries.
 - **Most-met rivals:** the 10 pairs of racers who entered the most races together. Any entry counts, DNFs and DQs included.
 - **Streak boards:** the 10 best streaks of each kind. Whether a streak is still active depends on today's date, so the page works that out (see [Hall of records](#hall-of-records)).
-- **Facts:** about a dozen English sentences generated from the data, such as the hardest preset or the busiest day. A fact without enough data is skipped.
+- **Facts:** about thirty English sentences generated from the data, such as the hardest preset, the biggest upset or the busiest day of the week. A fact without enough data is skipped.
+  - Each fact is published as three strings: the text before its headline number, the number, and the text after. The page highlights exactly that number, even when a racer's name holds digits.
+  - A streak fact needs a streak of 2 or more, and the comeback fact a break of 30 days or more, measured as for Touched Grass but with no start date.
+  - Mode facts leave out the `unknown` mode.
+  - Every fact comes from the archive alone. A record's age counts to the archive's latest race date, not to today.
+
+#### Claim to fame
+
+A racer's claim to fame is the one thing about them that the fewest racers match. The [Featured daily racer](#featured-daily-racer) card shows it.
+
+- **Stats:** wins, longest win streak, longest podium streak, longest finish streak, races entered, longest daily streak, PBs, different opponents, night finishes and longest comeback, in that order.
+  - PBs count improvements, as the PB tag does, so a mode's first timed finish is not one.
+  - Different opponents counts every racer met in a race, DNFs and DQs included, as Most-met rivals does.
+  - Night finishes are finishes in races starting between midnight and 5 AM ET.
+  - The longest comeback is the most days between two of the racer's consecutive race days.
+- **Count:** a stat takes part only at 2 or more. Its count is the number of racers whose value is at least as high, the racer included, so tied racers share a count.
+- **Badge:** the racer's rarest badge takes part too, with its holder count as the count. Among equally rare badges, the one earlier in the badge table wins.
+- **Pick:** the lowest count wins. Equal counts go to the stat earlier in the list above, and a badge comes after every stat. A racer has no claim when the lowest count is above 10% of the racers who have entered a race.
 
 ### Chest counts (CR and CPH)
 
@@ -537,7 +554,24 @@ The Latest sidebar's **Featured daily racer**, between **Your racers** and **Fac
 - **Exclusion:** a racer in the top 3 of any category (see [Top-rated banner](#top-rated-banner)) at the end of yesterday is not a candidate. Ranks are competition ranks, so ties can put more than three racers in a top 3.
 - **Pick:** candidates are listed in name order. The pick starts at the candidate given by the 32-bit FNV-1a hash of `featured YYYY-MM-DD`, using today's Eastern date, modulo the number of candidates. It steps forward, wrapping around, past anyone who has climbed into a top 3 since.
 - **Stability:** everyone sees the same racer all day. A data refresh changes the pick only when the featured racer reaches a top 3 that day. A page left open past midnight keeps its racer until it is reloaded.
-- **Card:** the **Your racers** card with one more line, the racer's latest highlight in the window and how long ago it was, such as "★ 250th race · 11 days ago". The section is hidden when there are no candidates.
+- **Card:** the **Your racers** card with up to two more lines. The section is hidden when there are no candidates.
+  - **Highlight:** the racer's latest highlight in the window and how long ago it was, such as "★ 250th race · 11 days ago".
+  - **Claim to fame:** the racer's [claim to fame](#claim-to-fame), such as "✦ 1 of 7 racers with 7+ wins in a row". A count of 1 reads "✦ Ladder best: …" instead. A badge claim shows the badge's art and name, and clicking it opens the badge's holders panel. A racer without a claim has no such line.
+
+#### Fact of the day
+
+The Latest sidebar's **Fact of the day**, between the **Featured daily racer** and **Latest badges**, shows one of the [facts](#records) a day.
+
+- **Rotation:** with N facts, every fact shows once in each cycle of N days, and a fact that shows is not repeated for the next 7 days.
+  - Day D counts the days from 1970-01-01 to today's Eastern date, and the cycle is ⌊D / N⌋.
+  - A cycle's shuffle is the fact indexes sorted by the 32-bit FNV-1a hash of `CYCLE INDEX SEED`, ties going to the lower index. The seed is `fact of the day 2`, set as `FACT_SEED` in `feed.js`. Changing it picks a new schedule from that day on.
+  - **The 7-day rule:** the 7 facts that close the previous cycle's shuffle move to the back of this cycle's first 14 slots, keeping their order, so none of them can show in this cycle's first 7 days.
+  - **Why the rule needs no history:** only those 14 slots move, so every cycle closes exactly as its shuffle does, and nothing about past days is stored.
+  - **Fewer facts:** the rule needs at least 21 facts. With fewer, the 7 becomes ⌊N / 3⌋ and the 14 twice that.
+  - Day D shows the fact at position D mod N of the result.
+  - The rule holds while the list of facts stays the same. A fact that appears or drops out changes N and reshuffles the schedule, so in the week after that, a fact can repeat early.
+- **Stability:** everyone sees the same fact all day, though a data refresh can update its numbers.
+- **Highlight:** the fact's headline number is set larger, in the display face.
 
 ### Racer statistics
 

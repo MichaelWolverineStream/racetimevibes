@@ -445,7 +445,8 @@
 
 .feed-racer__meta,
 .feed-racer__streak,
-.feed-racer__note {
+.feed-racer__note,
+.feed-racer__claim {
   margin: 2px 0 0;
   font-size: var(--text-xs);
 }
@@ -462,6 +463,39 @@
 .feed-racer__note {
   color: var(--accent);
   font-weight: 700;
+}
+
+.feed-racer__claim {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.feed-racer__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  vertical-align: bottom;
+}
+
+.feed-racer__badge:hover {
+  text-decoration: underline;
+}
+
+.feed-racer__badge:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.feed-racer__badge img {
+  flex: none;
+  border-radius: 3px;
+  object-fit: contain;
 }
 
 .feed-fact {

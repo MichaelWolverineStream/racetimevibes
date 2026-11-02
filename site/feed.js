@@ -9,6 +9,9 @@ const Feed = (() => {
   const NEW_BADGE_LIMIT = 12;
   const FEATURED_WINDOW_DAYS = 14;
   const FEATURED_TOP_RANKS = 3;
+  const FACT_REPEAT_DAYS = 7;
+  // Seeds the fact shuffle. Changing it picks a new schedule from today on.
+  const FACT_SEED = "fact of the day 2";
   const STATUS_DNF = 1;
   const STATUS_DQ = 2;
   const SUMMARY_TAGS = [
@@ -74,7 +77,7 @@ const Feed = (() => {
     return status === STATUS_DQ ? "DQ" : "DNF";
   }
 
-  // 32-bit FNV-1a, so the fact of the day is stable for everyone on the same date.
+  // 32-bit FNV-1a, so the fact order and the featured pick are stable for everyone on the same date.
   function fnv1a(text) {
     let hash = 2166136261;
     for (let index = 0; index < text.length; index += 1) {
@@ -569,7 +572,53 @@ const Feed = (() => {
     return [placeText(race, entry), modeLabel(modeName(race)), UI.relativeDay(race.d)].join(" · ");
   }
 
-  function racerCard(playerIndex, deltas, note = null) {
+  const CLAIM_PHRASES = {
+    wins: (value, plus) => `${value}${plus} wins`,
+    win_streak: (value, plus) => `${value}${plus} wins in a row`,
+    podium_streak: (value, plus) => `${value}${plus} podiums in a row`,
+    finish_streak: (value, plus) => `${value}${plus} finishes in a row`,
+    races: (value, plus) => `${value}${plus} races`,
+    daily: (value, plus) => `${value}${plus} race days in a row`,
+    pbs: (value, plus) => `${value}${plus} personal bests`,
+    opponents: (value, plus) => `${value}${plus} different opponents`,
+    night: (value, plus) => `${value}${plus} finishes from midnight to 5 AM ET`,
+    comeback: (value, plus) => `a comeback after ${value}${plus} days away`,
+  };
+
+  // The featured racer's claim to fame: [kind, value, count], where count racers match or beat it.
+  function claimNode(claim) {
+    if (!claim) {
+      return null;
+    }
+    const [kind, value, count] = claim;
+    const paragraph = element("p", "feed-racer__claim");
+    if (kind !== "badge") {
+      const phrase = CLAIM_PHRASES[kind];
+      paragraph.textContent = count === 1
+        ? `✦ Ladder best: ${phrase(integerFormatter.format(value), "")}`
+        : `✦ 1 of ${integerFormatter.format(count)} racers with ${phrase(integerFormatter.format(value), "+")}`;
+      return paragraph;
+    }
+    const definition = badgeDefinition(value);
+    paragraph.appendChild(document.createTextNode(
+      count === 1 ? "✦ The only racer with " : `✦ 1 of ${integerFormatter.format(count)} racers with `,
+    ));
+    const button = element("button", "feed-racer__badge");
+    button.type = "button";
+    button.setAttribute("aria-haspopup", "dialog");
+    const image = element("img");
+    image.src = definition.still;
+    image.alt = "";
+    image.width = 16;
+    image.height = 16;
+    button.append(image, document.createTextNode(definition.label));
+    bindTooltip(button, definition.description);
+    button.addEventListener("click", () => UI.badgePanel(definition));
+    paragraph.appendChild(button);
+    return paragraph;
+  }
+
+  function racerCard(playerIndex, deltas, { note = null, claim = null } = {}) {
     const card = element("div", "feed-racer");
     card.appendChild(UI.avatar(playerIndex, 32));
     const body = element("div", "feed-racer__body");
@@ -590,6 +639,10 @@ const Feed = (() => {
     }
     if (note) {
       body.appendChild(element("p", "feed-racer__note", note));
+    }
+    const claimLine = claimNode(claim);
+    if (claimLine) {
+      body.appendChild(claimLine);
     }
     card.appendChild(body);
     return card;
@@ -669,8 +722,35 @@ const Feed = (() => {
     const note = `★ ${highlightLabel(featured.tag, race)} · ${UI.relativeDay(race.d)}`;
     const deltas = typeof ratingRankDeltas === "function" ? ratingRankDeltas() : new Map();
     const section = sidebarSection("Featured daily racer");
-    section.appendChild(racerCard(featured.playerIndex, deltas, note));
+    section.appendChild(racerCard(featured.playerIndex, deltas, { note, claim: participants.players[featured.playerIndex].claim }));
     host.appendChild(section);
+  }
+
+  // One cycle's shuffle of the fact indexes. The cycle and index lead the hashed text,
+  // so FNV-1a mixes them through the rest of it.
+  function factShuffle(count, cycle) {
+    const order = [...Array(count).keys()];
+    return order.sort((a, b) => fnv1a(`${cycle} ${a} ${FACT_SEED}`) - fnv1a(`${cycle} ${b} ${FACT_SEED}`) || a - b);
+  }
+
+  // Every fact shows once in each cycle of facts.length days, in an order reshuffled every cycle.
+  // A shown fact then stays away for FACT_REPEAT_DAYS days: the facts that closed the previous
+  // cycle move to the back of this cycle's first 2 × away slots, so none can open it. Only those
+  // slots move, so with 3 × away facts or more a cycle still closes as its plain shuffle does,
+  // and no past day needs remembering.
+  function factOfTheDay(facts) {
+    const day = dayNumber(todayInZone());
+    const cycle = Math.floor(day / facts.length);
+    const away = Math.min(FACT_REPEAT_DAYS, Math.floor(facts.length / 3));
+    const closing = new Set(factShuffle(facts.length, cycle - 1).slice(facts.length - away));
+    const order = factShuffle(facts.length, cycle);
+    const head = order.slice(0, 2 * away);
+    const settled = [
+      ...head.filter((index) => !closing.has(index)),
+      ...head.filter((index) => closing.has(index)),
+      ...order.slice(2 * away),
+    ];
+    return facts[settled[day % facts.length]];
   }
 
   function renderFact(host) {
@@ -678,19 +758,14 @@ const Feed = (() => {
     if (!facts.length) {
       return;
     }
-    const sentence = facts[fnv1a(todayInZone()) % facts.length];
+    const [before, headline, after] = factOfTheDay(facts);
     const section = sidebarSection("Fact of the day");
     const paragraph = element("p", "feed-fact");
-    const number = sentence.match(/\d(?:[\d,.:]*\d)?/);
-    if (number) {
-      paragraph.append(
-        document.createTextNode(sentence.slice(0, number.index)),
-        element("span", "feed-fact__number", number[0]),
-        document.createTextNode(sentence.slice(number.index + number[0].length)),
-      );
-    } else {
-      paragraph.textContent = sentence;
-    }
+    paragraph.append(
+      document.createTextNode(before),
+      element("span", "feed-fact__number", headline),
+      document.createTextNode(after),
+    );
     section.appendChild(paragraph);
     host.appendChild(section);
   }
