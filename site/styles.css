@@ -144,16 +144,20 @@ footer {
   margin-inline: auto;
 }
 
+/* Named areas let the narrow layout move the comment to a row of its own. Tops align, so the
+   category mark lines up with the commenter's avatar. */
 .masthead {
   display: grid;
   grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-areas: "mark title comment extras";
   gap: 28px;
-  align-items: center;
+  align-items: start;
   padding: 34px 0 28px;
   animation: arrive 500ms ease-out both;
 }
 
 .category-mark {
+  grid-area: mark;
   display: block;
   width: 104px;
   height: 104px;
@@ -167,7 +171,6 @@ footer {
 .panel-index,
 .summary-label,
 .section-nav__heading,
-.source-block__snapshot > span,
 .control-label,
 .leaderboard-filter label,
 .leaderboard-range legend,
@@ -196,11 +199,21 @@ h1 {
   text-transform: uppercase;
 }
 
+.title-block {
+  grid-area: title;
+}
+
 .lede {
   max-width: 680px;
   margin-bottom: 0;
   color: var(--muted);
   font-size: var(--text-md);
+}
+
+.title-block__snapshot {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
 }
 
 .title-block__link {
@@ -217,28 +230,13 @@ h1 {
   outline-offset: 4px;
 }
 
-.source-block {
+/* Each child carries its own separator, so either can hide without leaving a stray border.
+   The min-height is the hero avatar's, so a heart on its own centres on it. */
+.masthead-extras {
+  grid-area: extras;
   display: flex;
   gap: 22px;
-  padding-left: 22px;
-  border-left: 1px solid var(--line);
-}
-
-.source-block__snapshot {
-  min-width: 212px;
-}
-
-.source-block strong,
-.source-block a {
-  display: block;
-}
-
-.source-block strong {
-  margin: 5px 0 8px;
-  overflow-wrap: anywhere;
-  font-family: var(--display);
-  font-size: var(--text-lg);
-  text-transform: uppercase;
+  min-height: 56px;
 }
 
 .hit-counter {
@@ -281,6 +279,7 @@ h1 {
 }
 
 .hit-counter__link {
+  display: block;
   color: #0000ee;
   font-family: var(--display);
   font-size: var(--text-xs);
@@ -1716,42 +1715,28 @@ footer p {
 
 /* Responsive */
 
-/* Below this the title and source block leave the comment too little room to share a row. */
 @media (max-width: 1365px) {
-  .masthead {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .comment-hero {
-    grid-column: 1 / -1;
-  }
-
-  .source-block {
-    grid-column: 1 / -1;
-    justify-content: space-between;
-    padding: 14px 0 0;
-    border-top: 1px solid var(--line);
-    border-left: 0;
-  }
-
-  .source-block__snapshot {
-    display: grid;
-    flex: 1;
-    grid-template-columns: auto 1fr auto;
-    gap: 16px;
-    align-items: baseline;
-  }
-
-  .source-block strong {
-    margin: 0;
-  }
-
   .section-nav__link {
     font-size: var(--text-lg);
   }
 }
 
+/* Below this the visitor counter would squeeze the comment bubble under its full 450px. */
+@media (max-width: 1199px) {
+  .hit-counter {
+    display: none;
+  }
+}
+
 @media (max-width: 980px) {
+  /* The comment and the heart move under the artwork and title instead of squeezing beside them. */
+  .masthead {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "mark title title"
+      "comment comment extras";
+  }
+
   .summary-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1804,7 +1789,6 @@ footer p {
   }
 
   .masthead {
-    grid-template-columns: 72px minmax(0, 1fr);
     gap: 16px;
     padding-top: 24px;
   }
@@ -1821,10 +1805,6 @@ footer p {
   .lede {
     margin-top: 8px;
     font-size: 0.86rem;
-  }
-
-  .source-block {
-    display: none;
   }
 
   .summary-item {

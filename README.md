@@ -530,6 +530,8 @@ The page runs top to bottom:
 
 Each racer also has a page with their rating, badges, personal bests, and charts (see [Racer pages](#racer-pages)).
 
+The masthead holds the category artwork, the title block, a racer comment and the visitor counter, with their tops aligned. The title block ends with **Data snapshot**, the age of the published data: "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering it shows the exact UTC time. The comment bubble is at most 450px wide. The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
+
 A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10). Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner sits between the nav bar and Latest, and is hidden on racer pages too.
 
 ### Top-rated banner

@@ -1,15 +1,17 @@
 /* Masthead comment */
 .comment-hero {
+  grid-area: comment;
   min-height: 120px;
   display: flex;
   align-items: flex-start;
   min-width: 0;
 }
 
-/* A fixed-width speech track keeps the refresh button in one spot, whatever the comment's size. */
+/* A fixed-width speech track keeps the refresh button in one spot, whatever the comment's size.
+   520px is the hero speech's max-width in ui.css: the 56px avatar, its 14px gap and the 450px bubble. */
 .comment-hero__stage {
   display: grid;
-  grid-template-columns: minmax(0, 600px) auto;
+  grid-template-columns: minmax(0, 520px) auto;
   align-items: start;
   gap: 12px;
   max-width: 100%;

@@ -71,6 +71,17 @@ function utcTimestamp(isoString) {
   }).format(new Date(isoString));
 }
 
+// "just now" under a minute, then whole minutes, hours or days, rounded down.
+function timeAgo(isoString) {
+  const minutes = Math.floor((Date.now() - Date.parse(isoString)) / 60000);
+  if (minutes < 1) return "just now";
+  const format = new Intl.RelativeTimeFormat("en", { numeric: "always" });
+  if (minutes < 60) return format.format(-minutes, "minute");
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return format.format(-hours, "hour");
+  return format.format(-Math.floor(hours / 24), "day");
+}
+
 function niceScale(value) {
   if (!Number.isFinite(value) || value <= 0) return { maximum: 1, tickCount: 5 };
   const magnitude = 10 ** Math.floor(Math.log10(value));
@@ -1010,8 +1021,20 @@ function renderPeriodControls(data) {
   container.replaceChildren(...buttons);
 }
 
+function renderSnapshotAge(isoString) {
+  const node = document.querySelector("#generated-at");
+  node.dateTime = isoString;
+  node.title = utcTimestamp(isoString);
+  const update = () => {
+    node.textContent = timeAgo(isoString);
+  };
+  update();
+  // Data commits don't reload an open page, so the age keeps counting.
+  setInterval(update, 60000);
+}
+
 function renderDashboard(data) {
-  document.querySelector("#generated-at").textContent = utcTimestamp(data.generated_at);
+  renderSnapshotAge(data.generated_at);
   renderPeriodControls(data);
   renderSelection(data, allDataSelection(data));
 }
