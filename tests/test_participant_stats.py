@@ -220,6 +220,11 @@ class EntrantNormalizationTests(unittest.TestCase):
             payload([race("bad-place", entrants=[entrant("racer", place=0)])])
 
 
+    def test_highlights_status_codes_match(self):
+        self.assertEqual(highlights.DONE_STATUS_CODE, participant_stats.STATUS_CODES["done"])
+        self.assertEqual(highlights.DNF_STATUS_CODE, participant_stats.STATUS_CODES["dnf"])
+
+
 class LeaderboardTests(unittest.TestCase):
     def test_counts_medals_per_mode_and_overall(self):
         result = payload(
@@ -659,6 +664,22 @@ class SchemaThreeTests(unittest.TestCase):
         progress = {player["id"]: player["progress"] for player in result["players"]}
         self.assertEqual(progress["ana"]["yap"], 1)
         self.assertEqual(progress["ben"]["yap"], 0)
+
+    def test_alphabetical_badges_keep_the_names_of_race_time(self):
+        entrants = [
+            entrant(
+                f"id-{name}",
+                place=index + 1,
+                finish_time=f"PT{index + 10}M",
+                user={"id": f"id-{name}", "name": name},
+            )
+            for index, name in enumerate(["ana", "ben", "cid", "dee", "eve"])
+        ]
+        result = payload([race("abc", entrants=entrants)], current_names={"id-ana": "Zed"})
+        self.assertIn("Zed", [player["name"] for player in result["players"]])
+        for player in result["players"]:
+            self.assertIn("step_letter", player["badges"])
+        self.assertNotIn('"ana"', json.dumps(result))
 
 
 class GeneratedParticipantDataTests(unittest.TestCase):

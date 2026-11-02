@@ -21,7 +21,7 @@ def dq(player):
     return (player, None, 2, None)
 
 
-def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None, commenters=()):
+def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None, commenters=(), names=None):
     return {
         "r": "alttpr-ladder/test-race",
         "m": mode,
@@ -32,6 +32,7 @@ def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None, commenters=(
         "p": preset,
         "e": list(entries),
         "c": set(commenters),
+        "names": {e[0]: f"P{e[0]}" for e in entries} if names is None else names,
     }
 
 
@@ -263,7 +264,7 @@ class StreakTests(unittest.TestCase):
     def test_dnf_breaks_finish_streak_but_not_daily_streak(self):
         records = [
             duel(0, 1, day=0),
-            record([dnf(0), done(1, 1, 3000.0)], day=1),
+            record([dnf(0), done(1, 1, 3000.0), done(2, 2, 3100.0)], day=1),
             duel(0, 1, day=2),
         ]
         streaks = run(records)["players"][0]["streaks"]
@@ -272,9 +273,23 @@ class StreakTests(unittest.TestCase):
         self.assertEqual(streaks["daily"]["best"], [3, "2026-03-01", "2026-03-03"])
         self.assertEqual(streaks["daily"]["current"], [3, "2026-03-01", "2026-03-03"])
 
-    def test_dq_breaks_finish_streak(self):
+    def test_dq_breaks_finish_streak_even_in_a_field_of_two(self):
         records = [duel(0, 1), record([dq(0), done(1, 1, 3000.0)]), duel(0, 1)]
         self.assertEqual(run(records)["players"][0]["streaks"]["finish"]["best"], [1, 0, 0])
+
+    def test_dnf_against_a_finisher_in_a_field_of_two_is_skipped(self):
+        records = [duel(0, 1), record([dnf(0), done(1, 1, 3000.0)]), duel(0, 1)]
+        finish = run(records)["players"][0]["streaks"]["finish"]
+        self.assertEqual(finish["best"], [2, 0, 2])
+        self.assertEqual(finish["current"], [2, 0, 2])
+
+    def test_dnf_in_a_field_of_two_without_a_finisher_breaks_finish_streak(self):
+        for middle in ([dnf(0), dnf(1)], [dnf(0), dq(1)]):
+            records = [duel(0, 1), record(middle), duel(0, 1)]
+            with self.subTest(middle=middle):
+                finish = run(records)["players"][0]["streaks"]["finish"]
+                self.assertEqual(finish["best"], [1, 0, 0])
+                self.assertEqual(finish["current"], [1, 2, 2])
 
     def test_midnight_boundary_counts_as_consecutive_days(self):
         records = [duel(0, 1, day=0, hour=23), duel(0, 1, day=1, hour=0)]
@@ -336,12 +351,22 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(self.badges(solo_finishes(69))["nice"], 68)
 
     def test_a_dnf_breaks_the_no_dodge_run(self):
-        records = solo_finishes(9) + [record([dnf(0), done(1, 1, 3000.0)])] + solo_finishes(9)
+        field_of_three = record([dnf(0), done(1, 1, 3000.0), done(2, 2, 3100.0)])
+        records = solo_finishes(9) + [field_of_three] + solo_finishes(9)
         result = run(records)
         self.assertNotIn("no_dodge", result["players"][0]["badges"])
         self.assertEqual(result["players"][0]["progress"]["no_dodge"], 9)
         self.assertEqual(
             run(records + solo_finishes(1))["players"][0]["badges"]["no_dodge"], 19
+        )
+
+    def test_a_dnf_against_a_finisher_in_a_field_of_two_neither_counts_nor_breaks_no_dodge(self):
+        records = solo_finishes(9) + [record([dnf(0), done(1, 1, 3000.0)])]
+        result = run(records)
+        self.assertNotIn("no_dodge", result["players"][0]["badges"])
+        self.assertEqual(result["players"][0]["progress"]["no_dodge"], 9)
+        self.assertEqual(
+            run(records + solo_finishes(1))["players"][0]["badges"]["no_dodge"], 10
         )
 
     def test_centurian_v_counts_finishes_but_not_dnfs(self):
@@ -564,6 +589,15 @@ class BadgeTests(unittest.TestCase):
         self.assertFalse(jet_lag(6000.0, player=1))
         self.assertFalse(jet_lag(6000.0, preset=1))
 
+    def test_entrance_needs_an_entrance_finish(self):
+        records = [
+            record([dnf(0), done(1, 1, 3000.0)], mode=1),
+            duel(1, 0, mode=0),
+            duel(1, 0, mode=1),
+        ]
+        self.assertEqual(self.badges(records, modes=ENTRANCE_MODES)["entrance"], 2)
+        self.assertNotIn("entrance", self.badges(records[:2], modes=ENTRANCE_MODES))
+
     def test_entranced_counts_days_in_a_row_with_a_gap_resetting_the_run(self):
         def entranced(days):
             records = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in days]
@@ -716,46 +750,57 @@ class BadgeTests(unittest.TestCase):
 
     def test_step_letter_is_alphabetical_in_place_order_ignoring_case(self):
         names = {0: "alice", 1: "Bob", 2: "carol", 3: "Dave", 4: "eve"}
-        race = record([done(p, p + 1, 3000.0 + p) for p in range(5)])
-        result = run([race], names=names)
+        finishes = [done(p, p + 1, 3000.0 + p) for p in range(5)]
+        result = run([record(finishes, names=names)])
         for player in range(5):
             self.assertEqual(result["players"][player]["badges"]["step_letter"], 0)
-        shuffled = run([race], names={**names, 0: "zed"})
+        shuffled = run([record(finishes, names={**names, 0: "zed"})])
         self.assertNotIn("step_letter", shuffled["players"][0]["badges"])
 
     def test_step_letter_needs_every_entrant_to_finish_and_be_identified(self):
         names = {p: "abcde"[p] for p in range(5)}
-        with_dnf = record([done(p, p + 1, 3000.0 + p) for p in range(4)] + [dnf(4)])
-        anonymous = record([done(p, p + 1, 3000.0 + p) for p in range(5)], n=6)
+        with_dnf = record([done(p, p + 1, 3000.0 + p) for p in range(4)] + [dnf(4)], names=names)
+        anonymous = record([done(p, p + 1, 3000.0 + p) for p in range(5)], n=6, names=names)
         for race in (with_dnf, anonymous):
-            result = run([race], names=names)
+            result = run([race])
             for player in range(5):
                 self.assertNotIn("step_letter", result["players"][player]["badges"])
 
     def test_step_letter_needs_a_field_of_five(self):
-        names = {p: "abcde"[p] for p in range(5)}
-        race = record([done(p, p + 1, 3000.0 + p) for p in range(4)])
-        self.assertNotIn("step_letter", run([race], names=names)["players"][0]["badges"])
+        names = {p: "abcde"[p] for p in range(4)}
+        race = record([done(p, p + 1, 3000.0 + p) for p in range(4)], names=names)
+        self.assertNotIn("step_letter", run([race])["players"][0]["badges"])
 
     def test_rettel_pets_is_reverse_alphabetical_in_place_order_ignoring_case(self):
         names = {0: "eve", 1: "Dave", 2: "carol", 3: "Bob", 4: "alice"}
-        race = record([done(p, p + 1, 3000.0 + p) for p in range(5)])
-        result = run([race], names=names)
+        finishes = [done(p, p + 1, 3000.0 + p) for p in range(5)]
+        result = run([record(finishes, names=names)])
         for player in range(5):
             self.assertEqual(result["players"][player]["badges"]["rettel_pets"], 0)
             self.assertNotIn("step_letter", result["players"][player]["badges"])
-        alphabetical = run([race], names={p: "abcde"[p] for p in range(5)})
+        alphabetical = run([record(finishes, names={p: "abcde"[p] for p in range(5)})])
         self.assertNotIn("rettel_pets", alphabetical["players"][0]["badges"])
 
     def test_rettel_pets_needs_a_full_field_of_five(self):
         names = {p: "edcba"[p] for p in range(5)}
-        four = record([done(p, p + 1, 3000.0 + p) for p in range(4)])
-        with_dnf = record([done(p, p + 1, 3000.0 + p) for p in range(4)] + [dnf(4)])
-        anonymous = record([done(p, p + 1, 3000.0 + p) for p in range(5)], n=6)
+        four = record([done(p, p + 1, 3000.0 + p) for p in range(4)], names=names)
+        with_dnf = record([done(p, p + 1, 3000.0 + p) for p in range(4)] + [dnf(4)], names=names)
+        anonymous = record([done(p, p + 1, 3000.0 + p) for p in range(5)], n=6, names=names)
         for race in (four, with_dnf, anonymous):
-            result = run([race], names=names)
+            result = run([race])
             for player in range(5):
                 self.assertNotIn("rettel_pets", result["players"][player]["badges"])
+
+    def test_alphabetical_badges_read_race_time_names_not_current_names(self):
+        finishes = [done(p, p + 1, 3000.0 + p) for p in range(5)]
+        alphabetical = {p: "abcde"[p] for p in range(5)}
+        reverse = {p: "edcba"[p] for p in range(5)}
+        renamed = run([record(finishes, names=alphabetical)], names=reverse)["players"][0]
+        self.assertEqual(renamed["badges"]["step_letter"], 0)
+        self.assertNotIn("rettel_pets", renamed["badges"])
+        renamed = run([record(finishes, names=reverse)], names=alphabetical)["players"][0]
+        self.assertEqual(renamed["badges"]["rettel_pets"], 0)
+        self.assertNotIn("step_letter", renamed["badges"])
 
     def test_badge_table_order(self):
         ids = [badge["id"] for badge in run([])["badges"]]
@@ -788,6 +833,7 @@ class BadgeTests(unittest.TestCase):
                 "jet_lag",
                 "driving_lesson",
                 "cruisin",
+                "entrance",
                 "entranced",
                 "entranced_weeks",
                 "what",

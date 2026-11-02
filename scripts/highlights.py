@@ -27,6 +27,7 @@ LUCKSACK_WINS = 9
 NO_DODGE_FINISHES = 10
 MORE_NO_DODGE_FINISHES = 40
 NICE_FINISHES = 69
+EXCUSED_DNF_FIELD = 2
 CENTURIAN_FINISHES = 105
 BLAZE_IT_FINISHES = 420
 OVER_174_NON_WINS = 175
@@ -70,6 +71,7 @@ CLAIM_MIN_VALUE = 2
 CLAIM_MAX_SHARE = 0.1
 
 DONE_STATUS_CODE = 0
+DNF_STATUS_CODE = 1
 STREAK_KINDS = ("win", "podium", "finish")
 # The order breaks ties between stats; a badge claim comes after every stat.
 CLAIM_KINDS = (
@@ -465,6 +467,12 @@ BADGES = (
         earned=lambda m: m.won and m.mode == SPOILER_MODE,
     ),
     Badge(
+        "entrance",
+        "Entrance",
+        f"Finish an {ENTRANCE_MODE} race.",
+        earned=lambda m: m.finisher and m.mode == ENTRANCE_MODE,
+    ),
+    Badge(
         "entranced",
         "Entranced",
         f"Enter an {ENTRANCE_MODE} race on {ENTRANCED_DAYS} days in a row.",
@@ -604,15 +612,19 @@ def _retimed(timed: list[Any]) -> set[int]:
 
 
 def _alphabetical_field(
-    entries: list[Any], n: int, players: list[JsonObject], *, reverse: bool = False
+    entries: list[Any], n: int, names: dict[int, str], *, reverse: bool = False
 ) -> set[int]:
-    """Every entrant, when all of a big enough field finished in alphabetical order (or reverse)."""
+    """Every entrant, when all of a big enough field finished in alphabetical order (or reverse).
+
+    `names` holds each entrant's name as archived with the race, so a later rename
+    never changes the outcome.
+    """
     if n < STEP_LETTER_MIN_FIELD or len(entries) != n:
         return set()
     if not all(_is_finisher(e[1], e[2]) for e in entries):
         return set()
-    names = [players[e[0]]["name"].casefold() for e in sorted(entries, key=lambda e: e[1])]
-    if names != sorted(names, reverse=reverse):
+    ordered = [names[e[0]].casefold() for e in sorted(entries, key=lambda e: e[1])]
+    if ordered != sorted(ordered, reverse=reverse):
         return set()
     return {e[0] for e in entries}
 
@@ -745,11 +757,13 @@ def compute(
                 god_route = {winner[0]}
 
         middle = _middle_finisher(entries, n)
-        step_letter = _alphabetical_field(entries, n, players)
-        rettel_pets = _alphabetical_field(entries, n, players, reverse=True)
+        step_letter = _alphabetical_field(entries, n, rec["names"])
+        rettel_pets = _alphabetical_field(entries, n, rec["names"], reverse=True)
         if step_letter:
             alphabetical_races += 1
         retimed = _retimed(timed)
+        # A DNF against the only other racer, who finished, neither extends nor ends a finish run.
+        excused_dnf = n == EXCUSED_DNF_FIELD and any(_is_finisher(e[1], e[2]) for e in entries)
 
         # Per-entry updates, in entry order.
         for position, (player, place, status, seconds) in enumerate(entries):
@@ -792,7 +806,8 @@ def compute(
             state.best_comment_streak = max(state.best_comment_streak, state.comment_streak)
             state.runs["win"].step(ri, won)
             state.runs["podium"].step(ri, finisher and place <= 3)
-            state.runs["finish"].step(ri, finisher)
+            if not (excused_dnf and status == DNF_STATUS_CODE):
+                state.runs["finish"].step(ri, finisher)
 
             palindrome = False
             if finisher and seconds is not None:

@@ -315,6 +315,9 @@ def build_participant_payload(
             ],
             # Who left a comment, for the Yap badge; never published.
             "c": {player_index[user_id] for user_id in row["commenters"]},
+            # Each entrant's name as archived with this race, so a later rename never
+            # changes the alphabetical badges; never published.
+            "names": {player_index[user_id]: name for user_id, name, *_ in row["entries"]},
         }
         for row in staged
     ]

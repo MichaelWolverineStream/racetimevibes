@@ -393,24 +393,24 @@ Each kind has its own colour, and so does the Hardest preset tag. The colour fil
 
 #### Badges
 
-Each badge records the index of the race that unlocked it. Shares are of the 397 racers as of 2026-11-01.
+Each badge records the index of the race that unlocked it. Shares are of the 398 racers as of 2026-11-02.
 
 | Badge | Rule | Held by |
 |---|---|---|
 | First Blood | Win a race. | 56% |
 | Hat Trick | Win 3 races in a row, in the racer's own sequence. | 15% |
 | OkDudeLucksack | Win 9 races in a row. | 0.8% |
-| No Dodge | Finish 10 races in a row. | 46% |
+| No Dodge | Finish 10 races in a row. | 47% |
 | More No Dodge | Finish 40 races in a row. | 11% |
-| Nice | Finish 69 races in a row. | 3.8% |
+| Nice | Finish 69 races in a row. | 4.3% |
 | CenturianV | Finish 105 races. | 13% |
 | BlazeIt | Finish 420 races. | 0% |
 | >174 | Enter 175 races you don't win. | 3.8% |
-| Omnivore | Finish a race in 7 different modes. | 4.3% |
-| Sniper | Win by less than 5 seconds. | 7.1% |
+| Omnivore | Finish a race in 7 different modes. | 4.5% |
+| Sniper | Win by less than 5 seconds. | 7.0% |
 | Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.3% |
 | RETIME | Finish less than 1 second from another racer. | 17% |
-| Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | 35% |
+| Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | 34% |
 | God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. | 13% |
 | Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. | 13% |
 | Glitched | Finish a glitched race. | 10% |
@@ -423,7 +423,8 @@ Each badge records the index of the race that unlocked it. Shares are of the 397
 | Jet Lag | Win a Casual Boots race in 100 minutes or more. | 2.8% |
 | Driving Lesson | Finish a spoiler race. | 8.3% |
 | Cruisin' | Win a spoiler race. | 3.3% |
-| Entranced | Enter an entrance race on 5 days in a row. | 7.1% |
+| Entrance | Finish an entrance race. | 56% |
+| Entranced | Enter an entrance race on 5 days in a row. | 7.0% |
 | Entranced! | Enter an entrance race in 20 weeks in a row. | 2.8% |
 | What? | Enter a mystery race. | 30% |
 | I Like It Here | Finish 10 mystery races. | 4.5% |
@@ -432,13 +433,13 @@ Each badge records the index of the race that unlocked it. Shares are of the 397
 | Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. | 56% |
 | Rando Sicko | Finish 5 races in one day. | 0.8% |
 | Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. | 20% |
-| Yap | Comment on 11 races in a row. | 9.1% |
+| Yap | Comment on 11 races in a row. | 9.3% |
 | Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. | 2.3% |
 | Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. | 1.3% |
 
 A badge is either a counter, which unlocks when a count reaches its target, or a one-race badge, which unlocks on a single result. In the notes below, a **finish** is a finisher's result, and **day**, **week** and **field** are as defined under [Definitions](#definitions). How the page shows badges is under [Racer pages](#racer-pages).
 
-- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. CenturianV and BlazeIt count finishes. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode, The Upside Down and Mirror Universe count finishes in the inverted mode, and I Like It Here and BUSTIN' count finishes in the mystery mode.
+- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode, The Upside Down and Mirror Universe count finishes in the inverted mode, and I Like It Here and BUSTIN' count finishes in the mystery mode.
 - **What?:** any entry in the mystery mode counts, DNFs included.
 - **Yap:** the racer's own races in order, DNFs included, each with a comment that isn't blank, the same comments that `comments.json` publishes. A race without one ends the run. Only whether a comment exists reaches `highlights.py`; its text never enters `participants.json`.
 - **Touched Grass:** the racer needs an earlier race, and the gap since it is counted only from 2026-08-01, so a break that started before then counts from that date and the earliest unlock is 2026-08-31. Any entry counts as the return, DNFs included.
@@ -451,6 +452,7 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 - **Grocery Stick:** the field is odd and at least 5, and the finisher whose place is the middle one, `(field + 1) / 2`, earns it.
 - **Step Letter:** the field is at least 5, every entrant is identified and finished, and the names in place order never decrease when compared without case. Every entrant earns it.
 - **Rettel Pets:** Step Letter's rule with the names in place order never increasing.
+- **Names for Step Letter and Rettel Pets:** each entrant's name as archived with that race, normally within hours of it, not their current name, so a later rename never adds or removes either badge. The archive was first filled in bulk on 2026-10-27, so earlier races carry the names racers had on that date.
 - **God Route:** places 1 and 2 are both timed and more than 10 minutes apart, using the exact times, and the field is at least 7. "Top-rated" is the entrant with the best pre-race overall rating among those who are not provisional and raced in the previous 90 days. When no entrant qualifies, the winner earns it.
 - **Omnivore:** needs 7 of the 8 modes, because requiring all 8 left 0.8% of racers holding it.
 
@@ -461,7 +463,7 @@ The badge art in `site/assets/badges/` includes [Twemoji](https://github.com/twi
 #### Streaks
 
 - **Daily:** consecutive Eastern Time dates with at least one entry. The current streak is the run ending on the racer's last race day.
-- **Win, podium and finish:** runs over the racer's own race sequence across all modes. Podium means places 1-3; finish means finisher. The current streak is the run that includes the racer's latest race, and is absent if that race broke it.
+- **Win, podium and finish:** runs over the racer's own race sequence across all modes. Podium means places 1-3; finish means finisher. A finish run skips a DNF in a field of two whose other racer finished, as under [Badges](#badges). The current streak is the run still open after the racer's latest race, and is absent if that race broke it.
 
 #### Presets
 
