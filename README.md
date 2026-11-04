@@ -13,7 +13,7 @@ This README is the spec. It has three parts:
 Other documents:
 
 - [Badge_Guide.md](Badge_Guide.md): how to add, remove or change a badge.
-- [Analyses.md](Analyses.md): the standalone analyses, mode overlap and the rating comparison.
+- [Analyses.md](Analyses.md): the standalone analyses, mode overlap, race schedule proposals, the schedule strategy comparison and the rating comparison.
 - [Racetime_API.md](Racetime_API.md): racetime.gg API behavior and field definitions.
 
 ## Running the project
@@ -31,6 +31,7 @@ The data builder and web page have no third-party runtime dependencies.
 ```bash
 python3 scripts/race_archive.py       # sync new races from racetime.gg into archive/ (network)
 python3 scripts/racer_bios.py         # optional: mirror racers' profile bios into archive/ (network)
+python3 scripts/schedule_archive.py   # optional: mirror the alttpr.racing ladder schedule into archive/ (network)
 python3 scripts/build_stats.py        # build site/data/*.json from archive/ (offline)
 python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/ (network)
 python3 scripts/version_assets.py     # restamp the asset URLs after editing site/
@@ -125,6 +126,9 @@ scripts/ladder_rating.py          Ladder rating model, overall and per mode, and
 scripts/highlights.py             Tags, badges, streaks, presets, records, claims and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report (see Analyses.md)
+scripts/schedule_archive.py       Mirror of the alttpr.racing ladder schedule and modes, and its loaders
+scripts/schedule_planner.py       Schedule proposals from past participation (see Analyses.md)
+scripts/schedule_lab.py           Comparison of schedule strategies with the planner's rules (see Analyses.md)
 scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating (see Analyses.md)
 scripts/badge_images.py           Converts badge art to the standard WebP pair (needs ImageMagick 7)
 scripts/pokemon_images.py         Fits Pokémon sprites to the avatar frame (needs ImageMagick 7)
@@ -140,6 +144,12 @@ tests/test_ladder_rating.py       Rating model unit tests
 tests/test_highlights.py          Tag, badge, streak and record unit tests
 tests/test_comment_stats.py       Comments dataset unit tests
 tests/test_mode_overlap.py        Mode overlap unit tests
+tests/test_schedule_archive.py    Schedule mirror unit tests
+tests/test_schedule_planner.py    Schedule planner unit tests, including the committed schedule mirror
+tests/test_schedule_report.py     Schedule planner report, HTML page, CSV and JSON tests
+tests/test_schedule_rates.py      Schedule planner success-rate CSV and page tests
+tests/schedule_fixtures.py        Shared fixtures for the schedule planner, report, rates and lab tests
+tests/test_schedule_lab.py        Schedule strategy comparison: variants, scoring and rules
 tests/test_rating_lab.py          Rating comparison: golden values, properties and statistics
 tests/test_site_globals.py        Checks that site scripts declare no clashing globals
 tests/test_badge_assets.py        Badge image pair checks
@@ -151,6 +161,7 @@ archive/races/                    Raw race records, one file per race
 archive/racer-names.json          Current racer display names
 archive/racer-avatars.json        Last observed leaderboard avatar of each racer
 archive/racer-bios.json           Profile bio of each racer checked, with the time it was checked
+archive/ladder-schedule/          alttpr.racing ladder schedule and modes, one file per season
 assets/pokemon/                   Pokémon sprites and pokedex.json, committed and never deployed
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
@@ -176,10 +187,11 @@ site/assets/alttpr-ladder.png     Category artwork
 site/assets/fonts/                Self-hosted Barlow fonts (SIL Open Font License)
 site/assets/badges/               Badge images, an animated WebP and a still for each badge
 README.md                         This spec
-Analyses.md                       Standalone analyses: mode overlap and the rating comparison
+Analyses.md                       Standalone analyses: mode overlap, race schedule proposals, schedule strategy comparison, rating comparison
 Badge_Guide.md                    How to add or remove a badge
 Racetime_API.md                   racetime.gg API behavior and field definitions
 CLAUDE.md                         Working rules for AI coding agents in this repository
+schedule-plan.json                Default bands, composition and external events for the schedule planner
 ```
 
 ## The data
@@ -235,6 +247,20 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 - **Challenge pages:** a page without a `user-profile` block, such as a challenge or error page, is a failure. It never becomes a stored `null` bio.
 - **The file** is rewritten only when at least one racer was checked, so a run that finds nobody due changes nothing.
 - The script ends with `Bios: N checked, K failed; M name a favourite Pokémon.`, where `M` counts the stored bios that name one (see [Pokémon avatars](#pokémon-avatars)). It exits with 1 only if the archive cannot be read. If the pokédex cannot be read, it prints a `Warning:` line and leaves the count out, because the bios are already saved.
+
+#### Ladder schedule mirror
+
+`scripts/schedule_archive.py` mirrors the alttpr.racing ladder schedule, so the [schedule planner](Analyses.md#race-schedule-proposals) can see every slot, including the rooms that were cancelled and so never reached racetime.gg. It is run by hand; the bot does not run it.
+
+- **What it fetches:**
+  - `https://alttpr.racing/api/v1/modes`, the modes with their archetype, name and `active` flag;
+  - `https://alttpr.racing/api/v1/schedule/<n>` for seasons 1, 2, …, stopping at the first season that answers 404. Season 0 is never fetched: it is an alias of the current season, with local-time strings.
+- **Where it writes:** `archive/ladder-schedule/modes.json` and `archive/ladder-schedule/season-<n>.json`. Each file wraps the response verbatim as `{"schema_version": 1, "fetched_at": …, "modes" | "schedule": [...]}`, minified with one trailing newline.
+- **Validation:** every response is validated before any file is written. A slot needs integer `id`, `season` and `mode`, a `raceId` that is an integer or null, a `time` of digits (Unix seconds), and its file's season. A mode needs integer `id` and `archetype`, a string `name`, and a boolean `active`. Any failure writes nothing.
+- **Rewrites:** a file is rewritten only when its body changed, so a run without news changes nothing. Files are never deleted.
+- **Reading it back:** `load_schedule` returns every slot once by its `id`; the same id with different content is an error.
+- **Output:** the script ends with `Schedule: N seasons, M slots, K files changed.` and exits with 1 on any failure.
+- **Privacy:** the schedule holds slot times, mode ids and alttpr.racing race ids, nothing about racers. Like the rest of `archive/`, it is never deployed.
 
 ### Published datasets
 

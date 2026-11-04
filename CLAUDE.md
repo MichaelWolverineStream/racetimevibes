@@ -3,7 +3,7 @@
 This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 - Python scripts in `scripts/` sync raw races into `archive/` and build JSON datasets into `site/data/`.
 - `site/` is a no-build HTML/CSS/JS page, deployed to GitHub Pages.
-- `README.md` is the full spec. `Badge_Guide.md` explains how to add or remove a badge. `Analyses.md` documents the standalone analyses: mode overlap and the rating comparison.
+- `README.md` is the full spec. `Badge_Guide.md` explains how to add or remove a badge. `Analyses.md` documents the standalone analyses: mode overlap, the race schedule proposals, the schedule strategy comparison and the rating comparison.
 
 ## The most important rules
 
@@ -16,7 +16,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
 2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds, mirrors avatars, and commits `archive/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `.github/workflows/update-bios.yml` calls it once a day with `sync-bios` on, which also runs `racer_bios.py`.
    - Pull before you start.
    - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `build_stats.py` and `avatar_mirror.py`.
-3. **`archive/` is a verbatim mirror of the racetime.gg API.**
+3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing ladder schedule in `archive/ladder-schedule/`.**
    - Never edit it by hand.
    - Never move or copy any of it into `site/`. It holds full user profiles, comments and `racer-bios.json` (verbatim profile bios), and it is deliberately never deployed.
 4. **Publish only what the privacy contract allows** (README › Privacy). Any new field in a published dataset must fit it.
@@ -49,10 +49,11 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
 ## Data pipeline
 
 ```bash
-python3 scripts/race_archive.py    # network: incremental sync into archive/
-python3 scripts/racer_bios.py      # network, optional (the bot runs it daily): racer bios into archive/racer-bios.json
-python3 scripts/build_stats.py     # offline: archive/ → site/data/{race-stats,participants,comments}.json
-python3 scripts/avatar_mirror.py   # network: site/avatars/ ⇄ the avatars participants.json names
+python3 scripts/race_archive.py     # network: incremental sync into archive/
+python3 scripts/racer_bios.py       # network, optional (the bot runs it daily): racer bios into archive/racer-bios.json
+python3 scripts/schedule_archive.py # network, by hand: the alttpr.racing ladder schedule into archive/ladder-schedule/
+python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json
+python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars participants.json names
 ```
 
 - **Where the logic lives:**
@@ -63,8 +64,11 @@ python3 scripts/avatar_mirror.py   # network: site/avatars/ ⇄ the avatars part
   - `avatar_mirror.py`: avatar file names, which observation is current, and the mirror into `site/avatars/`.
   - `pokemon_avatars.py`: bio phrase match, Pokémon name match, favourite and random assignment, sprite paths, and the pokédex refresh.
   - `racer_bios.py`: the bio sync and its loader.
+  - `schedule_archive.py`: the alttpr.racing schedule mirror and its loaders.
 - `mode_overlap.py` is a standalone analysis. The build never runs it.
 - `rating_lab.py` is a standalone analysis. The build never runs it. Its tuning reads races before 2026-01-01 only.
+- `schedule_planner.py` is a standalone analysis. The build never runs it. It reads `schedule-plan.json` and `archive/ladder-schedule/`.
+- `schedule_lab.py` is a standalone analysis. The build never runs it. It runs `schedule_planner.py` under other `Rules` and needs worker processes (`--jobs 1` inside a sandbox).
 - **Tests never use the network**, because API responses are mocked. After changing any build script, rebuild the data and include `site/data` in the change.
 - **A new race mode needs a colour slot** in `MODE_COLOR_SLOTS` (`site/racer-charts.js`). Without one it falls back to a muted grey. The order of `--mode-1..8` keeps neighbouring violins distinguishable for colour-blind viewers, so don't reorder them.
 
