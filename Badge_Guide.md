@@ -55,7 +55,7 @@ Badges are recomputed from the whole archive on every build and are never taken 
    python3 -m http.server 8000 -d site    # open a racer page at http://localhost:8000
    ```
 
-6. **Add a row to the README** Badges table, plus a note if the rule needs explaining. To get the "Held by" share, divide the badge's count in `diagnostics.highlights.badge_holders` by `diagnostics.highlights.racer_count`, both in `site/data/participants.json`.
+6. **Add a row to the README** Badges table, plus a note if the rule needs explaining.
 
 ## Remove a badge
 
@@ -76,5 +76,6 @@ Badges are recomputed from the whole archive on every build and are never taken 
 
 - **Ids:** snake_case, kept stable once published. A test checks the format and that ids are unique.
 - **Descriptions:** one imperative sentence ending with a full stop.
+- **Badger:** it counts the badges of the rows above it, including any unlocked in the same race, so it stays the last row. Add new badges above it.
 - **First Blood:** it never gets a `badge` tag, because the first-win tag already covers it. This is the one special case in `compute()`.
 - **Art standard:** 128×128 WebP on a transparent canvas. Animations loop forever. The still is static, and for static art it is a byte copy of the main image. `test_badge_assets.py` enforces this.

@@ -458,7 +458,7 @@ A winner's points never fall. Every pair a winner is in is decided in their favo
 
 Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode.
 
-Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.534 against 0.546 (see [Backtest](#backtest)). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and the top-rated racer of God Route and Upsetti always use the overall rating.
+Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.534 against 0.546 (see [Backtest](#backtest)). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and the top-rated racer of God Route, Big Routing and Upsetti always use the overall rating.
 
 #### What racetime.gg does differently
 
@@ -518,69 +518,71 @@ The two record tags are the exception: they share the PB tag's green, because a 
 
 #### Badges
 
-Each badge records the index of the race that unlocked it. Shares are of the 401 racers as of 2026-11-05.
+Each badge records the index of the race that unlocked it.
 
-| Badge | Rule | Held by |
-|---|---|---|
-| First Blood | Win a race. | 56% |
-| Hat Trick | Win 3 races in a row, in the racer's own sequence. | 15% |
-| Hummers | Win 6 races in a row. | 2.5% |
-| OkDudeLucksack | Win 9 races in a row. | 0.7% |
-| Double D | Win 10 races. | 20% |
-| Quarter Pounder | Win 25 races. | 10% |
-| Full Pounder | Win 50 races. | 5.0% |
-| On the Ped | Finish on the podium in 5 races in a row. | 25% |
-| Ped Regular | Finish on the podium in 10 races in a row. | 7.5% |
-| Bridesmaid | Finish 2nd in 3 races in a row. | 14% |
-| No Dodge | Finish 10 races in a row. | 46% |
-| More No Dodge | Finish 40 races in a row. | 11% |
-| Nice | Finish 69 races in a row. | 4.2% |
-| CenturianV | Finish 105 races. | 12% |
-| BlazeIt | Finish 420 races. | 0% |
-| >174 | Enter 175 races you don't win. | 3.7% |
-| Omnivore | Finish a race in 7 different modes. | 4.2% |
-| Apex Predator | Win a race in 7 different modes. | 1.7% |
-| Connoisseur | Finish 20 different seed presets. | 5.2% |
-| Rival | Finish ahead of the same opponent 20 times. | 14% |
-| Sniper | Win by less than 5 seconds. | 7.0% |
-| Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.2% |
-| RETIME | Finish less than 1 second from another racer. | 17% |
-| Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | 34% |
-| Déjà Vu | Finish two races with exactly the same time. | 21% |
-| God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. | 13% |
-| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. | 3.2% |
-| BigBrain | Win by 15 minutes or more in a field of 9 or more. | 5.0% |
-| Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. | 13% |
-| Glitched | Finish a glitched race. | 10% |
-| Glitched! | Finish 10 glitched races. | 3.5% |
-| G1!tch3d!!! | Finish 30 glitched races. | 1.7% |
-| G%!#ch@d!#? | Finish 100 glitched races. | 0% |
-| The Upside Down | Finish an inverted race. | 31% |
-| Mirror Universe | Finish 30 inverted races. | 1.7% |
-| Keys | Finish a keys race. | 58% |
-| Locksmith | Finish 30 keys races. | 6.7% |
-| Simpler Times | Finish 10 simple races. | 27% |
-| Simpler Life | Finish 30 simple races. | 9.5% |
-| Had Fun | Finish a fun race. | 36% |
-| Kept Having Fun | Finish 10 fun races. | 6.0% |
-| Jet Seed | Finish a Casual Boots race in under 70 minutes. | 9.2% |
-| Jet Lag | Win a Casual Boots race in 100 minutes or more. | 2.7% |
-| Driving Lesson | Finish a spoiler race. | 8.2% |
-| Cruisin' | Win a spoiler race. | 3.2% |
-| Entrance | Finish an entrance race. | 55% |
-| Entranced | Enter an entrance race on 5 days in a row. | 7.0% |
-| Entranced! | Enter an entrance race in 20 weeks in a row. | 2.7% |
-| What? | Enter a mystery race. | 30% |
-| I Like It Here | Finish 10 mystery races. | 4.5% |
-| BUSTIN' | Finish 30 mystery races. | 1.7% |
-| Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. | 0.2% |
-| Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. | 56% |
-| Lanterne Rouge | Finish last in a field of 10 or more where everyone finished. | 13% |
-| Rando Sicko | Finish 5 races in one day. | 0.7% |
-| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. | 21% |
-| Yap | Comment on 11 races in a row. | 9.5% |
-| Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. | 2.2% |
-| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. | 1.2% |
+| Badge | Rule |
+|---|---|
+| First Blood | Win a race. |
+| Hat Trick | Win 3 races in a row, in the racer's own sequence. |
+| Hummers | Win 6 races in a row. |
+| OkDudeLucksack | Win 9 races in a row. |
+| Double D | Win 10 races. |
+| Quarter Pounder | Win 25 races. |
+| Full Pounder | Win 50 races. |
+| On the Ped | Finish on the podium in 5 races in a row. |
+| Ped Regular | Finish on the podium in 10 races in a row. |
+| Bridesmaid | Finish 2nd in 3 races in a row. |
+| No Dodge | Finish 10 races in a row. |
+| More No Dodge | Finish 40 races in a row. |
+| Nice | Finish 69 races in a row. |
+| CenturianV | Finish 105 races. |
+| BlazeIt | Finish 420 races. |
+| >174 | Enter 175 races you don't win. |
+| Omnivore | Finish a race in 7 different modes. |
+| Apex Predator | Win a race in 7 different modes. |
+| Connoisseur | Finish 20 different seed presets. |
+| Rival | Finish ahead of the same opponent 20 times. |
+| Sniper | Win by less than 5 seconds. |
+| Sniped! | Finish 2nd, less than 5 seconds behind the winner. |
+| RETIME | Finish less than 1 second from another racer. |
+| Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. |
+| Déjà Vu | Finish two races with exactly the same time. |
+| God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. |
+| Big Routing | Win by more than 10 minutes in a field of 7 or more as its top-rated racer. |
+| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. |
+| BigBrain | Win by 15 minutes or more in a field of 9 or more. |
+| Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. |
+| Glitched | Finish a glitched race. |
+| Glitched! | Finish 10 glitched races. |
+| G1!tch3d!!! | Finish 30 glitched races. |
+| G%!#ch@d!#? | Finish 100 glitched races. |
+| The Upside Down | Finish an inverted race. |
+| Mirror Universe | Finish 30 inverted races. |
+| Keys | Finish a keys race. |
+| Locksmith | Finish 30 keys races. |
+| Simpler Times | Finish 10 simple races. |
+| Simpler Life | Finish 30 simple races. |
+| Had Fun | Finish a fun race. |
+| Kept Having Fun | Finish 10 fun races. |
+| Jet Seed | Finish a Casual Boots race in under 70 minutes. |
+| Jet Lag | Win a Casual Boots race in 100 minutes or more. |
+| Driving Lesson | Finish a spoiler race. |
+| Cruisin' | Win a spoiler race. |
+| Entrance | Finish an entrance race. |
+| Entranced | Enter an entrance race on 5 days in a row. |
+| Entranced! | Enter an entrance race in 20 weeks in a row. |
+| What? | Enter a mystery race. |
+| I Like It Here | Finish 10 mystery races. |
+| BUSTIN' | Finish 30 mystery races. |
+| Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. |
+| Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. |
+| Lanterne Rouge | Finish last in a field of 10 or more where everyone finished. |
+| Rando Sicko | Finish 5 races in one day. |
+| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. |
+| Yap | Comment on 11 races in a row. |
+| Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. |
+| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. |
+| Badger | Collect 30 badges. |
 
 A badge is either a counter, which unlocks when a count reaches its target, or a one-race badge, which unlocks on a single result. In the notes below, a **finish** is a finisher's result, and **day**, **week** and **field** are as defined under [Definitions](#definitions). How the page shows badges is under [Racer pages](#racer-pages).
 
@@ -604,10 +606,12 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 - **Rettel Pets:** Step Letter's rule with the names in place order never increasing.
 - **Names for Step Letter and Rettel Pets:** each entrant's name as archived with that race, normally within hours of it, not their current name, so a later rename never adds or removes either badge. The archive was first filled in bulk on 2026-10-27, so earlier races carry the names racers had on that date.
 - **God Route:** places 1 and 2 are both timed and more than 10 minutes apart, using the exact times, and the field is at least 7. "Top-rated" is the entrant with the best pre-race overall rating among those who are not provisional and raced in the previous 90 days. When no entrant qualifies, the winner earns it.
+- **Big Routing:** God Route's condition, but the winner must be the top-rated entrant, as defined for God Route. When no entrant qualifies, nobody earns it. Every such win earns exactly one of God Route and Big Routing.
 - **Upsetti:** places 1 and 2 are both timed and at least 10 minutes apart, using the exact times, the field is at least 7, and place 2 is the top-rated entrant, as defined for God Route. When no entrant qualifies, or the top-rated entrant finishes elsewhere or doesn't finish, nobody earns it. Unlike God Route's "more than", exactly 10 minutes is enough.
 - **BigBrain:** places 1 and 2 are both timed and at least 15 minutes apart, using the exact times, and the field is at least 9. Ratings play no part.
 - **Omnivore:** needs 7 of the 8 modes, because requiring all 8 left 0.8% of racers holding it.
 - **Apex Predator:** Omnivore's rule for wins: a win in 7 different modes.
+- **Badger:** counts every badge the racer holds, First Blood included. It unlocks in the same race as the 30th badge.
 
 Each badge ships an animated image and a still under `site/assets/badges/`. To add or remove a badge, see [Badge_Guide.md](Badge_Guide.md).
 

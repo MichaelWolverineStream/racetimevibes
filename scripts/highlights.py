@@ -72,10 +72,13 @@ BIG_FIELD_SIZE = 16
 BLOWOUT_MIN_FIELD = 5
 GOD_ROUTE_MIN_MARGIN = 600
 GOD_ROUTE_MIN_FIELD = 7
+BIG_ROUTING_MIN_MARGIN = 600
+BIG_ROUTING_MIN_FIELD = 7
 UPSETTI_MIN_MARGIN = 600
 UPSETTI_MIN_FIELD = 7
 BIG_BRAIN_MIN_MARGIN = 900
 BIG_BRAIN_MIN_FIELD = 9
+BADGER_BADGES = 30
 RANKING_WINDOW_DAYS = 90
 PRESET_MIN_RACES = 8
 BEST_PRESET_MIN_FINISHES = 3
@@ -272,6 +275,7 @@ class _Moment(NamedTuple):
     snipers: set[int]
     sniped: set[int]
     god_route: set[int]
+    big_routing: set[int]
     upsetti: set[int]
     big_brain: set[int]
     middle: set[int]
@@ -505,6 +509,13 @@ BADGES = (
         earned=lambda m: m.player in m.god_route,
     ),
     Badge(
+        "big_routing",
+        "Big Routing",
+        f"Win by more than {BIG_ROUTING_MIN_MARGIN // 60} minutes in a field of "
+        f"{BIG_ROUTING_MIN_FIELD} or more as its top-rated racer.",
+        earned=lambda m: m.player in m.big_routing,
+    ),
+    Badge(
         "upsetti",
         "Upsetti",
         f"Finish 2nd, {UPSETTI_MIN_MARGIN // 60} minutes or more behind the winner, in a field of "
@@ -725,6 +736,14 @@ BADGES = (
         f"Be in a race of {STEP_LETTER_MIN_FIELD} or more where everyone finished "
         "in reverse alphabetical order.",
         earned=lambda m: m.player in m.rettel_pets,
+    ),
+    # Last on purpose: it counts the badges the rows above unlocked, in this race too.
+    Badge(
+        "badger",
+        "Badger",
+        f"Collect {BADGER_BADGES} badges.",
+        BADGER_BADGES,
+        progress=lambda s: len(s.badges),
     ),
 )
 
@@ -949,11 +968,16 @@ def compute(
         if winner is not None and n >= BIG_FIELD_SIZE:
             big_fields.append([ri, winner[0], n])
 
-        # God Route and Upsetti need the pre-race ranking, so they run before state updates.
+        # God Route, Big Routing and Upsetti need the pre-race ranking, so they run before
+        # state updates.
         god_route: set[int] = set()
         if margin is not None and margin > GOD_ROUTE_MIN_MARGIN and n >= GOD_ROUTE_MIN_FIELD:
             if _top_rated(states, race_ordinal, entries) != winner[0]:
                 god_route = {winner[0]}
+        big_routing: set[int] = set()
+        if margin is not None and margin > BIG_ROUTING_MIN_MARGIN and n >= BIG_ROUTING_MIN_FIELD:
+            if _top_rated(states, race_ordinal, entries) == winner[0]:
+                big_routing = {winner[0]}
         upsetti: set[int] = set()
         if margin is not None and margin >= UPSETTI_MIN_MARGIN and n >= UPSETTI_MIN_FIELD:
             if _top_rated(states, race_ordinal, entries) == runner_up[0]:
@@ -1065,6 +1089,7 @@ def compute(
                 snipers,
                 sniped,
                 god_route,
+                big_routing,
                 upsetti,
                 big_brain,
                 middle,

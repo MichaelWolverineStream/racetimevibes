@@ -610,6 +610,38 @@ class BadgeTests(unittest.TestCase):
         records = warmup([0, 2], 5) + [race]
         self.assertNotIn("god_route", self.badges(records, player=1, means={0: 3.0}))
 
+    def test_big_routing_top_rated_wins_by_more_than_ten_minutes_in_a_field_of_seven(self):
+        records = warmup([0, 2], 5) + [self.margin_race(winner=0)]
+        result = run(records, means={0: 3.0})
+        self.assertEqual(result["players"][0]["badges"]["big_routing"], 5)
+        big_routing_tags = [tag for tag in tags_of(result, 5, "badge") if tag[2] == "big_routing"]
+        self.assertEqual(big_routing_tags, [["badge", 0, "big_routing"]])
+
+    def test_big_routing_needs_more_than_ten_minutes(self):
+        records = warmup([0, 2], 5) + [self.margin_race(winner=0, margin=600.0)]
+        self.assertNotIn("big_routing", self.badges(records, means={0: 3.0}))
+
+    def test_big_routing_needs_a_field_of_seven(self):
+        records = warmup([0, 2], 5) + [self.margin_race(winner=0, field=6)]
+        self.assertNotIn("big_routing", self.badges(records, means={0: 3.0}))
+
+    def test_big_routing_not_awarded_to_a_winner_who_is_not_top_rated(self):
+        records = warmup([0, 2], 5) + [self.margin_race(winner=1)]
+        badges = self.badges(records, player=1, means={0: 3.0})
+        self.assertNotIn("big_routing", badges)
+        self.assertIn("god_route", badges)
+
+    def test_big_routing_goes_to_the_top_rated_in_the_field(self):
+        # Racer 0 is not in this race, so racer 2 is the field's top-rated.
+        records = warmup([0, 2], 5) + [self.margin_race(winner=2, absent=(0,))]
+        self.assertEqual(
+            self.badges(records, player=2, means={0: 3.0, 2: 2.0})["big_routing"], 5
+        )
+
+    def test_big_routing_not_awarded_when_no_entrant_is_ranked(self):
+        provisional = warmup([0, 2], 4) + [self.margin_race(winner=0, day=4)]
+        self.assertNotIn("big_routing", self.badges(provisional, means={0: 3.0}))
+
     def test_upsetti_top_rated_finishes_second_ten_minutes_behind(self):
         records = warmup([0, 2], 5) + [self.margin_race(margin=600.0)]
         result = run(records, means={0: 3.0})
@@ -946,6 +978,25 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(renamed["badges"]["rettel_pets"], 0)
         self.assertNotIn("step_letter", renamed["badges"])
 
+    def test_badger_counts_badges_including_those_won_in_the_same_race(self):
+        # Target 3 instead of BADGER_BADGES, so the test needs only a few other badges.
+        table = tuple(
+            badge._replace(target=3) if badge.id == "badger" else badge
+            for badge in highlights.BADGES
+        )
+        with mock.patch.object(highlights, "BADGES", table):
+            result = run([duel(0, 1)] * 3)
+        # Racer 0: First Blood, Déjà Vu, then Hat Trick and Badger in race 2.
+        self.assertEqual(result["players"][0]["badges"]["hat_trick"], 2)
+        self.assertEqual(result["players"][0]["badges"]["badger"], 2)
+        self.assertIn(["badge", 0, "badger"], tags_of(result, 2, "badge"))
+        # Racer 1: Déjà Vu and Bridesmaid, one short.
+        self.assertNotIn("badger", result["players"][1]["badges"])
+        self.assertEqual(result["players"][1]["progress"]["badger"], 2)
+
+    def test_badger_target_is_reachable(self):
+        self.assertLess(highlights.BADGER_BADGES, len(highlights.BADGES))
+
     def test_badge_table_order(self):
         ids = [badge["id"] for badge in run([])["badges"]]
         self.assertEqual(
@@ -977,6 +1028,7 @@ class BadgeTests(unittest.TestCase):
                 "palindrome",
                 "dejavu",
                 "god_route",
+                "big_routing",
                 "upsetti",
                 "big_brain",
                 "big_game_hunter",
@@ -1010,6 +1062,7 @@ class BadgeTests(unittest.TestCase):
                 "yap",
                 "step_letter",
                 "rettel_pets",
+                "badger",
             ],
         )
 

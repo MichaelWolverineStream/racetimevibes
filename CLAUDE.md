@@ -41,7 +41,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - ImageMagick 7 is needed only by `scripts/badge_images.py` and `scripts/pokemon_images.py`.
 8. **Ladder rating invariants are tested across the whole archive, for the overall rating and every mode rating:**
    - A winner's points never fall.
-   - Mode ratings use the overall parameters, untuned. Predictions (win chance, Upset, God Route, Upsetti) always use the overall rating.
+   - Mode ratings use the overall parameters, untuned. Predictions (win chance, Upset, God Route, Big Routing, Upsetti) always use the overall rating.
    - Finish times never affect the rating.
    - `β`, `σ₀` and the field-size damping `α` were tuned by `scripts/rating_lab.py` on races before 2026-01-01, so that 2026 results stay out of sample. Do not retune on 2026 data. Use `python3 scripts/ladder_rating.py --backtest` to evaluate.
 9. **All dates, hours and day buckets are in `America/New_York` (Eastern Time).** The `ladder_test` mode is excluded from everything.
