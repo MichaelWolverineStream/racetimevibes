@@ -251,7 +251,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 - **Early stop:** after 5 failures in a row the run stops with a warning, because racetime.gg is refusing profile pages. The racers not yet reached stay due. A success resets the count. The script still exits 0, so the rest of the refresh goes on with the bios it has.
 - **Challenge pages:** a page without a `user-profile` block, such as a challenge or error page, is a failure. It never becomes a stored `null` bio.
 - **The file** is rewritten only when at least one racer was checked, so a run that finds nobody due changes nothing.
-- The script ends with `Bios: N checked, K failed; M name a favourite Pokémon.`, where `M` counts the stored bios that name one (see [Pokémon avatars](#pokémon-avatars)). It exits with 1 only if the archive cannot be read. If the pokédex cannot be read, it prints a `Warning:` line and leaves the count out, because the bios are already saved.
+- The script ends with `Bios: N checked, K failed; M name a favourite Pokémon.`, where `M` counts the stored bios that name one, `random` included (see [Pokémon avatars](#pokémon-avatars)). It exits with 1 only if the archive cannot be read. If the pokédex cannot be read, it prints a `Warning:` line and leaves the count out, because the bios are already saved.
 
 #### Ladder schedule mirror
 
@@ -293,11 +293,11 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 
 ### Pokémon avatars
 
-A racer's avatar can be a Pokémon. The Pokémon is the racer's favourite, if their bio names one, or else a random one. `scripts/pokemon_avatars.py` makes both choices, and `build_stats.py` publishes the result as the racer's avatar file name in `participants.json`.
+A racer's avatar can be a Pokémon. The Pokémon is the racer's favourite, if their bio names one, or else a random one. A racer whose bio names `random` as their favourite gets a random one too. `scripts/pokemon_avatars.py` makes both choices, and `build_stats.py` publishes the result as the racer's avatar file name in `participants.json`.
 
 **Precedence.** For each racer, in this order:
 
-1. A favourite Pokémon named in their bio, even when they have a racetime.gg avatar.
+1. A favourite Pokémon named in their bio, even when they have a racetime.gg avatar. If the favourite is `random`, a random Pokémon, again even over a racetime.gg avatar.
 2. Their racetime.gg avatar, when they have one that can be mirrored (see [Privacy](#privacy)).
 3. A random Pokémon.
 
@@ -309,8 +309,9 @@ Nobody is left without an avatar when `assets/pokemon/` has sprites.
 - A word is favourite-like if it is `fav` or `fave`, or at least 0.8 similar to `favourite` or `favorite`. It is Pokémon-like if it is `pkmn`, or at least 0.8 similar to `pokemon`. Similarity is the ratio of Python's `difflib.SequenceMatcher`, set as `PHRASE_WORD_CUTOFF`.
 - "My" is not required, and neither is anything before the phrase.
 - The words after the phrase are the name. One linking word, `is`, `s` (as in "pokemon's"), `are` or `was`, is skipped first.
+- If the first word of the name is random-like, at least 0.8 similar to `random` (`RANDOM_WORDS`), the favourite is `random` and the rest of the name is ignored. So "favourite pokemon: Random!" and "fav pokemon is rando" both ask for a random Pokémon, but "my favourite pokemon changes at random" and "favourite pokemon randomizer" do not. No word of a Pokémon name is random-like, so this is checked before the name and never hides a Pokémon.
 - The name is on the same line as the phrase. The name never continues onto the next line.
-- Hits are tried in text order, line by line. The first hit whose name resolves wins. A hit whose name resolves to nothing is skipped, and a later hit can still win.
+- Hits are tried in text order, line by line. The first hit whose name resolves, or is `random`, wins. A hit whose name resolves to nothing is skipped, and a later hit can still win.
 
 **The name.** At most 4 words (`NAME_MAX_WORDS`) after the phrase are used, so "pikachu is the best" still resolves. The name is tried as the first 4 words, then the first 3, 2 and 1, longest first. Names come from the pokédex's two lists: Pokémon, including alternate forms such as `charizard-mega-x` (ids from 10001), and species, such as `deoxys`. A name only counts if its id has a sprite.
 
@@ -322,14 +323,14 @@ So `Mr. Mime` and `mrmime` give Mr. Mime, `Mega Charizard X` gives `charizard-me
 **Assignment.** `assign` takes the racers in a fixed order: by the position of their first included race, then by user ID. It makes two passes.
 
 1. **Favourites:** each racer whose bio names a Pokémon gets it.
-2. **Random:** each other racer without a racetime.gg avatar gets a random base Pokémon, picked from the 1,025 species, that is, ids 1 to 1025 and never an alternate form. It is one of those the fewest racers already use. Racers who take a favourite count as users of its exact id, and so do those earlier in this pass. A favourite alternate form, such as `charizard-mega-x`, therefore does not take its base species out of the random pass. Ties are broken by a ranking from the SHA-256 of `<user id>/<pokédex number>`, lowest first, so the pick is fixed per racer.
+2. **Random:** each racer whose favourite is `random`, and each racer with neither a favourite nor a racetime.gg avatar, gets a random base Pokémon, in their place in the order. A favourite of `random` therefore gives a racer what they would get with no racetime.gg avatar at all. The Pokémon is picked from the 1,025 species, that is, ids 1 to 1025 and never an alternate form. It is one of those the fewest racers already use. Racers who take a favourite count as users of its exact id, and so do those earlier in this pass. A favourite alternate form, such as `charizard-mega-x`, therefore does not take its base species out of the random pass. Ties are broken by a ranking from the SHA-256 of `<user id>/<pokédex number>`, lowest first, so the pick is fixed per racer.
 
 A Pokémon can have several sprites, such as the Unown letters. The racer gets the sprite file, favourite or random, that the fewest racers use, with the same tie-break from the SHA-256 of `<user id>/<file name>`. A published name is `pokemon-` plus the file name, for example `pokemon-201-b.png`. There is no limit on how many racers share a Pokémon: once every one is in use, the least used are picked. If `assets/pokemon/` has no species, nobody gets a random Pokémon.
 
 **Stability.** The order depends only on racers' first races, so a new racer joins at the end, and a new racer who gets a random Pokémon changes nobody else's avatar. The one exception is a race that reaches the archive after a later-starting race: a new racer whose first race started before another racer's first race sorts ahead of them. A random pick is the racer's best-ranked Pokémon among the least used when their turn comes, so it changes only when what came before their turn changes:
 
-- a favourite is added, changed or removed, or
-- a racer earlier in the order enters or leaves the random pass, by gaining or losing a racetime.gg avatar or a favourite.
+- a favourite Pokémon is added, changed or removed, or
+- a racer earlier in the order enters or leaves the random pass, by gaining or losing a racetime.gg avatar or a favourite Pokémon, or, while they have a racetime.gg avatar, by naming or dropping `random`.
 
 Either can take a racer's Pokémon, or free one they rank higher. A favourite Pokémon changes only when the bio does, but its sprite can change when another racer earlier in the order starts or stops favouring the same Pokémon.
 
@@ -685,8 +686,8 @@ The banner crowns the top-rated racer in each category: **Overall**, then every 
 - The sidebar holds **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order.
 - **Latest badges** lists the 12 most recent unlocks by anyone, however long ago. Clicking a badge opens its holders panel, as on a racer page.
 - **Latest avatars** shows the 6 racers whose avatar changed most recently, newest first, each with how long ago the change was first seen. The section is hidden when there are none. A racer's avatar follows the [Pokémon avatars](#pokémon-avatars) precedence, so two kinds of change count, and the later one dates the racer:
-  - **Upload:** the racer's mirrorable racetime.gg upload changed, appeared or went. `avatar_mirror.py` sorts a racer's avatar observations as it does to pick the current avatar (see [Privacy](#privacy)), and compares their mirrored file names, so an upload that cannot be mirrored counts as none. A change needs an earlier observation with a different value; its time is the first observation of the current value after the last different one. A racer whose upload went shows the random Pokémon that replaced it. An upload change does not count while a favourite Pokémon hides the upload.
-  - **Favourite:** the favourite Pokémon named in the racer's bio was added, switched or removed. `pokemon_avatars.py` reads the favourite of each bio in the racer's [bio history](#bios), oldest first; the change is the last bio whose favourite differs from the one before it, at that bio's `since`. An edit that keeps the same favourite is not a change.
+  - **Upload:** the racer's mirrorable racetime.gg upload changed, appeared or went. `avatar_mirror.py` sorts a racer's avatar observations as it does to pick the current avatar (see [Privacy](#privacy)), and compares their mirrored file names, so an upload that cannot be mirrored counts as none. A change needs an earlier observation with a different value; its time is the first observation of the current value after the last different one. A racer whose upload went shows the random Pokémon that replaced it. An upload change does not count while a favourite Pokémon, or a favourite of `random`, hides the upload.
+  - **Favourite:** the favourite Pokémon named in the racer's bio was added, switched or removed. `pokemon_avatars.py` reads the favourite of each bio in the racer's [bio history](#bios), oldest first; the change is the last bio whose favourite differs from the one before it, at that bio's `since`. An edit that keeps the same favourite is not a change. `random` is a favourite of its own, so naming or dropping it is a change. A racer without an upload who names or drops `random` is listed too, although their random Pokémon stays the same.
   - **Not counted:** a racer's first avatar, so a new racer is not listed, and a random Pokémon that moves because other racers changed (see [Pokémon avatars](#pokémon-avatars)).
   - **When:** the archive can only date what it saw, so a change is dated by the sync that first saw it, and nothing from before the archive tracked it is known. The leaderboards are synced every two hours. A bio is only checked after its racer races, so a favourite picked between races is dated by the check after their next race; bio history began on 2026-11-05. The leaderboard file keeps only each racer's latest upload, so a switch back to an earlier picture before any race file recorded the one in between leaves no trace. The page shows the Eastern Time date; changes on the same day are ordered by the exact time first seen.
 

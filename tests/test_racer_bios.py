@@ -425,7 +425,7 @@ class SyncTests(unittest.TestCase):
 
 
 class MainTests(unittest.TestCase):
-    def run_main(self, archive):
+    def run_main(self, archive, favourite=151):
         stdout, stderr = io.StringIO(), io.StringIO()
         with (
             patch("sys.argv", ["racer_bios.py", "--archive", str(archive)]),
@@ -435,7 +435,7 @@ class MainTests(unittest.TestCase):
             patch.object(
                 racer_bios.pokemon_avatars,
                 "favourite_pokemon",
-                side_effect=lambda bio, catalogue: 151 if bio else None,
+                side_effect=lambda bio, catalogue: favourite if bio else None,
             ),
             redirect_stdout(stdout),
             redirect_stderr(stderr),
@@ -449,6 +449,13 @@ class MainTests(unittest.TestCase):
             write_race(archive, "a-1", ["u1", "u2"])
             code, out, _err = self.run_main(archive)
         self.assertEqual(code, 0)
+        self.assertEqual(out, "Bios: 2 checked, 0 failed; 1 name a favourite Pokémon.\n")
+
+    def test_a_random_favourite_is_counted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory)
+            write_race(archive, "a-1", ["u1", "u2"])
+            _code, out, _err = self.run_main(archive, racer_bios.pokemon_avatars.RANDOM)
         self.assertEqual(out, "Bios: 2 checked, 0 failed; 1 name a favourite Pokémon.\n")
 
     def test_a_corrupt_bios_file_exits_one(self):

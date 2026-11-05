@@ -124,6 +124,36 @@ class FavouritePokemonTests(RealCatalogueCase):
     def test_name_stops_at_the_word_limit(self):
         self.check("favourite pokemon is pikachu " + "word " * 10, 25)
 
+    def test_a_random_favourite_asks_for_a_random_pokemon(self):
+        for bio in (
+            "My favourite pokemon is random",
+            "fav pokemon: Random!",
+            "Favorite Pokémon: RANDOM (surprise me)",
+            "favourite pokemon's random",
+            "my favourite pokemon is rando",
+            "favourite pokemon: ramdom",
+            "favourite pokemon game is emerald\nfavourite pokemon: random",
+        ):
+            self.check(bio, pokemon_avatars.RANDOM)
+
+    def test_random_counts_only_as_the_first_word_of_the_name(self):
+        self.check("my favourite pokemon changes at random", None)
+        self.check("my favourite pokemon is a random one", None)
+        self.check("My favourite pokemon randomizer seed", None)
+        self.check("favourite pokemon: pikachu, random otherwise", 25)
+
+    def test_no_word_of_a_pokemon_name_is_random_like(self):
+        # The random check comes before the name, so it must never hide a real Pokémon.
+        names = [name for table in self.pokedex.values() for name in table.values()]
+        words = {pokemon_avatars.compact_key(name) for name in names}
+        words |= {part for name in names for part in name.split("-")}
+        for word in sorted(words):
+            with self.subTest(word=word):
+                self.assertNotEqual(
+                    pokemon_avatars.favourite_pokemon(f"favourite pokemon: {word}", self.catalogue),
+                    pokemon_avatars.RANDOM,
+                )
+
 
 class FavouriteChangeTimesTests(RealCatalogueCase):
     PIKACHU = "favourite pokemon: Pikachu"
@@ -176,6 +206,19 @@ class FavouriteChangeTimesTests(RealCatalogueCase):
         earlier = [[self.PIKACHU, None], [self.PIKACHU + " !", self.T1]]
         self.assertEqual(self.changes("fav pokemon: Pikachu :)", self.T3, earlier), {})
 
+    def test_random_is_a_favourite_of_its_own(self):
+        random = "favourite pokemon: random"
+        for current, earlier in (
+            (random, [[self.PIKACHU, self.T1]]),
+            (random, [["no idea", self.T1]]),
+            ("no idea", [[random, self.T1]]),
+        ):
+            with self.subTest(current=current, earlier=earlier):
+                self.assertEqual(
+                    self.changes(current, self.T2, earlier), {"u": self.instant(self.T2)}
+                )
+        self.assertEqual(self.changes(random + "!", self.T2, [[random, self.T1]]), {})
+
 
 class AssignTests(RealCatalogueCase):
     def bios(self, **texts):
@@ -190,6 +233,21 @@ class AssignTests(RealCatalogueCase):
     def test_racetime_avatar_without_favourite_gets_nothing(self):
         result = pokemon_avatars.assign(["a", "b"], {"a"}, {"a": [None, "x"]}, self.catalogue)
         self.assertEqual(set(result), {"b"})
+
+    def test_a_random_favourite_joins_the_random_pass_despite_a_racetime_avatar(self):
+        # "a" gets what they would get with no upload at all, in their place in the order,
+        # and takes no Pokémon in the favourites pass.
+        order = ["a", "b", "c"]
+        bios = self.bios(a="favourite pokemon: random")
+        result = pokemon_avatars.assign(order, {"a", "c"}, bios, self.catalogue)
+        self.assertEqual(result, pokemon_avatars.assign(order, {"c"}, {}, self.catalogue))
+        self.assertEqual(set(result), {"a", "b"})
+
+    def test_a_random_favourite_gets_nothing_from_an_empty_pool(self):
+        with tempfile.TemporaryDirectory() as root:
+            catalogue = pokemon_avatars.load_catalogue(fake_dir(root, {1: "a"}, {1: "a"}, []))
+        bios = self.bios(a="favourite pokemon: random")
+        self.assertEqual(pokemon_avatars.assign(["a"], {"a"}, bios, catalogue), {})
 
     def test_random_picks_come_from_the_pool_and_are_unused_while_possible(self):
         order = [f"user{n}" for n in range(300)]

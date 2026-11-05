@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 # Supports both `python3 scripts/pokemon_avatars.py` and `from scripts import pokemon_avatars`.
 try:
@@ -48,6 +48,9 @@ FAVOURITE_SHORT_FORMS = frozenset({"fav", "fave"})
 POKEMON_WORDS = ("pokemon",)
 POKEMON_SHORT_FORMS = frozenset({"pkmn"})
 LINKING_WORDS = frozenset({"is", "s", "are", "was"})
+RANDOM_WORDS = ("random",)
+# The favourite of a bio that names `random`: a random Pokémon, even over an upload.
+RANDOM = "random"
 TOKEN = re.compile(r"[a-z0-9]+")
 
 JsonObject = dict[str, Any]
@@ -163,8 +166,14 @@ def _resolve_name(tokens: Sequence[str], catalogue: Catalogue) -> int | None:
     return None
 
 
-def favourite_pokemon(bio: str | None, catalogue: Catalogue) -> int | None:
-    """The Pokémon id a bio names as favourite, tolerating typos, or None."""
+def favourite_pokemon(
+    bio: str | None, catalogue: Catalogue
+) -> int | Literal["random"] | None:
+    """The Pokémon id a bio names as favourite, tolerating typos, or None.
+
+    A favourite whose first word is random-like gives RANDOM: the racer asks for a
+    random Pokémon.
+    """
     for line in normalise(bio or "").splitlines():
         tokens = TOKEN.findall(line)
         for k in range(len(tokens) - 1):
@@ -176,6 +185,9 @@ def favourite_pokemon(bio: str | None, catalogue: Catalogue) -> int | None:
             rest = tokens[k + 2 :]
             if rest and rest[0] in LINKING_WORDS:
                 rest = rest[1:]
+            # No word of a Pokémon name is random-like, so this hides no favourite.
+            if rest and _like(rest[0], frozenset(), RANDOM_WORDS):
+                return RANDOM
             found = _resolve_name(rest, catalogue)
             if found is not None:
                 return found
@@ -190,8 +202,10 @@ def favourite_change_times(
     A bio entry is `[bio, checked_at, since, earlier]` (see `racer_bios`). The bios of
     `earlier` plus the current one form a timeline, and the change is dated at the
     `since` of the latest bio whose favourite differs from the one before it. Edits that
-    leave the favourite alone never move the date. A racer who never named a favourite,
-    kept the same one throughout or has no history has no entry.
+    leave the favourite alone never move the date. RANDOM is a favourite of its own, so
+    naming or dropping it is a change, but the random Pokémon it gives moving is not. A
+    racer who never named a favourite, kept the same one throughout or has no history has
+    no entry.
     """
     changes: dict[str, datetime] = {}
     for user_id, entry in bios.items():
@@ -225,7 +239,11 @@ def assign(
     bios: Mapping[str, Sequence],
     catalogue: Catalogue,
 ) -> dict[str, str]:
-    """Return {user_id: avatar name}: favourites first, then random for the avatarless."""
+    """Return {user_id: avatar name}: favourites first, then random Pokémon.
+
+    The random pass takes, in order, the racers who named RANDOM as their favourite and
+    the racers with neither a favourite nor a racetime.gg avatar.
+    """
     pokemon_uses: Counter = Counter()
     file_uses: Counter = Counter()
     avatars: dict[str, str] = {}
@@ -236,16 +254,17 @@ def assign(
         file_uses[file] += 1
         avatars[user_id] = AVATAR_PREFIX + file
 
-    favourites = {}
+    random_pass = []
     for user_id in order:
         bio = bios.get(user_id)
-        number = favourite_pokemon(bio[0] if bio else None, catalogue)
-        if number is not None:
-            favourites[user_id] = number
-            give(user_id, number)
-    for user_id in order:
-        if user_id in favourites or user_id in racetime_avatars or not catalogue.pool:
-            continue
+        favourite = favourite_pokemon(bio[0] if bio else None, catalogue)
+        if favourite == RANDOM or (favourite is None and user_id not in racetime_avatars):
+            random_pass.append(user_id)
+        elif favourite is not None:
+            give(user_id, favourite)
+    if not catalogue.pool:
+        return avatars
+    for user_id in random_pass:
         fewest = min(pokemon_uses[number] for number in catalogue.pool)
         unused = [number for number in catalogue.pool if pokemon_uses[number] == fewest]
         give(user_id, min(unused, key=lambda number: _digest(user_id, number)))

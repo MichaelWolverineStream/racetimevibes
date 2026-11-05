@@ -241,8 +241,9 @@ def build_participant_payload(
     `avatar_mirror.mirror_name` gives their most recently observed avatar URL, taken
     from every archived race file in `envelopes` and from `avatar_observations`.
     Given a Pokémon `pokemon` catalogue, `pokemon_avatars.assign` replaces it with the
-    favourite Pokémon their entry in `bios` names, or gives a racer without one a
-    random Pokémon; racers are ordered by their first included race, then user ID.
+    favourite Pokémon their entry in `bios` names, or a random one if the favourite is
+    `random`, and gives a racer with neither a random Pokémon; racers are ordered by
+    their first included race, then user ID.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -299,7 +300,8 @@ def build_participant_payload(
     player_index = {user_id: index for index, (user_id, _name) in enumerate(ordered_players)}
 
     # Racers whose avatar changed, newest first. A favourite change always counts. An
-    # upload change, including its removal, counts unless a favourite hides the upload.
+    # upload change, including its removal, counts unless a favourite hides the upload;
+    # a favourite of `random` hides it too.
     # Random Pokémon picks never count: they can reshuffle when other racers change.
     zone = ZoneInfo(timezone_name)
     upload_changes = avatar_mirror.avatar_change_times(envelopes or [], avatar_observations or {})

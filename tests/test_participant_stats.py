@@ -765,6 +765,18 @@ class AvatarChangesTests(unittest.TestCase):
         self.assertEqual({player["id"]: player.get("a") for player in result["players"]}["ana"], "pokemon-25.png")
         self.assertEqual([name for name, _date in changes], ["ben", "dan"])
 
+    def test_a_random_favourite_hides_the_upload_change(self):
+        bios = {"ana": ["fav pokemon: random", "2026-03-05T00:00:00Z", None, []]}
+        result, changes = self.changes(bios=bios, pokemon=self.catalogue)
+        avatar = {player["id"]: player.get("a") for player in result["players"]}["ana"]
+        self.assertIsNotNone(pokemon_avatars.sprite_path(avatar))
+        self.assertEqual([name for name, _date in changes], ["ben", "dan"])
+
+    def test_naming_random_is_listed_at_its_eastern_date(self):
+        bios = {"ana": ["fav pokemon: random", "2026-03-08T00:00:00Z", "2026-03-07T15:00:00Z", [["hi", None]]]}
+        _result, changes = self.changes(bios=bios, pokemon=self.catalogue)
+        self.assertEqual(changes[0], ["ana", "2026-03-07"])
+
     def test_a_favourite_holder_with_a_changed_upload_but_the_same_favourite_is_not_listed(self):
         pikachu = "My favourite pokemon is: Pikachu"
         bios = {"ana": [pikachu + "!", "2026-03-09T00:00:00Z", "2026-03-08T00:00:00Z", [[pikachu, None]]]}
@@ -881,6 +893,13 @@ class PokemonAvatarTests(unittest.TestCase):
     def test_a_favourite_replaces_a_racetime_avatar(self):
         bios = {"ana": ["My favourite pokemon is: Pikachu", "2026-03-03T00:00:00Z", None, []]}
         self.assertEqual(self.avatars(bios)["ana"], "pokemon-25.png")
+
+    def test_a_random_favourite_replaces_a_racetime_avatar(self):
+        bios = {"ana": ["My favourite pokemon is random", "2026-03-03T00:00:00Z", None, []]}
+        expected = pokemon_avatars.assign(["ana", "cid", "ben"], set(), {}, self.catalogue)
+        avatars = self.avatars(bios)
+        self.assertEqual(avatars, expected)
+        self.assertEqual(len(set(avatars.values())), 3)
 
     def test_racers_are_ordered_by_their_first_race_then_id(self):
         bios = {"ben": ["fav pokemon: unown", "2026-03-03T00:00:00Z", None, []]}
