@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Propose two-month ladder schedules from past participation, as four sets.
+"""Propose a season of ladder schedules from past participation, as four sets.
 
 The method in plain words
 -------------------------
@@ -12,7 +12,10 @@ date's day group and for the mode.
 
 Days fall into three groups: Work (Monday to Wednesday), Casual (Thursday and
 Friday) and Prime (Saturday, Sunday and the common US days off). The plan file
-sets each group's prime and quiet hours; the other hours are normal.
+sets each group's prime and quiet hours; the other hours are normal. It also sets
+the season: its first day and its length in weeks. A season's races end at
+midnight after the last Thursday of those weeks, and the days left are the pause
+before the next season.
 
 The plan file lists the categories and modes to run; the planner picks none of
 its own. Its between categories (glitched and spoiler) race only between two
@@ -119,11 +122,15 @@ WIDE_GAP_HOURS = 3
 WIDE_GAP = timedelta(hours=WIDE_GAP_HOURS)
 FEATURED_SHRINK = 5
 MIN_MODE_SLOTS = 20
-DEFAULT_MONTHS = 2
+# A season runs DEFAULT_WEEKS weeks, pause included, and its races end at midnight
+# after its last DEFAULT_LAST_DAY.
+DEFAULT_WEEKS = 9
+DEFAULT_LAST_DAY = "thursday"
 EFFECTS = ("avoid", "single", "block")
 WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 CATEGORY_KEYS = {"modes", "dailyMax", "weeklyMax", "onlyPrimeTime", "between"}
-CONFIG_KEYS = {"bands", "composition", "events"}
+CONFIG_KEYS = {"bands", "composition", "events", "season"}
+SEASON_KEYS = {"start", "weeks", "lastDay"}
 EVENT_KEYS = {"name", "weekly", "date", "start", "timezone", "hours", "effect", "categories"}
 CSV_COLUMNS = ("date", "time", "category", "mode", "mode_id", "utc")
 RATE_COLUMNS = (
@@ -605,7 +612,9 @@ def load_config(path: Path) -> JsonObject:
     except json.JSONDecodeError as error:
         raise ScheduleError(f"Config {path} is not valid JSON") from error
     if not isinstance(config, dict) or set(config) - CONFIG_KEYS or "bands" not in config:
-        raise ScheduleError("The config must be an object with bands, composition and events")
+        raise ScheduleError(
+            "The config must be an object with bands, composition, events and season"
+        )
     if not isinstance(config.get("composition"), dict) or not config["composition"]:
         raise ScheduleError("The config needs a non-empty composition object")
     if not isinstance(config.get("events", []), list):
@@ -866,11 +875,34 @@ def category_pairs(
 # Period ----------------------------------------------------------------------
 
 
-def add_months(day: date, months: int) -> date:
-    year, month = divmod(day.month - 1 + months, 12)
-    year += day.year
-    month += 1
-    return date(year, month, min(day.day, calendar.monthrange(year, month)[1]))
+@dataclass(frozen=True)
+class Season:
+    """The plan file's season. A start of None means the first day after the mirror."""
+
+    start: date | None
+    weeks: int
+    last_day: int  # weekday, Monday 0
+
+
+def parse_season(raw: Any) -> Season:
+    """Validate the plan file's optional season; a missing key takes its default."""
+    if raw is None:
+        raw = {}
+    if not isinstance(raw, dict) or set(raw) - SEASON_KEYS:
+        raise ScheduleError("season must be an object with at most start, weeks and lastDay")
+    start = raw.get("start")
+    if start is not None:
+        try:
+            start = date.fromisoformat(start)
+        except (TypeError, ValueError) as error:
+            raise ScheduleError("season: start must be YYYY-MM-DD") from error
+    weeks = raw.get("weeks", DEFAULT_WEEKS)
+    if not _is_count(weeks):
+        raise ScheduleError("season: weeks must be a whole number of at least 1")
+    last_day = raw.get("lastDay", DEFAULT_LAST_DAY)
+    if last_day not in WEEKDAYS:
+        raise ScheduleError("season: lastDay must be a weekday name such as thursday")
+    return Season(start=start, weeks=weeks, last_day=WEEKDAYS.index(last_day))
 
 
 def default_start(schedule: list[JsonObject]) -> date:
@@ -884,11 +916,35 @@ def default_start(schedule: list[JsonObject]) -> date:
     return day
 
 
-def period_bounds(start: date, months: int) -> tuple[datetime, datetime]:
-    """Return the period's UTC bounds: midnight ET on the start date to midnight months later."""
+def last_race_day(start: date, weeks: int, last_day: int) -> date:
+    """Return the last weekday `last_day` in the `weeks` weeks from the start date."""
+    day = start + timedelta(weeks=weeks, days=-1)
+    return day - timedelta(days=(day.weekday() - last_day) % 7)
+
+
+def season_bounds(start: date, weeks: int, last_day: int) -> tuple[datetime, datetime]:
+    """Return the season's UTC bounds: midnight ET on the start date to midnight ET after
+    its last race day."""
     first = datetime.combine(start, time(0), tzinfo=TIMEZONE)
-    end = datetime.combine(add_months(start, months), time(0), tzinfo=TIMEZONE)
+    end_day = last_race_day(start, weeks, last_day) + timedelta(days=1)
+    end = datetime.combine(end_day, time(0), tzinfo=TIMEZONE)
     return first.astimezone(UTC), end.astimezone(UTC)
+
+
+def plan_season(
+    config: JsonObject,
+    schedule: list[JsonObject],
+    start: date | None = None,
+    weeks: int | None = None,
+) -> tuple[date, int, int]:
+    """Return the season's first day, weeks and last weekday. `start` and `weeks` override
+    the plan file; without either, the first day follows the mirrored schedule."""
+    season = parse_season(config.get("season"))
+    weeks = season.weeks if weeks is None else weeks
+    if weeks < 1:
+        raise ScheduleError("weeks must be at least 1")
+    first_day = start or season.start or default_start(schedule)
+    return first_day, weeks, season.last_day
 
 
 def period_dates(period_start: datetime, period_end: datetime) -> list[date]:
@@ -1944,16 +2000,16 @@ def analyse(
     config: JsonObject,
     *,
     start: date | None = None,
-    months: int = DEFAULT_MONTHS,
+    weeks: int | None = None,
     pairs: dict[Pair, PairScore] | None = None,
     generated_at: datetime | None = None,
 ) -> JsonObject:
     """Learn the demand, then build one proposal per set as plain data for the reports.
 
-    `pairs` scores categories, not plan categories.
+    `start` and `weeks` override the plan file's season. `pairs` scores categories, not
+    plan categories.
     """
-    if months < 1:
-        raise ScheduleError("months must be at least 1")
+    first_day, weeks, last_day = plan_season(config, schedule, start, weeks)
     slots, history_start, history_end = history_slots(schedule, modes, races)
     model = fit_model(slots)
     categories, left_out = resolve_composition(config, modes, model)
@@ -1962,8 +2018,7 @@ def analyse(
         sources = sorted({source for category in categories for source in category.sources})
         pairs = pair_scores(build_stats.included_race_contexts(races), sources)
 
-    first_day = start or default_start(schedule)
-    period_start, period_end = period_bounds(first_day, months)
+    period_start, period_end = season_bounds(first_day, weeks, last_day)
     known = set(ARCHETYPE_CATEGORIES.values()) | set(config["composition"])
     events = expand_events(
         parse_events(config.get("events", []), known, period_start, period_end), categories
@@ -2019,6 +2074,9 @@ def analyse(
         "period": {
             "start": period_start.astimezone(TIMEZONE).isoformat(timespec="minutes"),
             "end": period_end.astimezone(TIMEZONE).isoformat(timespec="minutes"),
+            "weeks": weeks,
+            "last_day": dates[-1].isoformat(),
+            "next_season": (first_day + timedelta(weeks=weeks)).isoformat(),
             "days": len(dates),
             "today_races": len(dates) * TODAY_PER_DAY,
             "holidays": [day.isoformat() for day in dates if is_holiday(day)],
@@ -2204,8 +2262,9 @@ def format_report(result: JsonObject) -> str:
     period = result["period"]
     first = result["proposals"][0]
     lines = [
-        f"Schedule proposals for {period['start'][:10]} to {period['end'][:10]} "
-        f"({period['days']} days, Eastern Time).",
+        f"Schedule proposals for {period['start'][:10]} to {period['last_day']} "
+        f"({period['days']} days, Eastern Time), in a season of {period['weeks']} weeks. "
+        f"The next season starts on {period['next_season']}.",
         f"Learned from {history['slots']:,} scheduled slots, {history['start']} to "
         f"{history['end']}: {history['fired']:,} fired, {history['cancelled']:,} cancelled.",
     ]
@@ -2987,8 +3046,9 @@ def render_html(result: JsonObject) -> str:
 <p class="lede">Four ladder schedules for {period['days']} days, from {fewest} to {most}
 races a week plus the races that start between them, built from how many racers came to
 every past slot.</p>
-<p class="muted">Period {_esc(period['start'][:10])} to {_esc(period['end'][:10])}
-({period['days']} days, Eastern Time). Learned from {history['slots']:,} scheduled slots,
+<p class="muted">Period {_esc(period['start'][:10])} to {_esc(period['last_day'])}
+({period['days']} days, Eastern Time), in a season of {period['weeks']} weeks; the next
+season starts on {_esc(period['next_season'])}. Learned from {history['slots']:,} scheduled slots,
 {_esc(history['start'])} to {_esc(history['end'])}: {history['fired']:,} fired,
 {history['cancelled']:,} cancelled. Generated {_esc(result['generated_at'][:10])}.</p>
 </header>
@@ -3140,13 +3200,15 @@ def parse_args() -> argparse.Namespace:
         "--start",
         type=date.fromisoformat,
         default=None,
-        help="first day, YYYY-MM-DD (default: the first day after the mirrored schedule)",
+        help="first day, YYYY-MM-DD (default: the plan file's season start, "
+        "else the first day after the mirrored schedule)",
     )
     parser.add_argument(
-        "--months",
+        "--weeks",
         type=int,
-        default=DEFAULT_MONTHS,
-        help=f"length in calendar months (default: {DEFAULT_MONTHS})",
+        default=None,
+        help=f"season length in weeks, pause included (default: the plan file's, "
+        f"else {DEFAULT_WEEKS})",
     )
     parser.add_argument(
         "--out",
@@ -3167,8 +3229,8 @@ def parse_args() -> argparse.Namespace:
         help="also write the success-rate page to this path",
     )
     args = parser.parse_args()
-    if args.months < 1:
-        parser.error("--months must be at least 1")
+    if args.weeks is not None and args.weeks < 1:
+        parser.error("--weeks must be at least 1")
     return args
 
 
@@ -3181,7 +3243,7 @@ def main() -> int:
             [envelope["race"] for envelope in race_archive.load_races(args.archive)],
             load_config(args.config),
             start=args.start,
-            months=args.months,
+            weeks=args.weeks,
         )
     except (
         ScheduleError,

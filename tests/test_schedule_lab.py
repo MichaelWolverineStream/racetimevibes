@@ -553,9 +553,10 @@ _CONTEXTS = {}
 def context_for(key, composition):
     if key not in _CONTEXTS:
         schedule, modes, races = fx.world()
-        config = {"bands": fx.WORLD_BANDS, "composition": composition, "events": []}
+        config = {"bands": fx.WORLD_BANDS, "composition": composition, "events": [],
+                  "season": fx.SEASON}
         _CONTEXTS[key] = lab.build_context(
-            schedule, modes, races, config, start=fx.START, months=1, pairs=fx.PAIRS
+            schedule, modes, races, config, start=fx.START, pairs=fx.PAIRS
         )
     return _CONTEXTS[key]
 
@@ -726,15 +727,16 @@ class HalfCoverageTests(unittest.TestCase):
 
         kept = [row for row in schedule if not (row["mode"] in mystery and in_half_b(row))]
         self.assertLess(len(kept), len(schedule))
-        config = {"bands": fx.WORLD_BANDS, "composition": fx.BASE_COMPOSITION, "events": []}
+        config = {"bands": fx.WORLD_BANDS, "composition": fx.BASE_COMPOSITION, "events": [],
+                  "season": fx.SEASON}
         with self.assertRaises(lab.LabError) as caught:
             lab.build_context(kept, modes, races, config, start=fx.START,
-                              months=1, pairs=fx.PAIRS)
+                              pairs=fx.PAIRS)
         message = str(caught.exception)
         self.assertIn("Half B of the history has no slots for mystery", message)
         # The unfiltered world builds.
         lab.build_context(schedule, modes, races, config, start=fx.START,
-                          months=1, pairs=fx.PAIRS)
+                          pairs=fx.PAIRS)
 
 
 class VerdictTests(unittest.TestCase):

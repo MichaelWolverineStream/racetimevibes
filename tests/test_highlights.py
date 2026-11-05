@@ -75,6 +75,9 @@ ENTRANCE_MODES = ["mode0", highlights.ENTRANCE_MODE]
 MYSTERY_MODES = ["mode0", highlights.MYSTERY_MODE]
 SPOILER_MODES = ["mode0", highlights.SPOILER_MODE]
 INVERTED_MODES = ["mode0", highlights.INVERTED_MODE]
+KEYS_MODES = ["mode0", highlights.KEYS_MODE]
+SIMPLE_MODES = ["mode0", highlights.SIMPLE_MODE]
+FUN_MODES = ["mode0", highlights.FUN_MODE]
 CASUAL_BOOTS = ({"m": 0, "n": highlights.CASUAL_BOOTS_PRESET}, {"m": 0, "n": "Open"})
 
 
@@ -396,7 +399,9 @@ class BadgeTests(unittest.TestCase):
     def test_hat_trick(self):
         result = run([duel(0, 1), duel(0, 1), duel(0, 1)])
         self.assertEqual(result["players"][0]["badges"]["hat_trick"], 2)
-        self.assertEqual(tags_of(result, 2, "badge"), [["badge", 0, "hat_trick"]])
+        self.assertEqual(
+            tags_of(result, 2, "badge"), [["badge", 0, "hat_trick"], ["badge", 1, "bridesmaid"]]
+        )
 
     def test_hat_trick_needs_consecutive_wins(self):
         result = run([duel(0, 1), duel(0, 1), duel(1, 0), duel(0, 1)])
@@ -950,6 +955,12 @@ class BadgeTests(unittest.TestCase):
                 "hat_trick",
                 "hummers",
                 "ok_dude_lucksack",
+                "doubled",
+                "quarter_pounder",
+                "full_pounder",
+                "on_the_ped",
+                "ped_regular",
+                "bridesmaid",
                 "no_dodge",
                 "more_no_dodge",
                 "nice",
@@ -958,10 +969,13 @@ class BadgeTests(unittest.TestCase):
                 "over_174",
                 "omnivore",
                 "apex_predator",
+                "connoisseur",
+                "rival",
                 "sniper",
                 "sniped",
                 "retime",
                 "palindrome",
+                "dejavu",
                 "god_route",
                 "upsetti",
                 "big_brain",
@@ -972,6 +986,12 @@ class BadgeTests(unittest.TestCase):
                 "glitched_100",
                 "the_upside_down",
                 "mirror_universe",
+                "keys",
+                "locksmith",
+                "simpler_times",
+                "simpler_life",
+                "had_fun",
+                "kept_having_fun",
                 "jet_seed",
                 "jet_lag",
                 "driving_lesson",
@@ -984,6 +1004,7 @@ class BadgeTests(unittest.TestCase):
                 "bustin",
                 "both_ends",
                 "grocery_stick",
+                "lanterne_rouge",
                 "rando_sicko",
                 "touched_grass",
                 "yap",
@@ -1014,9 +1035,128 @@ class BadgeTests(unittest.TestCase):
         )
 
     def test_badge_unlocked_once(self):
-        result = run([duel(0, 1, margin=1.0), duel(0, 1, margin=1.0)])
+        # A different time in the second race keeps Déjà Vu out of it.
+        result = run([duel(0, 1, margin=1.0), duel(0, 1, first_seconds=3100.0, margin=1.0)])
         self.assertEqual(result["players"][0]["badges"]["sniper"], 0)
         self.assertEqual(tags_of(result, 1, "badge"), [])
+
+    def test_win_totals_count_wins_not_streaks(self):
+        # Every win is followed by a loss, so no win streak ever passes 1.
+        records = [race for _ in range(50) for race in (duel(0, 1), duel(1, 0))]
+        badges = self.badges(records)
+        self.assertEqual(badges["doubled"], 18)
+        self.assertEqual(badges["quarter_pounder"], 48)
+        self.assertEqual(badges["full_pounder"], 98)
+        self.assertNotIn("hat_trick", badges)
+        short = run(records[:-2])["players"][0]
+        self.assertNotIn("full_pounder", short["badges"])
+        self.assertEqual(short["progress"]["full_pounder"], 49)
+
+    def test_doubled_needs_ten_wins(self):
+        self.assertNotIn("doubled", self.badges([duel(0, 1)] * 9))
+        self.assertEqual(self.badges([duel(0, 1)] * 10)["doubled"], 9)
+
+    def test_podium_streak_badges(self):
+        third = record([done(1, 1, 3000.0), done(2, 2, 3100.0), done(0, 3, 3200.0)])
+        self.assertNotIn("on_the_ped", self.badges([third] * 4))
+        self.assertEqual(self.badges([third] * 5)["on_the_ped"], 4)
+        self.assertNotIn("ped_regular", self.badges([third] * 9))
+        self.assertEqual(self.badges([third] * 10)["ped_regular"], 9)
+
+    def test_podium_streak_badges_end_on_a_fourth_place(self):
+        third = record([done(1, 1, 3000.0), done(2, 2, 3100.0), done(0, 3, 3200.0)])
+        fourth = record(
+            [done(1, 1, 3000.0), done(2, 2, 3100.0), done(3, 3, 3200.0), done(0, 4, 3300.0)]
+        )
+        result = run([third] * 4 + [fourth] + [third])["players"][0]
+        self.assertNotIn("on_the_ped", result["badges"])
+        self.assertEqual(result["progress"]["on_the_ped"], 4)
+
+    def test_bridesmaid_needs_three_second_places_in_a_row(self):
+        self.assertNotIn("bridesmaid", self.badges([duel(1, 0)] * 2))
+        self.assertEqual(self.badges([duel(1, 0)] * 3)["bridesmaid"], 2)
+
+    def test_bridesmaid_run_ends_on_a_dnf_even_in_a_field_of_two(self):
+        lost = record([done(1, 1, 3000.0), dnf(0)])
+        result = run([duel(1, 0), duel(1, 0), lost, duel(1, 0)])["players"][0]
+        self.assertNotIn("bridesmaid", result["badges"])
+        self.assertEqual(result["progress"]["bridesmaid"], 2)
+
+    def test_connoisseur_counts_distinct_presets_finished(self):
+        presets = [{"m": 0, "n": f"Preset {i}"} for i in range(20)]
+        records = [record([done(0, 1, 3000.0 + i)], day=i, preset=i) for i in range(20)]
+        self.assertEqual(self.badges(records, presets=presets)["connoisseur"], 19)
+        repeat = records[:19] + [record([done(0, 1, 2000.0)], day=19, preset=0)]
+        short = run(repeat, presets=presets)["players"][0]
+        self.assertNotIn("connoisseur", short["badges"])
+        self.assertEqual(short["progress"]["connoisseur"], 19)
+
+    def test_connoisseur_ignores_a_dnf(self):
+        presets = [{"m": 0, "n": f"Preset {i}"} for i in range(20)]
+        records = [record([done(0, 1, 3000.0 + i)], day=i, preset=i) for i in range(19)]
+        records.append(record([dnf(0), done(1, 1, 3000.0)], day=19, preset=19))
+        self.assertNotIn("connoisseur", self.badges(records, presets=presets))
+
+    def test_rival_needs_twenty_wins_over_one_opponent(self):
+        self.assertNotIn("rival", self.badges([duel(0, 1)] * 19))
+        self.assertEqual(self.badges([duel(0, 1)] * 20)["rival"], 19)
+
+    def test_rival_counts_a_finish_over_a_dnf(self):
+        beat_dnf = record([done(0, 1, 3000.0), dnf(1)])
+        self.assertEqual(self.badges([beat_dnf] * 20)["rival"], 19)
+
+    def test_rival_does_not_add_up_different_opponents(self):
+        records = [duel(0, 1)] * 10 + [duel(0, 2)] * 10
+        result = run(records)["players"][0]
+        self.assertNotIn("rival", result["badges"])
+        self.assertEqual(result["progress"]["rival"], 10)
+
+    def test_dejavu_needs_the_same_whole_second_twice(self):
+        same = [record([done(0, 1, 3000.0)], day=0), record([done(0, 1, 3000.4)], day=1)]
+        self.assertEqual(self.badges(same)["dejavu"], 1)
+        apart = [record([done(0, 1, 3000.0)], day=0), record([done(0, 1, 3001.0)], day=1)]
+        self.assertNotIn("dejavu", self.badges(apart))
+
+    def test_dejavu_counts_across_modes(self):
+        records = [record([done(0, 1, 3000.0)], mode=0), record([done(0, 1, 3000.0)], mode=1)]
+        self.assertEqual(self.badges(records)["dejavu"], 1)
+
+    def test_lanterne_rouge_is_last_of_a_full_field_of_ten(self):
+        ten = record([done(p, p + 1, 3000.0 + p) for p in range(10)])
+        result = run([ten])
+        self.assertEqual(result["players"][9]["badges"]["lanterne_rouge"], 0)
+        for player in range(9):
+            self.assertNotIn("lanterne_rouge", result["players"][player]["badges"])
+
+    def test_lanterne_rouge_needs_ten_entrants_who_all_finished(self):
+        nine = record([done(p, p + 1, 3000.0 + p) for p in range(9)])
+        with_dnf = record([done(p, p + 1, 3000.0 + p) for p in range(10)] + [dnf(10)])
+        anonymous = record([done(p, p + 1, 3000.0 + p) for p in range(10)], n=11)
+        for race in (nine, with_dnf, anonymous):
+            result = run([race])
+            for player in range(11):
+                self.assertNotIn("lanterne_rouge", result["players"][player]["badges"])
+
+    def test_keys_simple_and_fun_tiers_count_finishes_in_their_mode(self):
+        cases = (
+            (KEYS_MODES, "keys", "locksmith", highlights.KEYS_TIERS),
+            (SIMPLE_MODES, "simpler_times", "simpler_life", highlights.SIMPLE_TIERS),
+            (FUN_MODES, "had_fun", "kept_having_fun", highlights.FUN_TIERS),
+        )
+        for modes, low, high, (low_target, high_target) in cases:
+            with self.subTest(mode=modes[1]):
+                finishes = [
+                    record([done(0, 1, 3000.0 + day)], mode=1, day=day)
+                    for day in range(high_target)
+                ]
+                # A DNF in the mode and finishes elsewhere don't count.
+                records = [record([dnf(0), done(1, 1, 3000.0)], mode=1)] + solo_finishes(3)
+                badges = self.badges(records + finishes, modes=modes)
+                self.assertEqual(badges[low], 4 + low_target - 1)
+                self.assertEqual(badges[high], 4 + high_target - 1)
+                short = run(records + finishes[:-1], modes=modes)["players"][0]
+                self.assertNotIn(high, short["badges"])
+                self.assertEqual(short["progress"][high], high_target - 1)
 
 
 class UpsetTests(unittest.TestCase):

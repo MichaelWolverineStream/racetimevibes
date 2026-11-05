@@ -25,6 +25,9 @@ MILESTONES = (25, 50, 100, 250, 500, 1000)
 HAT_TRICK_WINS = 3
 HUMMERS_WINS = 6
 LUCKSACK_WINS = 9
+WIN_TOTALS = (10, 25, 50)
+PODIUM_RUNS = (5, 10)
+BRIDESMAID_RUN = 3
 NO_DODGE_FINISHES = 10
 MORE_NO_DODGE_FINISHES = 40
 NICE_FINISHES = 69
@@ -34,10 +37,18 @@ BLAZE_IT_FINISHES = 420
 OVER_174_NON_WINS = 175
 OMNIVORE_MODES = 7
 APEX_PREDATOR_MODES = 7
+CONNOISSEUR_PRESETS = 20
+RIVAL_WINS = 20
 GLITCHED_MODE = "glitched"
 GLITCHED_TIERS = (1, 10, 30, 100)
 INVERTED_MODE = "inverted"
 INVERTED_TIERS = (1, 30)
+KEYS_MODE = "keys"
+KEYS_TIERS = (1, 30)
+SIMPLE_MODE = "simple"
+SIMPLE_TIERS = (10, 30)
+FUN_MODE = "fun"
+FUN_TIERS = (1, 10)
 SPOILER_MODE = "spoiler"
 CASUAL_BOOTS_PRESET = "Casual Boots"
 JET_SEED_MAX_SECONDS = 4200
@@ -50,6 +61,7 @@ MYSTERY_TIERS = (10, 30)
 BOTH_ENDS_FAST_SECONDS = 1800
 BOTH_ENDS_SLOW_SECONDS = 7800
 MIDDLE_MIN_FIELD = 5
+LANTERNE_ROUGE_MIN_FIELD = 10
 RANDO_SICKO_FINISHES = 5
 STEP_LETTER_MIN_FIELD = 5
 TOUCHED_GRASS_DAYS = 30
@@ -181,14 +193,17 @@ class _Player:
         "races",
         "finishes",
         "wins",
-        "glitched",
-        "mystery",
-        "inverted",
+        "mode_finishes",
+        "presets_done",
         "day",
         "day_finishes",
         "best_day_finishes",
         "comment_streak",
         "best_comment_streak",
+        "second_streak",
+        "best_second_streak",
+        "beaten",
+        "finish_times",
         "mystery_fast",
         "mystery_slow",
         "entrance_days",
@@ -210,14 +225,17 @@ class _Player:
         self.races = 0
         self.finishes = 0
         self.wins = 0
-        self.glitched = 0
-        self.mystery = 0
-        self.inverted = 0
+        self.mode_finishes: Counter[str] = Counter()
+        self.presets_done: set[int] = set()
         self.day = ""
         self.day_finishes = 0
         self.best_day_finishes = 0
         self.comment_streak = 0
         self.best_comment_streak = 0
+        self.second_streak = 0
+        self.best_second_streak = 0
+        self.beaten: Counter[int] = Counter()
+        self.finish_times: set[int] = set()
         self.mystery_fast = False
         self.mystery_slow = False
         self.entrance_days = _CalendarRun()
@@ -245,6 +263,7 @@ class _Moment(NamedTuple):
     won: bool
     seconds: float | None
     palindrome: bool
+    deja_vu: bool
     mode: str
     preset: str | None
     n: int
@@ -258,6 +277,7 @@ class _Moment(NamedTuple):
     middle: set[int]
     step_letter: set[int]
     rettel_pets: set[int]
+    lanterne_rouge: set[int]
     retimed: set[int]
 
 
@@ -279,6 +299,10 @@ class Badge(NamedTuple):
 
 def _best_run(kind: str) -> Callable[[_Player], int]:
     return lambda state: (state.runs[kind].best or (0,))[0]
+
+
+def _mode_finishes(mode: str) -> Callable[[_Player], int]:
+    return lambda state: state.mode_finishes[mode]
 
 
 def _jet_seed(moment: _Moment) -> bool:
@@ -330,6 +354,48 @@ BADGES = (
         f"Win {LUCKSACK_WINS} races in a row.",
         LUCKSACK_WINS,
         progress=_best_run("win"),
+    ),
+    Badge(
+        "doubled",
+        "Double D",
+        f"Win {WIN_TOTALS[0]} races.",
+        WIN_TOTALS[0],
+        progress=lambda s: s.wins,
+    ),
+    Badge(
+        "quarter_pounder",
+        "Quarter Pounder",
+        f"Win {WIN_TOTALS[1]} races.",
+        WIN_TOTALS[1],
+        progress=lambda s: s.wins,
+    ),
+    Badge(
+        "full_pounder",
+        "Full Pounder",
+        f"Win {WIN_TOTALS[2]} races.",
+        WIN_TOTALS[2],
+        progress=lambda s: s.wins,
+    ),
+    Badge(
+        "on_the_ped",
+        "On the Ped",
+        f"Finish on the podium in {PODIUM_RUNS[0]} races in a row.",
+        PODIUM_RUNS[0],
+        progress=_best_run("podium"),
+    ),
+    Badge(
+        "ped_regular",
+        "Ped Regular",
+        f"Finish on the podium in {PODIUM_RUNS[1]} races in a row.",
+        PODIUM_RUNS[1],
+        progress=_best_run("podium"),
+    ),
+    Badge(
+        "bridesmaid",
+        "Bridesmaid",
+        f"Finish 2nd in {BRIDESMAID_RUN} races in a row.",
+        BRIDESMAID_RUN,
+        progress=lambda s: s.best_second_streak,
     ),
     Badge(
         "no_dodge",
@@ -388,6 +454,20 @@ BADGES = (
         progress=lambda s: len(s.modes_won),
     ),
     Badge(
+        "connoisseur",
+        "Connoisseur",
+        f"Finish {CONNOISSEUR_PRESETS} different seed presets.",
+        CONNOISSEUR_PRESETS,
+        progress=lambda s: len(s.presets_done),
+    ),
+    Badge(
+        "rival",
+        "Rival",
+        f"Finish ahead of the same opponent {RIVAL_WINS} times.",
+        RIVAL_WINS,
+        progress=lambda s: max(s.beaten.values(), default=0),
+    ),
+    Badge(
         "sniper",
         "Sniper",
         f"Win by less than {PHOTO_MAX_MARGIN:g} seconds.",
@@ -410,6 +490,12 @@ BADGES = (
         "Palindrome",
         "Finish with a time that reads the same both ways.",
         earned=lambda m: m.palindrome,
+    ),
+    Badge(
+        "dejavu",
+        "Déjà Vu",
+        "Finish two races with exactly the same time.",
+        earned=lambda m: m.deja_vu,
     ),
     Badge(
         "god_route",
@@ -443,42 +529,84 @@ BADGES = (
         "Glitched",
         f"Finish a {GLITCHED_MODE} race.",
         GLITCHED_TIERS[0],
-        progress=lambda s: s.glitched,
+        progress=_mode_finishes(GLITCHED_MODE),
     ),
     Badge(
         "glitched_10",
         "Glitched!",
         f"Finish {GLITCHED_TIERS[1]} {GLITCHED_MODE} races.",
         GLITCHED_TIERS[1],
-        progress=lambda s: s.glitched,
+        progress=_mode_finishes(GLITCHED_MODE),
     ),
     Badge(
         "glitched_30",
         "G1!tch3d!!!",
         f"Finish {GLITCHED_TIERS[2]} {GLITCHED_MODE} races.",
         GLITCHED_TIERS[2],
-        progress=lambda s: s.glitched,
+        progress=_mode_finishes(GLITCHED_MODE),
     ),
     Badge(
         "glitched_100",
         "G%!#ch@d!#?",
         f"Finish {GLITCHED_TIERS[3]} {GLITCHED_MODE} races.",
         GLITCHED_TIERS[3],
-        progress=lambda s: s.glitched,
+        progress=_mode_finishes(GLITCHED_MODE),
     ),
     Badge(
         "the_upside_down",
         "The Upside Down",
         f"Finish an {INVERTED_MODE} race.",
         INVERTED_TIERS[0],
-        progress=lambda s: s.inverted,
+        progress=_mode_finishes(INVERTED_MODE),
     ),
     Badge(
         "mirror_universe",
         "Mirror Universe",
         f"Finish {INVERTED_TIERS[1]} {INVERTED_MODE} races.",
         INVERTED_TIERS[1],
-        progress=lambda s: s.inverted,
+        progress=_mode_finishes(INVERTED_MODE),
+    ),
+    Badge(
+        "keys",
+        "Keys",
+        f"Finish a {KEYS_MODE} race.",
+        KEYS_TIERS[0],
+        progress=_mode_finishes(KEYS_MODE),
+    ),
+    Badge(
+        "locksmith",
+        "Locksmith",
+        f"Finish {KEYS_TIERS[1]} {KEYS_MODE} races.",
+        KEYS_TIERS[1],
+        progress=_mode_finishes(KEYS_MODE),
+    ),
+    Badge(
+        "simpler_times",
+        "Simpler Times",
+        f"Finish {SIMPLE_TIERS[0]} {SIMPLE_MODE} races.",
+        SIMPLE_TIERS[0],
+        progress=_mode_finishes(SIMPLE_MODE),
+    ),
+    Badge(
+        "simpler_life",
+        "Simpler Life",
+        f"Finish {SIMPLE_TIERS[1]} {SIMPLE_MODE} races.",
+        SIMPLE_TIERS[1],
+        progress=_mode_finishes(SIMPLE_MODE),
+    ),
+    Badge(
+        "had_fun",
+        "Had Fun",
+        f"Finish a {FUN_MODE} race.",
+        FUN_TIERS[0],
+        progress=_mode_finishes(FUN_MODE),
+    ),
+    Badge(
+        "kept_having_fun",
+        "Kept Having Fun",
+        f"Finish {FUN_TIERS[1]} {FUN_MODE} races.",
+        FUN_TIERS[1],
+        progress=_mode_finishes(FUN_MODE),
     ),
     Badge(
         "jet_seed",
@@ -535,14 +663,14 @@ BADGES = (
         "I Like It Here",
         f"Finish {MYSTERY_TIERS[0]} {MYSTERY_MODE} races.",
         MYSTERY_TIERS[0],
-        progress=lambda s: s.mystery,
+        progress=_mode_finishes(MYSTERY_MODE),
     ),
     Badge(
         "bustin",
         "BUSTIN'",
         f"Finish {MYSTERY_TIERS[1]} {MYSTERY_MODE} races.",
         MYSTERY_TIERS[1],
-        progress=lambda s: s.mystery,
+        progress=_mode_finishes(MYSTERY_MODE),
     ),
     Badge(
         "both_ends",
@@ -556,6 +684,12 @@ BADGES = (
         "Grocery Stick",
         f"Finish in the exact middle of an odd field of {MIDDLE_MIN_FIELD} or more entrants.",
         earned=lambda m: m.player in m.middle,
+    ),
+    Badge(
+        "lanterne_rouge",
+        "Lanterne Rouge",
+        f"Finish last in a field of {LANTERNE_ROUGE_MIN_FIELD} or more where everyone finished.",
+        earned=lambda m: m.player in m.lanterne_rouge,
     ),
     Badge(
         "rando_sicko",
@@ -646,6 +780,15 @@ def _middle_finisher(entries: list[Any], n: int) -> set[int]:
     if n < MIDDLE_MIN_FIELD or n % 2 == 0:
         return set()
     return {e[0] for e in entries if _is_finisher(e[1], e[2]) and e[1] == (n + 1) // 2}
+
+
+def _lanterne_rouge(entries: list[Any], n: int) -> set[int]:
+    """The last finisher, when every entrant of a big enough field is identified and finished."""
+    if n < LANTERNE_ROUGE_MIN_FIELD or len(entries) != n:
+        return set()
+    if not all(_is_finisher(e[1], e[2]) for e in entries):
+        return set()
+    return {e[0] for e in entries if e[1] == n}
 
 
 def _retimed(timed: list[Any]) -> set[int]:
@@ -817,6 +960,7 @@ def compute(
                 upsetti = {runner_up[0]}
 
         middle = _middle_finisher(entries, n)
+        lanterne_rouge = _lanterne_rouge(entries, n)
         step_letter = _alphabetical_field(entries, n, rec["names"])
         rettel_pets = _alphabetical_field(entries, n, rec["names"], reverse=True)
         if step_letter:
@@ -841,12 +985,15 @@ def compute(
                 state.finishes += 1
                 state.modes_done.add(mode)
                 finishes_total += 1
-                if mode_name == GLITCHED_MODE:
-                    state.glitched += 1
-                if mode_name == MYSTERY_MODE:
-                    state.mystery += 1
-                if mode_name == INVERTED_MODE:
-                    state.inverted += 1
+                state.mode_finishes[mode_name] += 1
+                if rec["p"] is not None:
+                    state.presets_done.add(rec["p"])
+                # Decisive wins, as for H2H: everyone placed lower or not finishing.
+                for other in entries:
+                    if other[0] != player and not (
+                        _is_finisher(other[1], other[2]) and other[1] <= place
+                    ):
+                        state.beaten[other[0]] += 1
                 if state.day != rec["d"]:
                     state.day = rec["d"]
                     state.day_finishes = 0
@@ -865,12 +1012,15 @@ def compute(
                 state.entrance_weeks.step((race_ordinal - 1) // 7)
             state.comment_streak = state.comment_streak + 1 if player in rec["c"] else 0
             state.best_comment_streak = max(state.best_comment_streak, state.comment_streak)
+            state.second_streak = state.second_streak + 1 if finisher and place == 2 else 0
+            state.best_second_streak = max(state.best_second_streak, state.second_streak)
             state.runs["win"].step(ri, won)
             state.runs["podium"].step(ri, finisher and place <= 3)
             if not (excused_dnf and status == DNF_STATUS_CODE):
                 state.runs["finish"].step(ri, finisher)
 
             palindrome = False
+            deja_vu = False
             if finisher and seconds is not None:
                 total_seconds += seconds
                 palindrome = is_palindrome_time(seconds)
@@ -879,6 +1029,8 @@ def compute(
                     if palindrome_example is None:
                         palindrome_example = seconds
                 whole_seconds = round(seconds)
+                deja_vu = whole_seconds in state.finish_times
+                state.finish_times.add(whole_seconds)
                 previous_best = state.best_by_mode.get(mode)
                 if previous_best is None:
                     state.best_by_mode[mode] = whole_seconds
@@ -904,6 +1056,7 @@ def compute(
                 won,
                 seconds,
                 palindrome,
+                deja_vu,
                 mode_name,
                 preset_name,
                 n,
@@ -917,6 +1070,7 @@ def compute(
                 middle,
                 step_letter,
                 rettel_pets,
+                lanterne_rouge,
                 retimed,
             )
             for badge in BADGES:

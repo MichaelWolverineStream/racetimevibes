@@ -191,7 +191,7 @@ Analyses.md                       Standalone analyses: mode overlap, race schedu
 Badge_Guide.md                    How to add or remove a badge
 Racetime_API.md                   racetime.gg API behavior and field definitions
 CLAUDE.md                         Working rules for AI coding agents in this repository
-schedule-plan.json                Default bands, composition and external events for the schedule planner
+schedule-plan.json                Season, bands, composition and external events for the schedule planner
 ```
 
 ## The data
@@ -518,57 +518,78 @@ The two record tags are the exception: they share the PB tag's green, because a 
 
 #### Badges
 
-Each badge records the index of the race that unlocked it. Shares are of the 398 racers as of 2026-11-02.
+Each badge records the index of the race that unlocked it. Shares are of the 401 racers as of 2026-11-05.
 
 | Badge | Rule | Held by |
 |---|---|---|
 | First Blood | Win a race. | 56% |
 | Hat Trick | Win 3 races in a row, in the racer's own sequence. | 15% |
 | Hummers | Win 6 races in a row. | 2.5% |
-| OkDudeLucksack | Win 9 races in a row. | 0.8% |
-| No Dodge | Finish 10 races in a row. | 47% |
+| OkDudeLucksack | Win 9 races in a row. | 0.7% |
+| Double D | Win 10 races. | 20% |
+| Quarter Pounder | Win 25 races. | 10% |
+| Full Pounder | Win 50 races. | 5.0% |
+| On the Ped | Finish on the podium in 5 races in a row. | 25% |
+| Ped Regular | Finish on the podium in 10 races in a row. | 7.5% |
+| Bridesmaid | Finish 2nd in 3 races in a row. | 14% |
+| No Dodge | Finish 10 races in a row. | 46% |
 | More No Dodge | Finish 40 races in a row. | 11% |
-| Nice | Finish 69 races in a row. | 4.3% |
-| CenturianV | Finish 105 races. | 13% |
+| Nice | Finish 69 races in a row. | 4.2% |
+| CenturianV | Finish 105 races. | 12% |
 | BlazeIt | Finish 420 races. | 0% |
-| >174 | Enter 175 races you don't win. | 3.8% |
-| Omnivore | Finish a race in 7 different modes. | 4.5% |
-| Apex Predator | Win a race in 7 different modes. | 2.0% |
+| >174 | Enter 175 races you don't win. | 3.7% |
+| Omnivore | Finish a race in 7 different modes. | 4.2% |
+| Apex Predator | Win a race in 7 different modes. | 1.7% |
+| Connoisseur | Finish 20 different seed presets. | 5.2% |
+| Rival | Finish ahead of the same opponent 20 times. | 14% |
 | Sniper | Win by less than 5 seconds. | 7.0% |
-| Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.3% |
+| Sniped! | Finish 2nd, less than 5 seconds behind the winner. | 7.2% |
 | RETIME | Finish less than 1 second from another racer. | 17% |
 | Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | 34% |
+| Déjà Vu | Finish two races with exactly the same time. | 21% |
 | God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. | 13% |
-| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. | 3.3% |
+| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. | 3.2% |
 | BigBrain | Win by 15 minutes or more in a field of 9 or more. | 5.0% |
 | Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. | 13% |
 | Glitched | Finish a glitched race. | 10% |
 | Glitched! | Finish 10 glitched races. | 3.5% |
-| G1!tch3d!!! | Finish 30 glitched races. | 1.8% |
+| G1!tch3d!!! | Finish 30 glitched races. | 1.7% |
 | G%!#ch@d!#? | Finish 100 glitched races. | 0% |
 | The Upside Down | Finish an inverted race. | 31% |
-| Mirror Universe | Finish 30 inverted races. | 1.8% |
-| Jet Seed | Finish a Casual Boots race in under 70 minutes. | 9.3% |
-| Jet Lag | Win a Casual Boots race in 100 minutes or more. | 2.8% |
-| Driving Lesson | Finish a spoiler race. | 8.3% |
-| Cruisin' | Win a spoiler race. | 3.3% |
-| Entrance | Finish an entrance race. | 56% |
+| Mirror Universe | Finish 30 inverted races. | 1.7% |
+| Keys | Finish a keys race. | 58% |
+| Locksmith | Finish 30 keys races. | 6.7% |
+| Simpler Times | Finish 10 simple races. | 27% |
+| Simpler Life | Finish 30 simple races. | 9.5% |
+| Had Fun | Finish a fun race. | 36% |
+| Kept Having Fun | Finish 10 fun races. | 6.0% |
+| Jet Seed | Finish a Casual Boots race in under 70 minutes. | 9.2% |
+| Jet Lag | Win a Casual Boots race in 100 minutes or more. | 2.7% |
+| Driving Lesson | Finish a spoiler race. | 8.2% |
+| Cruisin' | Win a spoiler race. | 3.2% |
+| Entrance | Finish an entrance race. | 55% |
 | Entranced | Enter an entrance race on 5 days in a row. | 7.0% |
-| Entranced! | Enter an entrance race in 20 weeks in a row. | 2.8% |
+| Entranced! | Enter an entrance race in 20 weeks in a row. | 2.7% |
 | What? | Enter a mystery race. | 30% |
 | I Like It Here | Finish 10 mystery races. | 4.5% |
-| BUSTIN' | Finish 30 mystery races. | 1.8% |
-| Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. | 0.3% |
+| BUSTIN' | Finish 30 mystery races. | 1.7% |
+| Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. | 0.2% |
 | Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. | 56% |
-| Rando Sicko | Finish 5 races in one day. | 0.8% |
-| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. | 20% |
-| Yap | Comment on 11 races in a row. | 9.3% |
-| Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. | 2.3% |
-| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. | 1.3% |
+| Lanterne Rouge | Finish last in a field of 10 or more where everyone finished. | 13% |
+| Rando Sicko | Finish 5 races in one day. | 0.7% |
+| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. | 21% |
+| Yap | Comment on 11 races in a row. | 9.5% |
+| Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. | 2.2% |
+| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. | 1.2% |
 
 A badge is either a counter, which unlocks when a count reaches its target, or a one-race badge, which unlocks on a single result. In the notes below, a **finish** is a finisher's result, and **day**, **week** and **field** are as defined under [Definitions](#definitions). How the page shows badges is under [Racer pages](#racer-pages).
 
-- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode, The Upside Down and Mirror Universe count finishes in the inverted mode, and I Like It Here and BUSTIN' count finishes in the mystery mode.
+- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. Double D, Quarter Pounder and Full Pounder count wins, in a row or not. On the Ped and Ped Regular use the podium run (places 1-3), which, unlike the finish run, has no DNF exception. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode, The Upside Down and Mirror Universe count finishes in the inverted mode, I Like It Here and BUSTIN' count finishes in the mystery mode, Keys and Locksmith count finishes in the keys mode, Simpler Times and Simpler Life count finishes in the simple mode, and Had Fun and Kept Having Fun count finishes in the fun mode.
+- **Bridesmaid:** 2nd places in a row in the racer's own race sequence. Any other result ends the run, a DNF included, even in a field of two.
+- **Connoisseur:** distinct seed presets finished. A preset is one row of the published preset list, so a name that two modes share, such as MMMM (Not Slow), counts twice.
+- **Rival:** finishes ahead of one opponent, across all modes. Like an H2H win, it counts each opponent who placed lower or didn't finish. An equal place counts for neither racer.
+- **Déjà Vu:** two finishes with the same time in whole seconds, the precision the page shows, in any modes. It unlocks on the second of them.
+- **Lanterne Rouge:** named after the last-placed rider of the Tour de France. The field is at least 10, every entrant is identified and finished, as for Step Letter, and the finisher whose place equals the field earns it.
 - **What?:** any entry in the mystery mode counts, DNFs included.
 - **Yap:** the racer's own races in order, DNFs included, each with a comment that isn't blank, the same comments that `comments.json` publishes. A race without one ends the run. Only whether a comment exists reaches `highlights.py`; its text never enters `participants.json`.
 - **Touched Grass:** the racer needs an earlier race, and the gap since it is counted only from 2026-08-01, so a break that started before then counts from that date and the earliest unlock is 2026-08-31. Any entry counts as the return, DNFs included.

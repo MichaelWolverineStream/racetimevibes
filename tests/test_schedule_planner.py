@@ -952,7 +952,7 @@ class ShareWeightTests(unittest.TestCase):
 
 # Featured races -------------------------------------------------------------------
 
-SEPTEMBER = sp.period_dates(*sp.period_bounds(date(2026, 9, 1), 1))
+SEPTEMBER = sp.period_dates(*fx.PERIOD)
 
 
 def source_slots(category, weekday, hour, entrants, count=5):
@@ -1120,7 +1120,7 @@ class FeaturedSlotTests(unittest.TestCase):
 
 
 class EventTests(unittest.TestCase):
-    period = sp.period_bounds(date(2027, 3, 1), 2)
+    period = sp.season_bounds(date(2027, 3, 1), 9, sp.WEEKDAYS.index("thursday"))
     known = {"entrance", "simple"}
 
     def valid(self, **changes):
@@ -1201,23 +1201,33 @@ class EventTests(unittest.TestCase):
 
 
 class CalendarTests(unittest.TestCase):
-    def test_add_months_clamps_to_the_month_end(self):
-        self.assertEqual(sp.add_months(date(2026, 11, 6), 2), date(2027, 1, 6))
-        self.assertEqual(sp.add_months(date(2026, 12, 15), 2), date(2027, 2, 15))
-        self.assertEqual(sp.add_months(date(2026, 1, 31), 1), date(2026, 2, 28))
-        self.assertEqual(sp.add_months(date(2028, 1, 31), 1), date(2028, 2, 29))
-        self.assertEqual(sp.add_months(date(2026, 11, 30), 3), date(2027, 2, 28))
+    THURSDAY = sp.WEEKDAYS.index("thursday")
 
-    def test_period_runs_from_midnight_to_midnight_eastern(self):
-        begin, end = sp.period_bounds(date(2026, 11, 7), 2)
-        self.assertEqual(begin, datetime(2026, 11, 7, 5, tzinfo=UTC))
-        self.assertEqual(end, datetime(2027, 1, 7, 5, tzinfo=UTC))
+    def test_a_season_races_until_midnight_after_its_last_thursday(self):
+        begin, end = sp.season_bounds(date(2026, 11, 9), 9, self.THURSDAY)
+        self.assertEqual(begin, datetime(2026, 11, 9, 5, tzinfo=UTC))
+        self.assertEqual(end, datetime(2027, 1, 8, 5, tzinfo=UTC))
+        dates = sp.period_dates(begin, end)
+        self.assertEqual((len(dates), dates[0], dates[-1]), (60, date(2026, 11, 9), date(2027, 1, 7)))
+        # Friday to Sunday are the pause, and the next season starts on Monday 11 January.
+        self.assertEqual(date(2026, 11, 9) + timedelta(weeks=9), date(2027, 1, 11))
+
+    def test_the_last_race_day_is_the_last_such_weekday_in_the_seasons_weeks(self):
+        for start, weeks, last_day, expected in (
+            (date(2026, 11, 9), 9, self.THURSDAY, date(2027, 1, 7)),  # Monday: 3 days off
+            (date(2026, 11, 12), 1, self.THURSDAY, date(2026, 11, 12)),  # Thursday: 6 days off
+            (date(2026, 11, 13), 1, self.THURSDAY, date(2026, 11, 19)),  # Friday: no days off
+            (date(2026, 11, 9), 2, sp.WEEKDAYS.index("sunday"), date(2026, 11, 22)),
+        ):
+            with self.subTest(start=start, weeks=weeks, last_day=last_day):
+                self.assertEqual(sp.last_race_day(start, weeks, last_day), expected)
 
     def test_period_dates_count_eastern_dates_across_daylight_saving(self):
-        dates = sp.period_dates(*sp.period_bounds(date(2027, 2, 20), 2))
-        self.assertEqual(len(dates), 59)
-        self.assertEqual((dates[0], dates[-1]), (date(2027, 2, 20), date(2027, 4, 19)))
-        self.assertEqual(len(sp.period_dates(*sp.period_bounds(date(2026, 11, 7), 2))), 61)
+        dates = sp.period_dates(*sp.season_bounds(date(2027, 2, 20), 9, self.THURSDAY))
+        self.assertEqual(len(dates), 62)
+        self.assertEqual((dates[0], dates[-1]), (date(2027, 2, 20), date(2027, 4, 22)))
+        dates = sp.period_dates(*sp.season_bounds(date(2026, 10, 26), 2, self.THURSDAY))
+        self.assertEqual((len(dates), dates[-1]), (11, date(2026, 11, 5)))
 
     def test_default_start_is_the_first_date_whose_midnight_is_two_hours_after_the_last_slot(self):
         def rows(local):
@@ -2535,10 +2545,11 @@ class BetweenProposalTests(unittest.TestCase):
 
     @staticmethod
     def plan(names="abcdm", between="m", *, per_day=12, events=(), rules=sp.SHIPPED, layout=None,
-             start=SEP2, months=1, limits=None):
+             start=SEP2, limits=None):
         categories = [plain_category(n, between=n in between, **(limits or {}).get(n, {})) for n in names]
         bands = layout or fx.LAYOUT
-        period_start, period_end = sp.period_bounds(start, months)
+        # Five weeks from Wednesday 2 September, racing until the last Thursday: 1 October.
+        period_start, period_end = sp.season_bounds(start, 5, sp.WEEKDAYS.index("thursday"))
         return sp.plan_proposal(
             sp.RaceSet("t", {"work": per_day, "casual": per_day, "prime": per_day}),
             history=BetweenProposalTests.history(names), model=flat_model(list(names)),
@@ -2713,7 +2724,7 @@ class DaylightSavingProposalTests(unittest.TestCase):
                     self.assertGreaterEqual(second - first, sp.RACE_LENGTH)
                 per_date = Counter(r["date"] for r in rows if not r["between"])
                 short = {s["date"] for s in p["shortfall"]}
-                for day in sp.period_dates(*sp.period_bounds(start, 1)):
+                for day in sp.period_dates(*fx.period(start)):
                     wanted = p["per_day"][sp.day_group(day)]
                     if day.isoformat() not in short:
                         self.assertEqual(per_date[day.isoformat()], wanted, day)
@@ -2764,7 +2775,7 @@ class SetProposalTests(WorldCase):
                 per_date = Counter(r["date"] for r in p["schedule"] if not r["between"])
                 short = {s["date"]: s for s in p["shortfall"]}
                 self.assertEqual(p["days"], 30)
-                for day in sp.period_dates(*sp.period_bounds(fx.START, 1)):
+                for day in sp.period_dates(*fx.PERIOD):
                     wanted = p["per_day"][sp.day_group(day)]
                     count = per_date[day.isoformat()]
                     if day.isoformat() in short:
@@ -2773,7 +2784,7 @@ class SetProposalTests(WorldCase):
                         self.assertLess(count, wanted)
                     else:
                         self.assertEqual(count, wanted, day)
-                dates = sp.period_dates(*sp.period_bounds(fx.START, 1))
+                dates = sp.period_dates(*fx.PERIOD)
                 self.assertEqual(p["day_races"]["fewest"], min(per_date[d.isoformat()] for d in dates))
                 self.assertEqual(p["day_races"]["most"], max(per_date[d.isoformat()] for d in dates))
 
@@ -3030,7 +3041,7 @@ class FeaturedRaceTests(WorldCase):
             for weekdays in itertools.permutations(range(7), len(chosen))
         )
         open_bands = {c.name: sp.BANDS for c in chosen}
-        dates = sp.period_dates(*sp.period_bounds(fx.START, 1))
+        dates = sp.period_dates(*fx.PERIOD)
         result = sp.featured_slots(chosen, model, slots, bands, open_bands, [], dates)
         self.assertAlmostEqual(
             sum(score[name, weekday][0] for name, (weekday, _hour) in result.items()), best)
@@ -3187,6 +3198,10 @@ class ResultTests(WorldCase):
         self.assertEqual(period["today_races"], 30 * sp.TODAY_PER_DAY)
         self.assertTrue(period["start"].startswith("2026-09-01T00:00"))
         self.assertTrue(period["end"].startswith("2026-10-01T00:00"))
+        self.assertEqual(
+            (period["weeks"], period["last_day"], period["next_season"]),
+            (5, "2026-09-30", "2026-10-06"),
+        )
 
 
 class OnlyPrimeTimeTests(unittest.TestCase):
@@ -3203,12 +3218,49 @@ class OnlyPrimeTimeTests(unittest.TestCase):
         self.assertEqual(entry["weights"]["normal"], 0.0)
 
 
+class SeasonTests(unittest.TestCase):
+    def test_a_missing_season_or_key_takes_the_defaults(self):
+        for raw in (None, {}):
+            with self.subTest(raw):
+                self.assertEqual(sp.parse_season(raw), sp.Season(start=None, weeks=9, last_day=3))
+        self.assertEqual(
+            sp.parse_season({"start": "2026-11-09", "weeks": 4, "lastDay": "sunday"}),
+            sp.Season(start=date(2026, 11, 9), weeks=4, last_day=6),
+        )
+
+    def test_a_bad_season_is_an_error(self):
+        for raw in ([], {"length": 9}, {"start": "2026-13-01"}, {"start": 20261109},
+                    {"weeks": 0}, {"weeks": 2.5}, {"weeks": True}, {"weeks": "9"},
+                    {"lastDay": "Thursday"}, {"lastDay": 3}):
+            with self.subTest(raw), self.assertRaises(sp.ScheduleError):
+                sp.parse_season(raw)
+
+    def test_the_options_override_the_plan_files_season(self):
+        schedule = [slot(1, 1, datetime(2026, 11, 5, 21, tzinfo=EASTERN), 11)]
+        config = {"season": {"start": "2026-11-09", "weeks": 9}}
+        self.assertEqual(sp.plan_season(config, schedule), (date(2026, 11, 9), 9, 3))
+        self.assertEqual(sp.plan_season(config, schedule, date(2026, 11, 16), 4),
+                         (date(2026, 11, 16), 4, 3))
+        # Without a start anywhere, the season follows the mirrored schedule.
+        self.assertEqual(sp.plan_season({}, schedule), (date(2026, 11, 6), 9, 3))
+        with self.assertRaises(sp.ScheduleError):
+            sp.plan_season(config, schedule, weeks=0)
+
+    def test_the_committed_plan_starts_a_nine_week_season_on_monday_9_november(self):
+        if not sp.CONFIG_PATH.exists():
+            self.skipTest("schedule-plan.json is missing")
+        config = sp.load_config(sp.CONFIG_PATH)
+        first_day, weeks, last_day = sp.plan_season(config, [])
+        self.assertEqual((first_day, weeks), (date(2026, 11, 9), 9))
+        self.assertEqual(sp.last_race_day(first_day, weeks, last_day), date(2027, 1, 7))
+
+
 class AnalyseTests(unittest.TestCase):
-    def test_months_must_be_at_least_one(self):
+    def test_weeks_must_be_at_least_one(self):
         with self.assertRaises(sp.ScheduleError):
             schedule, modes, races = fx.world()
             sp.analyse(schedule, modes, races, {"composition": fx.BASE_COMPOSITION},
-                       start=fx.START, months=0, pairs=PAIRS)
+                       start=fx.START, weeks=0, pairs=PAIRS)
 
     def test_every_set_names_the_plan_categories_in_its_composition_and_pairs(self):
         for p in main_result()["proposals"]:
@@ -3220,10 +3272,10 @@ class AnalyseTests(unittest.TestCase):
         schedule, modes, races = fx.world()
         with self.assertRaisesRegex(sp.ScheduleError, "bands"):
             sp.analyse(schedule, modes, races, {"composition": fx.BASE_COMPOSITION, "events": []},
-                       start=fx.START, months=1, pairs=PAIRS)
+                       start=fx.START, pairs=PAIRS)
         bad = {"bands": {"work": {"prime": "12-15"}}, "composition": fx.BASE_COMPOSITION, "events": []}
         with self.assertRaises(sp.ScheduleError):
-            sp.analyse(schedule, modes, races, bad, start=fx.START, months=1, pairs=PAIRS)
+            sp.analyse(schedule, modes, races, bad, start=fx.START, pairs=PAIRS)
 
     def test_the_result_hands_the_plan_files_bands_back(self):
         result = main_result()
@@ -3259,7 +3311,7 @@ class AnalyseTests(unittest.TestCase):
             with self.subTest(p["set"]):
                 per_date = Counter(r["date"] for r in p["schedule"] if not r["between"])
                 short = {s["date"] for s in p["shortfall"]}
-                for day in sp.period_dates(*sp.period_bounds(fx.START, 1)):
+                for day in sp.period_dates(*fx.PERIOD):
                     wanted = p["per_day"][sp.day_group(day)]
                     if day.isoformat() in short:
                         self.assertLess(per_date[day.isoformat()], wanted)
@@ -3374,7 +3426,7 @@ class RulesTests(unittest.TestCase):
         # Mystery now counts toward the date's races like the others.
         per_date = Counter(r["date"] for r in plan["schedule"])
         short = {s["date"] for s in plan["shortfall"]}
-        for day in sp.period_dates(*sp.period_bounds(fx.START, 1)):
+        for day in sp.period_dates(*fx.PERIOD):
             if day.isoformat() not in short:
                 self.assertEqual(per_date[day.isoformat()], plan["per_day"][sp.day_group(day)])
         self.assertGreater(sum(r["category"] == "mystery" for r in plan["schedule"]), 0)
@@ -3425,6 +3477,8 @@ class LoadConfigTests(unittest.TestCase):
         self.assertEqual(config["bands"], self.BANDS)
         text = json.dumps({"bands": self.BANDS, "composition": {"a": {"modes": []}}})
         self.assertEqual(self.load(text)["composition"]["a"]["modes"], [])
+        season = {"start": "2026-11-09", "weeks": 9, "lastDay": "thursday"}
+        self.assertEqual(self.load(self.plan(season=season))["season"], season)
 
     def test_a_plan_needs_bands(self):
         for text in (json.dumps({"composition": {"a": {"modes": ["x"]}}, "events": []}),

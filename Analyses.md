@@ -34,7 +34,7 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 ## Race schedule proposals
 
-`scripts/schedule_planner.py` proposes the next two months of ladder races as four sets, *Light*, *Medium*, *Full* and *Bonanza*, from 55 to 76 races a week plus the races that start between them. All four run exactly the categories and modes that the plan file lists. It learns from how many racers came to every slot the alttpr.racing schedule ever held, including the cancelled ones. It is a standalone analysis: the dashboard build does not run it, and it writes nothing unless asked. The rules this section describes are `SHIPPED` in the code, and [Schedule strategy comparison](#schedule-strategy-comparison) tests deviations from them.
+`scripts/schedule_planner.py` proposes one season of ladder races as four sets, *Light*, *Medium*, *Full* and *Bonanza*, from 55 to 76 races a week plus the races that start between them. All four run exactly the categories and modes that the plan file lists. It learns from how many racers came to every slot the alttpr.racing schedule ever held, including the cancelled ones. It is a standalone analysis: the dashboard build does not run it, and it writes nothing unless asked. The rules this section describes are `SHIPPED` in the code, and [Schedule strategy comparison](#schedule-strategy-comparison) tests deviations from them.
 
 It reads the race archive and the schedule mirror (see [README › Ladder schedule mirror](README.md#ladder-schedule-mirror)), so refresh both first. `--out` writes each proposal as CSV and as JSON, and the success rates as CSV. `--html` writes a self-contained report page and `--rates` a self-contained success-rate page. Both are in the claude.ai Artifact page format, with no scripts or external requests. The planner is deterministic: the same archive, plan file and start date always give the same proposals.
 
@@ -43,7 +43,7 @@ python3 scripts/schedule_archive.py                     # refresh the schedule m
 python3 scripts/schedule_planner.py                     # the four proposals
 python3 scripts/schedule_planner.py --out proposals     # also write CSV and JSON per proposal
 python3 scripts/schedule_planner.py --rates rates.html  # also write the success-rate page
-python3 scripts/schedule_planner.py --start 2026-11-07 --months 2 --html report.html
+python3 scripts/schedule_planner.py --start 2027-01-11 --weeks 9 --html report.html
 python3 scripts/schedule_planner.py --config other-plan.json
 ```
 
@@ -93,10 +93,11 @@ The report ranks the four proposals by expected entrants per race. A separate **
 
 ### The plan file
 
-`schedule-plan.json` holds the bands, the composition and the external events. `--config` reads another file.
+`schedule-plan.json` holds the season, the bands, the composition and the external events. `--config` reads another file.
 
 ```json
-{"bands": {
+{"season": {"start": "2026-11-09", "weeks": 9, "lastDay": "thursday"},
+ "bands": {
    "work":   {"prime": "12-15", "quiet": "1-7"},
    "casual": {"prime": "12-17", "quiet": "2-7"},
    "prime":  {"prime": "11-18", "quiet": "2-4"}},
@@ -112,6 +113,13 @@ The report ranks the four proposals by expected entrants per race. A separate **
    {"name": "Tournament", "date": "2026-11-22", "start": "14:00",
     "timezone": "America/New_York", "hours": 5, "effect": "block"}]}
 ```
+
+**Season.** `season` (optional) sets the period to plan. It takes these keys, and no others:
+- **`start`**: the first date, `YYYY-MM-DD`. Without it, the season starts on the first date after the mirrored schedule (see *Period*).
+- **`weeks`**: the season's length in weeks, the pause included: the next season starts this many weeks after `start`. A whole number of at least 1, 9 by default.
+- **`lastDay`**: a weekday name, lowercase, `thursday` by default. The season races until midnight ET at the end of the last such weekday in its weeks, so that weekday is a full day of races. The days left are the pause before the next season.
+
+So a 9-week season that starts on Monday 2026-11-09 races until Thursday 2027-01-07, pauses Friday to Sunday, and the next season starts on Monday 2027-01-11. `--start` and `--weeks` override the plan file. Anything else is an error.
 
 **Bands.** `bands` (required) holds exactly the three groups `work`, `casual` and `prime`, each with exactly the keys `prime` and `quiet`.
 - Each value is a range `"first-last"` of Eastern Time hours, 0 to 23, both ends included. When the first hour is greater than the last, the range wraps past midnight, so `"22-2"` is 22, 23, 0, 1 and 2.
@@ -215,8 +223,8 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
 
 **Period**
 
-- **Period.** From 00:00 ET on the start date to 00:00 ET on the same date `--months` calendar months later, or the month's last day if shorter, so every date is a full day.
-  - The default start is the first date whose 00:00 ET is at least 2 hours after the last mirrored slot.
+- **Period.** From 00:00 ET on the start date to 00:00 ET after the season's last race day: the last `lastDay` weekday before the start date plus `weeks` weeks. Every date is a full day, and a race belongs to the date it starts on.
+  - The start is `--start`, else the plan file's `season.start`, else the first date whose 00:00 ET is at least 2 hours after the last mirrored slot. The weeks are `--weeks`, else the plan file's `season.weeks`, else 9.
   - Its days are counted as Eastern Time dates, so a daylight-saving change cannot shift the count.
   - Today's grid holds 12 races a day over the same days.
 - **Start times.** A race starts on the hour, on the Eastern Time wall clock. A wall-clock hour that daylight saving skips has no start, and a repeated hour takes its first occurrence.

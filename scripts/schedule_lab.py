@@ -313,7 +313,7 @@ def build_context(
     config: JsonObject,
     *,
     start: date | None = None,
-    months: int = planner.DEFAULT_MONTHS,
+    weeks: int | None = None,
     pairs: dict[planner.Pair, planner.PairScore] | None = None,
 ) -> Context:
     """Learn everything the runs share, the way `schedule_planner.analyse` does."""
@@ -331,8 +331,8 @@ def build_context(
             )
     if pairs is None:
         pairs = planner.pair_scores(build_stats.included_race_contexts(races), sources)
-    period_start, period_end = planner.period_bounds(
-        start or planner.default_start(schedule), months
+    period_start, period_end = planner.season_bounds(
+        *planner.plan_season(config, schedule, start, weeks)
     )
     known = set(planner.ARCHETYPE_CATEGORIES.values()) | set(config["composition"])
     return Context(
@@ -693,7 +693,8 @@ def compare(
     return {
         "period": {
             "start": context.period_start.astimezone(planner.TIMEZONE).date().isoformat(),
-            "end": context.period_end.astimezone(planner.TIMEZONE).date().isoformat(),
+            # The last race day: the period ends at midnight after it.
+            "end": planner.period_dates(context.period_start, context.period_end)[-1].isoformat(),
         },
         "history": {
             "start": context.history_start.astimezone(planner.TIMEZONE).date().isoformat(),
@@ -873,8 +874,8 @@ def parse_args() -> argparse.Namespace:
                         help=f"composition and events (default: {planner.CONFIG_PATH.name})")
     parser.add_argument("--start", type=date.fromisoformat, default=None,
                         help="first day, YYYY-MM-DD (default: the planner's)")
-    parser.add_argument("--months", type=int, default=planner.DEFAULT_MONTHS,
-                        help=f"length in calendar months (default: {planner.DEFAULT_MONTHS})")
+    parser.add_argument("--weeks", type=int, default=None,
+                        help="season length in weeks, pause included (default: the planner's)")
     parser.add_argument("--variant", default=None,
                         help="run only this variant against shipped, without the combined one")
     parser.add_argument("--jobs", type=int, default=os.cpu_count() or 1,
@@ -882,9 +883,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--json", type=Path, default=None,
                         help="also write every number to this JSON file")
     args = parser.parse_args()
-    for name in ("months", "jobs"):
-        if getattr(args, name) < 1:
-            parser.error(f"--{name} must be at least 1")
+    if args.weeks is not None and args.weeks < 1:
+        parser.error("--weeks must be at least 1")
+    if args.jobs < 1:
+        parser.error("--jobs must be at least 1")
     return args
 
 
@@ -897,7 +899,7 @@ def main() -> int:
             [envelope["race"] for envelope in race_archive.load_races(args.archive)],
             planner.load_config(args.config),
             start=args.start,
-            months=args.months,
+            weeks=args.weeks,
         )
         result = compare(context, workers=args.jobs, only=args.variant)
     except (

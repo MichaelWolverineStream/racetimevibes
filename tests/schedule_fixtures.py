@@ -172,6 +172,16 @@ MARKUP_EVENTS = [
 ]
 # September 2026: Labor Day (2026-09-07) is a holiday.
 START = date(2026, 9, 1)
+# Five weeks from Tuesday 1 September, racing until the last Wednesday: all of September.
+SEASON = {"weeks": 5, "lastDay": "wednesday"}
+
+
+def period(start=START):
+    """The fixture season's UTC bounds from a start date."""
+    return sp.season_bounds(start, SEASON["weeks"], sp.WEEKDAYS.index(SEASON["lastDay"]))
+
+
+PERIOD = period()
 TOURNAMENT = "2026-09-10"
 
 
@@ -180,10 +190,11 @@ def run(composition=None, *, pairs=PAIRS, events=(), bands=None, **kwargs):
         "bands": bands or WORLD_BANDS,
         "composition": composition or BASE_COMPOSITION,
         "events": list(events),
+        "season": SEASON,
     }
     schedule, modes, races = world()
     return sp.analyse(
-        schedule, modes, races, config, start=kwargs.pop("start", START), months=1,
+        schedule, modes, races, config, start=kwargs.pop("start", START),
         pairs=pairs, generated_at=GENERATED_AT, **kwargs,
     )
 
@@ -249,7 +260,7 @@ def rules_inputs(composition=None):
     slots = world_history()
     model = sp.fit_model(slots)
     chosen = categories(composition)
-    period_start, period_end = sp.period_bounds(START, 1)
+    period_start, period_end = PERIOD
     return dict(
         history=slots, model=model, categories=chosen, layout=WORLD_LAYOUT,
         pairs=sp.category_pairs(chosen, PAIRS), events=[],

@@ -1006,6 +1006,9 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             highlights.MYSTERY_MODE,
             highlights.SPOILER_MODE,
             highlights.INVERTED_MODE,
+            highlights.KEYS_MODE,
+            highlights.SIMPLE_MODE,
+            highlights.FUN_MODE,
         ):
             self.assertIn(mode, self.participants["modes"])
         preset_names = {preset["n"] for preset in self.participants["presets"]}

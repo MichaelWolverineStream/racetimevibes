@@ -441,10 +441,12 @@ class ArgumentTests(unittest.TestCase):
             self.parse("--seed", "3")
 
     def test_the_options_that_remain(self):
-        args = self.parse("--months", "3", "--start", "2026-09-01", "--out", "x")
-        self.assertEqual((args.months, args.start.isoformat(), args.out), (3, "2026-09-01", Path("x")))
-        with self.assertRaises(SystemExit), mock.patch("sys.stderr"):
-            self.parse("--months", "0")
+        args = self.parse("--weeks", "3", "--start", "2026-09-01", "--out", "x")
+        self.assertEqual((args.weeks, args.start.isoformat(), args.out), (3, "2026-09-01", Path("x")))
+        self.assertEqual((self.parse().weeks, self.parse().start), (None, None))
+        for removed in (("--weeks", "0"), ("--months", "2")):
+            with self.subTest(removed), self.assertRaises(SystemExit), mock.patch("sys.stderr"):
+                self.parse(*removed)
 
 
 if __name__ == "__main__":
