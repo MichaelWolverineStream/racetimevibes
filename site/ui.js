@@ -3,7 +3,7 @@ const AVATAR_BASE_URL = "avatars/";
 const COMMENTS_URL = "data/comments.json";
 const DIALOG_DEFAULT_MS = 3000;
 const SPEECH_AVATAR_SIZES = { hero: 56, compact: 28 };
-const TAG_KINDS = new Set(["pb", "record", "first_win", "photo", "upset", "hardest", "milestone", "badge", "new"]);
+const TAG_KINDS = new Set(["pb", "record", "preset_record", "first_win", "photo", "upset", "hardest", "milestone", "badge", "new"]);
 // Size, radius and border must match .ui-badge__tile in ui.css.
 const BADGE_TILE_SIZE = 60;
 const BADGE_TILE_RADIUS = 12;

@@ -18,10 +18,11 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `build_stats.py` and `avatar_mirror.py`.
 3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing ladder schedule in `archive/ladder-schedule/`.**
    - Never edit it by hand.
-   - Never move or copy any of it into `site/`. It holds full user profiles, comments and `racer-bios.json` (verbatim profile bios), and it is deliberately never deployed.
+   - Never move or copy any of it into `site/`. It holds full user profiles, comments and `racer-bios.json` (verbatim profile bios, with the earlier versions seen), and it is deliberately never deployed.
 4. **Publish only what the privacy contract allows** (README › Privacy). Any new field in a published dataset must fit it.
    - `race-stats.json` is anonymous: no IDs, names or entrant arrays.
    - `participants.json` may carry only display names, stable user IDs and mirrored avatar file names. A name is either the hash of a `racetime.gg/media/` raster URL plus its extension, or `pokemon-` plus a sprite file name from `assets/pokemon/`. Never publish bio text.
+   - `participants.json` may also carry `avatar_changes`: the Eastern Time date the archive first saw a racer's avatar change, from their racetime.gg upload or the favourite Pokémon in their bio. Never the old avatar, and never anything else from the bio.
    - `site/avatars/` holds exactly the files `participants.json` names, as validated raster images.
    - `comments.json` carries comments capped at 500 characters.
    - Never publish full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
@@ -61,9 +62,10 @@ python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars par
   - `ladder_rating.py`: the overall rating and the per-mode ratings.
   - `highlights.py`: tags, badges, streaks, presets, records and facts, all in one chronological pass. Thresholds are constants at the top of the module.
   - `comment_stats.py`: comments and the chest-count parser.
-  - `avatar_mirror.py`: avatar file names, which observation is current, and the mirror into `site/avatars/`.
-  - `pokemon_avatars.py`: bio phrase match, Pokémon name match, favourite and random assignment, sprite paths, and the pokédex refresh.
-  - `racer_bios.py`: the bio sync and its loader.
+  - `avatar_mirror.py`: avatar file names, which observation is current, when an upload last changed, and the mirror into `site/avatars/`.
+  - `pokemon_avatars.py`: bio phrase match, Pokémon name match, favourite and random assignment, when a favourite last changed, sprite paths, and the pokédex refresh.
+  - `racer_bios.py`: the bio sync, its bio history, and its loader.
+  - `participant_stats.py` combines the two change times into `avatar_changes`, by which source the published avatar comes from.
   - `schedule_archive.py`: the alttpr.racing schedule mirror and its loaders.
 - `mode_overlap.py` is a standalone analysis. The build never runs it.
 - `rating_lab.py` is a standalone analysis. The build never runs it. Its tuning reads races before 2026-01-01 only.
@@ -131,6 +133,7 @@ Rules for using them:
 - **`--radius` is only for surfaces and controls.** Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - **Mode colours mean modes.** Don't use `--mode-*` for anything else.
 - **Tag colours mean tag kinds.** Each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new kind needs its own, checked against the others for colour-blind separation.
+  - The exception is deliberate: `--tag-record` and `--tag-preset-record` alias `--tag-pb`, and the record tags' shine in `ui.css` sets them apart.
 
 ### Global rules
 

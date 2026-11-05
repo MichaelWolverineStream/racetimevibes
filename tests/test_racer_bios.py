@@ -128,8 +128,41 @@ class LoadRacerBiosTests(unittest.TestCase):
         self.assertEqual(self.load(), {})
 
     def test_a_valid_file_is_returned(self):
-        data = {"a": ["hello", EARLIER], "b": [None, LATER]}
+        data = {"a": ["hello", EARLIER, None, []], "b": [None, LATER, EARLIER, []]}
         self.assertEqual(self.load(json.dumps(data)), data)
+
+    def test_a_legacy_entry_loads_in_the_four_element_form(self):
+        data = {"a": ["hello", EARLIER], "b": [None, LATER]}
+        self.assertEqual(
+            self.load(json.dumps(data)),
+            {"a": ["hello", EARLIER, None, []], "b": [None, LATER, None, []]},
+        )
+
+    def test_the_history_form_round_trips(self):
+        data = {
+            "a": ["new", LATER, LATER, [["first", None], ["second", EARLIER], [None, EARLIER]]],
+            "b": ["now", LATER, EARLIER, [[None, None]]],
+        }
+        self.assertEqual(self.load(json.dumps(data)), data)
+
+    def test_malformed_history_is_rejected(self):
+        for entry in (
+            # A None time after earlier[0].
+            ["x", LATER, LATER, [["a", EARLIER], ["b", None]]],
+            # A None since with a non-empty history.
+            ["x", LATER, None, [["a", EARLIER]]],
+            # Bad timestamps anywhere.
+            ["x", LATER, "yesterday", []],
+            ["x", LATER, LATER, [["a", "yesterday"]]],
+            ["x", "yesterday", LATER, []],
+            # Bad shapes.
+            ["x", LATER, LATER, "none"],
+            ["x", LATER, LATER, [["a"]]],
+            ["x", LATER, LATER, [[1, EARLIER]]],
+            ["x", LATER, LATER, ["a"]],
+        ):
+            with self.subTest(entry=entry), self.assertRaises(race_archive.ArchiveError):
+                self.load(json.dumps({"a": entry}))
 
     def test_malformed_files_are_rejected(self):
         for text in (
@@ -238,15 +271,17 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(
             text,
             '{"u1":["I don\'t stream & race.\\nMy favourite pokemon is: Mew, see '
-            'https://x.example","2026-11-02T10:00:00Z"],'
-            '"u2":[null,"2026-11-02T10:00:05Z"]}\n',
+            'https://x.example","2026-11-02T10:00:00Z","2026-11-02T10:00:00Z",[]],'
+            '"u2":[null,"2026-11-02T10:00:05Z","2026-11-02T10:00:05Z",[]]}\n',
         )
 
     def test_a_404_stores_null(self):
         write_race(self.archive, "a-1", ["u1"])
         summary = self.run_sync(lambda url: None, FixedClock(datetime(2026, 11, 2, tzinfo=UTC)))
         self.assertEqual(summary["checked"], 1)
-        self.assertEqual(self.stored(), {"u1": [None, "2026-11-02T00:00:00Z"]})
+        self.assertEqual(
+            self.stored(), {"u1": [None, "2026-11-02T00:00:00Z", "2026-11-02T00:00:00Z", []]}
+        )
 
     def test_a_failed_fetch_keeps_the_old_entry_and_stays_due(self):
         write_race(self.archive, "a-1", ["u1", "u2"])
@@ -255,12 +290,61 @@ class SyncTests(unittest.TestCase):
         summary = self.run_sync(loader)
         self.assertEqual(summary, {"due": 2, "checked": 1, "failed": 1, "stopped": False})
         self.assertIn("Warning: HTTP 500; skipping u1.", self.warnings)
-        self.assertEqual(self.stored()["u1"], ["old", EARLIER])
+        self.assertEqual(self.stored()["u1"], ["old", EARLIER, None, []])
         self.assertIn("u2", self.stored())
         due = racer_bios.racers_to_check(
             race_archive.load_races(self.archive), racer_bios.load_racer_bios(self.archive)
         )
         self.assertEqual(due, ["u1"])
+
+    def test_an_unchanged_bio_keeps_since_and_earlier_but_updates_checked_at(self):
+        write_race(self.archive, "a-1", ["u1"])
+        history = [["older", None]]
+        race_archive.write_json_atomic({"u1": [None, EARLIER, "2026-09-02T00:00:00Z", history]}, self.path)
+        self.run_sync(lambda url: None, FixedClock(datetime(2026, 11, 2, tzinfo=UTC)))
+        self.assertEqual(
+            self.stored()["u1"], [None, "2026-11-02T00:00:00Z", "2026-09-02T00:00:00Z", history]
+        )
+
+    def test_a_changed_bio_appends_the_old_one_from_a_legacy_entry(self):
+        write_race(self.archive, "a-1", ["u1"])
+        race_archive.write_json_atomic({"u1": ["old", EARLIER]}, self.path)
+        self.run_sync(FakeLoader({"u1": BIO_PAGE}), FixedClock(datetime(2026, 11, 2, tzinfo=UTC)))
+        entry = self.stored()["u1"]
+        self.assertEqual(entry[1:], ["2026-11-02T00:00:00Z", "2026-11-02T00:00:00Z", [["old", None]]])
+        self.assertIn("Mew", entry[0])
+
+    def test_a_changed_bio_appends_the_old_one_to_a_history(self):
+        write_race(self.archive, "a-1", ["u1"])
+        race_archive.write_json_atomic(
+            {"u1": ["two", EARLIER, "2026-08-01T00:00:00Z", [["one", None]]]}, self.path
+        )
+        self.run_sync(FakeLoader({"u1": BIO_PAGE}), FixedClock(datetime(2026, 11, 2, tzinfo=UTC)))
+        entry = self.stored()["u1"]
+        self.assertEqual(
+            entry[1:],
+            [
+                "2026-11-02T00:00:00Z",
+                "2026-11-02T00:00:00Z",
+                [["one", None], ["two", "2026-08-01T00:00:00Z"]],
+            ],
+        )
+
+    def test_a_bio_that_disappears_is_recorded_like_any_change(self):
+        write_race(self.archive, "a-1", ["u1"])
+        race_archive.write_json_atomic({"u1": ["old", EARLIER, EARLIER, []]}, self.path)
+        self.run_sync(lambda url: None, FixedClock(datetime(2026, 11, 2, tzinfo=UTC)))
+        self.assertEqual(
+            self.stored()["u1"],
+            [None, "2026-11-02T00:00:00Z", "2026-11-02T00:00:00Z", [["old", EARLIER]]],
+        )
+
+    def test_a_failed_fetch_leaves_a_history_entry_untouched(self):
+        write_race(self.archive, "a-1", ["u1", "u2"])
+        entry = ["old", EARLIER, EARLIER, [["older", None]]]
+        race_archive.write_json_atomic({"u1": entry}, self.path)
+        self.run_sync(FakeLoader({"u1": race_archive.ArchiveError("HTTP 500")}))
+        self.assertEqual(self.stored()["u1"], entry)
 
     def test_an_os_error_counts_as_a_failure(self):
         write_race(self.archive, "a-1", ["u1"])

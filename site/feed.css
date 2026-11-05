@@ -289,9 +289,11 @@
   list-style: none;
 }
 
+/* The tags column sizes to each row's own tags, up to 40% of the row, then wraps them, so a
+   racer with many tags keeps their name; the fixed columns after it keep times aligned. */
 .feed-entrant {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 80px 64px 72px 56px;
+  grid-template-columns: 30px minmax(0, 1fr) fit-content(40%) 80px 64px 72px 56px;
   align-items: center;
   gap: 10px;
   padding: 4px 0;
@@ -309,6 +311,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.feed-entrant__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
 }
 
 .feed-entrant__time {
@@ -537,6 +546,40 @@
   white-space: nowrap;
 }
 
+.feed-avatars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 8px;
+}
+
+.feed-avatars__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.feed-avatars__item .racer-link {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feed-avatars__when {
+  border-radius: 2px;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.feed-avatars__when:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
 /* Narrow feed: rows fold onto more lines as the feed itself narrows, which depends on
    whether the sidebar is open, not just on the viewport. */
 @container feed (max-width: 899px) {
@@ -577,9 +620,48 @@
     padding-left: 0;
   }
 
+  /* The tags drop to their own line under the name, so names keep their width. */
   .feed-entrant {
     grid-template-columns: 26px minmax(0, 1fr) 60px 52px 60px 40px;
-    gap: 6px;
+    grid-template-areas:
+      "place name time chests cph delta"
+      ". tags tags tags tags tags";
+    gap: 0 6px;
+  }
+
+  .feed-entrant__place {
+    grid-area: place;
+  }
+
+  .feed-entrant__name {
+    grid-area: name;
+  }
+
+  /* A margin, not a row gap, so rows without tags keep their height. */
+  .feed-entrant__tags {
+    grid-area: tags;
+    justify-content: flex-start;
+    margin-top: 2px;
+  }
+
+  .feed-entrant__tags:empty {
+    display: none;
+  }
+
+  .feed-entrant__time {
+    grid-area: time;
+  }
+
+  .feed-entrant__chests {
+    grid-area: chests;
+  }
+
+  .feed-entrant__cph {
+    grid-area: cph;
+  }
+
+  .feed-entrant__delta {
+    grid-area: delta;
   }
 }
 

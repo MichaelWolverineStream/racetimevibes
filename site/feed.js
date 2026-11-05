@@ -7,6 +7,8 @@ const Feed = (() => {
   const HERO_WINDOW_DAYS = 30;
   const HERO_MAX_LENGTH = 180;
   const NEW_BADGE_LIMIT = 12;
+  const NEW_AVATAR_LIMIT = 6;
+  const NEW_AVATAR_SIZE = 48;
   const FEATURED_WINDOW_DAYS = 14;
   const FEATURED_TOP_RANKS = 3;
   const FACT_REPEAT_DAYS = 7;
@@ -17,6 +19,7 @@ const Feed = (() => {
   const SUMMARY_TAGS = [
     ["pb", "PB"],
     ["record", "Mode record"],
+    ["preset_record", "Preset record"],
     ["first_win", "First win"],
     ["upset", "Upset"],
     ["photo", "Photo finish"],
@@ -163,6 +166,12 @@ const Feed = (() => {
         const previous = b === null || b === undefined ? "" : `, previous record ${formatDuration(b)}`;
         return { kind, label: "Mode record", detail: `${playerName(playerIndex)}: ${formatDuration(a)}${previous}` };
       }
+      case "preset_record":
+        return {
+          kind,
+          label: "Preset record",
+          detail: `${playerName(playerIndex)}: ${formatDuration(a)}, previous record ${formatDuration(b)}`,
+        };
       case "first_win":
         return { kind, label: "First win", detail: `${playerName(playerIndex)} won for the first time` };
       case "photo":
@@ -242,6 +251,27 @@ const Feed = (() => {
     return cell;
   }
 
+  // One tag on its own, for the entrant it names: PBs and badges are grouped only on the race row.
+  function tagDescription(tag) {
+    if (tag[0] === "pb") {
+      return pbTag([tag]);
+    }
+    if (tag[0] === "badge") {
+      return badgeTag([tag]);
+    }
+    return describeTag(tag);
+  }
+
+  function entrantTagCell(race, playerIndex) {
+    const cell = element("span", "feed-entrant__tags");
+    (race.t || [])
+      .filter((tag) => tag[1] === playerIndex)
+      .map(tagDescription)
+      .filter(Boolean)
+      .forEach(({ kind, label, detail }) => cell.appendChild(UI.tag(kind, label, detail)));
+    return cell;
+  }
+
   function placePill(place) {
     const podium = place >= 1 && place <= 3 ? ` rank-badge--podium rank-badge--${place}` : "";
     return element("span", `rank-badge feed-place${podium}`, String(place));
@@ -302,7 +332,7 @@ const Feed = (() => {
     if (delta) {
       deltaCell.appendChild(delta);
     }
-    row.append(placeCell, nameCell, timeCell, chestsCell, perHourCell, deltaCell);
+    row.append(placeCell, nameCell, entrantTagCell(race, playerIndex), timeCell, chestsCell, perHourCell, deltaCell);
     return row;
   }
 
@@ -702,6 +732,8 @@ const Feed = (() => {
         return `${modeLabel(modeName(race))} PB`;
       case "record":
         return `${modeLabel(modeName(race))} record`;
+      case "preset_record":
+        return `${participants.presets[race.p].n} record`;
       case "upset":
         return "Upset win";
       case "photo":
@@ -801,6 +833,26 @@ const Feed = (() => {
     host.appendChild(section);
   }
 
+  // avatar_changes is newest first: [playerIndex, Eastern date the archive first saw the avatar].
+  function renderLatestAvatars(host) {
+    const changes = (participants.avatar_changes || []).slice(0, NEW_AVATAR_LIMIT);
+    if (!changes.length) {
+      return;
+    }
+    const section = sidebarSection("Latest avatars");
+    const grid = element("div", "feed-avatars");
+    changes.forEach(([playerIndex, isoDate]) => {
+      const cell = element("div", "feed-avatars__item");
+      const when = element("span", "feed-avatars__when", UI.relativeDay(isoDate));
+      when.tabIndex = 0;
+      bindTooltip(when, `First seen ${formatRaceDate(isoDate)}`);
+      cell.append(UI.avatar(playerIndex, NEW_AVATAR_SIZE), playerLink(playerIndex, "racer-link"), when);
+      grid.appendChild(cell);
+    });
+    section.appendChild(grid);
+    host.appendChild(section);
+  }
+
   function renderSidebar() {
     const sidebar = document.getElementById("updates-sidebar-body");
     const racersHost = element("div", "feed-side-racers");
@@ -808,6 +860,7 @@ const Feed = (() => {
     renderFeatured(sidebar);
     renderFact(sidebar);
     renderNewBadges(sidebar);
+    renderLatestAvatars(sidebar);
     const rerender = () => renderYourRacers(racersHost);
     rerender();
     document.addEventListener(FOLLOWING_EVENT, rerender);

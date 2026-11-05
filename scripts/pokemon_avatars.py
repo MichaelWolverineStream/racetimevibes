@@ -14,6 +14,7 @@ import unicodedata
 from collections import Counter
 from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -179,6 +180,30 @@ def favourite_pokemon(bio: str | None, catalogue: Catalogue) -> int | None:
             if found is not None:
                 return found
     return None
+
+
+def favourite_change_times(
+    bios: Mapping[str, Sequence], catalogue: Catalogue
+) -> dict[str, datetime]:
+    """Return when each racer last added, switched or dropped their favourite Pokémon.
+
+    A bio entry is `[bio, checked_at, since, earlier]` (see `racer_bios`). The bios of
+    `earlier` plus the current one form a timeline, and the change is dated at the
+    `since` of the latest bio whose favourite differs from the one before it. Edits that
+    leave the favourite alone never move the date. A racer who never named a favourite,
+    kept the same one throughout or has no history has no entry.
+    """
+    changes: dict[str, datetime] = {}
+    for user_id, entry in bios.items():
+        timeline = [*entry[3], [entry[0], entry[2]]]
+        favourites = [favourite_pokemon(text, catalogue) for text, _since in timeline]
+        for index in range(len(timeline) - 1, 0, -1):
+            if favourites[index] != favourites[index - 1]:
+                changes[user_id] = race_archive.parse_timestamp(
+                    timeline[index][1], "bio since time"
+                )
+                break
+    return changes
 
 
 def _digest(user_id: str, item: int | str) -> bytes:

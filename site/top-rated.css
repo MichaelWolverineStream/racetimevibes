@@ -38,7 +38,7 @@
   display: flex;
   gap: 8px;
   margin: 0;
-  padding: 4px 0 2px;
+  padding: 4px 0 4px;
   list-style: none;
   overflow-x: auto;
   scrollbar-color: var(--line) transparent;
@@ -49,10 +49,12 @@
 /* Tiles size to their names and never squeeze them; a row too wide for the screen scrolls instead. */
 .top-rated__tile {
   --tile-bg: var(--paper);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   flex: 1 0 auto;
   align-items: center;
-  gap: 10px;
+  column-gap: 10px;
+  row-gap: 6px;
   padding: 5px 10px 5px 8px;
   border-left: 3px solid var(--tile-color);
   border-radius: var(--radius);
@@ -162,6 +164,34 @@
   font-size: var(--text-lg);
   font-weight: 700;
   line-height: 1;
+}
+
+/* Runners-up */
+
+/* A second row under the leader, outside .top-rated__avatars so the overlap and leader ring don't apply. */
+.top-rated__runners-up {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 4px;
+}
+
+.top-rated__runner-up {
+  display: flex;
+  border-radius: 4px;
+  transition: transform 120ms ease-out;
+}
+
+.top-rated__runner-up .ui-avatar {
+  box-shadow: 0 0 0 1px var(--line);
+  transition: box-shadow 120ms ease-out;
+}
+
+.top-rated__runner-up:hover {
+  transform: translateY(-1px);
+}
+
+.top-rated__runner-up:hover .ui-avatar {
+  box-shadow: 0 0 0 2px var(--tile-color);
 }
 
 /* With the highlight 2.5 times the tile's width, 200% parks it off the left edge and -100% off the right. */

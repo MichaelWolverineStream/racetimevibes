@@ -170,6 +170,97 @@ class CurrentAvatarUrlsTests(unittest.TestCase):
         )
 
 
+class AvatarChangeTimesTests(unittest.TestCase):
+    A = f"{ORIGIN}a.png"
+    B = f"{ORIGIN}b.png"
+
+    @staticmethod
+    def instant(text):
+        return race_archive.parse_timestamp(text, "test time")
+
+    def test_a_change_is_dated_by_the_first_sighting_after_a_different_value(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.A}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": self.A}),
+                envelope("r3", "2026-10-03T00:00:00Z", {"u1": self.B}),
+                envelope("r4", "2026-10-04T00:00:00Z", {"u1": self.B}),
+            ],
+            {},
+        )
+        self.assertEqual(changes, {"u1": self.instant("2026-10-03T00:00:00Z")})
+
+    def test_a_single_value_is_no_change(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.A}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": self.A}),
+            ],
+            {"u1": [self.A, "2026-10-03T00:00:00Z"]},
+        )
+        self.assertEqual(changes, {})
+
+    def test_none_to_a_url_is_a_change(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": None}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": self.B}),
+            ],
+            {},
+        )
+        self.assertEqual(changes, {"u1": self.instant("2026-10-02T00:00:00Z")})
+
+    def test_a_removed_avatar_is_dated_at_the_first_sighting_without_it(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.A}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": None}),
+                envelope("r3", "2026-10-03T00:00:00Z", {"u1": None}),
+            ],
+            {},
+        )
+        self.assertEqual(changes, {"u1": self.instant("2026-10-02T00:00:00Z")})
+
+    def test_a_switch_to_an_unmirrorable_url_is_a_change(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.A}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": "https://evil.example/x.png"}),
+            ],
+            {},
+        )
+        self.assertEqual(changes, {"u1": self.instant("2026-10-02T00:00:00Z")})
+
+    def test_two_different_unmirrorable_urls_are_no_change(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": "https://evil.example/x.png"}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": "https://evil.example/y.png"}),
+                envelope("r3", "2026-10-03T00:00:00Z", {"u1": None}),
+            ],
+            {},
+        )
+        self.assertEqual(changes, {})
+
+    def test_a_leaderboard_sighting_later_than_the_races_dates_the_change(self):
+        changes = avatar_mirror.avatar_change_times(
+            [envelope("r1", "2026-10-27T00:00:00Z", {"u1": self.A})],
+            {"u1": [self.B, "2026-11-04T08:00:00Z"]},
+        )
+        self.assertEqual(changes, {"u1": self.instant("2026-11-04T08:00:00Z")})
+
+    def test_a_change_back_is_dated_at_the_return(self):
+        changes = avatar_mirror.avatar_change_times(
+            [
+                envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.A}),
+                envelope("r2", "2026-10-02T00:00:00Z", {"u1": self.B}),
+                envelope("r3", "2026-10-03T00:00:00Z", {"u1": self.A}),
+            ],
+            {},
+        )
+        self.assertEqual(changes, {"u1": self.instant("2026-10-03T00:00:00Z")})
+
+
 class IsRasterTests(unittest.TestCase):
     def test_accepts_matching_magic_bytes(self):
         for data, extension in (

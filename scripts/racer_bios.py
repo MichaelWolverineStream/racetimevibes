@@ -91,12 +91,60 @@ def extract_bio(html: str) -> str | None:
     return bio or None
 
 
+def _check_time(value: Any, path: Path, what: str) -> None:
+    try:
+        race_archive.parse_timestamp(value, what)
+    except (TypeError, ValueError) as error:
+        raise race_archive.ArchiveError(f"{path} has a bio without a valid {what}") from error
+
+
+def _normalise_entry(entry: Any, path: Path) -> list:
+    """Validate one stored entry and return it in the 4-element form."""
+    malformed = race_archive.ArchiveError(f"{path} is not a map of user IDs to bios")
+    if not isinstance(entry, list) or len(entry) not in (2, 4):
+        raise malformed
+    bio, checked_at = entry[0], entry[1]
+    if not (bio is None or isinstance(bio, str)):
+        raise malformed
+    _check_time(checked_at, path, "checked-at time")
+    if len(entry) == 2:
+        return [bio, checked_at, None, []]
+
+    since, earlier = entry[2], entry[3]
+    if since is not None:
+        _check_time(since, path, "since time")
+    if not isinstance(earlier, list):
+        raise malformed
+    for position, old in enumerate(earlier):
+        if (
+            not isinstance(old, list)
+            or len(old) != 2
+            or not (old[0] is None or isinstance(old[0], str))
+        ):
+            raise malformed
+        if old[1] is not None:
+            _check_time(old[1], path, "since time")
+        elif position:
+            raise race_archive.ArchiveError(
+                f"{path} has an earlier bio without a time after the first"
+            )
+    if since is None and earlier:
+        raise race_archive.ArchiveError(f"{path} has a bio history without a since time")
+    return [bio, checked_at, since, [list(old) for old in earlier]]
+
+
 def load_racer_bios(
     archive_dir: Path = race_archive.ARCHIVE_DIR,
-) -> dict[str, list[str | None]]:
-    """Return each racer's profile bio and when the profile was last fetched.
+) -> dict[str, list]:
+    """Return each racer's profile bio, its history and when the profile was last fetched.
 
-    Maps a user ID to [bio text or None, checked-at timestamp].
+    Maps a user ID to `[bio text or None, checked-at timestamp, since timestamp or None,
+    earlier]`. `since` is when the current bio was first seen, None for an entry written
+    before history was kept. `earlier` lists the racer's earlier bios, oldest first, each
+    `[bio text or None, since timestamp or None]`; only the first may lack a time, and
+    `since` may be None only when `earlier` is empty. Legacy 2-element entries
+    `[bio, checked-at]` load as `[bio, checked-at, None, []]`, so every entry returned has
+    four elements.
     """
     path = archive_dir / RACER_BIOS_FILE
     if not path.exists():
@@ -107,20 +155,7 @@ def load_racer_bios(
         raise race_archive.ArchiveError(f"{path} is not valid JSON") from error
     if not isinstance(bios, dict):
         raise race_archive.ArchiveError(f"{path} is not a map of user IDs to bios")
-    for entry in bios.values():
-        if (
-            not isinstance(entry, list)
-            or len(entry) != 2
-            or not (entry[0] is None or isinstance(entry[0], str))
-        ):
-            raise race_archive.ArchiveError(f"{path} is not a map of user IDs to bios")
-        try:
-            race_archive.parse_timestamp(entry[1], "checked-at time")
-        except ValueError as error:
-            raise race_archive.ArchiveError(
-                f"{path} has a bio without a valid time"
-            ) from error
-    return bios
+    return {user_id: _normalise_entry(entry, path) for user_id, entry in bios.items()}
 
 
 def racers_to_check(envelopes: list[JsonObject], bios: Mapping[str, list]) -> list[str]:
@@ -218,7 +253,14 @@ def sync(
             continue
 
         consecutive = 0
-        bios[user_id] = [bio, race_archive._format_timestamp(now())]
+        now_text = race_archive._format_timestamp(now())
+        old = bios.get(user_id)
+        if old is None:
+            bios[user_id] = [bio, now_text, now_text, []]
+        elif old[0] == bio:
+            bios[user_id] = [bio, now_text, old[2], old[3]]
+        else:
+            bios[user_id] = [bio, now_text, now_text, [*old[3], [old[0], old[2]]]]
         checked += 1
 
     if checked:
@@ -257,7 +299,7 @@ def main() -> int:
         return 0
     named = sum(
         1
-        for bio, _checked_at in bios.values()
+        for bio, *_ in bios.values()
         if pokemon_avatars.favourite_pokemon(bio, catalogue) is not None
     )
     print(f"{checked}; {named} name a favourite Pokémon.")

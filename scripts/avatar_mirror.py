@@ -71,6 +71,34 @@ def _race_start(race: JsonObject) -> datetime:
         return datetime.min.replace(tzinfo=UTC)
 
 
+def _observations(
+    envelopes: list[JsonObject],
+    observations: Mapping[str, list[str | None]],
+) -> dict[str, list[tuple[tuple, Any]]]:
+    """Return every avatar observation per racer as `(sort key, URL or None)` pairs."""
+    seen: dict[str, list[tuple[tuple, Any]]] = {}
+
+    for envelope in envelopes:
+        race = envelope["race"]
+        fetched_at = race_archive.parse_timestamp(envelope["fetched_at"], "fetched_at")
+        key = (fetched_at, 0, _race_start(race), race.get("name") or "")
+        for entrant in race.get("entrants") or []:
+            user = entrant.get("user") if isinstance(entrant, dict) else None
+            user_id = user.get("id") if isinstance(user, dict) else None
+            if isinstance(user_id, str) and user_id:
+                seen.setdefault(user_id, []).append((key, user.get("avatar")))
+
+    for user_id, (url, first_seen) in observations.items():
+        key = (
+            race_archive.parse_timestamp(first_seen, "first-seen time"),
+            1,
+            datetime.min.replace(tzinfo=UTC),
+            "",
+        )
+        seen.setdefault(user_id, []).append((key, url))
+    return seen
+
+
 def current_avatar_urls(
     envelopes: list[JsonObject],
     observations: Mapping[str, list[str | None]],
@@ -83,36 +111,38 @@ def current_avatar_urls(
     files that tie are ordered by race start time, then name. A racer whose winning
     observation is null, off racetime.gg/media or not a raster image has no entry.
     """
-    winners: dict[str, tuple[tuple, Any]] = {}
+    current: dict[str, str] = {}
+    for user_id, seen in _observations(envelopes, observations).items():
+        # max() returns the first of equal items: the first-seen of equal keys wins.
+        _key, url = max(seen, key=lambda item: item[0])
+        if mirror_name(url) is not None:
+            current[user_id] = url
+    return current
 
-    def observe(user_id: str, key: tuple, url: Any) -> None:
-        if user_id not in winners or key > winners[user_id][0]:
-            winners[user_id] = (key, url)
 
-    for envelope in envelopes:
-        race = envelope["race"]
-        fetched_at = race_archive.parse_timestamp(envelope["fetched_at"], "fetched_at")
-        key = (fetched_at, 0, _race_start(race), race.get("name") or "")
-        for entrant in race.get("entrants") or []:
-            user = entrant.get("user") if isinstance(entrant, dict) else None
-            user_id = user.get("id") if isinstance(user, dict) else None
-            if isinstance(user_id, str) and user_id:
-                observe(user_id, key, user.get("avatar"))
+def avatar_change_times(
+    envelopes: list[JsonObject],
+    observations: Mapping[str, list[str | None]],
+) -> dict[str, datetime]:
+    """Return when each racer last changed their racetime.gg avatar.
 
-    for user_id, (url, first_seen) in observations.items():
-        key = (
-            race_archive.parse_timestamp(first_seen, "first-seen time"),
-            1,
-            datetime.min.replace(tzinfo=UTC),
-            "",
-        )
-        observe(user_id, key, url)
-
-    return {
-        user_id: url
-        for user_id, (_key, url) in winners.items()
-        if mirror_name(url) is not None
-    }
+    Observations are compared by `mirror_name`, so None means no mirrorable upload. The
+    change is dated at the first sighting of the current value after the latest
+    observation whose value differed from it. Removing the upload, or switching to a URL
+    that cannot be mirrored, is a change; two different unmirrorable URLs are not. A
+    racer seen with one value only has no entry.
+    """
+    changes: dict[str, datetime] = {}
+    for user_id, seen in _observations(envelopes, observations).items():
+        # Newest first. A reverse sort keeps equal keys in their original order, so the
+        # first entry is the one current_avatar_urls picks with max().
+        newest_first = sorted(seen, key=lambda item: item[0], reverse=True)
+        values = [mirror_name(url) for _key, url in newest_first]
+        for index, value in enumerate(values):
+            if value != values[0]:
+                changes[user_id] = newest_first[index - 1][0][0]
+                break
+    return changes
 
 
 def is_raster(data: bytes, extension: str) -> bool:

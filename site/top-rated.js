@@ -2,6 +2,8 @@ const TopRated = (() => {
   const AVATAR_SIZE = 36;
   const MAX_AVATARS = 3;
   const MAX_NAMED = 2;
+  const RUNNER_UPS = 5;
+  const RUNNER_UP_AVATAR_SIZE = 20;
 
   let started = false;
 
@@ -32,6 +34,34 @@ const TopRated = (() => {
       .filter(([, rank]) => rank === 1)
       .map(([playerIndex]) => playerIndex)
       .sort((a, b) => a - b);
+  }
+
+  // Tied leaders are already in the main stack, so rank 1 is excluded. Ties break by player index, which is name order.
+  function runnersUpFor(modeId) {
+    return [...ratingRanks(modeId)]
+      .filter(([, rank]) => rank > 1)
+      .sort((a, b) => a[1] - b[1] || a[0] - b[0])
+      .slice(0, RUNNER_UPS)
+      .map(([playerIndex, rank]) => ({ playerIndex, rank }));
+  }
+
+  function runnersUpStrip(modeId) {
+    const runnersUp = runnersUpFor(modeId);
+    if (runnersUp.length === 0) {
+      return null;
+    }
+    const strip = element("div", "top-rated__runners-up");
+    for (const { playerIndex, rank } of runnersUp) {
+      const player = participants.players[playerIndex];
+      const text = `#${rank} ${player.name} · ${ratingFor(player, modeId).rating}`;
+      const link = element("a", "top-rated__runner-up");
+      link.href = playerHash(player.id, modeId);
+      link.setAttribute("aria-label", text);
+      link.append(UI.avatar(playerIndex, RUNNER_UP_AVATAR_SIZE));
+      bindTooltip(link, text);
+      strip.append(link);
+    }
+    return strip;
   }
 
   function namesLine(leaders, modeId) {
@@ -73,6 +103,10 @@ const TopRated = (() => {
     );
 
     item.append(avatars, text);
+    const runnersUp = runnersUpStrip(modeId);
+    if (runnersUp) {
+      item.append(runnersUp);
+    }
     return item;
   }
 

@@ -3,6 +3,7 @@ import re
 import tempfile
 import unittest
 from datetime import UTC, datetime
+from unittest import mock
 from pathlib import Path
 
 from scripts import avatar_mirror, build_stats, highlights, participant_stats, pokemon_avatars
@@ -562,7 +563,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 10)
+        self.assertEqual(result["schema_version"], 11)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "pbs", "streaks", "best_preset"):
@@ -684,6 +685,148 @@ class SchemaThreeTests(unittest.TestCase):
         self.assertNotIn('"ana"', json.dumps(result))
 
 
+def avatar_change_races():
+    """Four racers over three races. ana, ben and dan change avatar; cid never does.
+
+    The races end at 22:00Z, except the one that shows ben's new avatar, which ends at
+    02:00Z the next day: still the previous evening in Eastern Time.
+    """
+    def with_avatar(user_id, place, avatar):
+        return entrant(
+            user_id,
+            place=place,
+            finish_time=f"PT{10 + place}M",
+            user={"id": user_id, "name": user_id, "avatar": avatar},
+        )
+
+    def day(name, start, end, avatars):
+        return race(
+            name,
+            started_at=start,
+            ended_at=end,
+            entrants=[with_avatar(u, i + 1, a) for i, (u, a) in enumerate(avatars)],
+        )
+
+    m = "https://racetime.gg/media/"
+    return [
+        day(
+            "one",
+            "2026-03-01T20:00:00.000Z",
+            "2026-03-01T22:00:00.000Z",
+            [("ana", f"{m}a1.png"), ("ben", f"{m}b1.png"), ("cid", f"{m}c1.png"), ("dan", f"{m}d1.png")],
+        ),
+        day(
+            "two",
+            "2026-03-02T20:00:00.000Z",
+            "2026-03-02T22:00:00.000Z",
+            [("ana", f"{m}a2.png"), ("ben", f"{m}b1.png"), ("cid", f"{m}c1.png"), ("dan", f"{m}d1.png")],
+        ),
+        day(
+            "three",
+            "2026-03-03T00:30:00.000Z",
+            "2026-03-04T02:00:00.000Z",
+            [("ana", f"{m}a2.png"), ("ben", f"{m}b2.png"), ("cid", f"{m}c1.png"), ("dan", f"{m}d2.png")],
+        ),
+    ]
+
+
+class AvatarChangesTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.catalogue = pokemon_avatars.load_catalogue()
+
+    def changes(self, **kwargs):
+        result = payload(avatar_change_races(), **kwargs)
+        names = [player["name"] for player in result["players"]]
+        return result, [[names[index], date] for index, date in result["avatar_changes"]]
+
+    def test_changes_are_newest_first_with_eastern_dates(self):
+        _result, changes = self.changes()
+        # ben and dan changed at 02:00Z on 03-04, which is 21:00 on 03-03 in Eastern Time.
+        # They tie, so the lower player index (ben) goes first; ana changed on 03-02.
+        self.assertEqual(
+            changes, [["ben", "2026-03-03"], ["dan", "2026-03-03"], ["ana", "2026-03-02"]]
+        )
+
+    def test_a_racer_with_one_avatar_only_is_absent(self):
+        _result, changes = self.changes()
+        self.assertNotIn("cid", [name for name, _date in changes])
+
+    def test_indexes_point_at_players(self):
+        result, _changes = self.changes()
+        for index, date in result["avatar_changes"]:
+            self.assertIn(index, range(len(result["players"])))
+            self.assertRegex(date, r"^\d{4}-\d{2}-\d{2}$")
+
+    def test_a_favourite_hides_the_upload_change(self):
+        # ana's upload changed on 03-02, but her favourite Pokémon replaces it.
+        bios = {"ana": ["My favourite pokemon is: Pikachu", "2026-03-05T00:00:00Z", None, []]}
+        result, changes = self.changes(bios=bios, pokemon=self.catalogue)
+        self.assertEqual({player["id"]: player.get("a") for player in result["players"]}["ana"], "pokemon-25.png")
+        self.assertEqual([name for name, _date in changes], ["ben", "dan"])
+
+    def test_a_favourite_holder_with_a_changed_upload_but_the_same_favourite_is_not_listed(self):
+        pikachu = "My favourite pokemon is: Pikachu"
+        bios = {"ana": [pikachu + "!", "2026-03-09T00:00:00Z", "2026-03-08T00:00:00Z", [[pikachu, None]]]}
+        _result, changes = self.changes(bios=bios, pokemon=self.catalogue)
+        self.assertNotIn("ana", [name for name, _date in changes])
+
+    def test_an_added_favourite_is_listed_at_its_eastern_date(self):
+        # 03:00Z on 03-07 is 22:00 on 03-06 in Eastern Time (still standard time).
+        bios = {"cid": ["My favourite pokemon is: Pikachu", "2026-03-08T00:00:00Z", "2026-03-07T03:00:00Z", [[None, None]]]}
+        result, changes = self.changes(bios=bios, pokemon=self.catalogue)
+        self.assertEqual(changes[0], ["cid", "2026-03-06"])
+        avatars = {player["id"]: player.get("a") for player in result["players"]}
+        self.assertEqual(avatars["cid"], "pokemon-25.png")
+
+    def test_a_removed_favourite_is_listed(self):
+        bios = {"cid": ["no favourite", "2026-03-08T00:00:00Z", "2026-03-07T15:00:00Z", [["My favourite pokemon is: Pikachu", None]]]}
+        _result, changes = self.changes(bios=bios, pokemon=self.catalogue)
+        self.assertEqual(changes[0], ["cid", "2026-03-07"])
+
+    def test_a_removed_upload_with_a_random_pokemon_is_listed(self):
+        races = avatar_change_races()
+        # cid's avatar is removed in the last race, so a random Pokémon takes its place.
+        for item in races[-1]["entrants"]:
+            if item["user"]["id"] == "cid":
+                item["user"]["avatar"] = None
+        result = payload(races, pokemon=self.catalogue)
+        names = [player["name"] for player in result["players"]]
+        changes = [[names[index], date] for index, date in result["avatar_changes"]]
+        self.assertIn(["cid", "2026-03-03"], changes)
+        avatars = {player["id"]: player.get("a") for player in result["players"]}
+        self.assertTrue(avatars["cid"].startswith("pokemon-"))
+
+    def test_a_random_pokemon_alone_is_never_listed(self):
+        races = avatar_change_races()
+        for item in races:
+            for entry in item["entrants"]:
+                entry["user"]["avatar"] = None
+        result = payload(races, pokemon=self.catalogue)
+        self.assertEqual(result["avatar_changes"], [])
+
+    def test_a_leaderboard_sighting_dates_a_change(self):
+        url = "https://racetime.gg/media/cid2.png"
+        result, changes = self.changes(avatar_observations={"cid": [url, "2026-03-09T05:00:00Z"]})
+        self.assertEqual(changes[0], ["cid", "2026-03-09"])
+
+    def test_racers_missing_from_the_players_are_excluded(self):
+        # A ghost with a mirrorable racetime avatar and a change time, but no races the
+        # payload keeps, must be skipped rather than looked up among the players.
+        url = "https://racetime.gg/media/g.png"
+        real = avatar_mirror.avatar_change_times
+
+        def with_ghost(envelopes, observations):
+            return real(envelopes, observations) | {"ghost": datetime(2026, 3, 9, tzinfo=UTC)}
+
+        with mock.patch.object(participant_stats.avatar_mirror, "avatar_change_times", with_ghost):
+            result, changes = self.changes(
+                avatar_observations={"ghost": [url, "2026-03-09T00:00:00Z"]}
+            )
+        self.assertNotIn("ghost", [player["id"] for player in result["players"]])
+        self.assertEqual([name for name, _date in changes], ["ben", "dan", "ana"])
+
+
 class PokemonAvatarTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -736,11 +879,11 @@ class PokemonAvatarTests(unittest.TestCase):
         self.assertNotEqual(avatars["ben"], avatars["cid"])
 
     def test_a_favourite_replaces_a_racetime_avatar(self):
-        bios = {"ana": ["My favourite pokemon is: Pikachu", "2026-03-03T00:00:00Z"]}
+        bios = {"ana": ["My favourite pokemon is: Pikachu", "2026-03-03T00:00:00Z", None, []]}
         self.assertEqual(self.avatars(bios)["ana"], "pokemon-25.png")
 
     def test_racers_are_ordered_by_their_first_race_then_id(self):
-        bios = {"ben": ["fav pokemon: unown", "2026-03-03T00:00:00Z"]}
+        bios = {"ben": ["fav pokemon: unown", "2026-03-03T00:00:00Z", None, []]}
         expected = pokemon_avatars.assign(
             ["ana", "cid", "ben"], {"ana"}, bios, self.catalogue
         )
@@ -761,7 +904,7 @@ class PokemonAvatarTests(unittest.TestCase):
         )
 
     def test_bio_text_is_never_published(self):
-        bios = {"cid": ["Secret plans. My favourite pokemon is Mew", "2026-03-03T00:00:00Z"]}
+        bios = {"cid": ["Secret plans. My favourite pokemon is Mew", "2026-03-03T00:00:00Z", None, []]}
         result = payload(self.races(), bios=bios, pokemon=self.catalogue)
         self.assertNotIn("Secret plans", json.dumps(result))
         self.assertEqual(
@@ -824,8 +967,8 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 10)
-        for key in ("presets", "hardest_preset", "badges", "records", "facts", "rating"):
+        self.assertEqual(self.participants["schema_version"], 11)
+        for key in ("presets", "hardest_preset", "avatar_changes", "badges", "records", "facts", "rating"):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
 

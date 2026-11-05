@@ -92,7 +92,7 @@ CLAIM_KINDS = (
     "night",
     "comeback",
 )
-TAG_KINDS = ("record", "first_win", "upset", "photo", "pb", "milestone", "badge")
+TAG_KINDS = ("record", "preset_record", "first_win", "upset", "photo", "pb", "milestone", "badge")
 
 BADGE_IMAGE_DIR = "assets/badges"
 
@@ -749,6 +749,16 @@ def compute(
                     tags["record"].append(["record", fastest[0], fastest_seconds, previous])
                 mode_best[mode] = fastest_seconds
                 mode_steps[mode].append([ri, fastest[0], fastest_seconds])
+
+        # Preset record: the race's fastest time against the preset's record, unless the
+        # wider mode record already tagged this race. The preset row still holds the
+        # previous record here; it is updated further down.
+        if timed and rec["p"] is not None and not tags["record"]:
+            preset_best = preset_rows[rec["p"]]["best"]
+            if preset_best is not None and fastest_seconds < preset_best[1]:
+                tags["preset_record"].append(
+                    ["preset_record", fastest[0], fastest_seconds, preset_best[1]]
+                )
 
         # Upset, from pre-race ratings.
         if winner is not None and len(entries) >= UPSET_MIN_ENTRANTS:

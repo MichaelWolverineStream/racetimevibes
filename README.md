@@ -237,7 +237,12 @@ Avatars work the same way but never cost a request. The leaderboards response al
 
 #### Bios
 
-A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, and in no JSON API, so `racer_bios.py` reads the page's HTML. It stores the text of the first `<p class="bio">`, links included, stripped and cut to 2,000 characters, the length the field allows. A profile with no bio, or an empty one, is stored as `null`. Entries are `[bio text or null, checked-at time]`, in UTC, sorted by user ID.
+A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, and in no JSON API, so `racer_bios.py` reads the page's HTML. It stores the text of the first `<p class="bio">`, links included, stripped and cut to 2,000 characters, the length the field allows. A profile with no bio, or an empty one, is stored as `null`. Entries are `[bio, checked-at time, since, earlier]`, with times in UTC, sorted by user ID.
+
+- **Bio:** the text or `null`. **Checked-at time:** when the profile was last fetched.
+- **Since:** when the current bio was first seen. **Earlier:** the racer's earlier bios, oldest first, each `[bio, since]`. A fetch that finds a different bio moves the old one, with its time, to the end of `earlier`; one that finds the same bio changes only the checked-at time. A racer's first fetch is not a change.
+- The history began on 2026-11-05. An entry from before then was `[bio, checked-at time]`; it loads with an unknown `since` and no earlier bios, and is written in the new form the next time the file is. So only the first earlier bio, or `since` when there are none, can be unknown (`null`).
+- Earlier bios are kept so a change of [favourite Pokémon](#pokémon-avatars) can be dated (see [Latest results](#latest-results)). Like the rest of `archive/`, they are never deployed.
 
 - **Who is due:** a racer of an included race (see [Definitions](#definitions)) with no stored entry, or who entered an included race that finished after the time of their entry. A racer who has not raced since their bio was checked costs nothing, so a normal daily run fetches only the racers who raced that day.
 - **Pacing:** one request per racer, 1 second apart, with the same bounded retries as the race sync. A page is read up to 1,000,000 bytes, and a longer one is a failure.
@@ -269,7 +274,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the schedule and participation panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks, personal bests and a claim to fame. |
+| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks, personal bests and a claim to fame. `avatar_changes` lists the racers whose avatar changed, newest first, each with the Eastern Time date the change was first seen. |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
 `race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](#avatar-mirror)). What each of these may contain is fixed by [Privacy](#privacy).
@@ -347,13 +352,14 @@ Running it again on its own output changes nothing, because the factor is then 1
   - A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and `%`, as in percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`.
   - The avatar follows the racer's most recently observed profile: the category leaderboards each sync, or their latest race file among the races the dashboard includes, so never a `ladder_test` race, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none, unless a Pokémon fills in (see [Pokémon avatars](#pokémon-avatars)).
   - A Pokémon avatar's name is `pokemon-` plus a sprite file name, `pokemon-<pokédex number>[-<variant>].png`, for example `pokemon-201-b.png`. It reveals only which Pokémon the racer has, which comes from their public bio or from a random pick. Bio text is never published.
+  - `avatar_changes` adds, for racers whose avatar changed while the archive was watching, the Eastern Time date the archive first saw the change (see [Latest results](#latest-results)). It reveals nothing about the old avatar, which is neither named nor mirrored, and nothing from the bio beyond the date the favourite Pokémon changed.
 - **`comments.json`** publishes the raw post-race comments of included races, stripped and capped at 500 characters, keyed by race name and user ID, each with the chest count parsed from it, or `null`.
 - **`site/avatars/`** holds copies of exactly the files `participants.json` names, raster images only. The page serves avatars from there, so a viewer's browser never contacts racetime.gg for them.
   - The copies are byte for byte, so any metadata an upload carries, such as a JPEG's EXIF block, is served as racetime.gg serves it.
   - A replaced or removed avatar leaves `site/avatars/` but stays in the repository's git history.
 - **Never published:** full names, discriminators, pronouns, flair, Twitch fields and racetime.gg points and score fields.
 
-`archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It also holds racers' public profile bios, verbatim from their racetime.gg profile pages. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
+`archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It also holds racers' public profile bios, verbatim from their racetime.gg profile pages, with the earlier versions it has seen since 2026-11-05. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
 
 ### Definitions
 
@@ -494,11 +500,14 @@ Median veteran move per race (past race 50): 8 points
 
 #### Race tags
 
-Within a race, tags appear in the order record, first win, upset, photo, PB, milestone, badge.
+Within a race, tags appear in the order mode record, preset record, first win, upset, photo, PB, milestone, badge.
 
 Each kind has its own colour, and so does the Hardest preset tag. The colour fills the tag's dot and outlines its pill. The colours stay distinct from each other under colour-blind simulation, and every tag names its kind, so colour is never the only cue.
 
+The two record tags are the exception: they share the PB tag's green, because a record is a PB for the whole ladder, and they shine instead. Their pill has a green-tinted fill and a soft glow, their dot is a four-point sparkle, and a sheen sweeps across them every four seconds. With reduced motion the sheen stays still and the rest remains.
+
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
+- **Preset record:** the race's fastest time beats the preset's record in whole seconds, and the race does not set a mode record. A mode record always beats the preset's record too, so a race carries one record tag at most, the wider one. The first race in a preset sets the baseline and is not tagged. A race without a preset has no preset record.
 - **First win:** the racer's first place-1 result in any mode.
 - **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite. 3.7% of races qualify.
 - **Photo finish:** places 1 and 2 are both timed finishers separated by less than 5 seconds. The margin uses the exact times.
@@ -665,14 +674,21 @@ The banner crowns the top-rated racer in each category: **Overall**, then every 
 - **Who:** a tile shows exactly the top of the leaderboard sorted by rating in its category: the whole archive, no filters, and no decay, so a leader keeps the crown until someone rates higher.
 - **Ties:** ranks are competition ranks, so racers tied at the top share one tile. It shows up to three avatars, names the first two in name order, and adds **+N** for the rest.
 - **Tile:** the category, the avatar, the name and the rating. Each name links to that racer's page, opened on the tile's mode (**All modes** for Overall). A category where nobody is rated has no tile.
+- **Runners-up:** under the leader, the next five racers in the category, as small avatars side by side, in rank order and then name order. Tied leaders are not repeated there. Hovering or focusing one shows its rank, name and rating, such as "#2 Alice · 1834", and clicking it opens that racer's page on the tile's mode. A category with fewer rated racers shows fewer.
 - **Layout:** one row that keeps names whole and scrolls sideways when it is wider than the screen.
 
 ### Latest results
 
 - Each race shows its [race tags](#race-tags). Expanding a race lists each entrant with their change in that race's mode rating.
+- **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the tags drop to a line under the name.
 - **CR and CPH** (see [Chest counts](#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race.
-- The sidebar holds **Your racers**, the **Featured daily racer**, **Fact of the day** and **Latest badges**, in that order.
+- The sidebar holds **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order.
 - **Latest badges** lists the 12 most recent unlocks by anyone, however long ago. Clicking a badge opens its holders panel, as on a racer page.
+- **Latest avatars** shows the 6 racers whose avatar changed most recently, newest first, each with how long ago the change was first seen. The section is hidden when there are none. A racer's avatar follows the [Pokémon avatars](#pokémon-avatars) precedence, so two kinds of change count, and the later one dates the racer:
+  - **Upload:** the racer's mirrorable racetime.gg upload changed, appeared or went. `avatar_mirror.py` sorts a racer's avatar observations as it does to pick the current avatar (see [Privacy](#privacy)), and compares their mirrored file names, so an upload that cannot be mirrored counts as none. A change needs an earlier observation with a different value; its time is the first observation of the current value after the last different one. A racer whose upload went shows the random Pokémon that replaced it. An upload change does not count while a favourite Pokémon hides the upload.
+  - **Favourite:** the favourite Pokémon named in the racer's bio was added, switched or removed. `pokemon_avatars.py` reads the favourite of each bio in the racer's [bio history](#bios), oldest first; the change is the last bio whose favourite differs from the one before it, at that bio's `since`. An edit that keeps the same favourite is not a change.
+  - **Not counted:** a racer's first avatar, so a new racer is not listed, and a random Pokémon that moves because other racers changed (see [Pokémon avatars](#pokémon-avatars)).
+  - **When:** the archive can only date what it saw, so a change is dated by the sync that first saw it, and nothing from before the archive tracked it is known. The leaderboards are synced every two hours. A bio is only checked after its racer races, so a favourite picked between races is dated by the check after their next race; bio history began on 2026-11-05. The leaderboard file keeps only each racer's latest upload, so a switch back to an earlier picture before any race file recorded the one in between leaves no trace. The page shows the Eastern Time date; changes on the same day are ordered by the exact time first seen.
 
 #### Featured daily racer
 

@@ -12,6 +12,7 @@ from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import participant_stats`.
 try:
@@ -23,7 +24,7 @@ except ImportError:
     import pokemon_avatars
 
 
-PARTICIPANT_SCHEMA_VERSION = 10
+PARTICIPANT_SCHEMA_VERSION = 11
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -230,7 +231,7 @@ def build_participant_payload(
     current_names: Mapping[str, str] | None = None,
     envelopes: list[JsonObject] | None = None,
     avatar_observations: Mapping[str, list[str | None]] | None = None,
-    bios: Mapping[str, list[str | None]] | None = None,
+    bios: Mapping[str, list] | None = None,
     pokemon: pokemon_avatars.Catalogue | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
@@ -287,12 +288,8 @@ def build_participant_payload(
         if user_id in names:
             names[user_id] = name
 
-    avatars = {
-        user_id: avatar_mirror.mirror_name(url)
-        for user_id, url in avatar_mirror.current_avatar_urls(
-            envelopes or [], avatar_observations or {}
-        ).items()
-    }
+    racetime_urls = avatar_mirror.current_avatar_urls(envelopes or [], avatar_observations or {})
+    avatars = {user_id: avatar_mirror.mirror_name(url) for user_id, url in racetime_urls.items()}
     if pokemon is not None:
         order = sorted(names, key=lambda user_id: (first_race[user_id], user_id))
         avatars.update(pokemon_avatars.assign(order, set(avatars), bios or {}, pokemon))
@@ -300,6 +297,35 @@ def build_participant_payload(
     ordered_players = sorted(names.items(), key=lambda item: (item[1].casefold(), item[0]))
     players = [{"id": user_id, "name": name} for user_id, name in ordered_players]
     player_index = {user_id: index for index, (user_id, _name) in enumerate(ordered_players)}
+
+    # Racers whose avatar changed, newest first. A favourite change always counts. An
+    # upload change, including its removal, counts unless a favourite hides the upload.
+    # Random Pokémon picks never count: they can reshuffle when other racers change.
+    zone = ZoneInfo(timezone_name)
+    upload_changes = avatar_mirror.avatar_change_times(envelopes or [], avatar_observations or {})
+    favourite_changes: dict[str, datetime] = {}
+    favourite_holders: set[str] = set()
+    if pokemon is not None:
+        favourite_changes = pokemon_avatars.favourite_change_times(bios or {}, pokemon)
+        favourite_holders = {
+            user_id
+            for user_id, entry in (bios or {}).items()
+            if pokemon_avatars.favourite_pokemon(entry[0], pokemon) is not None
+        }
+    changed = []
+    for user_id, index in player_index.items():
+        if user_id not in avatars:  # nothing published, e.g. no catalogue and no upload
+            continue
+        times = [favourite_changes.get(user_id)]
+        if user_id not in favourite_holders:
+            times.append(upload_changes.get(user_id))
+        times = [changed_at for changed_at in times if changed_at is not None]
+        if times:
+            changed.append((max(times), index))
+    changed.sort(key=lambda item: (-item[0].timestamp(), item[1]))
+    avatar_changes = [
+        [index, changed_at.astimezone(zone).date().isoformat()] for changed_at, index in changed
+    ]
 
     modes = sorted({row["mode"] for row in staged})
     mode_index = {mode: index for index, mode in enumerate(modes)}
@@ -405,6 +431,7 @@ def build_participant_payload(
         "preset_min_races": highlights.PRESET_MIN_RACES,
         "blowout_min_field": highlights.BLOWOUT_MIN_FIELD,
         "players": players,
+        "avatar_changes": avatar_changes,
         "races": races,
         "leaderboards": leaderboards,
         "badges": derived["badges"],

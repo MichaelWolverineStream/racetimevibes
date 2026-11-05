@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 10;
+const PARTICIPANT_SCHEMA_VERSION = 11;
 const ALL_MODES = "all";
 // Races with a missing or malformed mode prefix; a bucket, not a category.
 const UNKNOWN_MODE = "unknown";
@@ -118,6 +118,19 @@ function validateParticipants(data) {
   const modes = data.leaderboards.map((board) => board.mode);
   if (modes[0] !== ALL_MODES) {
     throw new Error("Racer data is missing the combined leaderboard.");
+  }
+  if (
+    !Array.isArray(data.avatar_changes) ||
+    !data.avatar_changes.every((change) => (
+      Array.isArray(change) &&
+      Number.isInteger(change[0]) &&
+      change[0] >= 0 &&
+      change[0] < data.players.length &&
+      typeof change[1] === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(change[1])
+    ))
+  ) {
+    throw new Error("Racer data contains an invalid avatar change.");
   }
 }
 

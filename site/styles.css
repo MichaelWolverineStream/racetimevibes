@@ -77,8 +77,10 @@
   --mode-6: #008300;
   --mode-7: #6250d6;
   --mode-8: #e34948;
-  /* One hue per race-tag kind, in race-tag order with Hardest last; every pair stays apart under colour-blind simulation. */
-  --tag-record: var(--gold);
+  /* One hue per race-tag kind, in race-tag order with Hardest last; every pair stays apart under colour-blind simulation.
+     The record kinds share PB's green on purpose: a record is a PB for the whole ladder. Their shine (ui.css) and labels tell them apart. */
+  --tag-record: var(--tag-pb);
+  --tag-preset-record: var(--tag-pb);
   --tag-first-win: #842375;
   --tag-upset: var(--red);
   --tag-photo: #3152a5;

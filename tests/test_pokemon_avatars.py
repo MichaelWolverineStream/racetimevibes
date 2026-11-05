@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts import pokemon_avatars, pokemon_images
+from scripts import pokemon_avatars, pokemon_images, race_archive
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -123,6 +123,58 @@ class FavouritePokemonTests(RealCatalogueCase):
 
     def test_name_stops_at_the_word_limit(self):
         self.check("favourite pokemon is pikachu " + "word " * 10, 25)
+
+
+class FavouriteChangeTimesTests(RealCatalogueCase):
+    PIKACHU = "favourite pokemon: Pikachu"
+    EEVEE = "favourite pokemon: Eevee"
+    T1 = "2026-10-01T00:00:00Z"
+    T2 = "2026-10-05T00:00:00Z"
+    T3 = "2026-10-09T00:00:00Z"
+
+    def changes(self, bio, since, earlier):
+        entry = {"u": [bio, "2026-11-01T00:00:00Z", since, earlier]}
+        return pokemon_avatars.favourite_change_times(entry, self.catalogue)
+
+    def instant(self, text):
+        return race_archive.parse_timestamp(text, "test time")
+
+    def test_an_added_favourite_is_dated_at_the_new_bio(self):
+        self.assertEqual(
+            self.changes(self.PIKACHU, self.T2, [["no idea", self.T1]]),
+            {"u": self.instant(self.T2)},
+        )
+
+    def test_a_switched_favourite_is_dated_at_the_new_bio(self):
+        self.assertEqual(
+            self.changes(self.EEVEE, self.T2, [[self.PIKACHU, self.T1]]),
+            {"u": self.instant(self.T2)},
+        )
+
+    def test_a_removed_favourite_is_dated_at_the_new_bio(self):
+        for current in ("no idea", None):
+            with self.subTest(current=current):
+                self.assertEqual(
+                    self.changes(current, self.T2, [[self.PIKACHU, self.T1]]),
+                    {"u": self.instant(self.T2)},
+                )
+
+    def test_an_unrelated_edit_keeps_the_date_of_the_favourite_change(self):
+        earlier = [[None, None], [self.PIKACHU, self.T1]]
+        self.assertEqual(
+            self.changes(self.PIKACHU + ". I stream!", self.T3, earlier),
+            {"u": self.instant(self.T1)},
+        )
+
+    def test_an_entry_without_history_has_no_change(self):
+        self.assertEqual(self.changes(self.PIKACHU, None, []), {})
+
+    def test_never_naming_a_favourite_has_no_change(self):
+        self.assertEqual(self.changes("hello", self.T3, [["hi", None], [None, self.T1]]), {})
+
+    def test_the_same_favourite_through_several_edits_has_no_change(self):
+        earlier = [[self.PIKACHU, None], [self.PIKACHU + " !", self.T1]]
+        self.assertEqual(self.changes("fav pokemon: Pikachu :)", self.T3, earlier), {})
 
 
 class AssignTests(RealCatalogueCase):

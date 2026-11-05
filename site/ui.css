@@ -182,6 +182,10 @@
   --kind-color: var(--tag-record);
 }
 
+.ui-tag--preset_record {
+  --kind-color: var(--tag-preset-record);
+}
+
 .ui-tag--first_win {
   --kind-color: var(--tag-first-win);
 }
@@ -208,6 +212,37 @@
 
 .ui-tag--hardest {
   --kind-color: var(--tag-hardest);
+}
+
+/* Record tags share PB's green but shine: a tinted fill, a glow, a sparkle for a dot
+   and a sheen that sweeps across now and then. Reduced motion keeps all but the sweep. */
+.ui-tag--record,
+.ui-tag--preset_record {
+  background:
+    linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.7) 50%, transparent 60%) no-repeat 200% 0 / 250% 100%,
+    color-mix(in srgb, var(--kind-color) 14%, var(--panel));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--kind-color) 45%, transparent);
+  animation: ui-tag-shine 4s ease-in-out infinite;
+}
+
+.ui-tag--record .ui-tag__dot,
+.ui-tag--preset_record .ui-tag__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 0;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+
+/* With the sheen 2.5 times the pill's width, 200% parks it off the left edge and -100% off
+   the right; it sweeps in the first 35% of each cycle and rests out of sight for the rest. */
+@keyframes ui-tag-shine {
+  0% {
+    background-position: 200% 0, 0 0;
+  }
+  35%,
+  100% {
+    background-position: -100% 0, 0 0;
+  }
 }
 
 .ui-tag--new {
@@ -556,7 +591,9 @@ tr:focus-within .follow-star--row,
 
   .ui-badge-panel,
   .ui-dialog,
-  .palindrome-spark--twinkle {
+  .palindrome-spark--twinkle,
+  .ui-tag--record,
+  .ui-tag--preset_record {
     animation: none;
   }
 

@@ -124,6 +124,71 @@ class PersonalBestTests(unittest.TestCase):
         self.assertEqual(result["players"][1]["pbs"], {})
 
 
+class PresetRecordTests(unittest.TestCase):
+    presets = ({"m": 0, "n": "Easy"}, {"m": 0, "n": "Hard"})
+
+    def test_first_race_in_a_preset_is_the_baseline_and_untagged(self):
+        result = run([duel(0, 1, preset=0)], presets=self.presets)
+        self.assertEqual(tags_of(result, 0, "preset_record"), [])
+
+    def test_improvement_is_tagged_with_the_previous_record(self):
+        # Preset 1 holds the mode record, so preset 0's race is not a mode record.
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=1),
+            duel(0, 1, first_seconds=3600.0, preset=0),
+            duel(2, 1, first_seconds=3500.0, preset=0, day=1),
+        ]
+        result = run(records, presets=self.presets)
+        self.assertEqual(tags_of(result, 2, "preset_record"), [["preset_record", 2, 3500, 3600]])
+        self.assertEqual(tags_of(result, 2, "record"), [])
+
+    def test_equal_or_sub_second_improvements_are_not_tagged(self):
+        for second in (3600.0, 3599.6, 3600.4):
+            with self.subTest(second=second):
+                records = [
+                    duel(0, 1, first_seconds=3000.0, preset=1),
+                    duel(0, 1, first_seconds=3600.0, preset=0),
+                    duel(0, 1, first_seconds=second, preset=0, day=1),
+                ]
+                result = run(records, presets=self.presets)
+                self.assertEqual(tags_of(result, 2, "preset_record"), [])
+
+    def test_a_mode_record_is_not_also_a_preset_record(self):
+        records = [
+            duel(0, 1, first_seconds=3600.0, preset=0),
+            duel(2, 1, first_seconds=3500.0, preset=0, day=1),
+        ]
+        result = run(records, presets=self.presets)
+        self.assertEqual(len(tags_of(result, 1, "record")), 1)
+        self.assertEqual(tags_of(result, 1, "preset_record"), [])
+
+    def test_each_preset_keeps_its_own_record(self):
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=0),
+            duel(0, 1, first_seconds=3500.0, preset=1, day=1),
+            duel(0, 1, first_seconds=3400.0, preset=1, day=2),
+        ]
+        result = run(records, presets=self.presets)
+        # B's first race is its own baseline, not a record against A's faster time.
+        self.assertEqual(tags_of(result, 1, "preset_record"), [])
+        self.assertEqual(tags_of(result, 2, "preset_record"), [["preset_record", 0, 3400, 3500]])
+
+    def test_races_without_a_preset_or_times_do_not_tag(self):
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=0),
+            duel(0, 1, first_seconds=2000.0, day=1),
+            record([dnf(0), dq(1)], preset=0, day=2),
+        ]
+        result = run(records, presets=self.presets)
+        for index in range(3):
+            self.assertEqual(tags_of(result, index, "preset_record"), [])
+
+    def test_preset_record_sits_right_after_record_in_the_tag_order(self):
+        kinds = highlights.TAG_KINDS
+        self.assertEqual(kinds.index("preset_record"), kinds.index("record") + 1)
+        self.assertIn("preset_record", run([duel(0, 1)])["diagnostics"]["tag_counts"])
+
+
 class ModeRecordTests(unittest.TestCase):
     def test_first_race_sets_baseline_without_tag(self):
         result = run([duel(0, 1)])
