@@ -5,6 +5,8 @@ const RacerExtras = (() => {
   // No axis titles: the heading above the chart names the measure.
   const RATING_MARGIN = { top: 20, right: 18, bottom: 28, left: 44 };
   const RATING_CHART_ID = "player-rating";
+  // Keeps the heading's bubble to about two lines; the whole comment shows on hover.
+  const QUOTE_MAX_LENGTH = 80;
 
   let renderedPlayer = null;
   let quoteToken = 0;
@@ -40,8 +42,11 @@ const RacerExtras = (() => {
   function renderFollow(playerIndex) {
     const player = participants.players[playerIndex];
     const star = UI.followStar(playerIndex);
+    // Both words share one grid cell, so the label keeps the longer word's width and following a
+    // racer never shifts the star, which sits at the right end of the heading's top line.
     const label = element("span", "player-follow__label");
     label.dataset.playerId = player.id;
+    label.append(element("span", "player-follow__word player-follow__word--off", "Follow"), element("span", "player-follow__word player-follow__word--on", "Following"));
     label.addEventListener("click", () => star.click());
     syncFollowLabel(label);
     document.querySelector("#player-follow").replaceChildren(star, label);
@@ -57,7 +62,7 @@ const RacerExtras = (() => {
   }
 
   function syncFollowLabel(label) {
-    label.textContent = Following.has(label.dataset.playerId) ? "Following" : "Follow";
+    label.dataset.following = String(Following.has(label.dataset.playerId));
   }
 
   function commentsFor(data, playerIndex) {
@@ -78,7 +83,9 @@ const RacerExtras = (() => {
     const race = participants.races[comment.raceIndex];
     const entry = race.e[entryOf(race, playerIndex)];
     const place = isFinisher(entry) ? ordinal(entry[1]) : entry[2] === DQ_STATUS ? "DQ" : "DNF";
-    return UI.speech(comment.text, {
+    const cut = comment.text.length > QUOTE_MAX_LENGTH;
+    const shown = cut ? `${comment.text.slice(0, QUOTE_MAX_LENGTH - 1).trimEnd()}…` : comment.text;
+    const speech = UI.speech(shown, {
       size: "hero",
       context: [
         { text: modeLabel(participants.modes[race.m]) },
@@ -86,6 +93,10 @@ const RacerExtras = (() => {
         { text: UI.relativeDay(race.d), href: `${RACE_ROOT}${race.r}`, tooltip: formatRaceDate(race.d) },
       ],
     });
+    if (cut) {
+      bindTooltip(speech.querySelector(".ui-speech__bubble"), comment.text);
+    }
+    return speech;
   }
 
   function renderQuote(playerIndex) {
@@ -152,37 +163,27 @@ const RacerExtras = (() => {
     );
   }
 
-  function bestPresetTile(bestPreset) {
-    const [presetIndex, ratio] = bestPreset;
-    const preset = participants.presets[presetIndex];
-    const faster = Math.round((1 - ratio) * 100);
-    const item = tile("Best preset");
-    item.append(element("strong", "pb-preset", preset.n));
-    item.append(element("span", "pb-note", `${modeLabel(participants.modes[preset.m])} · ${faster > 0 ? `${faster}% faster than field` : "at field median"}`));
+  // The rank and provisional mark follow the same rules as the rating chart's standing line.
+  function ratingTile(playerIndex, modeId) {
+    const rating = ratingFor(participants.players[playerIndex], modeId);
+    const item = modeId === ALL_MODES ? tile("Overall rating") : tile(modeLabel(modeId), modeId);
+    item.append(element("strong", null, ratingText(rating)));
+    if (rating === null) {
+      item.append(element("span", "rating-note", "Unrated"));
+      return item;
+    }
+    const rank = `#${integerFormatter.format(ratingRank(playerIndex, modeId))} of ${integerFormatter.format(ratingRanks(modeId).size)}`;
+    const provisional = rating.finishes < participants.rating.provisional_finishes ? " · provisional" : "";
+    item.append(element("span", "rating-note", `${rank}${provisional}`));
+    bindTooltip(item, ratingTooltip(modeId));
     return item;
   }
 
-  function renderPbs(playerIndex) {
+  // Overall always; a mode only once the racer has a rating there.
+  function renderRatings(playerIndex) {
     const player = participants.players[playerIndex];
-    const tiles = [];
-    participants.modes.forEach((mode, modeIndex) => {
-      const steps = player.pbs[String(modeIndex)];
-      if (!steps || !steps.length) {
-        return;
-      }
-      const [raceIndex, seconds] = steps[steps.length - 1];
-      const item = tile(modeLabel(mode), mode);
-      const value = element("strong");
-      value.append(UI.time(seconds));
-      item.append(value, element("span", "pb-note", formatRaceDate(participants.races[raceIndex].d)));
-      tiles.push(item);
-    });
-    if (player.best_preset) {
-      tiles.push(bestPresetTile(player.best_preset));
-    }
-    const host = document.querySelector("#player-pbs");
-    host.hidden = !tiles.length;
-    host.replaceChildren(...tiles);
+    const categories = ratingCategories().filter((modeId) => modeId === ALL_MODES || ratingFor(player, modeId) !== null);
+    document.querySelector("#player-ratings").replaceChildren(...categories.map((modeId) => ratingTile(playerIndex, modeId)));
   }
 
   function niceStep(range) {
@@ -398,26 +399,55 @@ const RacerExtras = (() => {
     mountChart(host, (width) => (days.length ? ratingChart(days, player.name, width, modeId) : emptyMessage("No rating yet.")));
   }
 
-  function valueTile(label, ...value) {
-    const item = tile(label);
-    const strong = element("strong", "summary-value");
-    strong.append(...value);
-    item.append(strong);
+  // The heading's stats card: each tile is a label over a value, and some add a meter under it.
+  function stat(label, value, className = "player-stat", extra = null) {
+    const item = element("div", className);
+    item.append(element("span", "summary-label", label), value);
+    if (extra) {
+      item.append(extra);
+    }
     return item;
   }
 
-  function rivalTile(label, matchup) {
+  // A thin bar filled to a share from 0 to 1, or nothing when there is no share.
+  function meter(fraction) {
+    if (fraction === null) {
+      return null;
+    }
+    const bar = element("span", "player-stat__meter");
+    bar.setAttribute("aria-hidden", "true");
+    bar.style.setProperty("--fill", String(fraction));
+    return bar;
+  }
+
+  // Firsts, seconds and thirds in the leaderboard's medal colours.
+  function podiums(row) {
+    const value = element("strong", "player-stat__value");
+    if (!row) {
+      value.textContent = "--";
+      return value;
+    }
+    const counts = [["first", row.first], ["second", row.second], ["third", row.third]];
+    counts.forEach(([medal, count], index) => {
+      if (index) {
+        value.append(element("span", "player-stat__sep", "·"));
+      }
+      value.append(element("span", `medal-count--${medal}`, String(count)));
+    });
+    return value;
+  }
+
+  function rivalStat(label, matchup, outcome) {
     if (!matchup) {
-      return valueTile(label, "--");
+      return stat(label, element("strong", "player-stat__value", "--"), "player-stat player-stat--rival");
     }
     const player = participants.players[matchup.opponent];
-    const item = tile(label);
-    const row = element("div", "summary-value rival");
+    const row = element("div", "rival");
     const link = element("a", "rival__name", player.name);
     link.href = playerHash(player.id, ALL_MODES);
-    row.append(UI.avatar(matchup.opponent, RIVAL_AVATAR_SIZE), link, element("strong", "rival__record", `${matchup.wins}-${matchup.losses}`));
-    item.append(row);
-    return item;
+    const record = element("strong", `rival__record rival__record--${outcome}`, `${matchup.wins}-${matchup.losses}`);
+    row.append(UI.avatar(matchup.opponent, RIVAL_AVATAR_SIZE), link, record);
+    return stat(label, row, "player-stat player-stat--rival");
   }
 
   function rivals(playerIndex) {
@@ -431,29 +461,23 @@ const RacerExtras = (() => {
     };
   }
 
-  // Every tile covers all modes and the whole archive, so the strip ignores the racer page's mode toggle.
+  // Every stat covers all modes and the whole archive, so the heading ignores the racer page's mode toggle.
   function renderSummary(playerIndex) {
     const player = participants.players[playerIndex];
     const board = participants.leaderboards.find((item) => item.mode === ALL_MODES);
     const row = board.rows.find((item) => item.p === playerIndex);
     const record = recordsForMode(ALL_MODES, ALL_RACES)[playerIndex];
-    const rank = ratingRank(playerIndex);
-    const rating =
-      rank === undefined
-        ? valueTile("Rank & Rating", "--")
-        : valueTile("Rank & Rating", `#${integerFormatter.format(rank)}`, element("span", "summary-value__joiner", "with"), ratingText(ratingFor(player)));
-    if (rank !== undefined) {
-      bindTooltip(rating, ratingTooltip());
-    }
+    const value = (text) => element("strong", "player-stat__value", text);
     const { nemesis, victim } = rivals(playerIndex);
+    const rate = winRate(record.wins, record.losses);
+    const earned = Object.keys(player.badges).length;
+    const total = participants.badges.length;
     document.querySelector("#player-summary").replaceChildren(
-      rating,
-      valueTile("Podiums", row ? `${row.first} / ${row.second} / ${row.third}` : "--"),
-      valueTile("Record W-L-D", `${record.wins}-${record.losses}-${record.draws}`),
-      valueTile("H2H Win Rate", formatRate(winRate(record.wins, record.losses))),
-      valueTile("Badges", `${Object.keys(player.badges).length} / ${participants.badges.length}`),
-      rivalTile("Nemesis", nemesis),
-      rivalTile("Favourite Victim", victim),
+      stat("Podiums", podiums(row)),
+      stat("H2H Win Rate", value(formatRate(rate)), "player-stat", meter(rate)),
+      stat("Badges", value(`${earned} / ${total}`), "player-stat", meter(total ? earned / total : null)),
+      rivalStat("Nemesis", nemesis, "loss"),
+      rivalStat("Favourite Victim", victim, "win"),
     );
   }
 
@@ -463,7 +487,7 @@ const RacerExtras = (() => {
       renderHeading(playerIndex);
       renderSummary(playerIndex);
       renderBadges(playerIndex);
-      renderPbs(playerIndex);
+      renderRatings(playerIndex);
     }
   }
 

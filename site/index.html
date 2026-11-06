@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="0aa623e33061">
+    <meta name="app-version" content="1e4b7771f6cc">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=0aa623e33061">
-    <link rel="stylesheet" href="ui.css?v=0aa623e33061">
-    <link rel="stylesheet" href="feed.css?v=0aa623e33061">
-    <link rel="stylesheet" href="top-rated.css?v=0aa623e33061">
-    <link rel="stylesheet" href="records.css?v=0aa623e33061">
-    <link rel="stylesheet" href="racer-extras.css?v=0aa623e33061">
-    <link rel="stylesheet" href="share-card.css?v=0aa623e33061">
-    <link rel="stylesheet" href="easter-eggs.css?v=0aa623e33061">
+    <link rel="stylesheet" href="styles.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="ui.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="feed.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="top-rated.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="records.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="racer-extras.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="share-card.css?v=1e4b7771f6cc">
+    <link rel="stylesheet" href="easter-eggs.css?v=1e4b7771f6cc">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -273,22 +273,29 @@
       <section id="player-view" class="player-view" hidden aria-labelledby="player-name">
         <article class="chart-panel chart-panel--racers chart-panel--player">
           <header class="panel-heading">
-            <div>
+            <div class="player-heading__links">
               <a class="back-link" href="#leaderboard">&larr; All racers</a>
-              <span id="player-follow" class="player-follow"></span>
-              <span id="player-share"></span>
-              <div class="player-identity">
-                <div id="player-avatar" class="player-avatar"></div>
-                <h2 id="player-name" tabindex="-1">Racer</h2>
+              <div class="player-heading__actions">
+                <span id="player-follow" class="player-follow"></span>
+                <span id="player-share"></span>
               </div>
             </div>
-            <div class="player-heading-side">
+            <h2 id="player-name" tabindex="-1">Racer</h2>
+            <div class="player-profile">
+              <div id="player-avatar" class="player-avatar"></div>
               <div id="player-quote" class="player-quote" aria-live="polite"></div>
             </div>
+            <div id="player-summary" class="player-summary"></div>
           </header>
-          <div id="player-summary" class="summary-strip player-summary"></div>
+          <div id="player-ratings" class="player-ratings" role="group" aria-label="Player rating"></div>
           <div id="player-badges" class="player-badges"></div>
-          <div id="player-pbs" class="player-pbs"></div>
+          <section class="player-results" aria-labelledby="player-results-title">
+            <div class="heatmap-heading">
+              <h3 id="player-results-title">Latest results</h3>
+              <p>Their own result in each race · open one for the full field</p>
+            </div>
+            <div id="player-results" class="player-results__list"></div>
+          </section>
           <div class="leaderboard-controls">
             <div
               id="player-mode-toggle"
@@ -347,18 +354,18 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=0aa623e33061" defer></script>
-    <script src="racer-charts.js?v=0aa623e33061" defer></script>
-    <script src="store.js?v=0aa623e33061" defer></script>
-    <script src="ui.js?v=0aa623e33061" defer></script>
-    <script src="top-rated.js?v=0aa623e33061" defer></script>
-    <script src="feed.js?v=0aa623e33061" defer></script>
-    <script src="records.js?v=0aa623e33061" defer></script>
-    <script src="racer-extras.js?v=0aa623e33061" defer></script>
-    <script src="share-card.js?v=0aa623e33061" defer></script>
-    <script src="easter-eggs.js?v=0aa623e33061" defer></script>
-    <script src="leaderboard.js?v=0aa623e33061" defer></script>
-    <script src="version-check.js?v=0aa623e33061" defer></script>
-    <script src="visitor-counter.js?v=0aa623e33061" defer></script>
+    <script src="app.js?v=1e4b7771f6cc" defer></script>
+    <script src="racer-charts.js?v=1e4b7771f6cc" defer></script>
+    <script src="store.js?v=1e4b7771f6cc" defer></script>
+    <script src="ui.js?v=1e4b7771f6cc" defer></script>
+    <script src="top-rated.js?v=1e4b7771f6cc" defer></script>
+    <script src="feed.js?v=1e4b7771f6cc" defer></script>
+    <script src="records.js?v=1e4b7771f6cc" defer></script>
+    <script src="racer-extras.js?v=1e4b7771f6cc" defer></script>
+    <script src="share-card.js?v=1e4b7771f6cc" defer></script>
+    <script src="easter-eggs.js?v=1e4b7771f6cc" defer></script>
+    <script src="leaderboard.js?v=1e4b7771f6cc" defer></script>
+    <script src="version-check.js?v=1e4b7771f6cc" defer></script>
+    <script src="visitor-counter.js?v=1e4b7771f6cc" defer></script>
   </body>
 </html>

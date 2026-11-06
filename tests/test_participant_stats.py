@@ -565,12 +565,14 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 11)
+        self.assertEqual(result["schema_version"], 12)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
-                        "progress", "pbs", "streaks", "best_preset"):
+                        "progress", "streaks"):
                 self.assertIn(key, player)
             self.assertNotIn("rd", player)
+            self.assertNotIn("pbs", player)
+            self.assertNotIn("best_preset", player)
             self.assertNotIn("provisional", player)
         for race_row in result["races"]:
             for entry in race_row["e"]:
@@ -984,7 +986,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 11)
+        self.assertEqual(self.participants["schema_version"], 12)
         for key in ("presets", "hardest_preset", "avatar_changes", "badges", "records", "facts", "rating"):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
@@ -1052,9 +1054,11 @@ class GeneratedParticipantDataTests(unittest.TestCase):
     def test_every_player_has_the_rating_fields(self):
         for player in self.participants["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
-                        "progress", "pbs", "streaks", "best_preset"):
+                        "progress", "streaks"):
                 self.assertIn(key, player)
             self.assertNotIn("rd", player)
+            self.assertNotIn("pbs", player)
+            self.assertNotIn("best_preset", player)
             self.assertNotIn("provisional", player)
             self.assertIsInstance(player["rating"], int)
             self.assertIsInstance(player["mu"], float)

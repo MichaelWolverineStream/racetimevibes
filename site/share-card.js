@@ -587,7 +587,7 @@ const ShareCard = (() => {
         }
       },
     });
-    const title = element("h2", "ui-badge-panel__title", "Share card");
+    const title = element("h2", "ui-badge-panel__title", "Player card");
     title.id = TITLE_ID;
     const hint = element("p", "share-card__hint", `${model.name}'s ladder stats as a ${WIDTH} × ${HEIGHT} image, ready to paste into Discord.`);
     const frame = element("div", "share-card__frame share-card__frame--pending");
@@ -643,7 +643,7 @@ const ShareCard = (() => {
     const control = element("button", "player-share");
     control.type = "button";
     control.setAttribute("aria-haspopup", "dialog");
-    control.append(shareIcon(), element("span", null, "Share"));
+    control.append(shareIcon(), element("span", null, "Create player card"));
     control.addEventListener("click", () => open(playerIndex));
     return control;
   }

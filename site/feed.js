@@ -1,5 +1,7 @@
 const Feed = (() => {
   const PAGE_SIZE = 20;
+  // A racer page opens on their latest few races; "Show more" still adds a full page.
+  const RACER_FIRST_PAGE = 5;
   const MAX_VISIBLE_TAGS = 4;
   const MAX_TAG_DETAILS = 5;
   const HERO_MIN_LENGTH = 12;
@@ -33,13 +35,12 @@ const Feed = (() => {
     day: "numeric",
     timeZone: "UTC",
   });
+  const rowDateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+  const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
 
   let started = false;
-  let shownCount = 0;
-  let lastRenderedDay = null;
   let firstNewIndex = 0;
-  let feedList = null;
-  let moreButton = null;
+  let racerShown = null;
   const raceIndexByName = new Map();
 
   function element(tag, className, text = null) {
@@ -235,9 +236,8 @@ const Feed = (() => {
     return descriptions;
   }
 
-  function tagCell(race) {
+  function tagCell(descriptions) {
     const cell = element("span", "feed-row__tags");
-    const descriptions = raceTagDescriptions(race);
     descriptions.slice(0, MAX_VISIBLE_TAGS).forEach(({ kind, label, detail }) => {
       cell.appendChild(UI.tag(kind, label, detail));
     });
@@ -262,13 +262,16 @@ const Feed = (() => {
     return describeTag(tag);
   }
 
-  function entrantTagCell(race, playerIndex) {
-    const cell = element("span", "feed-entrant__tags");
-    (race.t || [])
+  function entrantTagDescriptions(race, playerIndex) {
+    return (race.t || [])
       .filter((tag) => tag[1] === playerIndex)
       .map(tagDescription)
-      .filter(Boolean)
-      .forEach(({ kind, label, detail }) => cell.appendChild(UI.tag(kind, label, detail)));
+      .filter(Boolean);
+  }
+
+  function entrantTagCell(race, playerIndex) {
+    const cell = element("span", "feed-entrant__tags");
+    entrantTagDescriptions(race, playerIndex).forEach(({ kind, label, detail }) => cell.appendChild(UI.tag(kind, label, detail)));
     return cell;
   }
 
@@ -284,6 +287,10 @@ const Feed = (() => {
     return cell;
   }
 
+  function presetCell(race) {
+    return element("span", "feed-row__preset", race.p === null || race.p === undefined ? "" : participants.presets[race.p].n);
+  }
+
   function winnerCell(race) {
     const cell = element("span", "feed-row__winner");
     const winner = race.e.find((entry) => entry[1] === 1 && entry[2] === 0);
@@ -293,6 +300,14 @@ const Feed = (() => {
     }
     cell.append(placePill(1), UI.avatar(winner[0], 24), playerLink(winner[0], "racer-link"));
     return { cell, winner };
+  }
+
+  // A finisher's time, or why there is none.
+  function resultTime(status, seconds) {
+    if (status === 0 && seconds !== null) {
+      return UI.time(seconds);
+    }
+    return document.createTextNode(status === STATUS_DQ ? "DQ" : status === STATUS_DNF ? "DNF" : "—");
   }
 
   function ratingDeltaNode(raceIndex, entryIndex) {
@@ -320,11 +335,7 @@ const Feed = (() => {
     const nameCell = element("span", "feed-entrant__name");
     nameCell.append(UI.avatar(playerIndex, 20), playerLink(playerIndex, "racer-link"));
     const timeCell = element("span", "feed-entrant__time");
-    if (status === 0 && seconds !== null) {
-      timeCell.appendChild(UI.time(seconds));
-    } else {
-      timeCell.textContent = status === STATUS_DQ ? "DQ" : status === STATUS_DNF ? "DNF" : "—";
-    }
+    timeCell.appendChild(resultTime(status, seconds));
     const chestsCell = element("span", "feed-entrant__chests");
     const perHourCell = element("span", "feed-entrant__cph");
     const deltaCell = element("span", "feed-entrant__delta");
@@ -368,12 +379,19 @@ const Feed = (() => {
     });
   }
 
-  function buildDetail(race, raceIndex, detailId) {
+  // focus, when set, is the racer whose own row stands out among the entrants.
+  function buildDetail(race, raceIndex, detailId, focus) {
     const detail = element("div", "feed-row__detail");
     detail.id = detailId;
     detail.hidden = true;
     const entrants = element("ol", "feed-entrants");
-    race.e.forEach((entry, entryIndex) => entrants.appendChild(entrantRow(race, raceIndex, entry, entryIndex)));
+    race.e.forEach((entry, entryIndex) => {
+      const row = entrantRow(race, raceIndex, entry, entryIndex);
+      if (entry[0] === focus) {
+        row.classList.add("feed-entrant--focus");
+      }
+      entrants.appendChild(row);
+    });
     const link = element("a", "feed-row__external", "racetime.gg ↗");
     link.href = RACE_ROOT + race.r;
     link.target = "_blank";
@@ -392,21 +410,104 @@ const Feed = (() => {
     return dayFormatter.format(new Date(`${isoDate}T00:00:00Z`)).toUpperCase();
   }
 
-  function raceRow(race, raceIndex) {
-    const wrapper = element("div", "feed-row");
-    const line = element("div", "feed-row__line");
-    const detailId = `feed-detail-${raceIndex}`;
+  function dayHeading(race) {
+    return { key: race.d, label: dayLabel(race.d) };
+  }
 
+  function monthHeading(race) {
+    return { key: race.d.slice(0, 7), label: monthFormatter.format(new Date(`${race.d}T00:00:00Z`)).toUpperCase() };
+  }
+
+  // The home feed's row: the race and its winner.
+  function winnerCells(race, raceIndex) {
     const newDot = element("span", "feed-row__new");
     if (raceIndex >= firstNewIndex) {
       newDot.classList.add("feed-row__new--visible");
       newDot.setAttribute("role", "img");
       newDot.setAttribute("aria-label", "New");
     }
-    const preset = race.p === null || race.p === undefined ? "" : participants.presets[race.p].n;
     const { cell: winner, winner: winnerEntry } = winnerCell(race);
     const time = element("span", "feed-row__time");
     time.appendChild(winnerEntry && winnerEntry[3] !== null ? UI.time(winnerEntry[3]) : document.createTextNode("—"));
+    return [
+      newDot,
+      element("span", "feed-row__hour", fullHour(race.h)),
+      modeCell(race),
+      presetCell(race),
+      winner,
+      time,
+      element("span", "feed-row__field", `${race.n} racers`),
+      tagCell(raceTagDescriptions(race)),
+    ];
+  }
+
+  // The racer's comment and chest count live in comments.json, which loads separately, so they
+  // fill in once it arrives. CR and CPH come from the same call as the expanded race's, so they match.
+  function fillFocusCells(race, entry, commentCell, chestsCell) {
+    const pending = UI.comments();
+    if (!pending) {
+      return;
+    }
+    pending.then((payload) => {
+      const [playerIndex, , status, seconds] = entry;
+      const userId = participants.players[playerIndex].id;
+      const entries = payload && payload.races ? payload.races[race.r] : null;
+      const own = (entries || []).find(([commenter]) => commenter === userId);
+      if (own) {
+        commentCell.textContent = own[1];
+        bindTooltip(commentCell, own[1]);
+      }
+      const pace = status === 0 ? UI.chestPace(payload, race.r, userId, seconds) : null;
+      if (pace) {
+        const chests = element("span", null, String(pace.chests));
+        chests.append(element("span", "feed-entrant__unit", "CR"));
+        const perHour = element("span", null, String(pace.perHour));
+        perHour.append(element("span", "feed-entrant__unit", "CPH"));
+        chestsCell.append(chests, perHour);
+      }
+    });
+  }
+
+  // The racer page's row: the race and the racer's own result in it.
+  function focusCells(race, raceIndex, playerIndex) {
+    const entryIndex = race.e.findIndex((entry) => entry[0] === playerIndex);
+    const entry = race.e[entryIndex];
+    const [, place, status, seconds] = entry;
+    const when = element("span", "feed-row__when", `${rowDateFormatter.format(new Date(`${race.d}T00:00:00Z`))} · ${fullHour(race.h)}`);
+    const placeCell = element("span", "feed-row__place");
+    if (status === 0 && place !== null) {
+      placeCell.appendChild(placePill(place));
+    }
+    const comment = element("span", "feed-row__comment");
+    const time = element("span", "feed-row__time");
+    time.appendChild(resultTime(status, seconds));
+    const chests = element("span", "feed-row__chests");
+    const delta = element("span", "feed-row__delta");
+    const deltaNode = ratingDeltaNode(raceIndex, entryIndex);
+    if (deltaNode) {
+      delta.appendChild(deltaNode);
+    }
+    fillFocusCells(race, entry, comment, chests);
+    return [
+      when,
+      modeCell(race),
+      presetCell(race),
+      placeCell,
+      comment,
+      time,
+      element("span", "feed-row__field", `${race.n} racers`),
+      chests,
+      tagCell(entrantTagDescriptions(race, playerIndex)),
+      delta,
+    ];
+  }
+
+  // focus is null for the home feed, whose rows show the winner, or the racer whose own result
+  // each row shows. The prefix keeps detail ids unique when one race is on both lists.
+  function raceRow(race, raceIndex, { idPrefix, focus }) {
+    const wrapper = element("div", focus === null ? "feed-row" : "feed-row feed-row--racer");
+    const line = element("div", "feed-row__line");
+    const detailId = `${idPrefix}-detail-${raceIndex}`;
 
     const toggle = element("button", "feed-row__toggle", "▾");
     toggle.type = "button";
@@ -414,23 +515,13 @@ const Feed = (() => {
     toggle.setAttribute("aria-controls", detailId);
     toggle.setAttribute("aria-label", "Show entrants");
 
-    line.append(
-      newDot,
-      element("span", "feed-row__hour", fullHour(race.h)),
-      modeCell(race),
-      element("span", "feed-row__preset", preset),
-      winner,
-      time,
-      element("span", "feed-row__field", `${race.n} racers`),
-      tagCell(race),
-      toggle,
-    );
+    line.append(...(focus === null ? winnerCells(race, raceIndex) : focusCells(race, raceIndex, focus)), toggle);
     wrapper.appendChild(line);
 
     let detail = null;
     function toggleDetail() {
       if (!detail) {
-        detail = buildDetail(race, raceIndex, detailId);
+        detail = buildDetail(race, raceIndex, detailId, focus);
         wrapper.appendChild(detail);
       }
       const open = detail.hidden;
@@ -448,43 +539,68 @@ const Feed = (() => {
     return wrapper;
   }
 
-  // Returns the first row added, or null when every race is already shown.
-  function renderMoreRows() {
-    const races = participants.races;
-    const end = Math.min(races.length, shownCount + PAGE_SIZE);
-    let firstRow = null;
-    for (let offset = shownCount; offset < end; offset += 1) {
-      const raceIndex = races.length - 1 - offset;
-      const race = races[raceIndex];
-      if (race.d !== lastRenderedDay) {
-        lastRenderedDay = race.d;
-        feedList.appendChild(element("h3", "feed-day", dayLabel(race.d)));
-      }
-      const row = raceRow(race, raceIndex);
-      firstRow ??= row;
-      feedList.appendChild(row);
-    }
-    shownCount = end;
-    moreButton.hidden = shownCount >= races.length;
-    return firstRow;
-  }
+  // Lists the races, given newest first, with a heading wherever heading(race).key changes: firstPage
+  // rows at first, then a page more per click. Each list keeps its own pages.
+  function raceList(host, raceIndexes, { idPrefix, focus = null, heading, headingTag = "h3", firstPage = PAGE_SIZE }) {
+    const list = element("div", "feed-list");
+    const more = element("button", "mode-toggle__button feed-more", `Show ${PAGE_SIZE} more`);
+    more.type = "button";
+    let shown = 0;
+    let lastKey = null;
 
-  // Focus moves to the first new row, so keyboard users carry on where the list grew.
-  function showMoreRows() {
-    const firstRow = renderMoreRows();
-    if (firstRow) {
-      firstRow.querySelector(".feed-row__toggle").focus();
+    // Returns the first row added, or null when every race is already shown.
+    function renderMore(count) {
+      const end = Math.min(raceIndexes.length, shown + count);
+      let firstRow = null;
+      for (let offset = shown; offset < end; offset += 1) {
+        const raceIndex = raceIndexes[offset];
+        const race = participants.races[raceIndex];
+        const { key, label } = heading(race);
+        if (key !== lastKey) {
+          lastKey = key;
+          list.appendChild(element(headingTag, "feed-day", label));
+        }
+        const row = raceRow(race, raceIndex, { idPrefix, focus });
+        firstRow ??= row;
+        list.appendChild(row);
+      }
+      shown = end;
+      more.hidden = shown >= raceIndexes.length;
+      return firstRow;
     }
+
+    // Focus moves to the first new row, so keyboard users carry on where the list grew.
+    more.addEventListener("click", () => {
+      const firstRow = renderMore(PAGE_SIZE);
+      if (firstRow) {
+        firstRow.querySelector(".feed-row__toggle").focus();
+      }
+    });
+    host.replaceChildren(list, more);
+    renderMore(firstPage);
   }
 
   function renderFeed() {
-    const host = document.getElementById("latest-feed");
-    feedList = element("div", "feed-list");
-    moreButton = element("button", "mode-toggle__button feed-more", `Show ${PAGE_SIZE} more`);
-    moreButton.type = "button";
-    moreButton.addEventListener("click", showMoreRows);
-    host.append(feedList, moreButton);
-    renderMoreRows();
+    const newestFirst = participants.races.map((race, raceIndex) => raceIndex).reverse();
+    raceList(document.getElementById("latest-feed"), newestFirst, { idPrefix: "feed", heading: dayHeading });
+  }
+
+  // The racer page's Latest results, under month headings: most racers race about once a day. The
+  // list covers every mode, so a mode change leaves it, and its pages, as they are.
+  function racerResults(playerIndex) {
+    if (playerIndex === racerShown) {
+      return;
+    }
+    const newestFirst = [...raceIndexesByPlayer[playerIndex]].reverse();
+    raceList(document.getElementById("player-results"), newestFirst, {
+      idPrefix: "racer",
+      focus: playerIndex,
+      heading: monthHeading,
+      headingTag: "h4",
+      firstPage: RACER_FIRST_PAGE,
+    });
+    // Only once the list is built, so a failed render is retried on the next visit.
+    racerShown = playerIndex;
   }
 
   // ---- Masthead comment ----
@@ -892,5 +1008,5 @@ const Feed = (() => {
     renderHero();
   }
 
-  return { init };
+  return { init, racerResults };
 })();

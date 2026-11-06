@@ -1442,44 +1442,9 @@ th[aria-sort="descending"] .sort-button::after {
   outline-offset: 4px;
 }
 
-/* Five stat tiles, then two wider tiles for the rivals' avatar, name and record. */
-.player-summary {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) repeat(2, minmax(0, 1.5fr));
-  margin: 0 24px 16px;
-  animation: none;
-}
-
 /* A long table scrolls its bottom padding out of view; keep its clipped edge off the opponent search below. */
 .player-charts .presets-table {
   margin-bottom: 16px;
-}
-
-.player-summary .summary-item {
-  padding: 15px 16px 14px 0;
-}
-
-.player-summary .summary-item + .summary-item {
-  padding-left: 16px;
-}
-
-.player-summary .summary-item strong {
-  font-size: var(--text-lg);
-}
-
-/* Text values and the rivals' avatar rows share one height, so every value sits on the same line. */
-.player-summary .summary-value {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 6px;
-  align-items: center;
-  min-height: 28px;
-  margin-top: 8px;
-}
-
-.summary-value__joiner {
-  color: var(--muted);
-  font-size: 0.7em;
-  text-transform: lowercase;
 }
 
 /* Footer */
@@ -1570,8 +1535,7 @@ footer p {
     border-top: 1px solid var(--line);
   }
 
-  .summary-item:nth-child(odd),
-  .player-summary .summary-item:nth-child(odd) {
+  .summary-item:nth-child(odd) {
     padding-left: 0;
     border-left: 0;
   }
@@ -1701,10 +1665,6 @@ footer p {
   .table-wrap--leaderboard thead th:first-child {
     z-index: 2;
     box-shadow: inset -1px 0 0 var(--grid), inset 0 -1px 0 var(--line);
-  }
-
-  .player-summary {
-    margin: 0 18px 16px;
   }
 
   .period-current {

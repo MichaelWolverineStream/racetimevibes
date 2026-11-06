@@ -1,25 +1,28 @@
+/* A filled button, so the racer page's one action reads as clickable beside the text links. */
 .player-share {
   display: inline-flex;
-  gap: 5px;
+  gap: 6px;
   align-items: center;
-  margin: 0 0 7px 14px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--accent);
+  min-height: 26px;
+  padding: 4px 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-fill);
   cursor: pointer;
   font: 800 var(--text-xs)/1.2 var(--body);
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .player-share:hover {
-  color: var(--accent-strong);
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
 }
 
 .player-share:focus-visible {
-  border-radius: 2px;
-  outline: 2px solid var(--focus);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 

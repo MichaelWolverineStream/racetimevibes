@@ -201,6 +201,7 @@
 }
 
 .feed-row__winner .rank-badge,
+.feed-row__place .rank-badge,
 .feed-entrant__place .rank-badge {
   flex: 0 0 auto;
   min-width: 22px;
@@ -210,6 +211,7 @@
 }
 
 .feed-row__winner .rank-badge--podium,
+.feed-row__place .rank-badge--podium,
 .feed-entrant__place .rank-badge--podium {
   margin-block: 0;
 }
@@ -276,6 +278,62 @@
 .feed-more {
   margin-top: 16px;
   border: 1px solid var(--line);
+}
+
+/* The racer page's Latest results: each row is the racer's own result. The list is a feed
+   container too, so an expanded race folds as it does in the home feed. */
+.player-results__list {
+  min-width: 0;
+  margin: 0 24px 16px;
+  container: feed / inline-size;
+}
+
+.feed-row--racer .feed-row__line {
+  grid-template-columns: 96px 108px 112px 24px minmax(0, 1fr) 76px 64px 116px minmax(0, 200px) 44px 28px;
+  grid-template-areas: "when mode preset place comment time field chests tags delta toggle";
+}
+
+.feed-row__when {
+  grid-area: when;
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.feed-row__place {
+  grid-area: place;
+  display: flex;
+}
+
+.feed-row__comment {
+  grid-area: comment;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feed-row__chests {
+  grid-area: chests;
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.feed-row__delta {
+  grid-area: delta;
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.feed-entrant--focus {
+  background: var(--row-hover);
+  box-shadow: -8px 0 0 var(--row-hover), 8px 0 0 var(--row-hover);
+}
+
+.feed-entrant--focus .racer-link {
+  font-weight: 800;
 }
 
 /* Expanded race */
@@ -662,6 +720,46 @@
 
   .feed-entrant__delta {
     grid-area: delta;
+  }
+}
+
+/* The racer's rows fold the same way: date, place, time and rating change stay on the first
+   line, and the comment and tags move down. Their row has more columns than the home feed's, so
+   the first fold comes earlier, before the tags track leaves the comment no room. */
+@container feed (max-width: 1099px) {
+  .feed-row--racer .feed-row__line {
+    grid-template-columns: 96px 24px 112px minmax(0, 1fr) 76px 116px 44px 28px;
+    grid-template-areas:
+      "when place mode comment time chests delta toggle"
+      "when place preset tags field chests delta toggle";
+  }
+
+  .feed-row--racer .feed-row__tags {
+    justify-content: flex-start;
+  }
+}
+
+@container feed (max-width: 719px) {
+  .feed-row--racer .feed-row__line {
+    grid-template-columns: 88px 24px minmax(0, 1fr) auto 44px 28px;
+    grid-template-areas:
+      "when place mode time delta toggle"
+      "when place preset field field toggle"
+      "when place comment comment comment toggle"
+      "when place tags chests chests toggle";
+  }
+}
+
+@container feed (max-width: 479px) {
+  .feed-row--racer .feed-row__line {
+    grid-template-columns: 24px minmax(0, 1fr) auto 28px;
+    grid-template-areas:
+      "place when time toggle"
+      "place mode delta toggle"
+      "place preset field toggle"
+      "place comment comment toggle"
+      "place tags chests toggle";
+    column-gap: 8px;
   }
 }
 

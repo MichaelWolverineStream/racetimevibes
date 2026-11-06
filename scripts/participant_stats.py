@@ -24,7 +24,7 @@ except ImportError:
     import pokemon_avatars
 
 
-PARTICIPANT_SCHEMA_VERSION = 11
+PARTICIPANT_SCHEMA_VERSION = 12
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]

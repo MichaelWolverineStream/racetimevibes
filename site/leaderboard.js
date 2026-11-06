@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 11;
+const PARTICIPANT_SCHEMA_VERSION = 12;
 const ALL_MODES = "all";
 // Races with a missing or malformed mode prefix; a bucket, not a category.
 const UNKNOWN_MODE = "unknown";
@@ -1140,6 +1140,13 @@ function renderRacerExtras(playerIndex) {
   }
 }
 
+// The racer's Latest results cover every mode, so the list only redraws for a different racer.
+function renderRacerResults(playerIndex) {
+  if (typeof Feed !== "undefined") {
+    runFeature("Feed.racerResults", () => Feed.racerResults(playerIndex));
+  }
+}
+
 // The rating chart follows the racer page's mode picker, so it redraws for a different mode too.
 function renderRacerRating(playerIndex) {
   if (typeof RacerExtras !== "undefined") {
@@ -1166,6 +1173,7 @@ function showPlayer(playerIndex, modeId, isInitial) {
   }
   currentView = { kind: "player", index: playerIndex };
   renderRacerExtras(playerIndex);
+  renderRacerResults(playerIndex);
   renderRacerRating(playerIndex);
 }
 

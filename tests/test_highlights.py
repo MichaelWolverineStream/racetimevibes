@@ -93,17 +93,25 @@ def warmup(players, count, **kwargs):
     ]
 
 
+def pb_counts(records, **kwargs):
+    """The `pbs` claim statistic: each racer's count of improvements over their own best."""
+    with mock.patch.object(highlights, "_racer_stats", wraps=highlights._racer_stats) as spy:
+        run(records, **kwargs)
+    return highlights._racer_stats(*spy.call_args.args)["pbs"]
+
+
 class PersonalBestTests(unittest.TestCase):
     def test_first_timed_finish_is_baseline_and_untagged(self):
         result = run([duel(0, 1)])
         self.assertEqual(tags_of(result, 0, "pb"), [])
-        self.assertEqual(result["players"][0]["pbs"], {"0": [[0, 3600]]})
+        self.assertEqual(pb_counts([duel(0, 1)])[0], 0)
 
     def test_strict_improvement_is_tagged_with_previous_best(self):
         records = [duel(0, 1, first_seconds=3600.0), duel(0, 1, first_seconds=3500.4)]
         result = run(records)
         self.assertEqual(tags_of(result, 1, "pb"), [["pb", 0, 3500, 3600], ["pb", 1, 3560, 3660]])
-        self.assertEqual(result["players"][0]["pbs"]["0"], [[0, 3600], [1, 3500]])
+        self.assertEqual(tags_of(result, 0, "pb"), [])
+        self.assertEqual(pb_counts(records)[0], 1)
 
     def test_equal_or_slower_time_is_not_a_pb(self):
         records = [duel(0, 1, first_seconds=3600.0), duel(0, 1, first_seconds=3600.0)]
@@ -119,12 +127,14 @@ class PersonalBestTests(unittest.TestCase):
         records = [duel(0, 1, first_seconds=3600.0), duel(0, 1, first_seconds=4000.0, mode=1)]
         result = run(records, mode_count=2)
         self.assertEqual(tags_of(result, 1, "pb"), [])
-        self.assertEqual(set(result["players"][0]["pbs"]), {"0", "1"})
+        self.assertEqual(tags_of(result, 0, "pb"), [])
+        self.assertEqual(pb_counts(records, mode_count=2)[0], 0)
 
     def test_dnf_and_dq_have_no_pb(self):
         result = run([record([dnf(0), dq(1), done(2, 1, 3000.0)])])
-        self.assertEqual(result["players"][0]["pbs"], {})
-        self.assertEqual(result["players"][1]["pbs"], {})
+        self.assertEqual(tags_of(result, 0, "pb"), [])
+        counts = pb_counts([record([dnf(0), dq(1), done(2, 1, 3000.0)])])
+        self.assertEqual((counts[0], counts[1]), (0, 0))
 
 
 class PresetRecordTests(unittest.TestCase):
@@ -1308,24 +1318,6 @@ class PresetTests(unittest.TestCase):
 
     def test_no_hardest_preset_without_enough_races(self):
         self.assertIsNone(run(self.races()[:4], presets=self.presets)["hardest_preset"])
-
-    def test_best_preset_is_lowest_ratio_to_the_median(self):
-        players = run(self.races(), presets=self.presets)["players"]
-        self.assertEqual(players[0]["best_preset"][0], 0)
-        self.assertLess(players[0]["best_preset"][1], 1)
-        self.assertEqual(players[1]["best_preset"][0], 1)
-        self.assertEqual(players[2]["best_preset"], None)
-
-    def test_best_preset_needs_three_timed_finishes(self):
-        sparse = [
-            record([done(0, 1, 1000.0), done(1, 2, 1100.0)], preset=0, day=day)
-            if day < 2
-            else record([done(1, 1, 1000.0), dnf(0)], preset=0, day=day)
-            for day in range(8)
-        ]
-        players = run(sparse, presets=self.presets)["players"]
-        self.assertIsNone(players[0]["best_preset"])
-        self.assertIsNotNone(players[1]["best_preset"])
 
     def test_races_without_preset_are_ignored(self):
         stats = run([duel(0, 1)], presets=self.presets)["preset_stats"]

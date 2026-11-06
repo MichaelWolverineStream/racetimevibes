@@ -1,28 +1,62 @@
+/* A top line with the back link at the left and the actions at the right. Under it, two columns:
+   the name over the avatar and bubble, and the stats card, which starts level with the name and
+   ends on the panel's right edge, under the actions. The profile column gives up width, from 450px
+   to 320px, before the card moves under it. */
 .chart-panel--player .panel-heading {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(320px, 450px) minmax(480px, 1fr);
+  grid-template-areas:
+    "links links"
+    "name stats"
+    "profile stats";
+  grid-template-rows: auto auto 1fr;
+  gap: 8px 24px;
+  align-items: start;
+  padding-block: 16px 14px;
 }
 
-.player-identity {
+.player-heading__links {
   display: flex;
-  gap: 14px;
+  grid-area: links;
+  flex-wrap: wrap;
+  gap: 8px 18px;
   align-items: center;
 }
 
-.player-identity h2 {
+.player-heading__links .back-link {
+  margin-bottom: 0;
+}
+
+/* Follow and the button wrap together, so on a phone they stay right-aligned on a line of their own. */
+.player-heading__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.chart-panel--player .panel-heading > h2 {
+  grid-area: name;
   margin: 0;
+}
+
+.player-profile {
+  display: grid;
+  grid-area: profile;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
 }
 
 .player-follow {
   display: inline-flex;
   gap: 4px;
   align-items: center;
-  margin: 0 0 7px 18px;
 }
 
 .player-follow__label {
+  display: inline-grid;
   color: var(--accent);
   cursor: pointer;
   font-size: var(--text-xs);
@@ -32,36 +66,48 @@
   text-transform: uppercase;
 }
 
-.player-heading-side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  max-width: 640px;
+.player-follow__word {
+  grid-area: 1 / 1;
+}
+
+.player-follow__label[data-following="true"] .player-follow__word--off,
+.player-follow__label:not([data-following="true"]) .player-follow__word--on {
+  visibility: hidden;
+}
+
+.player-quote {
   min-width: 0;
-  text-align: right;
 }
 
 .player-quote__row {
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  justify-content: flex-end;
 }
 
-.player-quote .ui-speech__bubble::before,
-.player-quote .ui-speech__bubble::after {
-  display: none;
+/* The bubble is centred in a row as tall as the avatar beside it, and the context line sits under
+   that row, so the bubble and the avatar share a centre. */
+.player-quote .ui-speech__body {
+  display: grid;
+  grid-template-rows: minmax(64px, auto) auto;
 }
 
 .player-quote .ui-speech__bubble {
-  text-align: left;
-  overflow-wrap: anywhere;
+  align-self: center;
+  justify-self: start;
+  padding: 6px 12px;
 }
 
+.player-quote .ui-speech__attribution {
+  margin: 4px 0 0 4px;
+}
+
+/* Right after the bubble. The top margin centres it on the avatar and must match it: (64px - 28px) / 2. */
 .player-quote__next {
   flex: none;
   width: 28px;
   height: 28px;
+  margin: 18px 0 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: transparent;
@@ -80,6 +126,89 @@
   outline-offset: 2px;
 }
 
+/* The stats card: Podiums, H2H Win Rate and Badges in thirds, then Nemesis and Favourite Victim in
+   halves, so each rival keeps room for a name. A sheen crosses it once, as on the overall Top rated
+   tile. */
+.player-summary {
+  display: grid;
+  grid-area: stats;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-self: stretch;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.8) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
+    linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--accent) 7%, var(--panel)));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(23, 33, 29, 0.06);
+  animation: player-summary-shine 1200ms 600ms ease-out both;
+}
+
+/* With the highlight 2.5 times the card's width, 200% parks it off the left edge and -100% off the right. */
+@keyframes player-summary-shine {
+  from {
+    background-position: 200% 0, 0 0;
+  }
+  to {
+    background-position: -100% 0, 0 0;
+  }
+}
+
+.player-stat {
+  display: flex;
+  flex-direction: column;
+  grid-column: span 2;
+  gap: 4px;
+  min-width: 0;
+  padding: 6px 16px;
+}
+
+.player-stat + .player-stat {
+  border-left: 1px solid var(--line);
+}
+
+.player-stat--rival {
+  grid-column: span 3;
+  border-top: 1px solid var(--line);
+}
+
+/* The first rival starts the second row, so it has no divider on its left. */
+.player-stat:not(.player-stat--rival) + .player-stat--rival {
+  border-left: 0;
+}
+
+.player-stat__value {
+  font-family: var(--display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.player-stat__sep {
+  margin-inline: 5px;
+  color: var(--line);
+}
+
+/* A share from 0 to 1 in --fill. */
+.player-stat__meter {
+  display: block;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--grid);
+}
+
+.player-stat__meter::before {
+  display: block;
+  width: calc(var(--fill) * 100%);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  content: "";
+}
+
 .player-badges {
   display: flex;
   flex-wrap: wrap;
@@ -87,46 +216,45 @@
   margin: 0 24px 16px;
 }
 
-.player-pbs {
+.player-ratings {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  margin: 0 24px 16px;
+  margin: 18px 24px 16px;
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
 }
 
-.player-pbs .summary-item {
+.player-ratings .summary-item {
   padding: 15px 18px 14px;
 }
 
-.player-pbs .summary-item:first-child {
+.player-ratings .summary-item:first-child {
   padding-left: 0;
 }
 
-.player-pbs .summary-label {
+.player-ratings .summary-label {
   display: flex;
   gap: 6px;
   align-items: center;
 }
 
-.player-pbs .summary-item strong {
+.player-ratings .summary-item strong {
   font-size: var(--text-lg);
 }
 
-.player-pbs .summary-item strong.pb-preset {
-  text-transform: none;
-}
-
-.pb-note {
+.rating-note {
   display: block;
   margin-top: 5px;
   color: var(--muted);
   font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
 }
 
-.player-summary .rival {
-  flex-wrap: nowrap;
+.rival {
+  display: flex;
   gap: 8px;
+  align-items: center;
+  min-width: 0;
 }
 
 .rival .ui-avatar {
@@ -135,6 +263,7 @@
 
 .rival__name {
   min-width: 0;
+  max-width: 9rem;
   overflow: hidden;
   color: var(--ink);
   font-weight: 700;
@@ -144,12 +273,20 @@
 
 .rival .rival__record {
   flex: none;
-  margin: 0 0 0 auto;
+  margin: 0;
   font-family: var(--display);
   font-size: var(--text-lg);
   font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
+}
+
+.rival .rival__record--loss {
+  color: var(--negative);
+}
+
+.rival .rival__record--win {
+  color: var(--positive);
 }
 
 /* Slower than the record charts' draw-in: this line spans the whole panel. */
@@ -201,22 +338,40 @@
   vector-effect: non-scaling-stroke;
 }
 
+/* Two columns, as the shared .summary-item rules at this width assume: the left column's tiles
+   drop their divider and indent, and every tile from the third on gets a top rule. */
+@media (max-width: 980px) {
+  .chart-panel--player .panel-heading {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas:
+      "links"
+      "name"
+      "profile"
+      "stats";
+  }
+
+  .player-ratings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .player-ratings .summary-item:nth-child(odd) {
+    padding-left: 0;
+  }
+}
+
 @media (max-width: 620px) {
   .heatmap-heading .rating-standing {
     margin-top: 0;
   }
 
-  .chart-panel--player .panel-heading {
-    flex-direction: column;
+  .player-stat {
+    padding-inline: 10px;
   }
 
-  .player-heading-side {
-    align-items: flex-start;
-    max-width: none;
-    text-align: left;
-  }
-
-  .player-quote__row {
-    justify-content: flex-start;
+  /* One rival per line, each under a full-width rule. */
+  .player-stat--rival {
+    grid-column: 1 / -1;
+    border-left: 0;
   }
 }

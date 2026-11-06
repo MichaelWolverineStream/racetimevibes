@@ -81,7 +81,6 @@ BIG_BRAIN_MIN_FIELD = 9
 BADGER_BADGES = 30
 RANKING_WINDOW_DAYS = 90
 PRESET_MIN_RACES = 8
-BEST_PRESET_MIN_FINISHES = 3
 BOARD_BEST = 10
 BOARD_TOP = 10
 FACT_RECORD_MODES = 3
@@ -218,7 +217,6 @@ class _Player:
         "badges",
         "runs",
         "dates",
-        "preset_times",
         "mean",
         "last_ordinal",
         "night_finishes",
@@ -250,7 +248,6 @@ class _Player:
         self.badges: dict[str, int] = {}
         self.runs = {kind: _Run() for kind in STREAK_KINDS}
         self.dates: list[str] = []
-        self.preset_times: dict[int, list[float]] = defaultdict(list)
         self.mean: float | None = None
         self.last_ordinal = 0
         self.night_finishes = 0
@@ -1063,8 +1060,6 @@ def compute(
                     tags["pb"].append(["pb", player, whole_seconds, previous_best])
                     state.best_by_mode[mode] = whole_seconds
                     state.pbs[mode].append([ri, whole_seconds])
-                if rec["p"] is not None:
-                    state.preset_times[rec["p"]].append(seconds)
                 if mode_name == MYSTERY_MODE:
                     state.mystery_fast |= seconds < BOTH_ENDS_FAST_SECONDS
                     state.mystery_slow |= seconds > BOTH_ENDS_SLOW_SECONDS
@@ -1174,25 +1169,10 @@ def compute(
             player_out.append(_empty_player())
             continue
         daily[index] = _daily_streaks(state.dates)
-        best_preset = None
-        for preset, times in state.preset_times.items():
-            median = preset_medians.get(preset)
-            if (
-                preset_stats[preset]["races"] < PRESET_MIN_RACES
-                or len(times) < BEST_PRESET_MIN_FINISHES
-                or not median
-            ):
-                continue
-            ratio = statistics.median(times) / median
-            if best_preset is None or ratio < best_preset[1]:
-                best_preset = [preset, ratio]
-        if best_preset:
-            best_preset[1] = round(best_preset[1], 3)
         player_out.append(
             {
                 "badges": dict(state.badges),
                 "progress": _progress(state, targets),
-                "pbs": {str(mode): steps for mode, steps in sorted(state.pbs.items())},
                 "streaks": {
                     "daily": {"best": daily[index][0], "current": daily[index][1]},
                     **{
@@ -1203,7 +1183,6 @@ def compute(
                         for kind in STREAK_KINDS
                     },
                 },
-                "best_preset": best_preset,
             }
         )
 
@@ -1294,14 +1273,12 @@ def _empty_player() -> JsonObject:
     return {
         "badges": {},
         "progress": {},
-        "pbs": {},
         "streaks": {
             "daily": dict(empty),
             "win": dict(empty),
             "podium": dict(empty),
             "finish": dict(empty),
         },
-        "best_preset": None,
         "claim": None,
     }
 

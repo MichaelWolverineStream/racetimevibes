@@ -177,10 +177,10 @@ site/leaderboard.js               Racer leaderboard and head-to-head views
 site/store.js                     Local storage wrapper and followed racers
 site/ui.js, ui.css                Shared avatars, speech bubbles, tags, badges, and dialogs
 site/top-rated.js, .css           Top-rated banner
-site/feed.js, feed.css            Latest results feed
+site/feed.js, feed.css            Latest results feed, on the home page and racer pages
 site/records.js, records.css      Hall of records
-site/racer-extras.js, .css        Racer page summary strip, badges, personal bests, and rating chart
-site/share-card.js, .css          Racer share card: a 600 x 300 PNG drawn in the browser
+site/racer-extras.js, .css        Racer page heading, badges, rating strip, and rating chart
+site/share-card.js, .css          Racer player card: a 600 x 300 PNG drawn in the browser
 site/easter-eggs.js, .css         Hidden extras
 site/version-check.js             Reloads the page when a new version ships
 site/visitor-counter.js           Masthead visitor counter
@@ -278,7 +278,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the Ladder Data panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks, personal bests and a claim to fame. `avatar_changes` lists the racers whose avatar changed, newest first, each with the Eastern Time date the change was first seen. |
+| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed, newest first, each with the Eastern Time date the change was first seen. |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
 `race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](#avatar-mirror)). What each of these may contain is fixed by [Privacy](#privacy).
@@ -344,7 +344,7 @@ Either can take a racer's Pokémon, or free one they rank higher. A favourite Po
 
 1. Trims the transparent margin.
 2. Centres the creature in a square whose side is its longest side divided by 0.875 (`FILL_RATIO`), so every creature fills 7/8 of the frame, with a 1/16 margin on each side, however small it was drawn.
-3. Scales the square up by the smallest whole factor that makes it at least 256 pixels on a side (`MIN_SIDE`), with nearest-neighbour sampling, so the pixel art stays exact. 256 is four times the 64-pixel racer-page avatar, so every avatar on the page, up to 3× screens and the 72-pixel share card, scales the sprite down.
+3. Scales the square up by the smallest whole factor that makes it at least 256 pixels on a side (`MIN_SIDE`), with nearest-neighbour sampling, so the pixel art stays exact. 256 is four times the 64-pixel racer-page avatar, so every avatar on the page, up to 3× screens and the 72-pixel player card, scales the sprite down.
 4. Writes a palette PNG.
 
 Running it again on its own output changes nothing, because the factor is then 1.
@@ -664,7 +664,6 @@ The badge art in `site/assets/badges/` includes [Twemoji](https://github.com/twi
 Presets are named as defined under [Definitions](#definitions). Statistics are races, entries, DNF rate (entries that are not finishers), median time, median winning time, mean field size, and the fastest finish.
 
 - **Hardest preset:** the highest DNF rate among presets with 8 or more races.
-- **A racer's best preset:** the lowest ratio of the racer's median time to the preset's median time, among presets with 8 or more races where the racer has 3 or more timed finishes.
 
 #### Records
 
@@ -724,7 +723,7 @@ The page runs top to bottom:
 4. **03 Records**: the hall of records.
 5. **04-07**: the Ladder Data panels, on the schedule, participation, traffic and turnout.
 
-Each racer also has a page with their rating, badges, personal bests, and charts (see [Racer pages](#racer-pages)).
+Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)).
 
 The masthead holds the category artwork, the title block, a racer comment and the visitor counter, with their tops aligned. The title block ends with **Data snapshot**, the age of the published data: "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering it shows the exact UTC time. The comment bubble is at most 450px wide. The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
 
@@ -744,7 +743,7 @@ The banner crowns the top-rated racer in each category: **Overall**, then every 
 
 - Each race shows its [race tags](#race-tags). Expanding a race lists each entrant with their change in that race's mode rating.
 - **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the tags drop to a line under the name.
-- **CR and CPH** (see [Chest counts](#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race.
+- **CR and CPH** (see [Chest counts](#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race, and each of the racer's own rows in a racer page's [Latest results](#racer-pages).
 - The sidebar holds **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order.
 - **Latest badges** lists the 12 most recent unlocks by anyone, however long ago. Clicking a badge opens its holders panel, as on a racer page.
 - **Latest avatars** shows the 6 racers whose avatar changed most recently, newest first, each with how long ago the change was first seen. The section is hidden when there are none. A racer's avatar follows the [Pokémon avatars](#pokémon-avatars) precedence, so two kinds of change count, and the later one dates the racer:
@@ -782,7 +781,7 @@ The Latest sidebar's **Fact of the day**, between the **Featured daily racer** a
 
 ### Racer statistics
 
-The browser computes these from `participants.json`. The leaderboard, the racer pages and the share card all use these definitions.
+The browser computes these from `participants.json`. The leaderboard, the racer pages and the player card all use these definitions.
 
 - A racer counts as finishing a race only when they are a [finisher](#definitions): their entrant `status.value` is `done` **and** the API reports a `place`. Everything else counts toward DNF, except `dq`, which is tracked separately on the racer page.
 - **1st, 2nd and 3rd** count first, second, and third place finishes regardless of field size. Because a podium in a field of three is not a podium in a field of thirty, read them alongside the head-to-head win rate.
@@ -797,7 +796,7 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 - **Rating:** by default the board is sorted by the [Ladder rating](#ladder-rating), highest first, with ties broken by name. The Rating column follows the selected mode: **All modes** shows the overall rating, and a mode shows each racer's rating in that mode (see [Mode ratings](#mode-ratings)). Either way it covers the whole archive, whatever dates are selected. There is no minimum-races cutoff.
 - **Position:** the number beside each racer is the row's position as shown, so it renumbers whenever a sort, filter or search changes the table.
 - **Rank movement:** while the board is sorted by rating, highest first, a ▲ or ▼ beside the number shows how far the racer has moved over the last 7 days in the ranks the Rating column shows: the overall ranks under **All modes**, else the selected mode's. **NEW** marks a racer who had no rating there 7 days ago: their first race, or their first race in the selected mode, falls in that window.
-- **Ranks:** rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's **Rank & Rating** tile and the **Your racers** and **Featured daily racer** sidebar cards use the overall ranks.
+- **Ranks:** rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's rating strip and the **Your racers** and **Featured daily racer** sidebar cards use the overall ranks.
 - **Columns:** 1st, 2nd, 3rd, Median time, Win % and H2H win % are defined under [Racer statistics](#racer-statistics). **Badges** counts the badges a racer has earned, across all modes and the whole archive.
 - **5+ races only** is an optional button that hides racers with fewer than five races. It counts races in the currently selected mode, so a veteran with only a few races in one mode drops out of that mode's board.
 - **Raced in last 30 days** is an optional button that hides racers with no race in the currently selected mode during the 30 Eastern Time calendar days ending today. Any entry counts, including a DNF or DQ. It only hides rows: the stats shown stay those of the chosen date range.
@@ -838,25 +837,36 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](#sc
 
 ### Racer pages
 
-- **Summary strip:** the page opens with Rank & Rating, Podiums, Record W-L-D, H2H Win Rate, Badges, Nemesis and Favourite Victim. Every tile covers all modes and the whole archive, whatever mode is selected. Among opponents with at least five decisive meetings, **Nemesis** is the one with the lowest head-to-head win rate below 50%, and **Favourite Victim** the one with the highest above 50%; ties go to the opponent met more often.
+- **Heading:** the top line has **← All racers** at the left, and **Follow** and the **Create player card** button (see [Player card](#player-card)) at the right.
+  - **Profile:** under it, a column 450px wide, narrowing to 320px before the stats move, holds the name and, under the name, the avatar beside a speech bubble with the racer's newest comment. The avatar and the bubble share a vertical centre, and the bubble's mode, place and race day sit under it. A comment over 80 characters is cut with "…", and hovering the bubble shows the whole comment. **↻**, right after the bubble, steps back through their older comments. A racer without comments has no bubble.
+  - **Stats:** a card right of the profile, from the name's top to the panel's right edge, under the actions. A sheen crosses it once when the page opens. Its top row has Podiums, H2H Win Rate and Badges, each a label over a value. Its bottom row has Nemesis and Favourite Victim, each with their avatar and the racer's W-L against them, the Nemesis's in red and the Favourite Victim's in blue.
+    - Podiums gives firsts, seconds and thirds in the leaderboard's gold, silver and bronze.
+    - H2H Win Rate and Badges each have a thin bar under the value, filled to the win rate and to the share of badges earned. A win rate of "--" has no bar.
+    - Below 980px wide the card moves under the profile, and below 620px each rival takes a line of its own.
+  - Every stat covers all modes and the whole archive, whatever mode is selected. Among opponents with at least five decisive meetings, **Nemesis** is the one with the lowest head-to-head win rate below 50%, and **Favourite Victim** the one with the highest above 50%; ties go to the opponent met more often.
+- **Rating strip:** the racer's current rating overall, then in every mode they are rated in, in mode order. Each tile gives their rank out of every racer rated there, marked provisional below 5 finishes there, and its tooltip explains the rating.
 - **Badges:** earned badges come first in the order they were won, oldest first, and locked badges follow in table order (see [Badges](#badges)). Earned badges animate, and locked badges show the grey still. A counter badge fills its border as it progresses. Hovering a badge shows the share of racers who hold it, to two significant digits, counted on the page from the current data. Clicking a badge, here or in the Latest results sidebar, opens a panel with every racer who holds it, earliest unlock first.
-- **Mode picker:** it sits below the badges and personal bests. Everything above it covers all modes, and everything below it follows it.
+- **Latest results:** every race the racer entered, newest first, under a heading per month: the 5 latest at first, then 20 more at a time with **Show 20 more**. It covers every mode, whatever mode is selected.
+  - Each row is the racer's own result: the date and Eastern Time start hour, the mode, the preset, their place (blank for a DNF or DQ), their comment, their finish time or DNF or DQ, the field size, their CR and CPH, the race tags that name them, and their change in that race's mode rating.
+  - The comment fits on one line, and hovering it shows the whole comment. Up to four tags show, then +N. Tags follow the entrant-tag rule under [Latest results](#latest-results), so Upset and Photo finish appear only on races the racer won.
+  - Clicking a row expands the whole race exactly as Latest results does, with the racer's own row highlighted.
+- **Mode picker:** it sits below the rating strip, the badges and Latest results. Everything above it covers all modes, and everything below it follows it.
 - **Rating chart:** its heading gives the racer's rank and rating in the picked mode, overall under **All modes**, out of every racer rated there, marked provisional below 5 finishes there.
   - The chart has one point per race day: the racer's rating in the picked mode after their last race that day. With a mode picked it covers only that mode's race days and takes the mode's colour.
   - Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive. It draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line.
   - Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar.
 - **Below the rating chart**, the picker also drives the finish-time violins of the racer's presets, the racer presets table (see [Finish-time violins and preset tables](#finish-time-violins-and-preset-tables)), and the head-to-head table, whose Win chance column always uses the overall rating.
 
-#### Share card
+#### Player card
 
-The **Share** button beside **Follow** on a racer page opens a panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. The panel offers four actions:
+The **Create player card** button beside **Follow** on a racer page opens the **Player card** panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. The panel offers four actions:
 
 - **Copy image**, where the browser can write images to the clipboard.
 - **Download**, named `<name>-step-ladder-<data date>.png`. `<name>` is the racer's name lowercased, with accents dropped and every other run of characters that are not letters or digits turned into one `-`, or `racer` if nothing is left.
 - **Share…**, where the browser can share files, mostly on phones.
 - **Copy link**, the racer page's address.
 
-Like the summary strip, everything on the card covers all modes and the whole archive.
+Like the racer page's heading stats, everything on the card covers all modes and the whole archive.
 
 - **Identity:**
   - The avatar, or the page's tinted letter when the racer has none.
@@ -870,7 +880,7 @@ Like the summary strip, everything on the card covers all modes and the whole ar
 - **Rating line:** the overall rating's race-day step line, as the rating chart draws it under **All modes**, with the starting rating dashed and the current rating haloed.
   - The highest rating is marked **Peak** while the racer is below it. **All-time high** shows when they are on it.
   - The line needs two race days. Without it, the four numbers spread across the card.
-- **Numbers:** races, wins (first places), podiums and H2H win %, as on the leaderboard and the summary strip.
+- **Numbers:** races, wins (first places), podiums and H2H win %, as on the leaderboard and the racer page's heading.
 - **Badges:** earned badges only, rarest first by holder count. Badges held by equally many racers keep the order they were won.
   - The row holds 15 tiles. With more than 15 badges, the last tile reads +N for the rest.
   - The rarest badge is named with its holder share.
