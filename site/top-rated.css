@@ -33,6 +33,21 @@
   white-space: nowrap;
 }
 
+/* The period toggle rides the top border opposite the title tab, about as tall as the tab,
+   so it clears the tiles below. */
+.top-rated__period {
+  position: absolute;
+  top: -13px;
+  right: 14px;
+  z-index: 1;
+  padding: 2px;
+}
+
+.top-rated__period .mode-toggle__button {
+  min-height: 20px;
+  padding: 3px 10px;
+}
+
 /* Overflow-x clips vertically too, so the top padding leaves room for the crowns. */
 .top-rated__list {
   display: flex;
@@ -222,5 +237,9 @@
 @media (max-width: 620px) {
   .top-rated {
     padding: 14px 10px 6px;
+  }
+
+  .top-rated__period {
+    right: 10px;
   }
 }

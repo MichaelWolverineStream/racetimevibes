@@ -24,6 +24,7 @@ try:
         race_archive,
         racer_bios,
         schedule_archive,
+        season_ratings,
     )
 except ImportError:
     import comment_stats
@@ -32,6 +33,7 @@ except ImportError:
     import race_archive
     import racer_bios
     import schedule_archive
+    import season_ratings
 
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
@@ -624,7 +626,10 @@ def build(
     participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
     comments_output_path: Path = COMMENTS_OUTPUT_PATH,
     pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
+    ledger_dir: Path | None = None,
 ) -> tuple[JsonObject, JsonObject, JsonObject]:
+    """Build and write the three datasets. It reads the season ledgers in `ledger_dir`,
+    by default the one beside the archive, and never writes one."""
     envelopes = race_archive.load_races(archive_dir)
     races = [envelope["race"] for envelope in envelopes]
     if not races:
@@ -654,6 +659,10 @@ def build(
         avatar_observations=race_archive.load_racer_avatars(archive_dir),
         bios=racer_bios.load_racer_bios(archive_dir),
         pokemon=pokemon_avatars.load_catalogue(pokemon_dir),
+        schedule=schedule,
+        ledgers=season_ratings.load_ledgers(
+            season_ratings.ledger_dir_for(archive_dir) if ledger_dir is None else ledger_dir
+        ),
     )
     comments = comment_stats.build_comments_payload(
         contexts, generated_at=generated_at
@@ -696,6 +705,12 @@ def parse_args() -> argparse.Namespace:
         default=pokemon_avatars.POKEMON_DIR,
         help=f"Pokémon sprites and pokédex (default: {pokemon_avatars.POKEMON_DIR})",
     )
+    parser.add_argument(
+        "--lock-seasons",
+        action="store_true",
+        help="after building, lock every finished season's ratings into a ledger in "
+        f"{season_ratings.LEDGER_DIRECTORY}/ beside the archive (the data bot passes this)",
+    )
     return parser.parse_args()
 
 
@@ -709,12 +724,23 @@ def main() -> int:
             args.comments_output,
             args.pokemon,
         )
+        locks = (
+            season_ratings.lock_seasons(
+                args.archive,
+                season_ratings.ledger_dir_for(args.archive),
+                participants,
+                datetime.now(UTC),
+            )
+            if args.lock_seasons
+            else []
+        )
     except (
         DataError,
         race_archive.ArchiveError,
         pokemon_avatars.PokedexError,
         participant_stats.ParticipantDataError,
         comment_stats.CommentDataError,
+        season_ratings.SeasonLedgerError,
     ) as error:
         print(f"Data build failed: {error}", file=sys.stderr)
         return 1
@@ -735,6 +761,11 @@ def main() -> int:
         f"{sum(len(entries) for entries in comments['races'].values())} comments "
         f"across {len(comments['races'])} races."
     )
+    for season, reason in locks:
+        if reason is None:
+            print(f"Locked the ratings of season {season}.")
+        else:
+            print(f"Season {season} stays open: {reason}.")
     return 0
 
 

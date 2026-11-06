@@ -13,9 +13,11 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - **Pokédex:** `assets/pokemon/pokedex.json` comes from `python3 scripts/pokemon_avatars.py --refresh-pokedex`. Never hand-edit it.
    - **Sprites:** `assets/pokemon/*.png` comes from `python3 scripts/pokemon_images.py`, which fits the originals in `_tmp_assets/pokemon/` to the avatar frame. Never hand-edit a sprite; run `avatar_mirror.py` after converting.
    - **Asset stamps:** the `?v=` tokens in `site/index.html` and `site/version.json` come from `python3 scripts/version_assets.py`. Run it after any change to `site/` HTML, CSS or JS. A test fails if the stamp is stale.
-2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds, mirrors avatars, and commits `archive/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `.github/workflows/update-bios.yml` calls it once a day with `sync-bios` and `sync-schedule` on, which also run `racer_bios.py` and `schedule_archive.py`.
+   - **Season ledgers:** `season-ratings/season-N.json` is written once by `python3 scripts/build_stats.py --lock-seasons`. Never hand-edit or regenerate one. Deleting a ledger is the only way to lock that season again, with the current rating, so do it only on purpose.
+2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds with `--lock-seasons`, mirrors avatars, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `.github/workflows/update-bios.yml` calls it once a day with `sync-bios` and `sync-schedule` on, which also run `racer_bios.py` and `schedule_archive.py`.
    - Pull before you start.
    - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
+   - If a pull conflicts in `season-ratings/`: take upstream. The ledgers are deterministic. Run local builds without `--lock-seasons`; only the bot locks.
 3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing ladder schedule in `archive/ladder-schedule/`.**
    - Never edit it by hand.
    - Never move or copy any of it into `site/`. It holds full user profiles, comments and `racer-bios.json` (verbatim profile bios, with the earlier versions seen), and it is deliberately never deployed.
@@ -25,6 +27,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - `participants.json` may also carry `avatar_changes`: the Eastern Time date the archive first saw a racer's avatar change, from their racetime.gg upload or the favourite Pokémon in their bio. Never the old avatar, and never anything else from the bio.
    - `site/avatars/` holds exactly the files `participants.json` names, as validated raster images.
    - `comments.json` carries comments capped at 500 characters.
+   - `season-ratings/` holds user IDs and season points. It sits beside `archive/` and is never deployed.
    - Never publish full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
 5. **Each dataset's schema version is set in Python and checked in JS. Bump both sides together.** The page refuses data whose version doesn't match, and shows "could not be loaded".
 
@@ -39,9 +42,9 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - Python is stdlib-only, version 3.11 or newer.
    - The site is plain files.
    - ImageMagick 7 is needed only by `scripts/badge_images.py` and `scripts/pokemon_images.py`.
-8. **Ladder rating invariants are tested across the whole archive, for the overall rating and every mode rating:**
+8. **Ladder rating invariants are tested across the whole archive, for the overall rating, every mode rating, and every season and season-mode track:**
    - A winner's points never fall.
-   - Mode ratings use the overall parameters, untuned. Predictions (win chance, Upset, God Route, Big Routing, Upsetti) always use the overall rating.
+   - Mode and season ratings use the overall parameters, untuned, and every racer debuts at 1000 in every season. A locked season is never recomputed: its ledger wins over whatever the rating computes today. Predictions (win chance, Upset, God Route, Big Routing, Upsetti) always use the overall rating.
    - Finish times never affect the rating.
    - `β`, `σ₀` and the field-size damping `α` were tuned by `scripts/rating_lab.py` on races before 2026-01-01, so that 2026 results stay out of sample. Do not retune on 2026 data. Use `python3 scripts/ladder_rating.py --backtest` to evaluate.
 9. **All dates, hours and day buckets are in `America/New_York` (Eastern Time).** The `ladder_test` mode is excluded from everything.
@@ -53,20 +56,21 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
 python3 scripts/race_archive.py     # network: incremental sync into archive/
 python3 scripts/racer_bios.py       # network, optional (the bot runs it daily): racer bios into archive/racer-bios.json
 python3 scripts/schedule_archive.py # network (the bot runs it daily): the alttpr.racing ladder schedule into archive/ladder-schedule/; the build reads it and refuses to run without it
-python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json
+python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json. `--lock-seasons` (the bot only) also writes the ledger of each finished, settled season into season-ratings/
 python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars participants.json names
 ```
 
 - **Where the logic lives:**
   - `participant_stats.py`: the per-racer dataset.
-  - `ladder_rating.py`: the overall rating and the per-mode ratings.
+  - `ladder_rating.py`: the overall rating, the per-mode ratings and the per-season ratings (`rate_by_season`).
+  - `season_ratings.py`: season membership with the ledgers, the lock conditions, and the ledger files.
   - `highlights.py`: tags, badges, streaks, presets, records and facts, all in one chronological pass. Thresholds are constants at the top of the module.
   - `comment_stats.py`: comments and the chest-count parser.
   - `avatar_mirror.py`: avatar file names, which observation is current, when an upload last changed, and the mirror into `site/avatars/`.
   - `pokemon_avatars.py`: bio phrase match, Pokémon name match, favourite and random assignment, when a favourite last changed, sprite paths, and the pokédex refresh.
   - `racer_bios.py`: the bio sync, its bio history, and its loader.
   - `participant_stats.py` combines the two change times into `avatar_changes`, by which source the published avatar comes from.
-  - `schedule_archive.py`: the alttpr.racing schedule mirror, its loaders, and the join of slots to races. The join is shared by the build and the planner.
+  - `schedule_archive.py`: the alttpr.racing schedule mirror, its loaders, and the join of slots to races. The join is shared by the build and the planner. It also holds the season start rule (`season_starts`, `season_of`).
   - `build_stats.py`: the schedule metrics and bands (scheduled races, counted-through, scheduled days), beside the race aggregates.
 - `mode_overlap.py` is a standalone analysis. The build never runs it.
 - `rating_lab.py` is a standalone analysis. The build never runs it. Its tuning reads races before 2026-01-01 only.
@@ -94,6 +98,8 @@ The scripts are classic `<script defer>` files that share one global scope. They
 - **`app.js`** is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, and formatters such as `formatModeName`.
 - **`leaderboard.js`** owns the data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
   - `ratingCategories()` is the one definition of a rating category: overall plus every mode except `unknown`. The top-rated banner and the featured daily racer both use it.
+  - **Season helpers:** `currentSeason()` returns the newest season, or null when there are none. A season is a number and `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rating-rank helpers take an optional `season` argument, so every caller that passes nothing stays all-time. Predictions (`hasRating`, `winChance`), the racer page's rating strip and chart, and the player card never pass one.
+  - **▲/▼ is for rank movement only.** A points change shows as +N, −N or ±0, with no arrow.
 - **`ui.js`** exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
 - **The private `element(tag, className, text)` copies** in `ui.js`, `feed.js`, `records.js`, `racer-extras.js` and `share-card.js` are deliberate. Sharing one would need either a dependency at load time or renaming about 140 call sites.
 

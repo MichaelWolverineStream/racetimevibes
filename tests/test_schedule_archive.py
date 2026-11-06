@@ -325,5 +325,93 @@ class JoinTests(unittest.TestCase):
         self.assertIs(odd.race, seeded)
 
 
+DAY = 86400
+SEASON_ONE = 1_750_000_000  # the first slot of the fixture's season 1
+
+
+def season_slots(season, first, days, start_id):
+    """One slot a day for `days` days from unix time `first`, all in `season`."""
+    return [
+        slot(start_id + day, season, time=str(first + day * DAY)) for day in range(days)
+    ]
+
+
+def at(seconds):
+    return datetime.fromtimestamp(seconds, UTC)
+
+
+class SeasonTests(unittest.TestCase):
+    def three_seasons(self):
+        """Seasons of 30 days each, back to back, starting at SEASON_ONE."""
+        return (
+            season_slots(1, SEASON_ONE, 30, 1)
+            + season_slots(2, SEASON_ONE + 30 * DAY, 30, 100)
+            + season_slots(3, SEASON_ONE + 60 * DAY, 30, 200)
+        )
+
+    def test_each_season_starts_at_its_first_slot(self):
+        starts = schedule_archive.season_starts(self.three_seasons())
+        self.assertEqual(
+            starts,
+            [(1, at(SEASON_ONE)), (2, at(SEASON_ONE + 30 * DAY)), (3, at(SEASON_ONE + 60 * DAY))],
+        )
+
+    def test_misfiled_slots_move_no_boundary(self):
+        rows = self.three_seasons() + [
+            # A season-2 slot before season 1 began, like season 2's 2025-05-15 slot.
+            slot(900, 2, time=str(SEASON_ONE - 3 * DAY)),
+            # A season-3 slot early in season 2, like season 6's slot inside season 5.
+            slot(901, 3, time=str(SEASON_ONE + 31 * DAY)),
+            # Season-1 slots in season 3, like season 1's slots in September 2026.
+            slot(902, 1, time=str(SEASON_ONE + 70 * DAY)),
+            slot(903, 1, time=str(SEASON_ONE + 71 * DAY)),
+        ]
+        starts = schedule_archive.season_starts(rows)
+        self.assertEqual(starts, schedule_archive.season_starts(self.three_seasons()))
+        self.assertEqual(schedule_archive.stray_slots(rows, starts), 4)
+        self.assertEqual(schedule_archive.stray_slots(self.three_seasons(), starts), 0)
+
+    def test_the_first_season_starts_at_its_first_slot_even_if_misfiled_later(self):
+        rows = season_slots(1, SEASON_ONE, 30, 1) + [slot(900, 1, time=str(SEASON_ONE + 400 * DAY))]
+        self.assertEqual(schedule_archive.season_starts(rows), [(1, at(SEASON_ONE))])
+
+    def test_a_season_with_no_slot_after_the_middle_of_the_last_has_no_start(self):
+        rows = season_slots(1, SEASON_ONE, 30, 1) + [slot(900, 2, time=str(SEASON_ONE + 5 * DAY))]
+        starts = schedule_archive.season_starts(rows)
+        self.assertEqual(starts, [(1, at(SEASON_ONE))])
+        self.assertEqual(schedule_archive.stray_slots(rows, starts), 1)
+
+    def test_a_new_season_with_one_slot_starts_at_it(self):
+        rows = season_slots(1, SEASON_ONE, 30, 1) + [slot(900, 2, time=str(SEASON_ONE + 31 * DAY))]
+        self.assertEqual(
+            schedule_archive.season_starts(rows)[-1], (2, at(SEASON_ONE + 31 * DAY))
+        )
+
+    def test_no_schedule_has_no_seasons(self):
+        self.assertEqual(schedule_archive.season_starts([]), [])
+        self.assertIsNone(schedule_archive.season_of(at(SEASON_ONE), []))
+
+    def test_a_race_belongs_to_the_season_it_started_in(self):
+        starts = schedule_archive.season_starts(self.three_seasons())
+        early = schedule_archive.JOIN_EARLY
+        second = at(SEASON_ONE + 30 * DAY)
+        cases = [
+            (at(SEASON_ONE) - early - timedelta(seconds=1), None),
+            (at(SEASON_ONE) - early, 1),
+            (second - early - timedelta(seconds=1), 1),
+            (second - early, 2),
+            (second + timedelta(hours=1), 2),
+            (at(SEASON_ONE + 400 * DAY), 3),
+        ]
+        for started_at, expected in cases:
+            with self.subTest(started_at=started_at):
+                self.assertEqual(schedule_archive.season_of(started_at, starts), expected)
+
+    def test_a_race_in_the_break_counts_toward_the_earlier_season(self):
+        rows = season_slots(1, SEASON_ONE, 30, 1) + season_slots(2, SEASON_ONE + 33 * DAY, 30, 100)
+        starts = schedule_archive.season_starts(rows)
+        self.assertEqual(schedule_archive.season_of(at(SEASON_ONE + 31 * DAY), starts), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

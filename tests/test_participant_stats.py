@@ -6,7 +6,15 @@ from datetime import UTC, datetime
 from unittest import mock
 from pathlib import Path
 
-from scripts import avatar_mirror, build_stats, highlights, participant_stats, pokemon_avatars
+from scripts import (
+    avatar_mirror,
+    build_stats,
+    highlights,
+    ladder_rating,
+    participant_stats,
+    pokemon_avatars,
+    season_ratings,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -54,7 +62,15 @@ def placed_race(name, order, **kwargs):
     return race(name, entrants=entrants, **kwargs)
 
 
-def payload(races, current_names=None, avatar_observations=None, bios=None, pokemon=None):
+def payload(
+    races,
+    current_names=None,
+    avatar_observations=None,
+    bios=None,
+    pokemon=None,
+    schedule=None,
+    ledgers=None,
+):
     # Each race file was fetched when its race ended.
     envelopes = [{"fetched_at": item["ended_at"], "race": item} for item in races]
     return participant_stats.build_participant_payload(
@@ -68,6 +84,8 @@ def payload(races, current_names=None, avatar_observations=None, bios=None, poke
         avatar_observations=avatar_observations,
         bios=bios,
         pokemon=pokemon,
+        schedule=schedule,
+        ledgers=ledgers,
     )
 
 
@@ -565,7 +583,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 12)
+        self.assertEqual(result["schema_version"], 13)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -575,10 +593,14 @@ class SchemaThreeTests(unittest.TestCase):
             self.assertNotIn("best_preset", player)
             self.assertNotIn("provisional", player)
         for race_row in result["races"]:
+            self.assertNotIn("s", race_row)
             for entry in race_row["e"]:
-                self.assertEqual(len(entry), 6)
+                self.assertEqual(len(entry), 8)
                 self.assertIsInstance(entry[4], int)
                 self.assertIsInstance(entry[5], int)
+                # Without a schedule no race has a season.
+                self.assertEqual(entry[6:], [None, None])
+        self.assertEqual(result["seasons"], [])
         self.assertEqual(result["races"][1]["p"], None)
         self.assertEqual(result["diagnostics"]["races_without_preset"], 1)
 
@@ -732,6 +754,137 @@ def avatar_change_races():
             [("ana", f"{m}a2.png"), ("ben", f"{m}b2.png"), ("cid", f"{m}c1.png"), ("dan", f"{m}d2.png")],
         ),
     ]
+
+
+def schedule_slot(slot_id, season, when):
+    seconds = int(datetime.fromisoformat(when.replace("Z", "+00:00")).timestamp())
+    return {"id": slot_id, "raceId": None, "season": season, "time": str(seconds), "mode": 1}
+
+
+# Season 1 runs daily slots from 2026-09-01, season 2 from 2026-09-15, at 20:00 UTC.
+SEASON_SCHEDULE = [
+    schedule_slot(day, 1, f"2026-09-{day:02d}T20:00:00Z") for day in range(1, 11)
+] + [schedule_slot(day, 2, f"2026-09-{day:02d}T20:00:00Z") for day in range(15, 25)]
+
+
+class SeasonPayloadTests(unittest.TestCase):
+    def races(self):
+        return [
+            placed_race("early", ["ana", "ben"], started_at="2026-08-20T20:00:00.000Z"),
+            placed_race("one-a", ["ana", "ben", "cid"], started_at="2026-09-01T20:00:00.000Z"),
+            placed_race(
+                "one-b",
+                ["ben", "ana"],
+                started_at="2026-09-02T20:00:00.000Z",
+                info="Step Ladder Series - [keys]",
+            ),
+            placed_race("break", ["cid", "ana"], started_at="2026-09-12T20:00:00.000Z"),
+            placed_race("two-a", ["cid", "ana", "ben"], started_at="2026-09-15T20:00:00.000Z"),
+            placed_race("two-b", ["ana", "cid"], started_at="2026-09-16T20:00:00.000Z"),
+        ]
+
+    def by_name(self, result):
+        return {race_row["r"]: race_row for race_row in result["races"]}
+
+    def test_each_race_gets_the_season_it_started_in(self):
+        result = payload(self.races(), schedule=SEASON_SCHEDULE)
+        seasons = {name: race_row.get("s") for name, race_row in self.by_name(result).items()}
+        self.assertEqual(
+            seasons,
+            {"early": None, "one-a": 1, "one-b": 1, "break": 1, "two-a": 2, "two-b": 2},
+        )
+        self.assertEqual(
+            result["seasons"],
+            [
+                {"n": 1, "first": "2026-09-01", "last": "2026-09-12", "ended": True},
+                {"n": 2, "first": "2026-09-15", "last": "2026-09-16", "ended": False},
+            ],
+        )
+        self.assertEqual(self.by_name(result)["early"]["e"][0][6:], [None, None])
+        self.assertEqual(
+            result["diagnostics"]["seasons"],
+            {
+                "stray_slots": 0,
+                "races_without_season": 1,
+                "left_out_of_locked_seasons": 0,
+                "mismatched_locked_races": 0,
+            },
+        )
+
+    def test_a_season_is_rated_on_its_races_alone(self):
+        races = self.races()
+        result = self.by_name(payload(races, schedule=SEASON_SCHEDULE))
+        alone = self.by_name(payload(races[4:]))
+        for name in ("two-a", "two-b"):
+            season_points = [entry[6:] for entry in result[name]["e"]]
+            overall_alone = [entry[4:6] for entry in alone[name]["e"]]
+            self.assertEqual(season_points, overall_alone)
+        # A veteran of season 1 restarts like a newcomer in season 2.
+        self.assertNotEqual(result["two-a"]["e"][1][4], result["two-a"]["e"][1][6])
+
+    def test_a_season_mode_rating_is_per_mode_inside_the_season(self):
+        result = self.by_name(payload(self.races(), schedule=SEASON_SCHEDULE))
+        # one-b is ana's and ben's first keys race of season 1, so their mode points
+        # are a debut, while their season points carry one-a.
+        alone = self.by_name(payload([self.races()[2]]))["one-b"]
+        self.assertEqual([entry[7] for entry in result["one-b"]["e"]], [entry[4] for entry in alone["e"]])
+        self.assertNotEqual([entry[6] for entry in result["one-b"]["e"]], [entry[7] for entry in result["one-b"]["e"]])
+
+    def ledger(self, result, season, bump):
+        """A ledger of `season` as `result` publishes it, with every point raised by `bump`."""
+        races = [race_row for race_row in result["races"] if race_row.get("s") == season]
+        ledger = season_ratings.ledger_payload(
+            season,
+            datetime(2026, 9, 1, 20, tzinfo=UTC),
+            datetime(2026, 9, 15, 20, tzinfo=UTC),
+            result,
+            races,
+        )
+        for race_row in ledger["races"]:
+            for entry in race_row["e"]:
+                entry[1] += bump
+                entry[2] += bump
+        return season_ratings.parse_ledger(ledger, "test ledger")
+
+    def test_a_locked_season_keeps_its_ledger_points_whatever_the_rating_says(self):
+        races = self.races()
+        open_result = payload(races, schedule=SEASON_SCHEDULE)
+        locked = payload(races, schedule=SEASON_SCHEDULE, ledgers={1: self.ledger(open_result, 1, 7)})
+        before, after = self.by_name(open_result), self.by_name(locked)
+        for name in ("one-a", "one-b", "break"):
+            self.assertEqual(
+                [[points + 7 for points in entry[6:]] for entry in before[name]["e"]],
+                [entry[6:] for entry in after[name]["e"]],
+            )
+        for name in ("two-a", "two-b"):
+            self.assertEqual(before[name], after[name])
+
+    def test_a_ledger_of_the_same_rating_changes_nothing(self):
+        races = self.races()
+        open_result = payload(races, schedule=SEASON_SCHEDULE)
+        locked = payload(races, schedule=SEASON_SCHEDULE, ledgers={1: self.ledger(open_result, 1, 0)})
+        self.assertEqual(open_result, locked)
+
+    def test_a_race_a_locked_season_does_not_hold_gets_no_season(self):
+        races = self.races()
+        ledger = self.ledger(payload(races, schedule=SEASON_SCHEDULE), 1, 0)
+        late = placed_race("late", ["ben", "cid"], started_at="2026-09-05T20:00:00.000Z")
+        result = payload(races + [late], schedule=SEASON_SCHEDULE, ledgers={1: ledger})
+        self.assertNotIn("s", self.by_name(result)["late"])
+        self.assertEqual(result["diagnostics"]["seasons"]["left_out_of_locked_seasons"], 1)
+
+    def test_a_locked_race_that_no_longer_matches_its_ledger_gets_no_season(self):
+        races = self.races()
+        ledger = self.ledger(payload(races, schedule=SEASON_SCHEDULE), 1, 0)
+        races[1] = placed_race(
+            "one-a",
+            ["ana", "ben", "cid"],
+            started_at="2026-09-01T20:00:00.000Z",
+            info="Step Ladder Series - [inverted]",
+        )
+        result = payload(races, schedule=SEASON_SCHEDULE, ledgers={1: ledger})
+        self.assertNotIn("s", self.by_name(result)["one-a"])
+        self.assertEqual(result["diagnostics"]["seasons"]["mismatched_locked_races"], 1)
 
 
 class AvatarChangesTests(unittest.TestCase):
@@ -986,8 +1139,17 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 12)
-        for key in ("presets", "hardest_preset", "avatar_changes", "badges", "records", "facts", "rating"):
+        self.assertEqual(self.participants["schema_version"], 13)
+        for key in (
+            "presets",
+            "hardest_preset",
+            "avatar_changes",
+            "badges",
+            "records",
+            "facts",
+            "rating",
+            "seasons",
+        ):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
 
@@ -1047,9 +1209,86 @@ class GeneratedParticipantDataTests(unittest.TestCase):
     def test_rating_after_is_an_int_on_every_entry(self):
         for race_row in self.participants["races"]:
             for entry in race_row["e"]:
-                self.assertEqual(len(entry), 6)
+                self.assertEqual(len(entry), 8)
                 self.assertIsInstance(entry[4], int)
                 self.assertIsInstance(entry[5], int)
+
+    def test_season_points_are_ints_exactly_in_races_with_a_season(self):
+        for race_row in self.participants["races"]:
+            for entry in race_row["e"]:
+                if "s" in race_row:
+                    self.assertIsInstance(entry[6], int)
+                    self.assertIsInstance(entry[7], int)
+                else:
+                    self.assertEqual(entry[6:], [None, None])
+
+    def test_seasons_list_every_season_with_a_race_in_order(self):
+        seasons = self.participants["seasons"]
+        numbers = [season["n"] for season in seasons]
+        self.assertGreaterEqual(len(numbers), 10)
+        self.assertEqual(numbers, sorted(set(numbers)))
+        self.assertEqual(
+            set(numbers), {race_row["s"] for race_row in self.participants["races"] if "s" in race_row}
+        )
+        for season in seasons[:-1]:
+            self.assertTrue(season["ended"])
+        for season in seasons:
+            dates = [r["d"] for r in self.participants["races"] if r.get("s") == season["n"]]
+            self.assertEqual((season["first"], season["last"]), (min(dates), max(dates)))
+
+    def test_seasons_follow_each_other_in_time(self):
+        last_date = ""
+        last_season = 0
+        for race_row in self.participants["races"]:
+            if "s" not in race_row:
+                continue
+            self.assertGreaterEqual(race_row["s"], last_season, race_row["r"])
+            self.assertGreaterEqual(race_row["d"], last_date)
+            last_season, last_date = race_row["s"], race_row["d"]
+
+    def season_walk(self, points_index, key):
+        """Yield (race, entry, the racer's points before the race) in one season track;
+        a racer's first race in the track starts from the base rating."""
+        last = {}
+        base = self.participants["rating"]["base"]
+        for race_row in self.participants["races"]:
+            if "s" not in race_row:
+                continue
+            for entry in race_row["e"]:
+                slot = key(race_row, entry)
+                yield race_row, entry, last.get(slot, base)
+                last[slot] = entry[points_index]
+
+    def test_no_winner_ever_loses_season_points(self):
+        tracks = (
+            (6, lambda race_row, entry: (race_row["s"], entry[0])),
+            (7, lambda race_row, entry: (race_row["s"], race_row["m"], entry[0])),
+        )
+        for points_index, key in tracks:
+            winners = 0
+            for race_row, entry, before in self.season_walk(points_index, key):
+                if entry[1] == 1 and entry[2] == 0:
+                    winners += 1
+                    self.assertGreaterEqual(entry[points_index], before, race_row["r"])
+            self.assertGreater(winners, 3000)
+
+    def test_committed_ledgers_match_the_published_points(self):
+        ledgers = season_ratings.load_ledgers(REPO_ROOT / season_ratings.LEDGER_DIRECTORY)
+        players = self.participants["players"]
+        modes = self.participants["modes"]
+        published = {race_row["r"]: race_row for race_row in self.participants["races"]}
+        for season, ledger in ledgers.items():
+            for name, locked in ledger.races.items():
+                with self.subTest(season=season, race=name):
+                    race_row = published[name]
+                    self.assertEqual(race_row["s"], season)
+                    self.assertEqual(modes[race_row["m"]], locked.mode)
+                    self.assertEqual(
+                        {players[entry[0]]["id"]: (entry[6], entry[7]) for entry in race_row["e"]},
+                        locked.points,
+                    )
+        self.assertEqual(self.participants["diagnostics"]["seasons"]["left_out_of_locked_seasons"], 0)
+        self.assertEqual(self.participants["diagnostics"]["seasons"]["mismatched_locked_races"], 0)
 
     def test_every_player_has_the_rating_fields(self):
         for player in self.participants["players"]:

@@ -8,8 +8,11 @@ a win by an hour are worth the same. Every racer has a skill estimate (a mean
 mu) and an uncertainty (sigma). A newcomer starts at mu 25, sigma 12. The overall
 rating covers every mode. Each mode also has its own rating (`rate_by_mode`):
 the same model and parameters on that mode's races alone, so a racer debuts at
-the starting rating in every mode. Predictions use the overall rating, which
-predicts results inside a mode better than the mode's own rating does.
+the starting rating in every mode. Each ladder season also has its own ratings
+(`rate_by_season`), overall and per mode, on that season's races alone, so
+everyone restarts at the starting rating every season. Predictions use the
+overall rating, which predicts results inside a mode better than the mode's own
+rating does.
 
 Within a race, every pair of entrants is a small match. A finisher with a
 better place beats one with a worse place, and any finisher beats a DNF, DQ or
@@ -201,6 +204,26 @@ class ModeRatings(_Ratings):
     players: dict[int, list[PlayerRating | None]]
 
 
+@dataclass(frozen=True)
+class SeasonRatings(_Ratings):
+    """Each season rated on its own races alone, overall and in each mode.
+
+    `pre` and `post` line up with the input records and hold each entry's state in
+    the race's season; `mode_pre` and `mode_post` hold it in the race's season and
+    mode. A record outside every season has empty lists in all four.
+    """
+
+    mode_pre: list[list[State]]
+    mode_post: list[list[State]]
+
+    def points(self) -> list[list[tuple[int, int]]]:
+        """Each entry's season points and season-mode points after its race, per record."""
+        return [
+            [(self.display(after), self.display(mode_after)) for after, mode_after in zip(post, mode_post)]
+            for post, mode_post in zip(self.post, self.mode_post)
+        ]
+
+
 def _damping(entries: list[Any], alpha: float) -> float:
     """Return the scale of one race's update, (entrants - 1) ** -alpha; 1 with alpha 0."""
     return max(len(entries) - 1, 1) ** -alpha
@@ -352,6 +375,49 @@ def rate_by_mode(
         players[mode] = result.players
     params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa, alpha=alpha)
     return ModeRatings(pre=pre, post=post, players=players, params=params)
+
+
+def rate_by_season(
+    records: list[JsonObject],
+    player_count: int,
+    seasons: list[int | None],
+    *,
+    beta: float = BETA,
+    sigma0: float = SIGMA0,
+    sigma_floor: float = SIGMA_FLOOR,
+    kappa: float = KAPPA,
+    alpha: float = ALPHA,
+) -> SeasonRatings:
+    """Rate every racer separately in each season, overall and in each mode.
+
+    `seasons` gives each record's season, or None for a race outside every season.
+    Each season is `rate` and `rate_by_mode` run on that season's races alone, so a
+    racer debuts at the starting rating in every season, and in every mode of it.
+    """
+    if len(seasons) != len(records):
+        raise ValueError("Every record needs a season, or None")
+    tuning = {"beta": beta, "sigma0": sigma0, "sigma_floor": sigma_floor, "kappa": kappa, "alpha": alpha}
+    pre: list[list[State]] = [[] for _ in records]
+    post: list[list[State]] = [[] for _ in records]
+    mode_pre: list[list[State]] = [[] for _ in records]
+    mode_post: list[list[State]] = [[] for _ in records]
+    for season in sorted({season for season in seasons if season is not None}):
+        indexes = [index for index, number in enumerate(seasons) if number == season]
+        chosen = [records[index] for index in indexes]
+        overall = rate(chosen, player_count, **tuning)
+        by_mode = rate_by_mode(chosen, player_count, **tuning)
+        for position, index in enumerate(indexes):
+            pre[index] = overall.pre[position]
+            post[index] = overall.post[position]
+            mode_pre[index] = by_mode.pre[position]
+            mode_post[index] = by_mode.post[position]
+    return SeasonRatings(
+        pre=pre,
+        post=post,
+        mode_pre=mode_pre,
+        mode_post=mode_post,
+        params=_params(**tuning),
+    )
 
 
 @dataclass(frozen=True)

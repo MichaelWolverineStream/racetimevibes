@@ -16,15 +16,24 @@ from zoneinfo import ZoneInfo
 
 # Supports both `python3 scripts/build_stats.py` and `from scripts import participant_stats`.
 try:
-    from scripts import avatar_mirror, highlights, ladder_rating, pokemon_avatars
+    from scripts import (
+        avatar_mirror,
+        highlights,
+        ladder_rating,
+        pokemon_avatars,
+        schedule_archive,
+        season_ratings,
+    )
 except ImportError:
     import avatar_mirror
     import highlights
     import ladder_rating
     import pokemon_avatars
+    import schedule_archive
+    import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 12
+PARTICIPANT_SCHEMA_VERSION = 13
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -233,6 +242,8 @@ def build_participant_payload(
     avatar_observations: Mapping[str, list[str | None]] | None = None,
     bios: Mapping[str, list] | None = None,
     pokemon: pokemon_avatars.Catalogue | None = None,
+    schedule: list[JsonObject] | None = None,
+    ledgers: Mapping[int, season_ratings.Ledger] | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
 
@@ -244,6 +255,10 @@ def build_participant_payload(
     favourite Pokémon their entry in `bios` names, or a random one if the favourite is
     `random`, and gives a racer with neither a random Pokémon; racers are ordered by
     their first included race, then user ID.
+
+    Given the ladder `schedule`, every race also gets its season and its entrants'
+    season ratings (see `season_ratings`); `ledgers` hold the seasons already locked.
+    Without a schedule no race has a season.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -273,6 +288,7 @@ def build_participant_payload(
         staged.append(
             {
                 "r": race.get("name"),
+                "started_at": context["started_at"],
                 "mode": context["mode"],
                 "preset": context.get("preset"),
                 "d": context["local_started_at"].date().isoformat(),
@@ -364,6 +380,28 @@ def build_participant_payload(
 
     ratings = ladder_rating.rate(records, len(players))
     mode_ratings = ladder_rating.rate_by_mode(records, len(players))
+
+    # Seasons: each race's season, and its entrants' points in the season and in the
+    # season's mode, as computed now or as a locked season's ledger holds them.
+    schedule = schedule or []
+    ledgers = ledgers or {}
+    starts = schedule_archive.season_starts(schedule)
+    season_races = [
+        season_ratings.Race(
+            row["r"],
+            row["started_at"],
+            row["mode"],
+            tuple(user_id for user_id, *_rest in row["entries"]),
+        )
+        for row in staged
+    ]
+    assignment = season_ratings.assign(season_races, starts, ledgers)
+    season_points = season_ratings.overlay(
+        season_races,
+        assignment.seasons,
+        ladder_rating.rate_by_season(records, len(players), assignment.seasons).points(),
+        ledgers,
+    )
     derived = highlights.compute(
         records, players=players, modes=modes, presets=presets, ratings=ratings
     )
@@ -382,6 +420,7 @@ def build_participant_payload(
 
     races = []
     for index, record in enumerate(records):
+        points = season_points[index] or [(None, None)] * len(record["e"])
         race_row = {
             "r": record["r"],
             "m": record["m"],
@@ -397,12 +436,19 @@ def build_participant_payload(
                     None if seconds is None else round(seconds),
                     ratings.display(after),
                     mode_ratings.display(mode_after),
+                    season_after,
+                    season_mode_after,
                 ]
-                for (player, place, status_code, seconds), after, mode_after in zip(
-                    record["e"], ratings.post[index], mode_ratings.post[index]
+                for (player, place, status_code, seconds), after, mode_after, (
+                    season_after,
+                    season_mode_after,
+                ) in zip(
+                    record["e"], ratings.post[index], mode_ratings.post[index], points
                 )
             ],
         }
+        if assignment.seasons[index] is not None:
+            race_row["s"] = assignment.seasons[index]
         if derived["race_tags"][index]:
             race_row["t"] = derived["race_tags"][index]
         races.append(race_row)
@@ -440,6 +486,9 @@ def build_participant_payload(
         "records": derived["records"],
         "facts": derived["facts"],
         "rating": ratings.params,
+        "seasons": season_ratings.published_seasons(
+            assignment.seasons, [record["d"] for record in records], starts, ledgers
+        ),
         "diagnostics": {
             "race_count": len(races),
             "player_count": len(players),
@@ -448,6 +497,12 @@ def build_participant_payload(
             "finishes_without_place": diagnostics["finishes_without_place"],
             "finishes_without_time": diagnostics["finishes_without_time"],
             "races_without_preset": diagnostics["races_without_preset"],
+            "seasons": {
+                "stray_slots": schedule_archive.stray_slots(schedule, starts),
+                "races_without_season": assignment.seasons.count(None),
+                "left_out_of_locked_seasons": assignment.left_out,
+                "mismatched_locked_races": assignment.mismatched,
+            },
             "status_counts": status_counts,
             "highlights": derived["diagnostics"],
         },

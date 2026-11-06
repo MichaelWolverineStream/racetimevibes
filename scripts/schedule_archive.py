@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import statistics
 import sys
 import time
 import urllib.error
@@ -286,6 +287,59 @@ def _race_by_time(
         ):
             return context
     return None
+
+
+# Seasons ----------------------------------------------------------------------
+
+
+def season_starts(rows: list[JsonObject]) -> list[tuple[int, datetime]]:
+    """Return (season, start) for every season that has a start, in season order.
+
+    Season 1 starts at its first slot. Every later season starts at its first slot
+    after the middle of the season before it: the later of that season's start and
+    the median time of its slots. alttpr.racing files the odd slot under the wrong
+    season, far from that season's run, and this keeps such a slot from moving a
+    boundary. A season with no slot after that point has no start yet.
+    """
+    times: dict[int, list[datetime]] = {}
+    for row in rows:
+        times.setdefault(row["season"], []).append(slot_time(row))
+    starts: list[tuple[int, datetime]] = []
+    for season in sorted(times):
+        ordered = sorted(times[season])
+        if not starts:
+            starts.append((season, ordered[0]))
+            continue
+        previous_season, previous_start = starts[-1]
+        middle = max(previous_start, _median_time(times[previous_season]))
+        later = [started_at for started_at in ordered if started_at > middle]
+        if later:
+            starts.append((season, later[0]))
+    return starts
+
+
+def _median_time(times: list[datetime]) -> datetime:
+    return datetime.fromtimestamp(statistics.median(t.timestamp() for t in times), UTC)
+
+
+def season_of(started_at: datetime, starts: list[tuple[int, datetime]]) -> int | None:
+    """Return the season a race that started at `started_at` belongs to, or None.
+
+    A season runs from JOIN_EARLY before its start until JOIN_EARLY before the next
+    season's start, so a race in the break between two seasons counts toward the
+    earlier one. A race before the first season has none.
+    """
+    season = None
+    for number, start in starts:
+        if started_at < start - JOIN_EARLY:
+            break
+        season = number
+    return season
+
+
+def stray_slots(rows: list[JsonObject], starts: list[tuple[int, datetime]]) -> int:
+    """Count the slots outside their own season's run: before its start, or in a later season's."""
+    return sum(1 for row in rows if season_of(slot_time(row), starts) != row["season"])
 
 
 # Sync -------------------------------------------------------------------------

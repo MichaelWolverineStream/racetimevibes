@@ -180,8 +180,7 @@ footer {
 .section-nav__heading,
 .control-label,
 .leaderboard-filter label,
-.leaderboard-range legend,
-.leaderboard-range label,
+.leaderboard-control label,
 .back-link {
   margin: 0;
   color: var(--accent);
@@ -1208,8 +1207,8 @@ body.viewing-player #leaderboard {
 }
 
 .leaderboard-filter input,
-.leaderboard-range input {
-  min-width: 220px;
+.leaderboard-control select {
+  min-width: 160px;
   min-height: 44px;
   padding: 7px 11px;
   border: 1px solid var(--line);
@@ -1220,40 +1219,9 @@ body.viewing-player #leaderboard {
 }
 
 .leaderboard-filter input:focus-visible,
-.leaderboard-range input:focus-visible {
+.leaderboard-control select:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 1px;
-}
-
-.leaderboard-range {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.leaderboard-range legend {
-  margin-bottom: 5px;
-  padding: 0;
-}
-
-.leaderboard-range__body {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  align-items: center;
-}
-
-.leaderboard-range__dates {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 8px;
-}
-
-.leaderboard-range input {
-  min-width: 0;
-  padding: 6px 9px;
 }
 
 .table-wrap--leaderboard {
@@ -1392,6 +1360,27 @@ th[aria-sort="descending"] .sort-button::after {
 }
 
 .trend--flat {
+  color: var(--muted);
+}
+
+/* A change in rating points, kept apart from the rank arrows. */
+.points-delta {
+  display: inline-block;
+  white-space: nowrap;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.points-delta--up {
+  color: var(--positive);
+}
+
+.points-delta--down {
+  color: var(--negative);
+}
+
+.points-delta--flat {
   color: var(--muted);
 }
 
@@ -1648,10 +1637,6 @@ footer p {
   .leaderboard-filter input {
     min-width: 0;
     width: 100%;
-  }
-
-  .leaderboard-range input {
-    flex: 1 1 120px;
   }
 
   .table-wrap--leaderboard th:first-child,

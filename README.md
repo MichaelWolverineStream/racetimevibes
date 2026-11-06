@@ -1,6 +1,6 @@
 # ALTTPR Step Ladder Race Signals
 
-A static infographic dashboard built from the public racetime.gg archive, from 2025-04-20, for the `alttpr-ladder` category. Beyond the schedule analytics it tracks racers: a ladder rating, overall and per mode, personal bests, streaks, badges, records, and a feed of the latest results.
+A static infographic dashboard built from the public racetime.gg archive, from 2025-04-20, for the `alttpr-ladder` category. Beyond the schedule analytics it tracks racers: a ladder rating, overall, per mode and per season, personal bests, streaks, badges, records, and a feed of the latest results.
 
 The dashboard is published at <https://michaelwolverinestream.github.io/racetimevibes/>.
 
@@ -46,7 +46,7 @@ A refresh is the race sync, the schedule sync, the build and the mirror, in that
 1. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/` (see [The race archive](#the-race-archive)).
 2. `racer_bios.py` saves the profile bios of racers who raced since their bio was last checked into `archive/racer-bios.json` (see [Bios](#bios)). It reads the races `race_archive.py` just saved, so it runs after it and before `build_stats.py`, which turns the bios into Pokémon avatars (see [Pokémon avatars](#pokémon-avatars)). The scheduled job runs it once a day.
 3. `schedule_archive.py` saves the alttpr.racing ladder schedule into `archive/ladder-schedule/` (see [Ladder schedule mirror](#ladder-schedule-mirror)). The build joins every slot to the race it became (see [Definitions](#definitions)), so `build_stats.py` refuses an archive without a mirror and asks you to run it first. The scheduled job runs it once a day.
-4. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)).
+4. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)). With `--lock-seasons` it then locks every season that has ended and settled into `season-ratings/` (see [Season ratings](#season-ratings)). Only the scheduled job passes it.
 5. `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
 
 Options:
@@ -54,6 +54,7 @@ Options:
 - `--archive` on `race_archive.py`, `racer_bios.py`, `schedule_archive.py` or `build_stats.py` points at a different archive.
 - `--output`, `--participants-output` and `--comments-output` on `build_stats.py` redirect each dataset.
 - `--participants`, `--archive` and `--output` on `avatar_mirror.py` point it elsewhere.
+- `--lock-seasons` on `build_stats.py` also writes a ledger in `season-ratings/` for every season that is ready to lock. Without it a build never writes one.
 - `--pokemon` on `build_stats.py`, `avatar_mirror.py` and `pokemon_avatars.py` points at a different directory of Pokémon sprites and pokédex. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites the pokédex (see [Pokémon avatars](#pokémon-avatars)).
 
 ### Previewing the site
@@ -78,7 +79,7 @@ python3 -m unittest discover -s tests -v
 
 Tests use mocked API responses and do not require network access.
 
-- The suite rebuilds all three datasets from the committed `archive/` and fails if they differ from the committed `site/data` files, ignoring `generated_at`. After changing `scripts/build_stats.py`, `scripts/participant_stats.py` or any module they call, run `python3 scripts/build_stats.py` and commit the result.
+- The suite rebuilds all three datasets from the committed `archive/` and `season-ratings/` and fails if they differ from the committed `site/data` files, ignoring `generated_at`. After changing `scripts/build_stats.py`, `scripts/participant_stats.py` or any module they call, run `python3 scripts/build_stats.py` and commit the result.
 - The avatar tests include a check that every file in the committed `site/avatars/` is named by the committed `participants.json` and is a valid raster image. A named file that is missing does not fail it, so an avatar that racetime.gg stops serving cannot block a deploy.
 - Another check requires every `pokemon-*` file in the committed `site/avatars/` to be a byte-for-byte copy of its sprite in `assets/pokemon/`.
 - The Pokémon tests check the committed `assets/pokemon/`: every file but `pokedex.json` is a PNG named `<pokédex number>.png` or `<number>-<variant>.png` for a Pokémon in the pokédex, every species from 1 to 1025 has a sprite, and there is no `0.png`. Every sprite is also a square palette PNG at least 256 pixels on a side, as `pokemon_images.py` writes it.
@@ -98,9 +99,9 @@ For the first deployment:
 
 #### Scheduled data refresh
 
-The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**. It can also be called with two inputs, both off by default: `sync-bios` adds a `scripts/racer_bios.py` step right after the race sync, and `sync-schedule` adds a `scripts/schedule_archive.py` step after the bios step and before the build. Starting it manually from **Actions** offers neither input.
+The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py --lock-seasons` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**. It can also be called with two inputs, both off by default: `sync-bios` adds a `scripts/racer_bios.py` step right after the race sync, and `sync-schedule` adds a `scripts/schedule_archive.py` step after the bios step and before the build. Starting it manually from **Actions** offers neither input.
 
-- Whenever the sync added or refreshed race files, it commits `archive/` to `main` as `YYYY-MM-DD data`.
+- Whenever the sync added or refreshed race files, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`. A newly locked season's ledger changes no site file, so it counts as an archive change, and the push redeploys the unchanged site.
 - When anything other than `generated_at` differs in the dashboard datasets, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows.
 - Runs that find nothing new commit nothing, and a failed sync, build or mirror commits nothing.
 
@@ -113,7 +114,7 @@ The workflow in `.github/workflows/update-bios.yml` runs once a day, at 05:47 UT
 
 #### Refreshing by hand
 
-You can still refresh by hand with the four refresh commands, `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`, and commit `archive/`, `site/data` and `site/avatars`. Running `racer_bios.py` by hand is optional: without it, `build_stats.py` uses the bios already in `archive/racer-bios.json`, and the daily job brings them up to date. The same goes for `schedule_archive.py`, as long as `archive/ladder-schedule/` exists. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py`, `schedule_archive.py` and `build_stats.py` again, then `avatar_mirror.py`.
+You can still refresh by hand with the four refresh commands, `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`, and commit `archive/`, `site/data` and `site/avatars`. Run `build_stats.py` without `--lock-seasons`: locking is the bot's job, so a ledger is never written by a local build by accident. Running `racer_bios.py` by hand is optional: without it, `build_stats.py` uses the bios already in `archive/racer-bios.json`, and the daily job brings them up to date. The same goes for `schedule_archive.py`, as long as `archive/ladder-schedule/` exists. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py`, `schedule_archive.py` and `build_stats.py` again, then `avatar_mirror.py`. If a pull conflicts in `season-ratings/`, take the upstream files: a ledger is deterministic, so the bot's copy is the one to keep.
 
 ### Project layout
 
@@ -124,11 +125,12 @@ scripts/participant_stats.py      Per-racer dataset: records, avatars and assemb
 scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/, including Pokémon sprite copies
 scripts/pokemon_avatars.py        Favourite Pokémon from bios, random Pokémon, sprite paths and the pokédex refresh
 scripts/racer_bios.py             Sync of racers' profile bios into archive/racer-bios.json, and its loader
-scripts/ladder_rating.py          Ladder rating model, overall and per mode, and backtest
+scripts/ladder_rating.py          Ladder rating model, overall, per mode and per season, and backtest
+scripts/season_ratings.py         Season membership, the lock conditions, and the season ledgers
 scripts/highlights.py             Tags, badges, streaks, presets, records, claims and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report (see Analyses.md)
-scripts/schedule_archive.py       Mirror of the alttpr.racing ladder schedule and modes, its loaders, and the join of slots to races
+scripts/schedule_archive.py       Mirror of the alttpr.racing ladder schedule and modes, its loaders, the join of slots to races, and the season start rule
 scripts/schedule_planner.py       Schedule proposals from past participation (see Analyses.md)
 scripts/schedule_lab.py           Comparison of schedule strategies with the planner's rules (see Analyses.md)
 scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating (see Analyses.md)
@@ -143,6 +145,7 @@ tests/test_pokemon_images.py      Sprite framing geometry and PNG header checks
 tests/test_build_stats.py         Pipeline unit tests
 tests/test_participant_stats.py   Racer dataset unit tests
 tests/test_ladder_rating.py       Rating model unit tests
+tests/test_season_ratings.py      Season membership, locking and ledger unit tests
 tests/test_highlights.py          Tag, badge, streak and record unit tests
 tests/test_comment_stats.py       Comments dataset unit tests
 tests/test_mode_overlap.py        Mode overlap unit tests
@@ -164,6 +167,7 @@ archive/racer-names.json          Current racer display names
 archive/racer-avatars.json        Last observed leaderboard avatar of each racer
 archive/racer-bios.json           Profile bio of each racer checked, with the time it was checked
 archive/ladder-schedule/          alttpr.racing ladder schedule and modes, one file per season
+season-ratings/                   Ledger of each locked season's ratings, written once by the bot, never deployed
 assets/pokemon/                   Pokémon sprites and pokedex.json, committed and never deployed
 site/data/race-stats.json         Generated aggregate dataset
 site/data/participants.json       Generated per-racer dataset
@@ -266,6 +270,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 - **Validation:** every response is validated before any file is written. A slot needs integer `id`, `season` and `mode`, a `raceId` that is an integer or null, a `time` of digits (Unix seconds), and its file's season. A mode needs integer `id` and `archetype`, a string `name`, and a boolean `active`. Any failure writes nothing.
 - **Rewrites:** a file is rewritten only when its body changed, so a run without news changes nothing. Files are never deleted.
 - **Reading it back:** `load_schedule` returns every slot once by its `id`; the same id with different content is an error.
+- **Seasons:** `season_starts`, `season_of` and `stray_slots` also live in this module, for the season rule under **Seasons** in [Definitions](#definitions).
 - **The join:** `join_races` also lives in this module. It matches slots to included races by the rules under **Schedule** in [Definitions](#definitions), for the build and the planner alike.
 - **Race ids arrive late.** alttpr.racing fills in a slot's `raceId` only when the room is created. A mirror is therefore only as current as its last sync, and the build counts slots only up to the latest one with a `raceId` (see **Counted through** in [Definitions](#definitions)).
 - **Output:** the script ends with `Schedule: N seasons, M slots, K files changed.` and exits with 1 on any failure.
@@ -278,10 +283,20 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the Ladder Data panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed, newest first, each with the Eastern Time date the change was first seen. |
+| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed, newest first, each with the Eastern Time date the change was first seen. Each race also carries its season, `s`, when it has one, and each entry the racer's points in the season and in the season's mode after the race. `seasons` lists every season that holds a race (see [Season ratings](#season-ratings)). |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
-`race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](#avatar-mirror)). What each of these may contain is fixed by [Privacy](#privacy).
+`race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect.
+
+The season fields of `participants.json` (schema 13):
+
+- **`seasons`:** an array, oldest first, of `{n, first, last, ended}` for every season that holds at least one race. `first` and `last` are the Eastern Time dates of the season's first and latest race. `ended` is true once the season is locked or a later season has started. The current season is the last element. The array is empty when there is no schedule, and the page then shows everything all-time.
+- **`races[].s`:** the race's season number. It is absent for a race with no season.
+- **Entries:** `races[].e[k]` is `[player, place, status, seconds, overall_after, mode_after, season_after, season_mode_after]`. `[6]` and `[7]` are integers when the race has `s`, and both `null` otherwise.
+- **No per-player season fields.** A racer's standing in a season is derived from their entries: their last `[6]` among the season's races for the overall rating, and their last `[7]` among the season's races in a mode for that mode's rating. Their season finishes are their finisher entries in those races, and they are provisional below 5.
+- **`diagnostics.seasons`:** `stray_slots`, `races_without_season`, `left_out_of_locked_seasons` and `mismatched_locked_races`.
+- `rating`, each player's rating, $\mu$, $\sigma$, finishes and mode ratings, and `leaderboards` are unchanged and all-time.
+ `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](#avatar-mirror)). What each of these may contain is fixed by [Privacy](#privacy).
 
 ### Avatar mirror
 
@@ -362,9 +377,12 @@ Running it again on its own output changes nothing, because the factor is then 1
 - **`site/avatars/`** holds copies of exactly the files `participants.json` names, raster images only. The page serves avatars from there, so a viewer's browser never contacts racetime.gg for them.
   - The copies are byte for byte, so any metadata an upload carries, such as a JPEG's EXIF block, is served as racetime.gg serves it.
   - A replaced or removed avatar leaves `site/avatars/` but stays in the repository's git history.
+- **Season fields** in `participants.json` are integers, dates and flags tied to the racers' published IDs. They add no field the contract above excludes.
 - **Never published:** full names, discriminators, pronouns, flair, Twitch fields and racetime.gg points and score fields.
 
 `archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It also holds racers' public profile bios, verbatim from their racetime.gg profile pages, with the earlier versions it has seen since 2026-11-05. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.
+
+`season-ratings/` is also outside `site/`. It holds racers' user IDs with their season points, is committed beside `archive/`, and is never deployed.
 
 ### Definitions
 
@@ -413,6 +431,16 @@ These terms use the [ladder schedule mirror](#ladder-schedule-mirror). `schedule
   - Scheduled days deliberately ignore **counted through**. The schedule is published ahead, so whether a day has races is known before its outcomes are, and the latest days stay in the per-day averages.
   - A season the mirror does not list yet only delays its days. Their entries leave the numerator too, so the average is never inflated.
 - **Slot times, not seasons:** the panels bucket a slot by its own Eastern Time start and never by its season number. API seasons overlap, so the season of a slot says little about when it ran.
+
+**Seasons**
+
+These terms drive the [season ratings](#season-ratings). `schedule_archive.season_starts` and `season_of` implement them.
+
+- **Season start:** season 1 starts at its first slot. Every later season starts at its first slot after the middle of the season before it, which is the later of that season's start and the median time of its slots. A season with no slot after that point has no start yet. alttpr.racing lists no future slots, so a season's end is only known once the next season's first slot appears.
+  - A race's season comes from this rule, not from the season number its slot carries. alttpr.racing files the odd slot under the wrong season: 3 season 1 slots on 2026-09-03 and 04 inside season 9, 1 season 2 slot on 2025-05-15 before season 1, and 1 season 6 slot on 2025-11-08 inside season 5. The rule keeps such a slot from moving a boundary. `diagnostics.seasons.stray_slots` counts the slots outside their own season's run (5 today).
+  - The starts today are 2025-05-18, 2025-07-01, 2025-08-04, 2025-10-03, 2025-11-07, 2026-01-02, 2026-03-01, 2026-05-04, 2026-07-04 and 2026-09-07.
+- **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start until 5 minutes before the next season's start. A race belongs to the season its start falls in. Races before season 1's span have none, and `diagnostics.seasons.races_without_season` counts them (5 today).
+- **Current season:** the newest season holding at least one included race.
 
 ### Schedule and participation metrics
 
@@ -485,17 +513,46 @@ $\beta$, $\sigma_0$ and $\alpha$ were picked by `scripts/rating_lab.py` from rac
 
 #### Points
 
-The displayed points are $1000 + s \cdot (\mu - k\sigma)$, the "conservative rating" idea from TrueSkill and Xbox levels. With $k = \mu_0 / \sigma_0 \approx 2.083$ a newcomer shows exactly 1000, and as $\sigma$ shrinks the points climb toward $\mu$. The scale $s = 400 / (\ln 10 \cdot \sqrt{2\sigma_{floor}^2 + 2\beta^2}) \approx 13.73$ makes 400 points about 10:1 odds between established racers, as in Elo. The pipeline publishes each racer's points, $\mu$ and $\sigma$ (4 decimal places), overall and in each mode they have raced, and every race entry's points after that race, overall and in the race's mode.
+The displayed points are $1000 + s \cdot (\mu - k\sigma)$, the "conservative rating" idea from TrueSkill and Xbox levels. With $k = \mu_0 / \sigma_0 \approx 2.083$ a newcomer shows exactly 1000, and as $\sigma$ shrinks the points climb toward $\mu$. The scale $s = 400 / (\ln 10 \cdot \sqrt{2\sigma_{floor}^2 + 2\beta^2}) \approx 13.73$ makes 400 points about 10:1 odds between established racers, as in Elo. The pipeline publishes each racer's points, $\mu$ and $\sigma$ (4 decimal places), overall and in each mode they have raced, and every race entry's points after that race: overall, in the race's mode, and, for a race in a season, in the season and in the season's mode (see [Season ratings](#season-ratings)). The season points are null for a race outside every season.
 
 #### The guarantee
 
-A winner's points never fall. Every pair a winner is in is decided in their favour, so $\Omega > 0$, and $d > 0$, so $\mu$ rises; $\sigma$ never rises, so $\mu - k\sigma$ rises too, and rounding is monotone. Finish times have no effect at all. Tests enforce both across every archived race, for the overall rating and for every mode rating.
+A winner's points never fall. Every pair a winner is in is decided in their favour, so $\Omega > 0$, and $d > 0$, so $\mu$ rises; $\sigma$ never rises, so $\mu - k\sigma$ rises too, and rounding is monotone. Finish times have no effect at all. Tests enforce both across every archived race, for the overall rating and for every mode rating, and for every season's overall and mode rating.
 
 #### Mode ratings
 
-Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode.
+Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode. Seasons have mode ratings too (see [Season ratings](#season-ratings)).
 
 Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does: on 2026 pairs, a log loss of 0.534 against 0.546 (see [Backtest](#backtest)). Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and the top-rated racer of God Route, Big Routing and Upsetti always use the overall rating.
+
+#### Season ratings
+
+A **season** is one run of the ladder, as the alttpr.racing schedule numbers them (see **Season** in [Definitions](#definitions)). Each season also has its own ratings, overall and in every mode, beside the all-time ones: the same model with the same parameters, run on that season's races alone. Nothing was retuned for it. `ladder_rating.rate_by_season` computes them.
+
+- **Full reset:** every racer debuts at exactly 1000 in every season, and again in every mode of it, however they rated before. A racer is provisional in a season, or in a season's mode, until they have 5 finishes there.
+- **Standings only:** season ratings carry no $\mu$ or $\sigma$. Predictions stay on the all-time overall rating, as they do for mode ratings: win chance, the Upset tag, and the top-rated racer of God Route, Big Routing and Upsetti.
+- **Which season a race is in:** a race belongs to the season whose start, less 5 minutes (`JOIN_EARLY`), is at or before the race's start, until the next season's start. Every included race counts, scheduled or not. A race in the break between two seasons counts toward the earlier one. The 5 races before season 1 (2025-04-20 and 21, 2025-05-15 and 16) have no season. The **current season** is the newest season that holds at least one included race.
+- **Why the start rule is not the API's seasons:** alttpr.racing files the odd slot under the wrong season, such as 3 season 1 slots on 2026-09-03 and 04, inside season 9. The start rule in [Definitions](#definitions) keeps such a slot from moving a boundary. The 5 `JOIN_EARLY` minutes let a race that started just before its first slot count.
+- **Schedule lag:** the schedule mirror syncs once a day and races every two hours, so a new season's first day can count toward the old season until the next daily schedule sync. This is display only: it cannot lock a wrong boundary (see below).
+
+**Locking.** A season's ratings are locked once the season has ended and none of its races awaits recording, so they never change again, even if the rating model does. `python3 scripts/build_stats.py --lock-seasons` builds as usual and then locks every season without a ledger, once all four hold:
+
+1. The next season started at least a day ago (`SETTLE`).
+2. At least 10 slots follow the next season's start (`LOCK_CONFIRM_SLOTS`), and none of them is the season's own. A misfiled slot that put the next season's start too early would be followed by the season's own slots, so it can never fix a wrong boundary: the season stays open.
+3. The archive holds a race that started after the next season's start, so the race sync has covered the season's end.
+4. Every race of the season is settled (`race_archive.is_settled`): recorded, unrecordable, or older than the 14 days after which the archive stops refreshing it. A race that was never recorded cannot block a lock forever.
+
+Only the data bot passes `--lock-seasons` (see [Scheduled data refresh](#scheduled-data-refresh)). A plain build never locks. The build prints `Locked the ratings of season N.` or `Season N stays open: <reason>.` for every season without a ledger.
+
+**The ledger.** `season-ratings/season-N.json`, beside `archive/` and outside `site/`, holds one locked season: `{schema_version: 1, season, start, end, rating, races}`.
+
+- **Contents:** `start` and `end` are the season's span in UTC, and `rating` is the parameters at lock time. Each race is `{r, mode, e}`: the race slug, the mode name, and `e`, a list of `[user ID, season points, season-mode points]` in entry order. It is keyed by slug, user ID and mode name, never by indexes, so it survives a rebuild that renumbers races and racers.
+- **Deterministic:** it holds no wall-clock time, so two locks of the same archive write identical bytes.
+- **Written once:** it is created exclusively and never overwritten. Deleting a ledger is the only way to lock that season again, with the rating as it is then.
+- **What the build does with it:** a locked season's races and points come from its ledger, whatever the rating computes today. A race the spans place in a locked season that the ledger does not hold, or a ledger race whose mode or entrants no longer match, gets no season and is never re-rated. Both are counted in `diagnostics.seasons` (`left_out_of_locked_seasons`, `mismatched_locked_races`).
+- **No visible change:** while the rating is unchanged, locking changes no published byte. Changing the rating changes the open season only.
+
+Today seasons 1 to 9 are locked and season 10 is open.
 
 #### What racetime.gg does differently
 
@@ -719,7 +776,7 @@ The page runs top to bottom:
 
 1. The [Top-rated banner](#top-rated-banner).
 2. **01 Latest**: the newest results with their tags.
-3. **02 Racers**: the leaderboard, with the rating column.
+3. **02 Racers**: the leaderboard, with its season select and the rating column.
 4. **03 Records**: the hall of records.
 5. **04-07**: the Ladder Data panels, on the schedule, participation, traffic and turnout.
 
@@ -733,15 +790,16 @@ A nav bar under the masthead links to the seven sections, grouped as Racing (01-
 
 The banner crowns the top-rated racer in each category: **Overall**, then every mode in mode order except `unknown`, which only groups races whose mode could not be read. The featured daily racer uses the same categories.
 
-- **Who:** a tile shows exactly the top of the leaderboard sorted by rating in its category: the whole archive, no filters, and no decay, so a leader keeps the crown until someone rates higher.
+- **Scope:** a two-button toggle in the banner header, **Season N** (the current season, pressed by default) and **All time**, in a group labelled "Rating period". Toggling redraws the tiles in place, and the choice is not persisted. With no seasons there is no toggle and the banner is all-time.
+- **Who:** a tile shows exactly the top of the leaderboard sorted by rating in its category and scope: the season's rating under a season, the all-time rating under **All time**. There are no filters and no decay, so a leader keeps the crown until someone rates higher. A season tile shows the season rating, and runners-up use the season's ranks.
 - **Ties:** ranks are competition ranks, so racers tied at the top share one tile. It shows up to three avatars, names the first two in name order, and adds **+N** for the rest.
-- **Tile:** the category, the avatar, the name and the rating. Each name links to that racer's page, opened on the tile's mode (**All modes** for Overall). A category where nobody is rated has no tile.
+- **Tile:** the category, the avatar, the name and the rating. Each name links to that racer's page, opened on the tile's mode (**All modes** for Overall). Racer pages are all-time whatever the scope. A category where nobody is rated in the scope has no tile.
 - **Runners-up:** under the leader, the next five racers in the category, as small avatars side by side, in rank order and then name order. Tied leaders are not repeated there. Hovering or focusing one shows its rank, name and rating, such as "#2 Alice · 1834", and clicking it opens that racer's page on the tile's mode. A category with fewer rated racers shows fewer.
 - **Layout:** one row that keeps names whole and scrolls sideways when it is wider than the screen.
 
 ### Latest results
 
-- Each race shows its [race tags](#race-tags). Expanding a race lists each entrant with their change in that race's mode rating.
+- Each race shows its [race tags](#race-tags). Expanding a race lists each entrant with their change in the season's rating in that race's mode: `+12`, `−9`, or `±0`, with a true minus sign and no arrow. ▲ and ▼ are for rank movement only, so a points change never looks like a rank change. The change is the entrant's season-mode points after the race minus their points before it, or minus the starting 1000 in their first race of that mode in that season. Its tooltip reads, for example, "Season 10 Keys rating after this race: 1234". A race with no season shows no change.
 - **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the tags drop to a line under the name.
 - **CR and CPH** (see [Chest counts](#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race, and each of the racer's own rows in a racer page's [Latest results](#racer-pages).
 - The sidebar holds **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order.
@@ -757,10 +815,10 @@ The banner crowns the top-rated racer in each category: **Overall**, then every 
 The Latest sidebar's **Featured daily racer**, between **Your racers** and **Fact of the day**, spotlights one racer a day.
 
 - **Candidates:** racers named by a race tag (see [Race tags](#race-tags)) in races from the 14 Eastern Time calendar days before today. Today's races do not count. A tag names the racer it is about: the record setter, the first-time winner, the upset or photo-finish winner, the PB setter, the milestone racer or the badge earner.
-- **Exclusion:** a racer in the top 3 of any category (see [Top-rated banner](#top-rated-banner)) at the end of yesterday is not a candidate. Ranks are competition ranks, so ties can put more than three racers in a top 3.
-- **Pick:** candidates are listed in name order. The pick starts at the candidate given by the 32-bit FNV-1a hash of `featured YYYY-MM-DD`, using today's Eastern date, modulo the number of candidates. It steps forward, wrapping around, past anyone who has climbed into a top 3 since.
-- **Stability:** everyone sees the same racer all day. A data refresh changes the pick only when the featured racer reaches a top 3 that day. A page left open past midnight keeps its racer until it is reloaded.
-- **Card:** the **Your racers** card with up to two more lines. The section is hidden when there are no candidates.
+- **Exclusion:** a racer in the top 3 of any category (see [Top-rated banner](#top-rated-banner)) at the end of yesterday is not a candidate, in either scope: all time or the current season. Ranks are competition ranks, so ties can put more than three racers in a top 3.
+- **Pick:** candidates are listed in name order. The pick starts at the candidate given by the 32-bit FNV-1a hash of `featured YYYY-MM-DD`, using today's Eastern date, modulo the number of candidates. It steps forward, wrapping around, past anyone who has climbed into a top 3, in either scope, since.
+- **Stability:** everyone sees the same racer all day. A data refresh changes the pick only when the featured racer reaches a top 3, in either scope, that day. A page left open past midnight keeps its racer until it is reloaded.
+- **Card:** the **Your racers** card with up to two more lines. Like that card, it shows the racer's 7-day rank movement in the current season's overall ranks (see [Racer leaderboard](#racer-leaderboard)). The section is hidden when there are no candidates.
   - **Highlight:** the racer's latest highlight in the window and how long ago it was, such as "★ 250th race · 11 days ago".
   - **Claim to fame:** the racer's [claim to fame](#claim-to-fame), such as "✦ 1 of 7 racers with 7+ wins in a row". A count of 1 reads "✦ Ladder best: …" instead. A badge claim shows the badge's art and name, and clicking it opens the badge's holders panel. A racer without a claim has no such line.
 
@@ -793,16 +851,19 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 
 ### Racer leaderboard
 
-- **Rating:** by default the board is sorted by the [Ladder rating](#ladder-rating), highest first, with ties broken by name. The Rating column follows the selected mode: **All modes** shows the overall rating, and a mode shows each racer's rating in that mode (see [Mode ratings](#mode-ratings)). Either way it covers the whole archive, whatever dates are selected. There is no minimum-races cutoff.
+- **Season:** a **Season** select above the table picks the scope: **Season 10** (the current season, the default), **Season 9** and so on down to **Season 1**, newest first, then **All seasons**. With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
+  - Under a season, every column except Badges is calculated from the races of that season, and of the selected mode when one is picked, with the rules under [Racer statistics](#racer-statistics). That includes H2H win %.
+  - Under **All seasons**, every column covers the whole archive.
+  - A racer with no race in the scope has no row. The table's status text names the season.
+- **Rating:** by default the board is sorted by the rating, highest first, with ties broken by name. The Rating column follows the selected scope and mode. Under a season it shows the [season rating](#season-ratings), overall under **All modes** and else in the selected mode. Under **All seasons** it shows the all-time [Ladder rating](#ladder-rating), overall or in the selected mode (see [Mode ratings](#mode-ratings)). Its tooltip names the scope, such as "Season 10 rating · Keys" or "All-time rating". A racer is provisional, or unrated, in a scope by the rules of that scope. There is no minimum-races cutoff.
 - **Position:** the number beside each racer is the row's position as shown, so it renumbers whenever a sort, filter or search changes the table.
-- **Rank movement:** while the board is sorted by rating, highest first, a ▲ or ▼ beside the number shows how far the racer has moved over the last 7 days in the ranks the Rating column shows: the overall ranks under **All modes**, else the selected mode's. **NEW** marks a racer who had no rating there 7 days ago: their first race, or their first race in the selected mode, falls in that window.
-- **Ranks:** rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's rating strip and the **Your racers** and **Featured daily racer** sidebar cards use the overall ranks.
-- **Columns:** 1st, 2nd, 3rd, Median time, Win % and H2H win % are defined under [Racer statistics](#racer-statistics). **Badges** counts the badges a racer has earned, across all modes and the whole archive.
-- **5+ races only** is an optional button that hides racers with fewer than five races. It counts races in the currently selected mode, so a veteran with only a few races in one mode drops out of that mode's board.
-- **Raced in last 30 days** is an optional button that hides racers with no race in the currently selected mode during the 30 Eastern Time calendar days ending today. Any entry counts, including a DNF or DQ. It only hides rows: the stats shown stay those of the chosen date range.
+- **Rank movement:** while the board is sorted by rating, highest first, a ▲ or ▼ beside the number shows how far the racer has moved over the last 7 days in the ranks the Rating column shows: the selected scope's overall ranks under **All modes**, else the selected mode's. **NEW** marks a racer who had no rating there 7 days ago. Under a season that is their first race in the season, or in the season's mode, in that window, so in a season's first week everyone in it is **NEW**. A season that ended more than 7 days ago shows no movement.
+- **Ranks:** rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's rating strip uses the all-time overall ranks. The **Your racers** and **Featured daily racer** sidebar cards show 7-day rank movement in the current season's overall ranks, as ▲N, ▼N or NEW, with a tooltip naming the scope, such as "Season 10 rank, last 7 days". With no seasons they use the all-time ranks.
+- **Columns:** 1st, 2nd, 3rd, Median time, Win % and H2H win % are defined under [Racer statistics](#racer-statistics). **Badges** counts the badges a racer has earned, across all modes and the whole archive, whatever season is selected.
+- **5+ races only** is an optional button that hides racers with fewer than five races. It counts races in the selected season and mode, so a veteran with only a few races in one mode, or in one season, drops out of that board.
+- **Raced in last 30 days** is an optional button that hides racers with no race in the currently selected mode during the 30 Eastern Time calendar days ending today. Any entry counts, including a DNF or DQ. It only hides rows: the stats shown stay those of the selected season.
 - **Followed** is an optional button that shows only the racers starred in this browser. Unstarring a racer while it is on drops their row at once.
-- **Count races from** limits the leaderboard to races dated inside a chosen range, inclusive, using the Eastern Time race date. Presets cover all time, the last 30 or 90 days, and this year, and the From and To dates can be set by hand. Every column except Rating and Badges, including H2H win %, is recalculated from races in the range with the same rules as above, and **5+ races only** counts races in the range. Racer pages always cover the whole archive.
-- By default the leaderboard covers the whole archive. The reporting-period toggle applies to the dashboard panels only.
+- Racer pages always cover the whole archive. The reporting-period toggle applies to the dashboard panels only.
 
 ### Hall of records
 
@@ -828,7 +889,7 @@ Records runs in three parts. Only By mode follows the mode picker.
 
 Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](#schedule-and-participation-metrics) defines every number they show, and **Schedule** in [Definitions](#definitions) defines the slots they count.
 
-- The reporting-period toggle applies to these panels only; the leaderboard has its own date range. The toolbar also shows **Scheduled races counted through** the Eastern Time date and hour in `source.schedule_counted_through`, the last slot the schedule panels count. Races later than that are not in them.
+- The reporting-period toggle applies to these panels only; the leaderboard has its own season select. The toolbar also shows **Scheduled races counted through** the Eastern Time date and hour in `source.schedule_counted_through`, the last slot the schedule panels count. Races later than that are not in them.
 - **04 Primetime heatmap:** a 7 by 24 grid of weekday against Eastern Time hour. A cell's colour is its band, primetime, normal or quiet, and its text is the racers per scheduled race to one decimal, or "·" when nothing was scheduled. The legend adds "Fewer than 5 scheduled races" for the cells without a band. A cell's tooltip gives its band, the racers per scheduled race, and how many of its scheduled races started.
 - **05 Turnout over time:** two monthly charts, the average racers per finished race and the race entries per scheduled day. Months without a scheduled day break the second line. Its tooltip gives the entries and the scheduled days behind each value, and the table lists the scheduled days.
 - **06 When races start:** the scheduled races per Eastern Time hour, as bars split into started and never started, with the start rate in the table.
@@ -844,14 +905,14 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](#sc
     - H2H Win Rate and Badges each have a thin bar under the value, filled to the win rate and to the share of badges earned. A win rate of "--" has no bar.
     - Below 980px wide the card moves under the profile, and below 620px each rival takes a line of its own.
   - Every stat covers all modes and the whole archive, whatever mode is selected. Among opponents with at least five decisive meetings, **Nemesis** is the one with the lowest head-to-head win rate below 50%, and **Favourite Victim** the one with the highest above 50%; ties go to the opponent met more often.
-- **Rating strip:** the racer's current rating overall, then in every mode they are rated in, in mode order. Each tile gives their rank out of every racer rated there, marked provisional below 5 finishes there, and its tooltip explains the rating.
+- **Rating strip:** the racer's current all-time rating overall, then in every mode they are rated in, in mode order. Each tile gives their rank out of every racer rated there, marked provisional below 5 finishes there, and its tooltip explains the rating.
 - **Badges:** earned badges come first in the order they were won, oldest first, and locked badges follow in table order (see [Badges](#badges)). Earned badges animate, and locked badges show the grey still. A counter badge fills its border as it progresses. Hovering a badge shows the share of racers who hold it, to two significant digits, counted on the page from the current data. Clicking a badge, here or in the Latest results sidebar, opens a panel with every racer who holds it, earliest unlock first.
 - **Latest results:** every race the racer entered, newest first, under a heading per month: the 5 latest at first, then 20 more at a time with **Show 20 more**. It covers every mode, whatever mode is selected.
-  - Each row is the racer's own result: the date and Eastern Time start hour, the mode, the preset, their place (blank for a DNF or DQ), their comment, their finish time or DNF or DQ, the field size, their CR and CPH, the race tags that name them, and their change in that race's mode rating.
+  - Each row is the racer's own result: the date and Eastern Time start hour, the mode, the preset, their place (blank for a DNF or DQ), their comment, their finish time or DNF or DQ, the field size, their CR and CPH, the race tags that name them, and their change in the season's rating in that race's mode, shown as in [Latest results](#latest-results).
   - The comment fits on one line, and hovering it shows the whole comment. Up to four tags show, then +N. Tags follow the entrant-tag rule under [Latest results](#latest-results), so Upset and Photo finish appear only on races the racer won.
   - Clicking a row expands the whole race exactly as Latest results does, with the racer's own row highlighted.
 - **Mode picker:** it sits below the rating strip, the badges and Latest results. Everything above it covers all modes, and everything below it follows it.
-- **Rating chart:** its heading gives the racer's rank and rating in the picked mode, overall under **All modes**, out of every racer rated there, marked provisional below 5 finishes there.
+- **Rating chart:** it is all-time. Its heading gives the racer's rank and rating in the picked mode, overall under **All modes**, out of every racer rated there, marked provisional below 5 finishes there.
   - The chart has one point per race day: the racer's rating in the picked mode after their last race that day. With a mode picked it covers only that mode's race days and takes the mode's colour.
   - Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive. It draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line.
   - Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar.
@@ -875,7 +936,7 @@ Like the racer page's heading stats, everything on the card covers all modes and
 - **Standing:**
   - The rating rank, out of all rated racers.
   - The rating, labelled provisional below 5 finishes.
-  - Under the rank, the 7-day rank movement as on the leaderboard: ▲, ▼ or new.
+  - Under the rank, the 7-day rank movement in the all-time overall ranks, as on the leaderboard under **All seasons**: ▲, ▼ or new.
   - A racer without a rating shows Unrated.
 - **Rating line:** the overall rating's race-day step line, as the rating chart draws it under **All modes**, with the starting rating dashed and the current rating haloed.
   - The highest rating is marked **Peak** while the racer is below it. **All-time high** shows when they are on it.

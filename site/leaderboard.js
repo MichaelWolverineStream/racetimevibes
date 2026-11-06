@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 12;
+const PARTICIPANT_SCHEMA_VERSION = 13;
 const ALL_MODES = "all";
 // Races with a missing or malformed mode prefix; a bucket, not a category.
 const UNKNOWN_MODE = "unknown";
@@ -11,6 +11,7 @@ const DQ_STATUS = 2;
 const DEFAULT_TIMEZONE = "America/New_York";
 const RACE_ROOT = "https://racetime.gg/";
 const BASE_TITLE = document.title;
+const SEASON_ALL_VALUE = "all";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -26,7 +27,8 @@ let badgeHolderCounts = new Map();
 let recordCache = new Map();
 let ratingRankCache = new Map();
 let ratingRankDeltaCache = new Map();
-let modeRatingDeltaCache = null;
+let seasonStandingsCache = new Map();
+let seasonModeRatingDeltaCache = null;
 let currentView = null;
 
 const DEFAULT_LEADERBOARD_SORT = { key: "rating", direction: "desc" };
@@ -37,7 +39,8 @@ const leaderboardState = {
   minRaces: 0,
   recentOnly: false,
   followedOnly: false,
-  range: { preset: "all", start: null, end: null },
+  // A season number, or null for all seasons; loadParticipants sets the current season.
+  season: null,
 };
 const playerState = { mode: ALL_MODES, sort: null, query: "", presetSort: null };
 
@@ -63,6 +66,21 @@ function validateParticipants(data) {
   ) {
     throw new Error("Racer data contains an invalid badge definition.");
   }
+  if (
+    !Array.isArray(data.seasons) ||
+    !data.seasons.every((season, index) => (
+      season !== null &&
+      typeof season === "object" &&
+      Number.isInteger(season.n) &&
+      (index === 0 || season.n > data.seasons[index - 1].n) &&
+      typeof season.first === "string" &&
+      typeof season.last === "string" &&
+      typeof season.ended === "boolean"
+    ))
+  ) {
+    throw new Error("Racer data contains an invalid season.");
+  }
+  const seasonNumbers = new Set(data.seasons.map((season) => season.n));
   data.players.forEach((player) => {
     if (player.rating !== null && typeof player.rating !== "number") {
       throw new Error("Racer data contains an invalid rating.");
@@ -102,16 +120,22 @@ function validateParticipants(data) {
       race.m >= data.modes.length ||
       !Number.isInteger(race.h) ||
       race.h < 0 ||
-      race.h > 23
+      race.h > 23 ||
+      !(race.s === undefined || (Number.isInteger(race.s) && seasonNumbers.has(race.s)))
     ) {
       throw new Error("Racer data contains an invalid race record.");
     }
     race.e.forEach((entry) => {
-      if (!Array.isArray(entry) || entry.length < 6 || !Number.isInteger(entry[0]) || entry[0] < 0 || entry[0] >= data.players.length) {
+      if (!Array.isArray(entry) || entry.length < 8 || !Number.isInteger(entry[0]) || entry[0] < 0 || entry[0] >= data.players.length) {
         throw new Error("Racer data contains an out-of-range player index.");
       }
       if (typeof entry[5] !== "number") {
         throw new Error("Racer data contains an invalid mode rating after a race.");
+      }
+      const seasonRatings = [entry[6], entry[7]];
+      const valid = race.s === undefined ? seasonRatings.every((value) => value === null) : seasonRatings.every(Number.isInteger);
+      if (!valid) {
+        throw new Error("Racer data contains an invalid season rating after a race.");
       }
     });
   });
@@ -177,15 +201,21 @@ function compareEntries(subject, opponent) {
   return 0;
 }
 
-function recordsForMode(modeId, range) {
-  const cacheKey = `${modeId}|${range.start ?? ""}|${range.end ?? ""}`;
+// Whether a race counts toward `season`; null is all time.
+function inSeason(race, season) {
+  return season === null || race.s === season;
+}
+
+// Win/loss/draw records in one mode (or all) over one season (or null for all time).
+function recordsForMode(modeId, season) {
+  const cacheKey = `${modeId}|${season ?? "all"}`;
   if (recordCache.has(cacheKey)) {
     return recordCache.get(cacheKey);
   }
   const modeIndex = modeIndexFor(modeId);
   const records = participants.players.map(() => ({ wins: 0, losses: 0, draws: 0 }));
   participants.races.forEach((race) => {
-    if ((modeIndex !== null && race.m !== modeIndex) || !inRange(race, range)) {
+    if ((modeIndex !== null && race.m !== modeIndex) || !inSeason(race, season)) {
       return;
     }
     const entries = race.e;
@@ -211,12 +241,12 @@ function recordsForMode(modeId, range) {
   return records;
 }
 
-// Mirrors _leaderboard() in scripts/participant_stats.py for a date-limited slice of races.
+// Mirrors _leaderboard() in scripts/participant_stats.py for one season's races.
 // Players are stored sorted by casefolded name, so the index is the name tie-break.
-function computeBoardRows(modeIndex, range) {
+function computeBoardRows(modeIndex, season) {
   const totals = new Map();
   participants.races.forEach((race) => {
-    if ((modeIndex !== null && race.m !== modeIndex) || !inRange(race, range)) {
+    if ((modeIndex !== null && race.m !== modeIndex) || !inSeason(race, season)) {
       return;
     }
     race.e.forEach((entry) => {
@@ -277,8 +307,51 @@ function competitionRanks(ratings) {
   return new Map([...ratings].map(([playerIndex, rating]) => [playerIndex, firstRank.get(rating)]));
 }
 
-// The racer's rating in the overall ladder or in one mode; null when unrated in scope.
-function ratingFor(player, modeId = ALL_MODES) {
+// The current season is the newest one, the last in `seasons`; null when the data has none.
+function currentSeason() {
+  return participants.seasons.length ? participants.seasons.at(-1).n : null;
+}
+
+function seasonLabel(season) {
+  return `Season ${season}`;
+}
+
+// Every racer's standing in one season: the rating after their last race there, overall and per mode index,
+// with their finishes. Season ratings carry no mu or sigma.
+function seasonStandings(season) {
+  if (!seasonStandingsCache.has(season)) {
+    const standings = { overall: new Map(), modes: new Map() };
+    const record = (standing, playerIndex, rating, entry) => {
+      const finishes = (standing.get(playerIndex)?.finishes ?? 0) + (isFinisher(entry) ? 1 : 0);
+      standing.set(playerIndex, { rating, finishes });
+    };
+    participants.races.forEach((race) => {
+      if (race.s !== season) {
+        return;
+      }
+      if (!standings.modes.has(race.m)) {
+        standings.modes.set(race.m, new Map());
+      }
+      race.e.forEach((entry) => {
+        record(standings.overall, entry[0], entry[6], entry);
+        record(standings.modes.get(race.m), entry[0], entry[7], entry);
+      });
+    });
+    seasonStandingsCache.set(season, standings);
+  }
+  return seasonStandingsCache.get(season);
+}
+
+function seasonStanding(season, modeId) {
+  const standings = seasonStandings(season);
+  return modeId === ALL_MODES ? standings.overall : (standings.modes.get(modeIndexFor(modeId)) ?? new Map());
+}
+
+// The racer's rating in the overall ladder or in one mode, all time or in one season; null when unrated in scope.
+function ratingFor(player, modeId = ALL_MODES, season = null) {
+  if (season !== null) {
+    return seasonStanding(season, modeId).get(playerIndexFor(player.id)) ?? null;
+  }
   if (modeId === ALL_MODES) {
     return player.rating === null ? null : { rating: player.rating, mu: player.mu, sigma: player.sigma, finishes: player.finishes };
   }
@@ -286,23 +359,24 @@ function ratingFor(player, modeId = ALL_MODES) {
 }
 
 // Competition ranks of everyone rated overall or in one mode; its size is how many are rated.
-function ratingRanks(modeId = ALL_MODES) {
-  if (!ratingRankCache.has(modeId)) {
+function ratingRanks(modeId = ALL_MODES, season = null) {
+  const cacheKey = `${season ?? "all"}|${modeId}`;
+  if (!ratingRankCache.has(cacheKey)) {
     const ratings = new Map();
     participants.players.forEach((player, index) => {
-      const rating = ratingFor(player, modeId);
+      const rating = ratingFor(player, modeId, season);
       if (rating) {
         ratings.set(index, rating.rating);
       }
     });
-    ratingRankCache.set(modeId, competitionRanks(ratings));
+    ratingRankCache.set(cacheKey, competitionRanks(ratings));
   }
-  return ratingRankCache.get(modeId);
+  return ratingRankCache.get(cacheKey);
 }
 
 // Undefined for a racer unrated in scope.
-function ratingRank(playerIndex, modeId = ALL_MODES) {
-  return ratingRanks(modeId).get(playerIndex);
+function ratingRank(playerIndex, modeId = ALL_MODES, season = null) {
+  return ratingRanks(modeId, season).get(playerIndex);
 }
 
 // The scopes the top-rated banner crowns and the featured racer avoids: the overall ladder and every named mode.
@@ -310,14 +384,14 @@ function ratingCategories() {
   return [ALL_MODES, ...participants.modes.filter((modeId) => modeId !== UNKNOWN_MODE)];
 }
 
-// Competition ranks as they stood at the end of `lastDate`, overall or in one mode.
+// Competition ranks as they stood at the end of `lastDate`, overall or in one mode, all time or in one season.
 // A rating only moves when its racer races, so the rating on a past date is the one after their last race by then.
-function ratingRanksThrough(modeId, lastDate) {
+function ratingRanksThrough(modeId, lastDate, season = null) {
   const modeIndex = modeIndexFor(modeId);
-  const ratingIndex = modeIndex === null ? 4 : 5;
+  const ratingIndex = (season === null ? 4 : 6) + (modeIndex === null ? 0 : 1);
   const ratings = new Map();
   participants.races.forEach((race) => {
-    if (race.d > lastDate || (modeIndex !== null && race.m !== modeIndex)) {
+    if (race.d > lastDate || (modeIndex !== null && race.m !== modeIndex) || !inSeason(race, season)) {
       return;
     }
     race.e.forEach((entry) => {
@@ -330,14 +404,15 @@ function ratingRanksThrough(modeId, lastDate) {
 }
 
 // Positive when the racer climbed the rating ranks, overall or in one mode, over the last 7 days; "new" if they had no rating then.
-function ratingRankDeltas(modeId = ALL_MODES) {
-  if (ratingRankDeltaCache.has(modeId)) {
-    return ratingRankDeltaCache.get(modeId);
+function ratingRankDeltas(modeId = ALL_MODES, season = null) {
+  const cacheKey = `${season ?? "all"}|${modeId}`;
+  if (ratingRankDeltaCache.has(cacheKey)) {
+    return ratingRankDeltaCache.get(cacheKey);
   }
-  const ranksBefore = ratingRanksThrough(modeId, shiftIsoDate(todayInZone(), -7));
+  const ranksBefore = ratingRanksThrough(modeId, shiftIsoDate(todayInZone(), -7), season);
   const deltas = new Map();
   participants.players.forEach((player, playerIndex) => {
-    const rank = ratingRank(playerIndex, modeId);
+    const rank = ratingRank(playerIndex, modeId, season);
     if (rank === undefined) {
       return;
     }
@@ -348,24 +423,28 @@ function ratingRankDeltas(modeId = ALL_MODES) {
       deltas.set(playerIndex, previous - rank);
     }
   });
-  ratingRankDeltaCache.set(modeId, deltas);
+  ratingRankDeltaCache.set(cacheKey, deltas);
   return deltas;
 }
 
-// Change in the race's own mode rating for one entry; a racer's first race in a mode counts from the starting rating.
-function modeRatingDelta(raceIndex, entryIndex) {
-  if (!modeRatingDeltaCache) {
+// Change in the entry's season rating in the race's own mode; a racer's first race of a mode in a season counts from the starting rating.
+// Null for a race outside every season.
+function seasonModeRatingDelta(raceIndex, entryIndex) {
+  if (!seasonModeRatingDeltaCache) {
     const last = new Map();
-    modeRatingDeltaCache = participants.races.map((race) =>
+    seasonModeRatingDeltaCache = participants.races.map((race) =>
       race.e.map((entry) => {
-        const key = `${race.m}:${entry[0]}`;
+        if (race.s === undefined) {
+          return null;
+        }
+        const key = `${race.s}:${race.m}:${entry[0]}`;
         const previous = last.get(key);
-        last.set(key, entry[5]);
-        return entry[5] - (previous === undefined ? participants.rating.base : previous);
+        last.set(key, entry[7]);
+        return entry[7] - (previous === undefined ? participants.rating.base : previous);
       }),
     );
   }
-  return modeRatingDeltaCache[raceIndex][entryIndex];
+  return seasonModeRatingDeltaCache[raceIndex][entryIndex];
 }
 
 function lastRaceDate(playerIndex, modeIndex) {
@@ -480,9 +559,10 @@ function ratingText(rating) {
   return rating === null ? "--" : String(rating.rating);
 }
 
-function ratingTooltip(modeId = ALL_MODES) {
+function ratingTooltip(modeId = ALL_MODES, season = null) {
   const scope = modeId === ALL_MODES ? "all modes" : `${modeLabel(modeId)} races only`;
-  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 ${scope}`;
+  const period = season === null ? "" : ` \u00B7 ${seasonLabel(season)}`;
+  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 ${scope}${period}`;
 }
 
 function formatRaceDate(isoDate) {
@@ -510,23 +590,12 @@ function inRange(race, range) {
   return (!range.start || race.d >= range.start) && (!range.end || race.d <= range.end);
 }
 
-function isRangeActive(range) {
-  return Boolean(range.start || range.end);
-}
-
-function rangeLabel(range) {
-  if (range.start && range.end) {
-    return `races from ${formatRaceDate(range.start)} to ${formatRaceDate(range.end)}`;
-  }
-  return range.start ? `races from ${formatRaceDate(range.start)}` : `races through ${formatRaceDate(range.end)}`;
-}
-
 function playerHash(playerId, modeId) {
   const suffix = modeId === ALL_MODES ? "" : `/${encodeURIComponent(modeId)}`;
   return `#/player/${encodeURIComponent(playerId)}${suffix}`;
 }
 
-function appendRankDelta(cell, rank, delta) {
+function appendRankDelta(cell, rank, delta, season = null) {
   const arrow = document.createElement("span");
   if (delta === "new") {
     arrow.className = "rank-new";
@@ -535,20 +604,20 @@ function appendRankDelta(cell, rank, delta) {
   } else {
     arrow.className = `trend rank-delta trend--${delta > 0 ? "up" : "down"}`;
     arrow.textContent = `${delta > 0 ? "\u25B2" : "\u25BC"}${Math.abs(delta)}`;
-    arrow.title = `Rating rank 7 days ago: #${rank + delta}`;
+    arrow.title = `${season === null ? "Rating" : `${seasonLabel(season)} rating`} rank 7 days ago: #${rank + delta}`;
   }
   cell.appendChild(arrow);
 }
 
-// `rowNumber` is the row's position as displayed; `rankDelta` is the racer's rating-rank movement.
-function appendRacerLink(cell, player, modeId, rowNumber, rankDelta) {
+// `rowNumber` is the row's position as displayed; `rankDelta` is the racer's rating-rank movement in `season` (null: all time).
+function appendRacerLink(cell, player, modeId, rowNumber, rankDelta, season = null) {
   if (rowNumber !== null) {
     const badge = document.createElement("span");
     badge.className = rowNumber <= 3 ? `rank-badge rank-badge--podium rank-badge--${rowNumber}` : "rank-badge";
     badge.textContent = integerFormatter.format(rowNumber);
     cell.appendChild(badge);
     if (rankDelta !== undefined) {
-      appendRankDelta(cell, ratingRank(playerIndexFor(player.id), modeId), rankDelta);
+      appendRankDelta(cell, ratingRank(playerIndexFor(player.id), modeId, season), rankDelta, season);
     }
   }
   const link = document.createElement("a");
@@ -692,8 +761,8 @@ function matchesQuery(name, query) {
 }
 
 function leaderboardColumns() {
-  const { sort } = leaderboardState;
-  // Rank movement is in the slice's rating rank, so it only reads against the row order when sorted by rating.
+  const { sort, season } = leaderboardState;
+  // Rank movement is in the selected scope's rating rank, so it only reads against the row order when sorted by rating.
   const showRankMovement = sort.key === DEFAULT_LEADERBOARD_SORT.key && sort.direction === DEFAULT_LEADERBOARD_SORT.direction;
   return [
     {
@@ -704,8 +773,8 @@ function leaderboardColumns() {
       defaultDirection: "asc",
       sortValue: (row) => row.player.name.toLowerCase(),
       render: (cell, row, rowIndex) => {
-        const delta = showRankMovement ? ratingRankDeltas(leaderboardState.mode).get(row.p) : undefined;
-        appendRacerLink(cell, row.player, leaderboardState.mode, rowIndex + 1, delta);
+        const delta = showRankMovement ? ratingRankDeltas(leaderboardState.mode, season).get(row.p) : undefined;
+        appendRacerLink(cell, row.player, leaderboardState.mode, rowIndex + 1, delta, season);
         if (typeof UI !== "undefined") {
           const star = UI.followStar(row.p);
           star.classList.add("follow-star--row");
@@ -717,16 +786,18 @@ function leaderboardColumns() {
       key: "rating",
       label: "Rating",
       sortLabel: "ladder rating",
-      tooltip: leaderboardState.mode === ALL_MODES
-        ? "Ladder rating · all modes, all time"
-        : `Ladder rating · ${modeLabel(leaderboardState.mode)} races, all time`,
+      tooltip: season === null
+        ? (leaderboardState.mode === ALL_MODES
+          ? "All-time rating · all modes"
+          : `All-time rating · ${modeLabel(leaderboardState.mode)}`)
+        : `${seasonLabel(season)} rating · ${leaderboardState.mode === ALL_MODES ? "all modes" : modeLabel(leaderboardState.mode)}`,
       sortValue: (row) => row.rating?.rating,
       render: (cell, row) => {
         const text = document.createElement("span");
         text.className = "rating-value";
         text.textContent = ratingText(row.rating);
         if (row.rating !== null) {
-          bindTooltip(text, ratingTooltip(leaderboardState.mode));
+          bindTooltip(text, ratingTooltip(leaderboardState.mode, season));
         }
         cell.appendChild(text);
       },
@@ -798,12 +869,12 @@ function leaderboardColumns() {
   ];
 }
 
-// Rows in order of the slice's all-time rating (overall, or in the mode), highest first, unrated last; the players array is name-sorted, so its index breaks ties.
-function leaderboardRows(modeId, range) {
+// Rows in order of the selected scope's rating (overall, or in the mode), highest first, unrated last; the players array is name-sorted, so its index breaks ties.
+function leaderboardRows(modeId, season) {
   const modeIndex = modeIndexFor(modeId);
   let boardRows;
-  if (isRangeActive(range)) {
-    boardRows = computeBoardRows(modeIndex, range);
+  if (season !== null) {
+    boardRows = computeBoardRows(modeIndex, season);
   } else {
     const board = participants.leaderboards.find((item) => item.mode === modeId);
     if (!board) {
@@ -811,7 +882,7 @@ function leaderboardRows(modeId, range) {
     }
     boardRows = board.rows;
   }
-  const records = recordsForMode(modeId, range);
+  const records = recordsForMode(modeId, season);
   const rows = boardRows.map((row) => {
     const record = records[row.p];
     const player = participants.players[row.p];
@@ -819,7 +890,7 @@ function leaderboardRows(modeId, range) {
       rank: 0,
       p: row.p,
       player,
-      rating: ratingFor(player, modeId),
+      rating: ratingFor(player, modeId, season),
       lastRaceDate: lastRaceDate(row.p, modeIndex),
       races: row.races,
       first: row.first,
@@ -853,9 +924,9 @@ function renderLeaderboard() {
     },
   );
 
-  const { range } = leaderboardState;
+  const { season } = leaderboardState;
   const columns = leaderboardColumns();
-  const all = leaderboardRows(leaderboardState.mode, range);
+  const all = leaderboardRows(leaderboardState.mode, season);
   const recentCutoff = daysAgoCutoff(RECENT_DAYS);
   const visible = all.filter(
     (row) =>
@@ -873,11 +944,7 @@ function renderLeaderboard() {
   document
     .querySelector("#leaderboard-followed")
     .setAttribute("aria-pressed", String(leaderboardState.followedOnly));
-  document.querySelectorAll("#leaderboard-range-presets [data-range]").forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.dataset.range === range.preset));
-  });
-  document.querySelector("#leaderboard-from").value = range.start || "";
-  document.querySelector("#leaderboard-to").value = range.end || "";
+  document.querySelector("#leaderboard-season").value = season === null ? SEASON_ALL_VALUE : String(season);
 
   if (!visible.length) {
     const empty = document.createElement("p");
@@ -895,9 +962,7 @@ function renderLeaderboard() {
     ? `Sorted by ${columns.find((item) => item.key === leaderboardState.sort.key).sortLabel || ""}, ${leaderboardState.sort.direction === "asc" ? "ascending" : "descending"}. `
     : "";
   const filterLabels = [];
-  if (isRangeActive(range)) {
-    filterLabels.push(rangeLabel(range));
-  }
+  filterLabels.push(season === null ? "all seasons" : seasonLabel(season));
   if (leaderboardState.minRaces > 0) {
     filterLabels.push(`${MIN_RACES_THRESHOLD}+ races only`);
   }
@@ -913,7 +978,9 @@ function renderLeaderboard() {
 
 function emptyLeaderboardText(hasRaces) {
   if (!hasRaces) {
-    return "No races in this mode during the selected dates.";
+    return leaderboardState.season === null
+      ? "No races in this mode."
+      : `No races in this mode during ${seasonLabel(leaderboardState.season)}.`;
   }
   if (leaderboardState.followedOnly && !Following.ids().length) {
     return "Star a racer to follow them, then they show up here.";
@@ -921,54 +988,25 @@ function emptyLeaderboardText(hasRaces) {
   return "No racers match these filters.";
 }
 
-function clampIsoDate(isoDate, min, max) {
-  if (isoDate < min) {
-    return min;
-  }
-  return isoDate > max ? max : isoDate;
-}
-
-function presetRange(preset, firstDate, lastDate) {
-  if (preset === "all") {
-    return { preset, start: null, end: null };
-  }
-  const today = todayInZone();
-  const start = preset === "year" ? `${today.slice(0, 4)}-01-01` : daysAgoCutoff(Number(preset));
-  return {
-    preset,
-    start: clampIsoDate(start, firstDate, lastDate),
-    end: clampIsoDate(today, firstDate, lastDate),
-  };
-}
-
-function bindRangeControls() {
-  const firstDate = participants.races[0].d;
-  const lastDate = participants.races.at(-1).d;
-  const fromInput = document.querySelector("#leaderboard-from");
-  const toInput = document.querySelector("#leaderboard-to");
-  [fromInput, toInput].forEach((input) => {
-    input.min = firstDate;
-    input.max = lastDate;
-    input.addEventListener("change", () => {
-      let start = fromInput.value || null;
-      let end = toInput.value || null;
-      // Keep the date just picked and move the other bound to meet it.
-      if (start && end && start > end) {
-        if (input === fromInput) {
-          end = start;
-        } else {
-          start = end;
-        }
-      }
-      leaderboardState.range = { preset: start || end ? null : "all", start, end };
-      renderLeaderboard();
-    });
+// Newest season first, then "All seasons"; with no seasons in the data there is nothing to choose, so the control stays hidden.
+function bindSeasonControl() {
+  const control = document.querySelector("#leaderboard-season-control");
+  const select = document.querySelector("#leaderboard-season");
+  const options = [...participants.seasons].reverse().map((season) => {
+    const option = document.createElement("option");
+    option.value = String(season.n);
+    option.textContent = seasonLabel(season.n);
+    return option;
   });
-  document.querySelectorAll("#leaderboard-range-presets [data-range]").forEach((button) => {
-    button.addEventListener("click", () => {
-      leaderboardState.range = presetRange(button.dataset.range, firstDate, lastDate);
-      renderLeaderboard();
-    });
+  const all = document.createElement("option");
+  all.value = SEASON_ALL_VALUE;
+  all.textContent = "All seasons";
+  select.replaceChildren(...options, all);
+  control.hidden = participants.seasons.length === 0;
+  select.addEventListener("change", () => {
+    leaderboardState.season = select.value === SEASON_ALL_VALUE ? null : Number(select.value);
+    leaderboardState.sort = DEFAULT_LEADERBOARD_SORT;
+    renderLeaderboard();
   });
 }
 
@@ -1223,7 +1261,9 @@ async function loadParticipants() {
     recordCache = new Map();
     ratingRankCache = new Map();
     ratingRankDeltaCache = new Map();
-    modeRatingDeltaCache = null;
+    seasonStandingsCache = new Map();
+    seasonModeRatingDeltaCache = null;
+    leaderboardState.season = currentSeason();
 
     bindFilter("#leaderboard-search", leaderboardState, renderLeaderboard);
     bindFilter("#player-search", playerState, () => {
@@ -1249,7 +1289,7 @@ async function loadParticipants() {
         renderLeaderboard();
       }
     });
-    bindRangeControls();
+    bindSeasonControl();
 
     renderLeaderboard();
     status.hidden = true;

@@ -466,7 +466,7 @@ const RacerExtras = (() => {
     const player = participants.players[playerIndex];
     const board = participants.leaderboards.find((item) => item.mode === ALL_MODES);
     const row = board.rows.find((item) => item.p === playerIndex);
-    const record = recordsForMode(ALL_MODES, ALL_RACES)[playerIndex];
+    const record = recordsForMode(ALL_MODES, null)[playerIndex];
     const value = (text) => element("strong", "player-stat__value", text);
     const { nemesis, victim } = rivals(playerIndex);
     const rate = winRate(record.wins, record.losses);

@@ -311,17 +311,22 @@ const Feed = (() => {
   }
 
   function ratingDeltaNode(raceIndex, entryIndex) {
-    const delta = typeof modeRatingDelta === "function" ? modeRatingDelta(raceIndex, entryIndex) : null;
+    const delta = typeof seasonModeRatingDelta === "function" ? seasonModeRatingDelta(raceIndex, entryIndex) : null;
     if (delta === null || delta === undefined) {
       return null;
     }
+    // A points change, not a rank change: signed numbers, never the arrows that mean rank movement.
     const rounded = Math.round(delta);
     const node =
       rounded === 0
-        ? element("span", "trend trend--flat", "0")
-        : element("span", rounded > 0 ? "trend trend--up" : "trend trend--down", `${rounded > 0 ? "▲" : "▼"}${Math.abs(rounded)}`);
+        ? element("span", "points-delta points-delta--flat", "\u00B10")
+        : element(
+            "span",
+            rounded > 0 ? "points-delta points-delta--up" : "points-delta points-delta--down",
+            `${rounded > 0 ? "+" : "\u2212"}${Math.abs(rounded)}`,
+          );
     const race = participants.races[raceIndex];
-    bindTooltip(node, `${modeLabel(participants.modes[race.m])} rating after this race: ${race.e[entryIndex][5]}`);
+    bindTooltip(node, `${seasonLabel(race.s)} ${modeLabel(participants.modes[race.m])} rating after this race: ${race.e[entryIndex][7]}`);
     return node;
   }
 
@@ -679,15 +684,23 @@ const Feed = (() => {
     return section;
   }
 
-  function rankMovementNode(deltas, playerIndex) {
+  // `season` names the scope of the ranks in the tooltip; null is all time.
+  function rankMovementNode(deltas, playerIndex, season) {
     const delta = deltas.get(playerIndex);
     if (delta === undefined) {
       return null;
     }
-    if (delta === "new") {
-      return element("span", "trend trend--flat", "NEW");
-    }
-    return element("span", delta > 0 ? "trend trend--up" : "trend trend--down", `${delta > 0 ? "▲" : "▼"}${Math.abs(delta)}`);
+    const node =
+      delta === "new"
+        ? element("span", "trend trend--flat", "NEW")
+        : element("span", delta > 0 ? "trend trend--up" : "trend trend--down", `${delta > 0 ? "▲" : "▼"}${Math.abs(delta)}`);
+    bindTooltip(node, `${season === null ? "All-time" : seasonLabel(season)} rank, last 7 days`);
+    return node;
+  }
+
+  // The current season's overall rank movement; all time when the data has no seasons.
+  function sidebarRankDeltas() {
+    return typeof ratingRankDeltas === "function" ? ratingRankDeltas(ALL_MODES, currentSeason()) : new Map();
   }
 
   function activeStreakTexts(playerIndex) {
@@ -765,12 +778,13 @@ const Feed = (() => {
   }
 
   function racerCard(playerIndex, deltas, { note = null, claim = null } = {}) {
+    const season = currentSeason();
     const card = element("div", "feed-racer");
     card.appendChild(UI.avatar(playerIndex, 32));
     const body = element("div", "feed-racer__body");
     const head = element("div", "feed-racer__head");
     head.append(playerLink(playerIndex, "racer-link"), UI.followStar(playerIndex));
-    const movement = rankMovementNode(deltas, playerIndex);
+    const movement = rankMovementNode(deltas, playerIndex, season);
     if (movement) {
       head.appendChild(movement);
     }
@@ -800,7 +814,7 @@ const Feed = (() => {
     if (!indexes.length) {
       section.appendChild(element("p", "feed-side__empty", "☆ Star a racer to follow them here."));
     } else {
-      const deltas = typeof ratingRankDeltas === "function" ? ratingRankDeltas() : new Map();
+      const deltas = sidebarRankDeltas();
       indexes.forEach((playerIndex) => section.appendChild(racerCard(playerIndex, deltas)));
     }
     host.replaceChildren(section);
@@ -818,16 +832,18 @@ const Feed = (() => {
         (race.t || []).forEach((tag) => latestHighlight.set(tag[1], { tag, raceIndex }));
       }
     });
+    // A racer leading either the all-time or the current season's ladder in any category is already featured elsewhere.
     const categories = ratingCategories();
+    const scopes = [null, currentSeason()].filter((season, index, all) => all.indexOf(season) === index);
     const inTopRanks = (rankMaps, playerIndex) => rankMaps.some((ranks) => ranks.get(playerIndex) <= FEATURED_TOP_RANKS);
-    const ranksThrough = categories.map((modeId) => ratingRanksThrough(modeId, through));
+    const ranksThrough = scopes.flatMap((season) => categories.map((modeId) => ratingRanksThrough(modeId, through, season)));
     const candidates = [...latestHighlight.keys()]
       .filter((playerIndex) => !inTopRanks(ranksThrough, playerIndex))
       .sort((left, right) => left - right);
     if (!candidates.length) {
       return null;
     }
-    const ranksNow = categories.map((modeId) => ratingRanks(modeId));
+    const ranksNow = scopes.flatMap((season) => categories.map((modeId) => ratingRanks(modeId, season)));
     const start = fnv1a(`featured ${today}`) % candidates.length;
     for (let step = 0; step < candidates.length; step += 1) {
       const playerIndex = candidates[(start + step) % candidates.length];
@@ -868,7 +884,7 @@ const Feed = (() => {
     }
     const race = participants.races[featured.raceIndex];
     const note = `★ ${highlightLabel(featured.tag, race)} · ${UI.relativeDay(race.d)}`;
-    const deltas = typeof ratingRankDeltas === "function" ? ratingRankDeltas() : new Map();
+    const deltas = sidebarRankDeltas();
     const section = sidebarSection("Featured daily racer");
     section.appendChild(racerCard(featured.playerIndex, deltas, { note, claim: participants.players[featured.playerIndex].claim }));
     host.appendChild(section);

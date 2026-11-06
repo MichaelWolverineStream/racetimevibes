@@ -60,7 +60,8 @@ jobs:
         if: inputs.sync-schedule
         run: python3 scripts/schedule_archive.py
       - name: Build data
-        run: python3 scripts/build_stats.py
+        # --lock-seasons writes a ledger for every season that has ended and settled.
+        run: python3 scripts/build_stats.py --lock-seasons
       - name: Mirror avatars
         run: python3 scripts/avatar_mirror.py
       - name: Detect changes
@@ -97,8 +98,9 @@ jobs:
               check=True, capture_output=True, text=True,
           ).stdout.strip())
 
+          # A newly locked season's ledger changes no site file, so it counts as an archive change.
           archive = bool(subprocess.run(
-              ["git", "status", "--porcelain", "--", "archive"],
+              ["git", "status", "--porcelain", "--", "archive", "season-ratings"],
               check=True, capture_output=True, text=True,
           ).stdout.strip())
 
@@ -114,7 +116,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # Leave out site files whose only change is generated_at.
           if [ "${{ steps.changes.outputs.site }}" != "true" ]; then git checkout -- site/data; fi
-          git add archive site/data site/avatars
+          git add archive season-ratings site/data site/avatars
           git commit -m "$(date -u +%F) data"
           git pull --rebase origin main
           git push origin HEAD:main

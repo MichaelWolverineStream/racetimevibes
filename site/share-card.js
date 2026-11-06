@@ -88,7 +88,7 @@ const ShareCard = (() => {
     const player = participants.players[playerIndex];
     const board = participants.leaderboards.find((item) => item.mode === ALL_MODES);
     const row = board.rows.find((item) => item.p === playerIndex);
-    const record = recordsForMode(ALL_MODES, ALL_RACES)[playerIndex];
+    const record = recordsForMode(ALL_MODES, null)[playerIndex];
     const earnedAt = (definition) => player.badges[definition.id];
     const holders = (definition) => badgeHolderCounts.get(definition.id) ?? 0;
     // Rarest first; badges held by equally many racers keep the order they were won.

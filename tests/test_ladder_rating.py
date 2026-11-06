@@ -274,6 +274,70 @@ class ModeRatingTests(unittest.TestCase):
         self.assertIsNotNone(by_mode.players[1][3])
 
 
+class SeasonRatingTests(unittest.TestCase):
+    def two_seasons(self):
+        """Season 1: players 0-2 race mode 0 six times. A race outside every season.
+        Season 2: the same three plus player 3, twice in mode 0 and twice in mode 1."""
+        races = [
+            record(finished([3000, 3300, 3600]), f"alttpr-ladder/one-{index}")
+            for index in range(6)
+        ]
+        races.append(record(finished([3600, 3300, 3000]), "alttpr-ladder/break"))
+        races += [
+            record(
+                finished([3600, 3300, 3000, 3900]),
+                f"alttpr-ladder/two-{index}",
+                mode=index % 2,
+                mode_name=("open", "entrance")[index % 2],
+            )
+            for index in range(4)
+        ]
+        seasons = [1] * 6 + [None] + [2] * 4
+        return races, seasons
+
+    def test_each_season_matches_rating_its_races_alone(self):
+        races, seasons = self.two_seasons()
+        result = ladder_rating.rate_by_season(races, 4, seasons)
+        for season in (1, 2):
+            indexes = [index for index, number in enumerate(seasons) if number == season]
+            chosen = [races[index] for index in indexes]
+            alone = ladder_rating.rate(chosen, 4)
+            by_mode = ladder_rating.rate_by_mode(chosen, 4)
+            self.assertEqual([result.pre[index] for index in indexes], alone.pre)
+            self.assertEqual([result.post[index] for index in indexes], alone.post)
+            self.assertEqual([result.mode_pre[index] for index in indexes], by_mode.pre)
+            self.assertEqual([result.mode_post[index] for index in indexes], by_mode.post)
+        self.assertEqual(result.params, ladder_rating.rate(races, 4).params)
+
+    def test_a_race_outside_every_season_has_no_season_state(self):
+        races, seasons = self.two_seasons()
+        result = ladder_rating.rate_by_season(races, 4, seasons)
+        for states in (result.pre, result.post, result.mode_pre, result.mode_post):
+            self.assertEqual(states[6], [])
+
+    def test_a_race_in_one_season_leaves_another_untouched(self):
+        races, seasons = self.two_seasons()
+        before = ladder_rating.rate_by_season(races[:7], 4, seasons[:7])
+        after = ladder_rating.rate_by_season(races, 4, seasons)
+        self.assertEqual(before.post[:7], after.post[:7])
+        self.assertEqual(before.mode_post[:7], after.mode_post[:7])
+
+    def test_everyone_debuts_at_1000_every_season_and_in_every_mode_of_it(self):
+        races, seasons = self.two_seasons()
+        result = ladder_rating.rate_by_season(races, 4, seasons)
+        self.assertNotEqual(result.display(result.post[5][0]), 1000)
+        for position in range(4):
+            self.assertEqual(result.display(result.pre[7][position]), 1000)
+            self.assertEqual(result.display(result.mode_pre[7][position]), 1000)
+            self.assertEqual(result.display(result.mode_pre[8][position]), 1000)
+        self.assertNotEqual(result.display(result.pre[8][0]), 1000)
+
+    def test_the_seasons_must_line_up_with_the_records(self):
+        races, seasons = self.two_seasons()
+        with self.assertRaisesRegex(ValueError, "season"):
+            ladder_rating.rate_by_season(races, 4, seasons[:-1])
+
+
 class ArchiveTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
