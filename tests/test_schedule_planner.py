@@ -2946,7 +2946,7 @@ class RaceModeTests(WorldCase):
             for r in p["schedule"]:
                 self.assertIn(r["mode"], plan[r["category"]])
                 self.assertEqual(r["mode_id"], modes[r["mode"]]["id"])
-                self.assertEqual(r["source"], sp.ARCHETYPE_CATEGORIES[modes[r["mode"]]["archetype"]])
+                self.assertEqual(r["source"], schedule_archive.ARCHETYPE_CATEGORIES[modes[r["mode"]]["archetype"]])
 
     def test_a_mixed_categorys_races_count_under_both_sources_and_rotate_even_when_featured(self):
         for p in mixed_result()["proposals"]:
@@ -3537,7 +3537,7 @@ class CommittedDataTests(unittest.TestCase):
         wrong = [
             (s.started_at.isoformat(), s.mode_id, s.category)
             for s in fired
-            if sp.ARCHETYPE_CATEGORIES.get(archetypes[s.mode_id]) != s.category
+            if schedule_archive.ARCHETYPE_CATEGORIES.get(archetypes[s.mode_id]) != s.category
         ]
         self.assertEqual(wrong[:5], [])
 

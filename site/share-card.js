@@ -18,7 +18,7 @@ const ShareCard = (() => {
   const CATEGORY_MARK = "assets/alttpr-ladder.png";
   const TITLE_ID = "share-card-title";
   // Fills for UI.monogramTint's 1-6; must match the .ui-avatar__monogram--tint-N rules in ui.css.
-  const MONOGRAM_FILLS = ["--accent", "--cohort-3", "--cohort-4", "--gold-ink", "--bronze-ink", "--silver-ink"];
+  const MONOGRAM_FILLS = ["--accent", "--teal", "--teal-deep", "--gold-ink", "--bronze-ink", "--silver-ink"];
   const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 
   function element(tag, className, text = null) {

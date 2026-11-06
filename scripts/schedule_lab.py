@@ -334,7 +334,7 @@ def build_context(
     period_start, period_end = planner.season_bounds(
         *planner.plan_season(config, schedule, start, weeks)
     )
-    known = set(planner.ARCHETYPE_CATEGORIES.values()) | set(config["composition"])
+    known = set(schedule_archive.ARCHETYPE_CATEGORIES.values()) | set(config["composition"])
     return Context(
         api_modes=api_modes,
         config=config,

@@ -4,10 +4,15 @@ import unittest
 from datetime import UTC, datetime
 from pathlib import Path
 
-from scripts import build_stats, race_archive
+from scripts import build_stats, race_archive, schedule_archive
 
 
 DEFAULT_ENTRANTS = object()
+MODES = [
+    {"id": 1, "archetype": 1, "name": "Open", "active": True},
+    {"id": 4, "archetype": 4, "name": "Keys", "active": True},
+    {"id": 8, "archetype": 8, "name": "Odd", "active": True},
+]
 
 
 def race(
@@ -50,16 +55,38 @@ def race(
     }
 
 
-class AggregationTests(unittest.TestCase):
-    def setUp(self):
-        self.generated_at = datetime(2026, 9, 17, 12, tzinfo=UTC)
+def seeded(seed, mode="simple"):
+    """A race info line with an alttpr.racing seed link for race id `seed`."""
+    return (
+        f"Step Ladder Series - [{mode}] - Open\n"
+        f"open - https://alttpr.racing/getseed.php?race={seed} - (x)"
+    )
 
+
+def slot(slot_id, race_id, started_at, mode=1, season=1):
+    moment = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+    return {
+        "id": slot_id,
+        "raceId": race_id,
+        "season": season,
+        "time": str(int(moment.timestamp())),
+        "mode": mode,
+    }
+
+
+def aggregate(races, schedule=(), modes=MODES):
+    return build_stats.aggregate_races(
+        list(races),
+        schedule=list(schedule),
+        modes=modes,
+        generated_at=datetime(2026, 9, 17, 12, tzinfo=UTC),
+    )
+
+
+class AggregationTests(unittest.TestCase):
     def test_rejects_dataset_with_no_included_races(self):
         with self.assertRaisesRegex(build_stats.DataError, "No races remained"):
-            build_stats.aggregate_races(
-                [race("cancelled", status="cancelled")],
-                generated_at=self.generated_at,
-            )
+            aggregate([race("cancelled", status="cancelled")])
 
     def test_extracts_only_leading_normalized_mode(self):
         self.assertEqual(
@@ -102,42 +129,11 @@ class AggregationTests(unittest.TestCase):
             race("bad-info", info=None),
         ]
 
-        stats = build_stats.aggregate_races(
-            races,
-            generated_at=self.generated_at,
-        )
+        stats = aggregate(races)
 
-        self.assertEqual(len(stats["hourly"]), 24)
-        self.assertEqual([item["hour"] for item in stats["hourly"]], list(range(24)))
-        by_hour = {item["hour"]: item for item in stats["hourly"]}
-        self.assertEqual(by_hour[22]["race_count"], 2)
-        self.assertEqual(by_hour[22]["entrant_total"], 12)
-        self.assertEqual(by_hour[22]["average_racers"], 6)
-        self.assertEqual(by_hour[22]["median_racers"], 6)
-        self.assertEqual(by_hour[22]["q1_racers"], 4)
-        self.assertEqual(by_hour[22]["q3_racers"], 8)
-        self.assertAlmostEqual(by_hour[22]["standard_deviation"], 2.8284271247461903)
-        self.assertEqual(by_hour[0]["average_racers"], 3)
-        self.assertEqual(by_hour[1]["average_racers"], 6)
-        self.assertIsNone(by_hour[2]["average_racers"])
-
-        by_weekday = {item["label"]: item for item in stats["weekdays"]}
-        self.assertEqual(by_weekday["Wednesday"]["race_count"], 2)
-        self.assertEqual(by_weekday["Thursday"]["race_count"], 2)
-        wednesday_22 = next(
-            item
-            for item in stats["weekday_hourly"]
-            if item["weekday_label"] == "Wednesday" and item["hour"] == 22
-        )
-        self.assertEqual(wednesday_22["average_racers"], 6)
-        self.assertEqual(wednesday_22["adjusted_average"], 0)
-
-        by_mode = {item["mode"]: item for item in stats["modes"]}
-        self.assertEqual(by_mode["keys"]["race_count"], 2)
-        self.assertEqual(by_mode["keys"]["average_racers"], 6)
-        self.assertEqual(by_mode["unknown"]["race_count"], 1)
-        self.assertEqual(stats["schema_version"], 8)
+        self.assertEqual(stats["schema_version"], 9)
         self.assertEqual(stats["source"]["included_race_count"], 4)
+        self.assertEqual(stats["source"]["included_entrant_count"], 21)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
         self.assertEqual(stats["diagnostics"]["excluded_by_status"], {"cancelled": 1})
         self.assertEqual(
@@ -152,64 +148,32 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(stats["generated_at"], "2026-09-17T12:00:00Z")
         self.assertEqual(stats["timezone"]["name"], "America/New_York")
 
-    def test_uses_eastern_standard_time_in_winter(self):
-        stats = build_stats.aggregate_races(
-            [race("winter", started_at="2026-01-15T05:00:00Z")],
-            generated_at=self.generated_at,
+    def test_buckets_slots_by_eastern_hour_in_winter_and_summer(self):
+        stats = aggregate(
+            [
+                race("winter", started_at="2026-01-15T05:00:00Z", info=seeded(1)),
+                race("summer", started_at="2026-07-15T05:00:00Z", info=seeded(2)),
+                race("newest", started_at="2026-07-20T05:00:00Z"),
+            ],
+            [
+                slot(1, 1, "2026-01-15T05:00:00Z"),
+                slot(2, 2, "2026-07-15T05:00:00Z"),
+            ],
         )
 
         by_hour = {item["hour"]: item for item in stats["hourly"]}
-        self.assertEqual(by_hour[0]["race_count"], 1)
-        self.assertEqual(by_hour[1]["race_count"], 0)
-
-    def test_adjusts_weekday_hours_for_mode_and_period_mix(self):
-        stats = build_stats.aggregate_races(
-            [
-                race("simple-13", started_at="2026-01-05T18:00:00Z", entrants_count=10),
-                race("simple-14", started_at="2026-01-05T19:00:00Z", entrants_count=2),
-                race(
-                    "entrance-13",
-                    started_at="2026-01-12T18:00:00Z",
-                    entrants_count=20,
-                    info="Step Ladder Series - [entrance]",
-                ),
-                race(
-                    "entrance-14",
-                    started_at="2026-01-12T19:00:00Z",
-                    entrants_count=12,
-                    info="Step Ladder Series - [entrance]",
-                ),
-            ],
-            generated_at=self.generated_at,
-        )
-
-        monday = {
-            item["hour"]: item
+        self.assertEqual(by_hour[0]["scheduled_count"], 1)
+        self.assertEqual(by_hour[1]["scheduled_count"], 1)
+        self.assertEqual(sum(item["scheduled_count"] for item in stats["hourly"]), 2)
+        cells = {
+            (item["weekday_label"], item["hour"]): item["scheduled_count"]
             for item in stats["weekday_hourly"]
-            if item["weekday_label"] == "Monday"
+            if item["scheduled_count"]
         }
-        self.assertEqual(monday[13]["average_racers"], 15)
-        self.assertEqual(monday[13]["adjusted_average"], 4)
-        self.assertEqual(monday[14]["average_racers"], 7)
-        self.assertEqual(monday[14]["adjusted_average"], -4)
-
-    def test_sorts_modes_by_average_then_name(self):
-        stats = build_stats.aggregate_races(
-            [
-                race("simple", entrants_count=3),
-                race("keys", entrants_count=8, info="Step Ladder Series - [keys]"),
-                race("entrance", entrants_count=8, info="Step Ladder Series - [entrance]"),
-            ],
-            generated_at=self.generated_at,
-        )
-
-        self.assertEqual(
-            [item["mode"] for item in stats["modes"]],
-            ["entrance", "keys", "simple"],
-        )
+        self.assertEqual(cells, {("Thursday", 0): 1, ("Wednesday", 1): 1})
 
     def test_includes_2025_races_excludes_ladder_tests_and_groups_quarters(self):
-        stats = build_stats.aggregate_races(
+        stats = aggregate(
             [
                 race(
                     "archive-start",
@@ -243,16 +207,14 @@ class AggregationTests(unittest.TestCase):
                     entrants_count=100,
                     info="Step Ladder Series - [ladder test]",
                 ),
-            ],
-            generated_at=self.generated_at,
+            ]
         )
 
-        self.assertEqual(stats["schema_version"], 8)
+        self.assertEqual(stats["schema_version"], 9)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 2)
-        self.assertNotIn("ladder_test", {item["mode"] for item in stats["modes"]})
         self.assertNotIn("excluded_before_data_start", stats["diagnostics"])
         self.assertEqual(
             stats["diagnostics"]["excluded_by_mode"],
@@ -324,13 +286,17 @@ class AggregationTests(unittest.TestCase):
                 )
 
     def test_monthly_turnout_covers_every_archive_month(self):
-        stats = build_stats.aggregate_races(
+        stats = aggregate(
             [
-                race("april", started_at="2025-04-20T16:00:00Z", entrants_count=4),
-                race("december", started_at="2025-12-31T20:00:00Z", entrants_count=5),
-                race("july", started_at="2026-07-01T04:00:00Z", entrants_count=8),
+                race("april", started_at="2025-04-20T16:00:00Z", entrants_count=4, info=seeded(1)),
+                race("december", started_at="2025-12-31T20:00:00Z", entrants_count=5, info=seeded(2)),
+                race("july", started_at="2026-07-01T04:00:00Z", entrants_count=8, info=seeded(3)),
             ],
-            generated_at=self.generated_at,
+            [
+                slot(1, 1, "2025-04-20T16:00:00Z"),
+                slot(2, 2, "2025-12-31T20:00:00Z"),
+                slot(3, 3, "2026-07-01T04:00:00Z"),
+            ],
         )
 
         monthly = {item["id"]: item for item in stats["monthly"]}
@@ -339,19 +305,19 @@ class AggregationTests(unittest.TestCase):
         ]
         self.assertEqual(list(monthly), expected_ids)
 
-        self.assertEqual(monthly["2025-04"]["covered_day_count"], 11)
+        self.assertEqual(monthly["2025-04"]["scheduled_day_count"], 1)
         self.assertFalse(monthly["2025-04"]["is_complete"])
-        self.assertAlmostEqual(monthly["2025-04"]["entries_per_day"], 4 / 11)
+        self.assertEqual(monthly["2025-04"]["entries_per_day"], 4)
 
         self.assertEqual(monthly["2025-05"]["race_count"], 0)
         self.assertIsNone(monthly["2025-05"]["average_racers"])
-        self.assertEqual(monthly["2025-05"]["entries_per_day"], 0)
+        self.assertEqual(monthly["2025-05"]["scheduled_day_count"], 0)
+        self.assertIsNone(monthly["2025-05"]["entries_per_day"])
 
         self.assertTrue(monthly["2025-12"]["is_complete"])
-        self.assertEqual(monthly["2025-12"]["covered_day_count"], 31)
-        self.assertAlmostEqual(monthly["2025-12"]["entries_per_day"], 5 / 31)
+        self.assertEqual(monthly["2025-12"]["scheduled_day_entrant_total"], 5)
+        self.assertEqual(monthly["2025-12"]["entries_per_day"], 5)
 
-        self.assertEqual(monthly["2026-07"]["covered_day_count"], 1)
         self.assertFalse(monthly["2026-07"]["is_complete"])
         self.assertEqual(monthly["2026-07"]["entries_per_day"], 8)
 
@@ -364,91 +330,326 @@ class AggregationTests(unittest.TestCase):
             stats["source"]["included_entrant_count"],
         )
 
-    def test_aggregates_unique_players_without_serializing_identities(self):
+    def test_never_serializes_identities(self):
         private_id = "private-player-id"
         private_name = "Private Player"
-        stats = build_stats.aggregate_races(
+        stats = aggregate(
             [
                 race(
                     "first",
-                    entrants_count=3,
-                    entrants=[
-                        {"user": {"id": private_id, "name": private_name}},
-                        {"user": {"id": "one-race", "name": "Once"}},
-                        {"user": None},
-                    ],
-                ),
-                race(
-                    "second",
                     entrants_count=2,
                     entrants=[
                         {"user": {"id": private_id, "name": private_name}},
-                        {"user": {"id": "other", "name": "Other"}},
+                        {"user": None},
                     ],
+                    info=seeded(1),
                 ),
+                race("newest", started_at="2026-09-20T20:00:00Z"),
             ],
-            generated_at=self.generated_at,
+            [slot(1, 1, "2026-09-17T20:00:00Z")],
         )
 
-        players = stats["unique_players"]
-        self.assertEqual(players["identified_player_count"], 3)
-        self.assertEqual(players["identified_entry_count"], 4)
-        self.assertEqual(players["unidentified_entry_count"], 1)
-        self.assertEqual(players["identity_coverage"], 0.8)
-        self.assertEqual(players["repeat_player_count"], 1)
-        self.assertEqual(
-            sum(item["player_count"] for item in players["cohorts"]), 3
-        )
-        self.assertEqual(
-            sum(item["entry_count"] for item in players["cohorts"]), 4
-        )
         serialized = json.dumps(stats)
         self.assertNotIn(private_id, serialized)
         self.assertNotIn(private_name, serialized)
         self.assertNotIn('"entrants"', serialized)
 
-    def test_unique_player_summary_covers_all_cohorts(self):
-        records = []
-        for race_number in range(21):
-            entrant_ids = ["core"]
-            if race_number < 6:
-                entrant_ids.append("regular")
-            if race_number < 2:
-                entrant_ids.append("occasional")
-            if race_number == 0:
-                entrant_ids.append("one-race")
-            records.append(
-                {
-                    "entrant_ids": tuple(entrant_ids),
-                    "unidentified_entry_count": 0,
-                    "entrants_count": len(entrant_ids),
-                }
-            )
-
-        summary = build_stats._unique_player_summary(records)
-        cohorts = {item["id"]: item for item in summary["cohorts"]}
-        self.assertEqual(
-            {cohort_id: item["player_count"] for cohort_id, item in cohorts.items()},
-            {"one_race": 1, "occasional": 1, "regular": 1, "core": 1},
-        )
-        self.assertEqual(
-            {cohort_id: item["entry_count"] for cohort_id, item in cohorts.items()},
-            {"one_race": 1, "occasional": 2, "regular": 6, "core": 21},
-        )
-
-    def test_rejects_incomplete_or_duplicate_entrant_data(self):
+    def test_rejects_an_entrant_count_mismatch(self):
         with self.assertRaisesRegex(build_stats.DataError, "reports 2 entrants"):
-            build_stats.aggregate_races(
-                [race("partial", entrants_count=2, entrants=[])],
-                generated_at=self.generated_at,
+            aggregate([race("partial", entrants_count=2, entrants=[])])
+
+
+# Mondays at 13:00 ET (17:00 UTC) in June 2026, and a race long after them, so the day
+# before the newest race never cuts the schedule short.
+MONDAYS = ("2026-06-01", "2026-06-08", "2026-06-15", "2026-06-22", "2026-06-29")
+NEWEST = race("newest", started_at="2026-08-31T16:00:00Z")
+
+
+class ScheduleAggregationTests(unittest.TestCase):
+    def test_counts_started_never_started_pulled_and_excluded_slots(self):
+        stats = aggregate(
+            [
+                race("a", started_at="2026-06-01T17:00:00Z", entrants_count=6, info=seeded(101)),
+                race("test", started_at="2026-06-01T23:00:00Z", info=seeded(104, "ladder_test")),
+                race("b", started_at="2026-06-08T17:00:00Z", entrants_count=4, info=seeded(105)),
+                NEWEST,
+            ],
+            [
+                slot(1, 101, "2026-06-01T17:00:00Z"),
+                slot(2, 102, "2026-06-01T19:00:00Z"),
+                slot(3, None, "2026-06-01T21:00:00Z"),
+                slot(4, 104, "2026-06-01T23:00:00Z"),
+                slot(5, 105, "2026-06-08T17:00:00Z"),
+            ],
+        )
+
+        self.assertEqual(
+            stats["diagnostics"]["schedule"],
+            {
+                "scheduled_count": 3,
+                "started_count": 2,
+                "pulled_count": 1,
+                "unscheduled_race_count": 0,
+            },
+        )
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-08T17:00:00Z")
+        by_hour = {item["hour"]: item for item in stats["hourly"]}
+        self.assertEqual(
+            {key: by_hour[13][key] for key in ("scheduled_count", "started_count", "median_racers")},
+            {"scheduled_count": 2, "started_count": 2, "median_racers": 5},
+        )
+        self.assertEqual(
+            {key: by_hour[15][key] for key in ("scheduled_count", "started_count", "median_racers")},
+            {"scheduled_count": 1, "started_count": 0, "median_racers": 0},
+        )
+        self.assertIsNone(by_hour[17]["median_racers"])
+        monday_13 = next(
+            item
+            for item in stats["weekday_hourly"]
+            if item["weekday_label"] == "Monday" and item["hour"] == 13
+        )
+        self.assertEqual(
+            (monday_13["entrant_total"], monday_13["average_racers"], monday_13["band"]),
+            (10, 5, None),
+        )
+
+    def test_median_counts_never_started_races_as_zero(self):
+        stats = aggregate(
+            [race("a", started_at="2026-06-01T17:00:00Z", entrants_count=4, info=seeded(1)), NEWEST],
+            [
+                slot(1, 1, "2026-06-01T17:00:00Z"),
+                slot(2, 2, "2026-06-08T17:00:00Z"),
+                slot(3, 3, "2026-06-15T17:00:00Z"),
+            ],
+        )
+
+        hour = stats["hourly"][13]
+        self.assertEqual(
+            (hour["median_racers"], hour["q1_racers"], hour["q3_racers"]), (0, 0, 4)
+        )
+
+    def test_stops_a_day_before_the_newest_race(self):
+        stats = aggregate(
+            [
+                race("first", started_at="2026-06-01T17:00:00Z"),
+                race("newest", started_at="2026-06-10T12:00:00Z"),
+            ],
+            [
+                slot(1, 1, "2026-06-09T11:00:00Z"),
+                slot(2, 2, "2026-06-09T13:00:00Z"),
+            ],
+        )
+
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-09T12:00:00Z")
+        self.assertEqual(stats["diagnostics"]["schedule"]["scheduled_count"], 1)
+
+    def test_stops_at_the_latest_slot_with_a_race_id(self):
+        # A stale mirror: the later slots have no race id yet, so they are neither
+        # counted as never started nor as pulled.
+        stats = aggregate(
+            [
+                race("a", started_at="2026-06-01T17:00:00Z", info=seeded(1)),
+                race("later", started_at="2026-06-03T17:00:00Z", info=seeded(3)),
+                NEWEST,
+            ],
+            [
+                slot(1, 1, "2026-06-01T17:00:00Z"),
+                slot(2, 2, "2026-06-02T17:00:00Z"),
+                slot(3, None, "2026-06-03T17:00:00Z"),
+                slot(4, None, "2026-06-04T17:00:00Z"),
+            ],
+        )
+
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-02T17:00:00Z")
+        self.assertEqual(
+            stats["diagnostics"]["schedule"],
+            {
+                "scheduled_count": 2,
+                "started_count": 1,
+                "pulled_count": 0,
+                "unscheduled_race_count": 0,
+            },
+        )
+
+    def test_counts_nothing_without_a_slot_that_has_a_race_id(self):
+        stats = aggregate(
+            [race("a", started_at="2026-06-01T17:00:00Z"), NEWEST],
+            [slot(1, None, "2026-06-01T17:00:00Z")],
+        )
+
+        self.assertIsNone(stats["source"]["schedule_counted_through"])
+        self.assertEqual(
+            stats["diagnostics"]["schedule"],
+            {
+                "scheduled_count": 0,
+                "started_count": 0,
+                "pulled_count": 0,
+                "unscheduled_race_count": 0,
+            },
+        )
+
+    def test_an_empty_schedule_gives_empty_schedule_panels(self):
+        stats = aggregate([race("a", started_at="2026-06-01T17:00:00Z")], [])
+
+        self.assertIsNone(stats["source"]["schedule_counted_through"])
+        self.assertTrue(all(item["scheduled_count"] == 0 for item in stats["hourly"]))
+        self.assertTrue(all(item["median_racers"] is None for item in stats["hourly"]))
+        self.assertTrue(all(item["band"] is None for item in stats["weekday_hourly"]))
+        (month,) = stats["monthly"]
+        self.assertEqual(month["scheduled_day_count"], 0)
+        self.assertIsNone(month["entries_per_day"])
+
+    def test_leaves_out_slots_before_the_archive_starts(self):
+        stats = aggregate(
+            [race("a", started_at="2026-06-01T17:00:00Z", info=seeded(1)), NEWEST],
+            [
+                slot(1, 900, "2026-05-31T17:00:00Z"),
+                slot(2, 1, "2026-06-01T17:00:00Z"),
+            ],
+        )
+
+        self.assertEqual(stats["diagnostics"]["schedule"]["scheduled_count"], 1)
+        self.assertEqual(stats["monthly"][0]["id"], "2026-06")
+
+    def test_an_unmapped_archetype_joins_by_seed(self):
+        stats = aggregate(
+            [race("odd", started_at="2026-06-01T17:00:00Z", info=seeded(1, "fun")), NEWEST],
+            [
+                slot(1, 1, "2026-06-01T17:00:00Z", mode=8),
+                slot(2, 2, "2026-06-08T17:00:00Z", mode=8),
+            ],
+        )
+
+        schedule = stats["diagnostics"]["schedule"]
+        self.assertEqual((schedule["scheduled_count"], schedule["started_count"]), (2, 1))
+
+    def test_rejects_a_counted_slot_with_an_unlisted_mode(self):
+        with self.assertRaisesRegex(build_stats.DataError, "names mode 77, which is not listed"):
+            aggregate(
+                [race("a", started_at="2026-06-01T17:00:00Z"), NEWEST],
+                [slot(1, 1, "2026-06-01T17:00:00Z", mode=77)],
             )
 
-        duplicate = {"user": {"id": "same-player"}}
-        with self.assertRaisesRegex(build_stats.DataError, "duplicate entrant"):
-            build_stats.aggregate_races(
-                [race("duplicate", entrants_count=2, entrants=[duplicate, duplicate])],
-                generated_at=self.generated_at,
+    def test_rejects_a_counted_slot_in_a_quarter_without_races(self):
+        with self.assertRaisesRegex(build_stats.DataError, "2026-Q2, which has no finished race"):
+            aggregate(
+                [
+                    race("q1", started_at="2026-03-02T17:00:00Z"),
+                    race("q3", started_at="2026-07-13T17:00:00Z"),
+                ],
+                [slot(1, 1, "2026-05-04T17:00:00Z")],
             )
+
+    def test_bands_weekday_hours_by_quartile(self):
+        # Seven Monday hours whose racers per scheduled race are 1 to 7, over five slots
+        # each: one race of 5 * value racers and four that never started.
+        races, schedule = [NEWEST], []
+        for value in range(1, 8):
+            hour = 10 + value
+            for week, day in enumerate(MONDAYS):
+                race_id = value * 10 + week
+                started_at = f"{day}T{hour + 4:02d}:00:00Z"
+                schedule.append(slot(race_id, race_id, started_at))
+                if week == 0:
+                    races.append(
+                        race(
+                            f"r{race_id}",
+                            started_at=started_at,
+                            entrants_count=5 * value,
+                            info=seeded(race_id),
+                        )
+                    )
+        # Four slots are one too few for a band.
+        for week, day in enumerate(MONDAYS[:4]):
+            schedule.append(slot(900 + week, 900 + week, f"{day}T13:00:00Z"))
+
+        stats = aggregate(races, schedule)
+
+        monday = {
+            item["hour"]: item for item in stats["weekday_hourly"] if item["weekday"] == 0
+        }
+        # The quartiles of 1..7 are 2 and 6; a tie with a quartile takes the outer band.
+        self.assertEqual(
+            {hour: monday[hour]["band"] for hour in range(9, 18)},
+            {
+                9: None,
+                10: None,
+                11: "quiet",
+                12: "quiet",
+                13: "normal",
+                14: "normal",
+                15: "normal",
+                16: "prime",
+                17: "prime",
+            },
+        )
+        self.assertEqual(monday[17]["average_racers"], 7)
+        self.assertTrue(all(item["band"] is None for item in stats["weekday_hourly"] if item["weekday"] != 0))
+
+    def test_per_day_entries_count_only_days_with_scheduled_races(self):
+        stats = aggregate(
+            [
+                race("may", started_at="2026-05-20T17:00:00Z", entrants_count=3),
+                race("a", started_at="2026-06-01T17:00:00Z", entrants_count=4, info=seeded(1)),
+                race("gap", started_at="2026-06-03T17:00:00Z", entrants_count=5),
+                race("test", started_at="2026-06-10T17:00:00Z", info=seeded(4, "ladder_test")),
+                race("c", started_at="2026-07-02T17:00:00Z", entrants_count=6, info=seeded(5)),
+            ],
+            [
+                slot(1, 1, "2026-06-01T17:00:00Z"),
+                slot(2, None, "2026-06-02T17:00:00Z"),
+                slot(3, 3, "2026-06-04T17:00:00Z"),
+                slot(4, 4, "2026-06-10T17:00:00Z"),
+                slot(5, 5, "2026-07-02T17:00:00Z"),
+                slot(6, 6, "2026-07-15T17:00:00Z"),
+            ],
+        )
+
+        monthly = {item["id"]: item for item in stats["monthly"]}
+        self.assertEqual(
+            {
+                month_id: (
+                    item["scheduled_day_count"],
+                    item["scheduled_day_entrant_total"],
+                    item["entrant_total"],
+                    item["entries_per_day"],
+                )
+                for month_id, item in monthly.items()
+            },
+            {
+                "2026-05": (0, 0, 3, None),
+                "2026-06": (3, 4, 9, 4 / 3),
+                "2026-07": (1, 6, 6, 6),
+            },
+        )
+        schedule = stats["diagnostics"]["schedule"]
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-07-01T17:00:00Z")
+        self.assertEqual(schedule["unscheduled_race_count"], 2)
+        self.assertEqual(schedule["pulled_count"], 1)
+
+    def test_periods_take_slots_by_their_own_quarter(self):
+        stats = aggregate(
+            [
+                race("q2", started_at="2026-06-29T17:00:00Z", entrants_count=4, info=seeded(1)),
+                race("q3", started_at="2026-07-06T17:00:00Z", entrants_count=6, info=seeded(2)),
+                NEWEST,
+            ],
+            [
+                slot(1, 1, "2026-06-29T17:00:00Z"),
+                slot(2, 2, "2026-07-06T17:00:00Z"),
+                slot(3, 3, "2026-07-13T17:00:00Z"),
+            ],
+        )
+
+        periods = {item["id"]: item for item in stats["periods"]}
+        self.assertEqual(
+            {
+                period_id: sum(item["scheduled_count"] for item in period["hourly"])
+                for period_id, period in periods.items()
+            },
+            {"2026-Q2": 1, "2026-Q3": 2},
+        )
+        self.assertEqual(sum(item["scheduled_count"] for item in stats["hourly"]), 3)
 
 
 class ExtractPresetTests(unittest.TestCase):
@@ -510,6 +711,17 @@ class BuildTests(unittest.TestCase):
             race_archive.race_path(self.archive_dir, race_record["name"]),
         )
 
+    def schedule(self, rows, modes=MODES):
+        directory = self.archive_dir / schedule_archive.SCHEDULE_DIRECTORY
+        race_archive.write_json_atomic(
+            {"schema_version": 1, "fetched_at": "2026-09-18T00:00:00Z", "modes": modes},
+            directory / schedule_archive.MODES_FILE,
+        )
+        race_archive.write_json_atomic(
+            {"schema_version": 1, "fetched_at": "2026-09-18T00:00:00Z", "schedule": rows},
+            directory / "season-1.json",
+        )
+
     def test_builds_all_datasets_from_the_archive(self):
         entrants = [
             {"user": {"id": "player-a", "name": "A"}, "comment": "  gg  "},
@@ -520,6 +732,7 @@ class BuildTests(unittest.TestCase):
                 "alttpr-ladder/kept-race-0001",
                 entrants_count=2,
                 entrants=entrants,
+                info=seeded(1),
             )
         )
         self.archive(
@@ -528,6 +741,8 @@ class BuildTests(unittest.TestCase):
                 info="Step Ladder Series - [ladder_test]",
             )
         )
+        self.archive(race("alttpr-ladder/newest-race-0003", started_at="2026-09-20T20:00:00Z"))
+        self.schedule([slot(1, 1, "2026-09-17T20:00:00Z"), slot(2, 2, "2026-09-18T20:00:00Z")])
         race_archive.write_json_atomic(
             {"player-a": "Renamed"},
             self.archive_dir / race_archive.RACER_NAMES_FILE,
@@ -538,10 +753,14 @@ class BuildTests(unittest.TestCase):
         )
 
         source = stats["source"]
-        self.assertEqual(source["archived_race_count"], 2)
-        self.assertEqual(source["included_race_count"], 1)
+        self.assertEqual(source["archived_race_count"], 3)
+        self.assertEqual(source["included_race_count"], 2)
         self.assertEqual(source["excluded_archived_race_count"], 1)
         self.assertEqual(stats["diagnostics"]["excluded_by_mode"], {"ladder_test": 1})
+        self.assertEqual(
+            (stats["diagnostics"]["schedule"]["scheduled_count"], stats["diagnostics"]["schedule"]["started_count"]),
+            (2, 1),
+        )
         self.assertEqual(
             comments["races"], {"alttpr-ladder/kept-race-0001": [["player-a", "gg", None]]}
         )
@@ -556,7 +775,7 @@ class BuildTests(unittest.TestCase):
         )
         self.assertEqual(
             sorted(player["name"] for player in participants["players"]),
-            ["B", "Renamed"],
+            ["B", "Player 0", "Player 1", "Player 2", "Player 3", "Renamed"],
         )
 
     def test_empty_archive_fails_with_instructions(self):
@@ -566,51 +785,13 @@ class BuildTests(unittest.TestCase):
             build_stats.build(self.archive_dir, *self.output_paths)
         self.assertFalse(self.output_paths[0].exists())
 
-
-class RoomCancellationEstimateTests(unittest.TestCase):
-    @staticmethod
-    def hourly(counts):
-        return [
-            {"hour": hour, "race_count": count}
-            for hour, count in enumerate(counts)
-        ]
-
-    def test_uses_top_six_median_and_clamped_deficits(self):
-        estimate = build_stats._room_cancellation_estimate(
-            self.hourly([10, 9, 8, 7, 6, 5] + [0] * 18)
-        )
-
-        self.assertEqual(estimate["baseline_rooms_per_hour"], 7.5)
-        self.assertEqual(estimate["estimated_cancelled_rooms"], 140)
-        self.assertEqual(estimate["observed_finished_rooms"], 45)
-        self.assertEqual(estimate["estimated_opened_rooms"], 185)
-        self.assertEqual(estimate["estimated_cancelled_share"], 140 / 185)
-        self.assertLessEqual(
-            estimate["sensitivity"]["lower_estimated_cancelled_rooms"],
-            estimate["estimated_cancelled_rooms"],
-        )
-        self.assertLessEqual(
-            estimate["estimated_cancelled_rooms"],
-            estimate["sensitivity"]["upper_estimated_cancelled_rooms"],
-        )
-
-    def test_equal_hours_infer_no_cancelled_rooms(self):
-        estimate = build_stats._room_cancellation_estimate(self.hourly([4] * 24))
-
-        self.assertEqual(estimate["estimated_cancelled_rooms"], 0)
-        self.assertEqual(estimate["estimated_opened_rooms"], 96)
-        self.assertEqual(estimate["estimated_cancelled_share"], 0)
-
-    def test_sparse_hours_remain_nonnegative(self):
-        estimate = build_stats._room_cancellation_estimate(
-            self.hourly([3, 2, 1] + [0] * 21)
-        )
-
-        self.assertEqual(estimate["baseline_rooms_per_hour"], 0.5)
-        self.assertEqual(estimate["estimated_cancelled_rooms"], 11)
-        self.assertGreaterEqual(
-            estimate["sensitivity"]["lower_estimated_cancelled_rooms"], 0
-        )
+    def test_refuses_an_archive_without_a_schedule_mirror(self):
+        self.archive(race("alttpr-ladder/kept-race-0001"))
+        with self.assertRaisesRegex(
+            build_stats.DataError, "run scripts/schedule_archive.py first"
+        ):
+            build_stats.build(self.archive_dir, *self.output_paths)
+        self.assertFalse(self.output_paths[0].exists())
 
 
 class GeneratedDataTests(unittest.TestCase):
@@ -628,7 +809,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 8)
+        self.assertEqual(data["schema_version"], 9)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
@@ -661,31 +842,34 @@ class GeneratedDataTests(unittest.TestCase):
             month_numbers, list(range(month_numbers[0], month_numbers[-1] + 1))
         )
 
-        for aggregate in [data, *data["periods"]]:
-            players = aggregate["unique_players"]
-            estimate = aggregate["room_cancellation_estimate"]
-            self.assertEqual(
-                players["identified_entry_count"]
-                + players["unidentified_entry_count"],
-                aggregate.get("entrant_total", source["included_entrant_count"]),
+        schedule = data["diagnostics"]["schedule"]
+        for selection in [data, *data["periods"]]:
+            hourly = selection["hourly"]
+            cells = selection["weekday_hourly"]
+            self.assertEqual(len(hourly), 24)
+            self.assertEqual(len(cells), 168)
+            for key in ("scheduled_count", "started_count"):
+                self.assertEqual(
+                    sum(item[key] for item in hourly), sum(item[key] for item in cells)
+                )
+            self.assertTrue(
+                all(item["started_count"] <= item["scheduled_count"] for item in cells)
             )
-            self.assertEqual(
-                sum(cohort["player_count"] for cohort in players["cohorts"]),
-                players["identified_player_count"],
+            self.assertTrue(
+                {item["band"] for item in cells} <= {"prime", "normal", "quiet", None}
             )
+        for key in ("scheduled_count", "started_count"):
+            self.assertEqual(sum(item[key] for item in data["hourly"]), schedule[key])
             self.assertEqual(
-                sum(cohort["entry_count"] for cohort in players["cohorts"]),
-                players["identified_entry_count"],
+                sum(item[key] for period in data["periods"] for item in period["hourly"]),
+                schedule[key],
             )
-            self.assertEqual(
-                estimate["observed_finished_rooms"],
-                sum(item["race_count"] for item in aggregate["hourly"]),
+        for month in data["monthly"]:
+            self.assertLessEqual(
+                month["scheduled_day_entrant_total"], month["entrant_total"]
             )
-            self.assertEqual(
-                estimate["estimated_opened_rooms"],
-                estimate["observed_finished_rooms"]
-                + estimate["estimated_cancelled_rooms"],
-            )
+            if month["scheduled_day_count"] == 0:
+                self.assertIsNone(month["entries_per_day"])
 
     def test_generated_schema_contains_no_participant_details(self):
         forbidden_keys = {

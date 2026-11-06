@@ -5,8 +5,6 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-const MINIMUM_CANDIDATE_SAMPLE = 20;
-const HIGHLIGHTED_CANDIDATES = 3;
 // Narrowest width that still fits 24 hourly bars with their labels; narrower hosts scroll.
 const MIN_CHART_WIDTH = 480;
 // Each nice axis maximum as a multiple of its power of ten, with a tick count that keeps every tick round.
@@ -16,12 +14,6 @@ const NICE_SCALES = [
 // Month labels thin out by divisors of 12, so January always keeps its label.
 const MONTH_LABEL_STEPS = [1, 2, 3, 6, 12];
 const MONTH_LABEL_MIN_SPACING = 40;
-const COHORTS = {
-  one_race: { label: "One race", range: "1 race", markClass: "orbit-mark--one-race" },
-  occasional: { label: "Occasional", range: "2-5 races", markClass: "orbit-mark--occasional" },
-  regular: { label: "Regular", range: "6-20 races", markClass: "orbit-mark--regular" },
-  core: { label: "Core", range: "21+ races", markClass: "orbit-mark--core" },
-};
 const chartBuilders = new Map();
 const chartWidths = new Map();
 const chartResizeObserver = new ResizeObserver((entries) => {
@@ -117,18 +109,13 @@ function formatAverage(value) {
   return value === null ? "--" : decimalFormatter.format(value);
 }
 
-function formatSigned(value) {
-  if (value === null) return "--";
-  return `${value > 0 ? "+" : ""}${decimalFormatter.format(value)}`;
-}
-
-function formatInterval(low, high) {
-  if (low === null || high === null) return "--";
-  return `${formatSigned(low)} to ${formatSigned(high)}`;
+// Medians and quartiles are whole or half numbers; show a half only when there is one.
+function formatCount(value) {
+  return Number.isInteger(value) ? integerFormatter.format(value) : decimalFormatter.format(value);
 }
 
 function formatPercent(value) {
-  return `${decimalFormatter.format(value * 100)}%`;
+  return `${integerFormatter.format(Math.round(value * 100))}%`;
 }
 
 // Sits above the anchor; with no room there it drops below anchorBottom instead of covering it,
@@ -175,66 +162,19 @@ function bindTooltip(target, text) {
   target.addEventListener("blur", hideTooltip);
 }
 
-function evidenceLabel(raceCount) {
-  if (raceCount >= 50) return "High sample";
-  if (raceCount >= 30) return "Moderate sample";
-  return "Minimum sample";
+const BAND_LABELS = { prime: "primetime", normal: "normal", quiet: "quiet" };
+// Must match BAND_MIN_SCHEDULED in scripts/build_stats.py and the heatmap legend in index.html.
+const BAND_MIN_SCHEDULED = 5;
+
+function startRateText(startedCount, scheduledCount) {
+  return `${integerFormatter.format(startedCount)} of ${integerFormatter.format(scheduledCount)} scheduled races started (${formatPercent(startedCount / scheduledCount)})`;
 }
 
-function rankCandidates(items) {
-  return items
-    .filter((item) => (
-      item.race_count >= MINIMUM_CANDIDATE_SAMPLE
-      && item.adjusted_average !== null
-    ))
-    .sort((left, right) => (
-      right.adjusted_average - left.adjusted_average
-      || right.race_count - left.race_count
-      || left.weekday - right.weekday
-      || left.hour - right.hour
-    ));
-}
-
-function renderCandidateTable(container, items) {
-  const candidates = rankCandidates(items).slice(0, 10);
-
-  if (candidates.length === 0) {
-    const emptyState = document.createElement("p");
-    emptyState.className = "candidate-empty";
-    emptyState.textContent = "No weekday-hour window has at least 20 races in this period. Use the opportunity map for exploratory signals or return to All data for ranked candidates.";
-    container.replaceChildren(emptyState);
-    return;
-  }
-
-  renderTable(
-    container,
-    ["Candidate window", "Adjusted lift", "95% range", "Raw average", "Median", "Races", "Evidence"],
-    candidates.map((item) => [
-      `${item.weekday_label}, ${fullHour(item.hour)}`,
-      formatSigned(item.adjusted_average),
-      formatInterval(item.adjusted_ci95_low, item.adjusted_ci95_high),
-      formatAverage(item.average_racers),
-      formatAverage(item.median_racers),
-      integerFormatter.format(item.race_count),
-      evidenceLabel(item.race_count),
-    ]),
-  );
-}
-
-function renderOpportunityHeatmap(container, items) {
-  const observedValues = items
-    .map((item) => item.adjusted_average)
-    .filter((value) => value !== null);
-  const maximumMagnitude = Math.max(1, ...observedValues.map((value) => Math.abs(value)));
-  const candidateRanks = new Map(
-    rankCandidates(items)
-      .slice(0, HIGHLIGHTED_CANDIDATES)
-      .map((item, index) => [item, index + 1]),
-  );
+function renderPrimetimeHeatmap(container, items) {
   const grid = document.createElement("div");
-  grid.className = "opportunity-heatmap";
+  grid.className = "primetime-heatmap";
   grid.setAttribute("role", "group");
-  grid.setAttribute("aria-label", "Mode and period adjusted entry lift by weekday and Eastern start hour");
+  grid.setAttribute("aria-label", "Average racers per scheduled race by weekday and Eastern start hour");
 
   const corner = document.createElement("div");
   corner.className = "heatmap-corner";
@@ -256,25 +196,21 @@ function renderOpportunityHeatmap(container, items) {
 
     rowItems.forEach((item) => {
       const cell = document.createElement("div");
-      const isReliable = item.race_count >= MINIMUM_CANDIDATE_SAMPLE;
-      const value = item.adjusted_average;
-      const strength = value === null ? 0 : Math.abs(value) / maximumMagnitude;
-      // Capped at 75% so the ink cell text keeps its contrast on the strongest fills.
-      const alpha = value === null ? 0 : (0.12 + strength * 0.63) * (isReliable ? 1 : 0.48);
-      const candidateRank = candidateRanks.get(item);
-      cell.className = "heatmap-cell";
-      if (!isReliable) cell.classList.add("heatmap-cell--limited");
-      if (candidateRank) cell.classList.add("heatmap-cell--top");
+      const place = `${item.weekday_label}, ${hourRange(item.hour)}`;
+      cell.className = `heatmap-cell ${item.band ? `heatmap-cell--${item.band}` : "heatmap-cell--unbanded"}`;
       cell.tabIndex = 0;
       cell.setAttribute("role", "img");
-      cell.style.backgroundColor = value === null
-        ? "transparent"
-        : `color-mix(in srgb, var(${value >= 0 ? "--positive" : "--negative"}) ${Math.round(alpha * 100)}%, transparent)`;
-      cell.textContent = item.race_count === 0 ? "·" : formatSigned(value);
-      const rankNote = candidateRank ? `; top candidate window #${candidateRank}` : "";
-      const label = item.race_count === 0
-        ? `${item.weekday_label}, ${hourRange(item.hour)}: no observed races`
-        : `${item.weekday_label}, ${hourRange(item.hour)}: ${formatSigned(value)} adjusted entries versus the matching mode-period baseline; ${formatAverage(item.average_racers)} raw average; ${integerFormatter.format(item.race_count)} races; adjusted 95% range ${formatInterval(item.adjusted_ci95_low, item.adjusted_ci95_high)}${rankNote}`;
+      let label;
+      if (item.scheduled_count === 0) {
+        cell.textContent = "·";
+        label = `${place}: no scheduled races`;
+      } else {
+        const detail = `${formatAverage(item.average_racers)} racers per scheduled race; ${startRateText(item.started_count, item.scheduled_count)}`;
+        cell.textContent = formatAverage(item.average_racers);
+        label = item.band
+          ? `${place}: ${BAND_LABELS[item.band]}. ${detail}`
+          : `${place}: no band, fewer than ${BAND_MIN_SCHEDULED} scheduled races. ${detail}`;
+      }
       cell.setAttribute("aria-label", label);
       bindTooltip(cell, label);
       grid.append(cell);
@@ -336,14 +272,28 @@ function verticalChart(items, options, width) {
       role: "img",
       "aria-label": label,
     });
+    // With a startedKey the full bar is the scheduled count and a lower segment is how many started.
     const bar = svgElement("rect", {
-      class: "bar bar--series",
+      class: options.startedKey ? "bar bar--muted" : "bar bar--series",
       x,
       y,
       width: barWidth,
       height: Math.max(0, barHeight),
       rx: 1,
     });
+    const startedHeight = options.startedKey
+      ? ((item[options.startedKey] ?? 0) / maximum) * plotHeight
+      : 0;
+    const startedBar = options.startedKey
+      ? svgElement("rect", {
+        class: "bar bar--series",
+        x,
+        y: margin.top + plotHeight - startedHeight,
+        width: barWidth,
+        height: Math.max(0, startedHeight),
+        rx: 1,
+      })
+      : null;
     const focusRing = svgElement("rect", {
       class: "focus-ring",
       x: x - 2,
@@ -352,7 +302,7 @@ function verticalChart(items, options, width) {
       height: Math.max(4, barHeight + 4),
       rx: 2,
     });
-    group.append(bar, focusRing, svgElement("title", {}, label));
+    group.append(bar, ...(startedBar ? [startedBar] : []), focusRing, svgElement("title", {}, label));
     bindTooltip(group, label);
     svg.append(
       group,
@@ -507,115 +457,6 @@ function monthlyLineChart(months, selectedPeriodId, options, width) {
   return svg;
 }
 
-function modeChart(items, width) {
-  const rowHeight = 48;
-  const margin = { top: 22, right: 74, bottom: 42, left: 175 };
-  const height = margin.top + margin.bottom + items.length * rowHeight;
-  const plotWidth = width - margin.left - margin.right;
-  const { maximum, tickCount } = niceScale(Math.max(...items.map((item) => item.average_racers ?? 0)));
-  const svg = svgElement("svg", {
-    class: "chart-svg",
-    width,
-    height,
-    viewBox: `0 0 ${width} ${height}`,
-    role: "img",
-    "aria-labelledby": "mode-chart-title mode-chart-description",
-  });
-  svg.append(
-    svgElement("title", { id: "mode-chart-title" }, "Average entries per mode"),
-    svgElement(
-      "desc",
-      { id: "mode-chart-description" },
-      "Horizontal bars compare average total entrants per finished race for each mode.",
-    ),
-  );
-
-  for (let tick = 0; tick <= tickCount; tick += 1) {
-    const value = (maximum * tick) / tickCount;
-    const x = margin.left + (value / maximum) * plotWidth;
-    svg.append(
-      svgElement("line", {
-        class: tick === 0 ? "baseline" : "grid-line",
-        x1: x,
-        x2: x,
-        y1: margin.top,
-        y2: height - margin.bottom,
-      }),
-      svgElement(
-        "text",
-        { class: "axis-label", x, y: height - 17, "text-anchor": "middle" },
-        decimalFormatter.format(value),
-      ),
-    );
-  }
-
-  items.forEach((item, index) => {
-    const y = margin.top + index * rowHeight + 9;
-    const barHeight = 24;
-    const barWidth = ((item.average_racers ?? 0) / maximum) * plotWidth;
-    const modeName = formatModeName(item.mode);
-    const label = `${modeName}: ${decimalFormatter.format(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`;
-    const group = svgElement("g", {
-      class: "chart-mark",
-      tabindex: "0",
-      role: "img",
-      "aria-label": label,
-    });
-    group.append(
-      svgElement("rect", {
-        class: "bar bar--series",
-        x: margin.left,
-        y,
-        width: barWidth,
-        height: barHeight,
-        rx: 1,
-      }),
-      svgElement("rect", {
-        class: "focus-ring",
-        x: margin.left - 2,
-        y: y - 2,
-        width: barWidth + 4,
-        height: barHeight + 4,
-        rx: 2,
-      }),
-      svgElement("title", {}, label),
-    );
-    bindTooltip(group, label);
-    svg.append(
-      group,
-      svgElement(
-        "text",
-        { class: "axis-label axis-label--mode", x: margin.left - 12, y: y + 11, "text-anchor": "end" },
-        modeName.toUpperCase(),
-      ),
-      svgElement(
-        "text",
-        { class: "axis-label axis-label--sample", x: margin.left - 12, y: y + 24, "text-anchor": "end" },
-        `${integerFormatter.format(item.race_count)} RACES`,
-      ),
-      svgElement(
-        "text",
-        { class: "value-label", x: margin.left + barWidth + 8, y: y + 16 },
-        decimalFormatter.format(item.average_racers),
-      ),
-    );
-  });
-
-  svg.append(
-    svgElement(
-      "text",
-      {
-        class: "axis-label",
-        x: margin.left + plotWidth / 2,
-        y: height - 2,
-        "text-anchor": "middle",
-      },
-      "AVERAGE RACERS PER RACE",
-    ),
-  );
-  return svg;
-}
-
 function renderTable(container, headers, rows) {
   const table = document.createElement("table");
   const head = document.createElement("thead");
@@ -642,208 +483,37 @@ function renderTable(container, headers, rows) {
   container.replaceChildren(table);
 }
 
-function renderTotalEntrants(selection) {
-  document.querySelector("#hourly-total-range").textContent = selection.label;
-  mountChart(document.querySelector("#hourly-total-chart"), (width) => verticalChart(selection.hourly, {
-    id: "hourly-total",
-    valueKey: "entrant_total",
-    title: `Total entrants per hour for ${selection.label}`,
-    description: `Vertical bars show recorded race entries across finished races in each Eastern Time start hour for ${selection.label}.`,
-    axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (item) => `${hourRange(item.hour)}, ${selection.label}: ${integerFormatter.format(item.entrant_total)} recorded entries across ${integerFormatter.format(item.race_count)} finished races`,
-  }, width));
-  renderTable(
-    document.querySelector("#hourly-total-table"),
-    ["Hour (ET)", "Total entrants", "Finished races"],
-    selection.hourly.map((item) => [
-      hourRange(item.hour),
-      integerFormatter.format(item.entrant_total),
-      integerFormatter.format(item.race_count),
-    ]),
+const BANDS = new Set(["prime", "normal", "quiet"]);
+
+function hasValidHourly(hourly) {
+  return (
+    Array.isArray(hourly)
+    && hourly.length === 24
+    && hourly.every((item, hour) => (
+      item.hour === hour
+      && Number.isFinite(item.scheduled_count)
+      && Number.isFinite(item.started_count)
+      && item.started_count <= item.scheduled_count
+      && (item.median_racers === null || Number.isFinite(item.median_racers))
+      && (item.q1_racers === null || Number.isFinite(item.q1_racers))
+      && (item.q3_racers === null || Number.isFinite(item.q3_racers))
+    ))
   );
-}
-
-function renderRoomSurvival(selection) {
-  const estimate = selection.room_cancellation_estimate;
-  const sensitivity = estimate.sensitivity;
-  const observedShare = estimate.estimated_opened_rooms
-    ? estimate.observed_finished_rooms / estimate.estimated_opened_rooms
-    : 0;
-  document.querySelector("#room-finished").textContent = integerFormatter.format(estimate.observed_finished_rooms);
-  document.querySelector("#room-cancelled").textContent = `~${integerFormatter.format(estimate.estimated_cancelled_rooms)}`;
-  document.querySelector("#room-cancelled-share").textContent = formatPercent(estimate.estimated_cancelled_share);
-  document.querySelector("#room-sensitivity").textContent = `${integerFormatter.format(sensitivity.lower_estimated_cancelled_rooms)}-${integerFormatter.format(sensitivity.upper_estimated_cancelled_rooms)}`;
-  document.querySelector("#room-baseline").textContent = decimalFormatter.format(estimate.baseline_rooms_per_hour);
-  document.querySelector("#room-observed-bar").style.width = `${observedShare * 100}%`;
-  document.querySelector("#room-cancelled-bar").style.width = `${estimate.estimated_cancelled_share * 100}%`;
-}
-
-function renderCommunityOrbit(container, tableContainer, coverageContainer, summary) {
-  const mobile = window.matchMedia("(max-width: 620px)").matches;
-  const layout = mobile
-    ? {
-      width: 360,
-      height: 540,
-      center: [180, 82],
-      nodes: [[85, 240], [275, 240], [85, 430], [275, 430]],
-    }
-    : {
-      width: 820,
-      height: 490,
-      center: [410, 240],
-      nodes: [[410, 97], [690, 240], [410, 383], [130, 240]],
-    };
-  const svg = svgElement("svg", {
-    class: "orbit-svg",
-    viewBox: `0 0 ${layout.width} ${layout.height}`,
-    role: "img",
-    "aria-labelledby": "community-orbit-title community-orbit-description",
-  });
-  const hasFullCoverage = summary.identity_coverage === 1;
-  const racerLabel = hasFullCoverage ? "unique racers" : "identified racers";
-  svg.append(
-    svgElement("title", { id: "community-orbit-title" }, `Community orbit of ${racerLabel}`),
-    svgElement(
-      "desc",
-      { id: "community-orbit-description" },
-      "Four cohorts surround the identified racer total. Node area represents player share and connector weight represents entry share.",
-    ),
-  );
-
-  const [centerX, centerY] = layout.center;
-  summary.cohorts.forEach((cohort, index) => {
-    const [nodeX, nodeY] = layout.nodes[index];
-    svg.append(svgElement("line", {
-      class: "orbit-connector",
-      x1: centerX,
-      y1: centerY,
-      x2: nodeX,
-      y2: nodeY,
-      "stroke-width": 2 + cohort.entry_share * 12,
-    }));
-  });
-
-  const center = svgElement("g", { class: "orbit-center" });
-  center.append(
-    svgElement("circle", { cx: centerX, cy: centerY, r: mobile ? 61 : 70 }),
-    svgElement(
-      "text",
-      { class: "orbit-center__value", x: centerX, y: centerY - 3, "text-anchor": "middle" },
-      integerFormatter.format(summary.identified_player_count),
-    ),
-    svgElement(
-      "text",
-      { class: "orbit-center__label", x: centerX, y: centerY + 21, "text-anchor": "middle" },
-      racerLabel.toUpperCase(),
-    ),
-  );
-  svg.append(center);
-
-  summary.cohorts.forEach((cohort, index) => {
-    const metadata = COHORTS[cohort.id];
-    const [nodeX, nodeY] = layout.nodes[index];
-    const radius = 28 + Math.sqrt(cohort.player_share) * 29;
-    // Labels go on the far side of the node from the centre so connectors never cross them.
-    const labelsAbove = nodeY < centerY;
-    const labelY = labelsAbove ? nodeY - radius - 26 : nodeY + radius + 19;
-    const label = `${metadata.label}, ${metadata.range}: ${integerFormatter.format(cohort.player_count)} players (${formatPercent(cohort.player_share)}); ${integerFormatter.format(cohort.entry_count)} entries (${formatPercent(cohort.entry_share)})`;
-    const group = svgElement("g", {
-      class: `orbit-mark ${metadata.markClass}`,
-      tabindex: "0",
-      role: "img",
-      "aria-label": label,
-    });
-    group.append(
-      svgElement("circle", {
-        class: "orbit-node",
-        cx: nodeX,
-        cy: nodeY,
-        r: radius,
-      }),
-      svgElement("circle", {
-        class: "orbit-focus-ring",
-        cx: nodeX,
-        cy: nodeY,
-        r: radius + 4,
-      }),
-      svgElement(
-        "text",
-        { class: "orbit-node__value", x: nodeX, y: nodeY - 4, "text-anchor": "middle" },
-        integerFormatter.format(cohort.player_count),
-      ),
-      svgElement(
-        "text",
-        { class: "orbit-node__share", x: nodeX, y: nodeY + 15, "text-anchor": "middle" },
-        `${decimalFormatter.format(cohort.player_share * 100)}%`,
-      ),
-      svgElement(
-        "text",
-        { class: "orbit-node__label", x: nodeX, y: labelY, "text-anchor": "middle" },
-        metadata.label.toUpperCase(),
-      ),
-      svgElement(
-        "text",
-        { class: "orbit-node__range", x: nodeX, y: labelY + 16, "text-anchor": "middle" },
-        `${metadata.range.toUpperCase()} · ${formatPercent(cohort.entry_share)} OF ENTRIES`,
-      ),
-      svgElement("title", {}, label),
-    );
-    bindTooltip(group, label);
-    svg.append(group);
-  });
-
-  container.replaceChildren(svg);
-  renderTable(
-    tableContainer,
-    ["Cohort", "Races per player", "Players", "Player share", "Entries", "Entry share"],
-    summary.cohorts.map((cohort) => [
-      COHORTS[cohort.id].label,
-      COHORTS[cohort.id].range,
-      integerFormatter.format(cohort.player_count),
-      formatPercent(cohort.player_share),
-      integerFormatter.format(cohort.entry_count),
-      formatPercent(cohort.entry_share),
-    ]),
-  );
-  coverageContainer.textContent = `${formatPercent(summary.identity_coverage)} identity coverage across archived finished-race entries. Aggregate counts only; identities are not stored in this dataset.`;
 }
 
 function hasValidAggregate(aggregate) {
-  const cohortIds = aggregate?.unique_players?.cohorts?.map((cohort) => cohort.id);
-  const estimate = aggregate?.room_cancellation_estimate;
   return (
-    Array.isArray(aggregate?.hourly)
-    && aggregate.hourly.length === 24
-    && aggregate.hourly.every((item, hour) => (
-      item.hour === hour
-      && Number.isFinite(item.race_count)
-      && Number.isFinite(item.entrant_total)
-    ))
-    && Array.isArray(aggregate.weekdays)
-    && aggregate.weekdays.length === 7
+    hasValidHourly(aggregate?.hourly)
     && Array.isArray(aggregate.weekday_hourly)
     && aggregate.weekday_hourly.length === 168
-    && Array.isArray(aggregate.modes)
-    && JSON.stringify(cohortIds) === JSON.stringify(Object.keys(COHORTS))
-    && Number.isFinite(aggregate.unique_players.identified_player_count)
-    && Number.isFinite(aggregate.unique_players.identified_entry_count)
-    && Number.isFinite(aggregate.unique_players.unidentified_entry_count)
-    && aggregate.unique_players.identity_coverage >= 0
-    && aggregate.unique_players.identity_coverage <= 1
-    && aggregate.unique_players.cohorts.every((cohort) => (
-      Number.isFinite(cohort.player_count)
-      && Number.isFinite(cohort.player_share)
-      && Number.isFinite(cohort.entry_count)
-      && Number.isFinite(cohort.entry_share)
+    && aggregate.weekday_hourly.every((item) => (
+      Number.isFinite(item.weekday)
+      && Number.isFinite(item.hour)
+      && Number.isFinite(item.scheduled_count)
+      && Number.isFinite(item.started_count)
+      && (item.average_racers === null || Number.isFinite(item.average_racers))
+      && (item.band === null || BANDS.has(item.band))
     ))
-    && estimate?.method === "top_6_median_clamped_hourly_deficit"
-    && Number.isFinite(estimate.observed_finished_rooms)
-    && Number.isFinite(estimate.estimated_cancelled_rooms)
-    && estimate.estimated_opened_rooms === (
-      estimate.observed_finished_rooms + estimate.estimated_cancelled_rooms
-    )
-    && Number.isFinite(estimate.sensitivity?.lower_estimated_cancelled_rooms)
-    && Number.isFinite(estimate.sensitivity?.upper_estimated_cancelled_rooms)
   );
 }
 
@@ -856,7 +526,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 8
+    || data.schema_version !== 9
     || !hasValidAggregate(data)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
@@ -878,14 +548,17 @@ function validateData(data) {
       || typeof month.quarter_id !== "string"
       || !Number.isFinite(month.race_count)
       || !Number.isFinite(month.entrant_total)
-      || !(month.covered_day_count > 0)
-      || !Number.isFinite(month.entries_per_day)
+      || !(Number.isFinite(month.scheduled_day_count) && month.scheduled_day_count >= 0)
+      || !Number.isFinite(month.scheduled_day_entrant_total)
+      || (month.entries_per_day !== null && !Number.isFinite(month.entries_per_day))
       || (month.average_racers !== null && !Number.isFinite(month.average_racers))
     ))
     || !data.source
     || !isIsoDate(data.source.data_start_local)
     || !Number.isFinite(data.source.archived_race_count)
     || !Number.isFinite(data.source.included_race_count)
+    || !Number.isFinite(data.source.included_entrant_count)
+    || (data.source.schedule_counted_through !== null && Number.isNaN(Date.parse(data.source.schedule_counted_through)))
   ) {
     throw new Error("The generated race dataset has an unsupported shape.");
   }
@@ -895,31 +568,30 @@ function allDataSelection(data) {
   return {
     id: "all",
     label: "All data",
-    race_count: data.source.included_race_count,
-    entrant_total: data.source.included_entrant_count,
-    included_date_range: data.source.included_date_range,
     hourly: data.hourly,
-    weekdays: data.weekdays,
     weekday_hourly: data.weekday_hourly,
-    modes: data.modes,
-    unique_players: data.unique_players,
-    room_cancellation_estimate: data.room_cancellation_estimate,
   };
+}
+
+function renderCountedThrough(isoString) {
+  const node = document.querySelector("#schedule-counted-through");
+  node.hidden = isoString === null;
+  if (isoString === null) return;
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/New_York",
+    timeZoneName: "short",
+  }).format(new Date(isoString));
+  node.textContent = `Scheduled races counted through ${formatted}`;
 }
 
 function renderSelection(data, selection) {
   document.querySelector("#active-period-label").textContent = selection.label;
-  renderCandidateTable(document.querySelector("#candidate-table"), selection.weekday_hourly);
-  renderOpportunityHeatmap(
-    document.querySelector("#opportunity-heatmap"),
-    selection.weekday_hourly,
-  );
-  renderCommunityOrbit(
-    document.querySelector("#community-orbit"),
-    document.querySelector("#community-table"),
-    document.querySelector("#community-coverage"),
-    selection.unique_players,
-  );
+  renderPrimetimeHeatmap(document.querySelector("#primetime-heatmap"), selection.weekday_hourly);
   mountChart(document.querySelector("#participation-racers-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
     id: "participation-racers",
     valueKey: "average_racers",
@@ -933,42 +605,36 @@ function renderSelection(data, selection) {
     id: "participation-entries",
     valueKey: "entries_per_day",
     title: "Race entries per day by month",
-    description: "A line with one dot per calendar month shows recorded race entries per calendar day the archive covers.",
+    description: "A line with one dot per calendar month shows recorded race entries per day with scheduled races.",
     axisTitle: "RACE ENTRIES PER DAY",
     axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (month) => `${monthTitle(month)}: ${decimalFormatter.format(month.entries_per_day)} entries per day (${integerFormatter.format(month.entrant_total)} entries over ${integerFormatter.format(month.covered_day_count)} days)`,
+    tooltip: (month) => (month.entries_per_day === null
+      ? `${monthTitle(month)}: no scheduled races`
+      : `${monthTitle(month)}: ${decimalFormatter.format(month.entries_per_day)} entries per day (${integerFormatter.format(month.scheduled_day_entrant_total)} entries over ${integerFormatter.format(month.scheduled_day_count)} scheduled days)`),
   }, width));
   mountChart(document.querySelector("#race-count-chart"), (width) => verticalChart(selection.hourly, {
     id: "race-count",
-    valueKey: "race_count",
-    title: "Race starts by hour",
-    description: "Vertical bars show the number of finished races starting in each Eastern Time hour.",
+    valueKey: "scheduled_count",
+    startedKey: "started_count",
+    title: "Scheduled races by hour",
+    description: "Vertical bars show scheduled races in each Eastern Time hour, with the part of each bar that started drawn from the baseline.",
     axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.race_count)} races`,
+    tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.scheduled_count)} scheduled races, ${integerFormatter.format(item.started_count)} started${item.scheduled_count ? ` (${formatPercent(item.started_count / item.scheduled_count)})` : ""}, ${integerFormatter.format(item.scheduled_count - item.started_count)} never started`,
   }, width));
   mountChart(document.querySelector("#hourly-average-chart"), (width) => verticalChart(selection.hourly, {
     id: "hourly-average",
-    valueKey: "average_racers",
-    title: "Average entries by hour",
-    description: "Vertical bars show average total entrants per finished race for each Eastern Time start hour.",
+    valueKey: "median_racers",
+    title: "Median racers per scheduled race by hour",
+    description: "Vertical bars show the median racers per scheduled race for each Eastern Time hour, counting races that never started as zero.",
     axisFormatter: (value) => decimalFormatter.format(value),
-    tooltip: (item) => `${hourRange(item.hour)}: ${formatAverage(item.average_racers)} average entries across ${integerFormatter.format(item.race_count)} races`,
+    tooltip: (item) => (item.scheduled_count === 0
+      ? `${hourRange(item.hour)}: no scheduled races`
+      : `${hourRange(item.hour)}: median ${formatCount(item.median_racers)} racers per scheduled race (middle half ${formatCount(item.q1_racers)}-${formatCount(item.q3_racers)}); ${startRateText(item.started_count, item.scheduled_count)}`),
   }, width));
-  mountChart(
-    document.querySelector("#mode-average-chart"),
-    (width) => modeChart(selection.modes, width),
-  );
-  renderRoomSurvival(selection);
-  renderTotalEntrants(selection);
 
-  const hourlyRows = selection.hourly.map((item) => [
-    hourRange(item.hour),
-    integerFormatter.format(item.race_count),
-    formatAverage(item.average_racers),
-  ]);
   renderTable(
     document.querySelector("#participation-table"),
-    ["Month", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries", "Days", "Entries/day"],
+    ["Month", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries", "Scheduled days", "Entries/day"],
     data.monthly.map((month) => [
       month.label,
       month.is_complete ? "Complete" : "Partial",
@@ -977,27 +643,30 @@ function renderSelection(data, selection) {
       month.ci95_low === null ? "--" : `${formatAverage(month.ci95_low)} to ${formatAverage(month.ci95_high)}`,
       integerFormatter.format(month.race_count),
       integerFormatter.format(month.entrant_total),
-      integerFormatter.format(month.covered_day_count),
-      decimalFormatter.format(month.entries_per_day),
+      integerFormatter.format(month.scheduled_day_count),
+      formatAverage(month.entries_per_day),
+    ]),
+  );
+  const startRate = (item) => (item.scheduled_count ? formatPercent(item.started_count / item.scheduled_count) : "--");
+  renderTable(
+    document.querySelector("#race-count-table"),
+    ["Hour (ET)", "Scheduled", "Started", "Start rate"],
+    selection.hourly.map((item) => [
+      hourRange(item.hour),
+      integerFormatter.format(item.scheduled_count),
+      integerFormatter.format(item.started_count),
+      startRate(item),
     ]),
   );
   renderTable(
-    document.querySelector("#race-count-table"),
-    ["Hour (ET)", "Races", "Avg entries"],
-    hourlyRows,
-  );
-  renderTable(
     document.querySelector("#hourly-average-table"),
-    ["Hour (ET)", "Races", "Avg entries"],
-    hourlyRows,
-  );
-  renderTable(
-    document.querySelector("#mode-average-table"),
-    ["Mode", "Races", "Avg entries"],
-    selection.modes.map((item) => [
-      formatModeName(item.mode),
-      integerFormatter.format(item.race_count),
-      decimalFormatter.format(item.average_racers),
+    ["Hour (ET)", "Scheduled", "Started", "Median racers", "Middle half"],
+    selection.hourly.map((item) => [
+      hourRange(item.hour),
+      integerFormatter.format(item.scheduled_count),
+      integerFormatter.format(item.started_count),
+      item.median_racers === null ? "--" : formatCount(item.median_racers),
+      item.q1_racers === null ? "--" : `${formatCount(item.q1_racers)}-${formatCount(item.q3_racers)}`,
     ]),
   );
 }
@@ -1036,6 +705,7 @@ function renderSnapshotAge(isoString) {
 function renderDashboard(data) {
   renderSnapshotAge(data.generated_at);
   renderPeriodControls(data);
+  renderCountedThrough(data.source.schedule_counted_through);
   renderSelection(data, allDataSelection(data));
 }
 

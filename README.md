@@ -21,7 +21,7 @@ Other documents:
 ### Requirements
 
 - Python 3.11 or newer
-- A network connection when refreshing the data, including the optional bio sync
+- A network connection when refreshing the data, including the optional bio sync and the schedule sync
 - ImageMagick 7, only for `scripts/badge_images.py`, which converts badge art, and `scripts/pokemon_images.py`, which fits Pokémon sprites to the avatar frame
 
 The data builder and web page have no third-party runtime dependencies.
@@ -31,7 +31,7 @@ The data builder and web page have no third-party runtime dependencies.
 ```bash
 python3 scripts/race_archive.py       # sync new races from racetime.gg into archive/ (network)
 python3 scripts/racer_bios.py         # optional: mirror racers' profile bios into archive/ (network)
-python3 scripts/schedule_archive.py   # optional: mirror the alttpr.racing ladder schedule into archive/ (network)
+python3 scripts/schedule_archive.py   # mirror the alttpr.racing ladder schedule into archive/ (network); the build needs it
 python3 scripts/build_stats.py        # build site/data/*.json from archive/ (offline)
 python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/ (network)
 python3 scripts/version_assets.py     # restamp the asset URLs after editing site/
@@ -41,16 +41,17 @@ python3 -m http.server 8000 -d site   # preview at http://localhost:8000
 
 ### Refreshing the data
 
-A refresh is the race sync, the build and the mirror, in that order, with the optional bio sync between the race sync and the build:
+A refresh is the race sync, the schedule sync, the build and the mirror, in that order, with the optional bio sync between the race sync and the build:
 
 1. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/` (see [The race archive](#the-race-archive)).
 2. `racer_bios.py` saves the profile bios of racers who raced since their bio was last checked into `archive/racer-bios.json` (see [Bios](#bios)). It reads the races `race_archive.py` just saved, so it runs after it and before `build_stats.py`, which turns the bios into Pokémon avatars (see [Pokémon avatars](#pokémon-avatars)). The scheduled job runs it once a day.
-3. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)).
-4. `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
+3. `schedule_archive.py` saves the alttpr.racing ladder schedule into `archive/ladder-schedule/` (see [Ladder schedule mirror](#ladder-schedule-mirror)). The build joins every slot to the race it became (see [Definitions](#definitions)), so `build_stats.py` refuses an archive without a mirror and asks you to run it first. The scheduled job runs it once a day.
+4. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)).
+5. `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
 
 Options:
 
-- `--archive` on `race_archive.py`, `racer_bios.py` or `build_stats.py` points at a different archive.
+- `--archive` on `race_archive.py`, `racer_bios.py`, `schedule_archive.py` or `build_stats.py` points at a different archive.
 - `--output`, `--participants-output` and `--comments-output` on `build_stats.py` redirect each dataset.
 - `--participants`, `--archive` and `--output` on `avatar_mirror.py` point it elsewhere.
 - `--pokemon` on `build_stats.py`, `avatar_mirror.py` and `pokemon_avatars.py` points at a different directory of Pokémon sprites and pokédex. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites the pokédex (see [Pokémon avatars](#pokémon-avatars)).
@@ -97,27 +98,28 @@ For the first deployment:
 
 #### Scheduled data refresh
 
-The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**. It also accepts a `sync-bios` input, off by default, that adds a `scripts/racer_bios.py` step right after the race sync.
+The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**. It can also be called with two inputs, both off by default: `sync-bios` adds a `scripts/racer_bios.py` step right after the race sync, and `sync-schedule` adds a `scripts/schedule_archive.py` step after the bios step and before the build. Starting it manually from **Actions** offers neither input.
 
 - Whenever the sync added or refreshed race files, it commits `archive/` to `main` as `YYYY-MM-DD data`.
 - When anything other than `generated_at` differs in the dashboard datasets, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows.
 - Runs that find nothing new commit nothing, and a failed sync, build or mirror commits nothing.
 
-The workflow in `.github/workflows/update-bios.yml` runs once a day, at 05:47 UTC, between the even-hour data runs. It can also be started manually from **Actions > Update racer bios**. It does nothing itself: it calls `update-data.yml` with `sync-bios` on, so a bio run is a data run that also syncs bios, with the same build, mirror, commit and deploy steps.
+The workflow in `.github/workflows/update-bios.yml` runs once a day, at 05:47 UTC, between the even-hour data runs. It can also be started manually from **Actions > Update racer bios**. It does nothing itself: it calls `update-data.yml` with `sync-bios` and `sync-schedule` on, so a bio run is a data run that also syncs bios and the ladder schedule, with the same build, mirror, commit and deploy steps. A manual run of **Update racer bios** is therefore how to sync both on demand.
 
 - The bios sync before the build, so a new favourite Pokémon reaches `participants.json` in the same run.
+- The schedule syncs before the build too, so the schedule panels use the newest race ids in the same run. A failed schedule sync fails the run, like the other syncs, and commits nothing.
 - `update-bios.yml` sets no `concurrency` group on purpose. The called workflow's `update-data` group already queues a bio run behind any data run in progress. The same group on the caller would hold it while the callee waits for it, and the run would deadlock.
 - GitHub keeps only one waiting run per group, so a data run that starts waiting behind the same run cancels a waiting bio run. Nothing is lost: a racer stays due until their profile is checked, so the next day's run catches up.
 
 #### Refreshing by hand
 
-You can still refresh by hand with the three refresh commands and commit `archive/`, `site/data` and `site/avatars`. Running `racer_bios.py` by hand is optional: without it, `build_stats.py` uses the bios already in `archive/racer-bios.json`, and the daily job brings them up to date. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py` and `build_stats.py` again, then `avatar_mirror.py`.
+You can still refresh by hand with the four refresh commands, `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`, and commit `archive/`, `site/data` and `site/avatars`. Running `racer_bios.py` by hand is optional: without it, `build_stats.py` uses the bios already in `archive/racer-bios.json`, and the daily job brings them up to date. The same goes for `schedule_archive.py`, as long as `archive/ladder-schedule/` exists. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py`, `schedule_archive.py` and `build_stats.py` again, then `avatar_mirror.py`.
 
 ### Project layout
 
 ```text
 scripts/race_archive.py           Incremental sync of raw races, racer names and avatar observations
-scripts/build_stats.py            Archive validation and aggregation
+scripts/build_stats.py            Archive validation and aggregation, including the schedule panels and their bands
 scripts/participant_stats.py      Per-racer dataset: records, avatars and assembly
 scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/, including Pokémon sprite copies
 scripts/pokemon_avatars.py        Favourite Pokémon from bios, random Pokémon, sprite paths and the pokédex refresh
@@ -126,7 +128,7 @@ scripts/ladder_rating.py          Ladder rating model, overall and per mode, and
 scripts/highlights.py             Tags, badges, streaks, presets, records, claims and facts
 scripts/comment_stats.py          Racer comments dataset
 scripts/mode_overlap.py           Mode overlap analysis and report (see Analyses.md)
-scripts/schedule_archive.py       Mirror of the alttpr.racing ladder schedule and modes, and its loaders
+scripts/schedule_archive.py       Mirror of the alttpr.racing ladder schedule and modes, its loaders, and the join of slots to races
 scripts/schedule_planner.py       Schedule proposals from past participation (see Analyses.md)
 scripts/schedule_lab.py           Comparison of schedule strategies with the planner's rules (see Analyses.md)
 scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating (see Analyses.md)
@@ -156,7 +158,7 @@ tests/test_badge_assets.py        Badge image pair checks
 tests/test_version_assets.py      Asset versioning unit tests
 .github/workflows/pages.yml       Test and deploy to GitHub Pages
 .github/workflows/update-data.yml Scheduled archive sync, data build, commit, and deploy
-.github/workflows/update-bios.yml Daily run of update-data.yml with the bio sync on
+.github/workflows/update-bios.yml Daily run of update-data.yml with the bio and schedule syncs on
 archive/races/                    Raw race records, one file per race
 archive/racer-names.json          Current racer display names
 archive/racer-avatars.json        Last observed leaderboard avatar of each racer
@@ -255,7 +257,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 
 #### Ladder schedule mirror
 
-`scripts/schedule_archive.py` mirrors the alttpr.racing ladder schedule, so the [schedule planner](Analyses.md#race-schedule-proposals) can see every slot, including the rooms that were cancelled and so never reached racetime.gg. It is run by hand; the bot does not run it.
+`scripts/schedule_archive.py` mirrors the alttpr.racing ladder schedule, so the build and the [schedule planner](Analyses.md#race-schedule-proposals) can see every slot, including the rooms that were cancelled and so never reached racetime.gg. The daily bot run syncs it (see [Scheduled data refresh](#scheduled-data-refresh)), and `build_stats.py` reads it and fails without it.
 
 - **What it fetches:**
   - `https://alttpr.racing/api/v1/modes`, the modes with their archetype, name and `active` flag;
@@ -264,6 +266,8 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 - **Validation:** every response is validated before any file is written. A slot needs integer `id`, `season` and `mode`, a `raceId` that is an integer or null, a `time` of digits (Unix seconds), and its file's season. A mode needs integer `id` and `archetype`, a string `name`, and a boolean `active`. Any failure writes nothing.
 - **Rewrites:** a file is rewritten only when its body changed, so a run without news changes nothing. Files are never deleted.
 - **Reading it back:** `load_schedule` returns every slot once by its `id`; the same id with different content is an error.
+- **The join:** `join_races` also lives in this module. It matches slots to included races by the rules under **Schedule** in [Definitions](#definitions), for the build and the planner alike.
+- **Race ids arrive late.** alttpr.racing fills in a slot's `raceId` only when the room is created. A mirror is therefore only as current as its last sync, and the build counts slots only up to the latest one with a `raceId` (see **Counted through** in [Definitions](#definitions)).
 - **Output:** the script ends with `Schedule: N seasons, M slots, K files changed.` and exits with 1 on any failure.
 - **Privacy:** the schedule holds slot times, mode ids and alttpr.racing race ids, nothing about racers. Like the rest of `archive/`, it is never deployed.
 
@@ -273,7 +277,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 
 | File | Contents |
 |---|---|
-| `site/data/race-stats.json` | The anonymous aggregate behind the schedule and participation panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
+| `site/data/race-stats.json` | The anonymous aggregate behind the Ladder Data panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
 | `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, and its derived tags. Each racer carries an overall rating and one for each mode they have raced, badges, streaks, personal bests and a claim to fame. `avatar_changes` lists the racers whose avatar changed, newest first, each with the Eastern Time date the change was first seen. |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
@@ -347,7 +351,7 @@ Running it again on its own output changes nothing, because the factor is then 1
 
 ### Privacy
 
-- **`race-stats.json`** is anonymous. Entrant user IDs are used only as in-memory deduplication keys, and the file contains cohort totals and identity-coverage statistics, never entrant arrays, IDs, names, profile links, or Twitch fields.
+- **`race-stats.json`** is anonymous. It holds slot and race counts, distributions and bands, never entrant arrays, IDs, names, profile links, or Twitch fields. The schedule's slot and race ids are used only inside the build.
 - **`participants.json`** publishes each racer's public display name and stable user ID, because a leaderboard requires them, plus the file name of their mirrored avatar.
   - That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus the URL's lowercase extension, for example `3f9ac01d2e7b8a64.jpg`. It carries nothing from the upload's own file name.
   - A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and `%`, as in percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`.
@@ -386,22 +390,55 @@ These terms mean the same in every part of this README.
 - **Winner:** the identified entrant with place 1.
 - **Provisional:** a racer with fewer than 5 finishes, in any mode, before a given race. A mode rating has its own provisional rule (see [Mode ratings](#mode-ratings)).
 
+**Schedule**
+
+These terms use the [ladder schedule mirror](#ladder-schedule-mirror). `schedule_archive.join_races` implements the join, and the build and the schedule planner share it.
+
+- **Slot:** one row of the mirrored schedule. Its start is its `time`, in Unix seconds. Slots are taken in `(time, id)` order.
+- **Join:** a slot becomes an included race in one of two ways, tried in this order.
+  1. The slot's `raceId` matches the number in an included race's `getseed.php?race=<n>`.
+  2. Failing that, it matches an included race without such a number. The race must be in the category of the slot mode's archetype and start between 5 minutes before and 30 minutes after the slot (`JOIN_EARLY` and `JOIN_LATE`). Each such race matches once.
+- **Category of an archetype:** `ARCHETYPE_CATEGORIES` maps an archetype to a race mode: 1 simple, 2 entrance, 3 inverted, 4 keys, 5 glitched, 6 fun, 7 mystery, 9 spoiler. **Archetype 8** (modes 20 to 24) has no category, so its slots join only by seed. That is not an error in the build.
+- **Slot outcomes:**
+  - A slot whose `raceId` belongs to a race excluded for its mode (`ladder_test`) is dropped.
+  - A slot with a null `raceId` and no race is **pulled**: it was removed from the schedule.
+  - Every other slot is a **scheduled race**. It **started** if it joined a race. Otherwise it **never started**, and it counts as **0 racers**.
+- **Racers per scheduled race:** the joined race's entrant count, which is the field (see **Races**), or 0 for a scheduled race that never started.
+- **Counted through:** a slot counts in the schedule panels only when it starts on or after the archive's first date (`data_start_local`, Eastern Time), and no later than the earlier of two times:
+  - one day before the start of the newest included race (`SETTLE`), because rooms may still be open;
+  - the start of the latest slot in the mirror that has a `raceId`.
+
+  The second time is a staleness guard: alttpr.racing fills in a `raceId` only when a room is created, so a mirror synced once a day must never make recent slots look pulled. With a daily sync the first time is almost always the earlier one, and the guard bites only when a sync fails or someone builds with an old mirror. When no slot has a `raceId`, nothing counts. The result is published as `source.schedule_counted_through` and shown on the page.
+- **Scheduled day:** an Eastern Time date inside the archive's dates that holds at least one slot. Pulled slots count. Slots of `ladder_test` races do not. The days that are not scheduled are the gaps between seasons and the time before the first slot, so April 2025 has none.
+  - Scheduled days deliberately ignore **counted through**. The schedule is published ahead, so whether a day has races is known before its outcomes are, and the latest days stay in the per-day averages.
+  - A season the mirror does not list yet only delays its days. Their entries leave the numerator too, so the average is never inflated.
+- **Slot times, not seasons:** the panels bucket a slot by its own Eastern Time start and never by its season number. API seasons overlap, so the season of a slot says little about when it ran.
+
 ### Schedule and participation metrics
 
 `build_stats.py` computes these for `race-stats.json`. They drive the [Ladder data panels](#ladder-data-panels).
 
-- Periods are calendar quarters (`Q1` to `Q4`) determined from the race's Eastern Time start. Edge periods are marked partial when the archive does not cover the full quarter.
-- Race turnout uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries.
-- Identified racers are deduplicated from stable public user IDs within the selected period. Identity coverage is the share of entries carrying such an ID. Cohorts are one race, occasional (2-5), regular (6-20), and core (21+); cohort entry shares use identified entries as the denominator.
-- Unique-player metrics cover archived finished races only. They do not estimate people from cancelled rooms, and anonymized entries contribute to identity coverage but not player or cohort counts.
-- Monthly participation is average entries per finished race: total race entries divided by races in that calendar month.
-- Entries per day is a month's total race entries divided by the calendar days the archive covers in that month, so the first and current months use only their covered days. Months without a finished race still appear, with no average and zero entries per day.
-- Hour, weekday-hour, and mode averages use the same entries-per-finished-race definition.
-- Total entrants per hour sums recorded entries for the selected reporting period.
-- Racerooms with fewer than two entrants are cancelled and are not available through the archive. The dashboard estimates their count under a uniform hourly-opening assumption. Let $F_h$ be observed finished rooms in hour $h$ and let $B_6$ be the median of the six busiest hourly counts. The central estimate is $\sum_h \max(0, B_6 - F_h)$, rounded to the nearest room.
-- The displayed sensitivity range repeats that calculation with the median of the 12 busiest hours as the lower baseline and the maximum observed hour as the upper baseline. This is sensitivity analysis, not a confidence interval. It estimates rooms missing from the archive and is separate from API records explicitly marked `cancelled`.
-- Medians and quartiles describe the observed race-level distribution. The displayed 95% ranges are normal confidence intervals for the mean using the sample standard deviation, and the ranges for entry counts never go below zero; cells with fewer than two races have no interval.
-- Adjusted weekday-hour lift subtracts the matching mode-by-calendar-quarter mean from every race, then averages those residuals within each weekday-hour cell. This reduces mode and broad time-period mix effects.
+- **Periods** are calendar quarters (`Q1` to `Q4`). A race belongs to the quarter of its Eastern Time start, and a counted slot to the quarter of its own Eastern Time start. Edge periods are marked partial when the archive does not cover the full quarter. Each period keeps the finished-race summary and the schedule metrics below, so its slot counts add up to the overall ones. A counted slot in a quarter with no finished race is a build error.
+- **Race turnout** uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries, not people.
+- **Monthly participation** is the average entries per finished race: total race entries divided by the finished races in that calendar month. A month's finished-race summary also gives the median, the middle half (quartiles) and the 95% range.
+- **Entries per scheduled day** is the entries of that month's finished races that started on scheduled days (`scheduled_day_entrant_total`), divided by the month's scheduled days (`scheduled_day_count`, see **Scheduled day** in [Definitions](#definitions)). It is null, not zero, in a month with no scheduled day. Months without a finished race still appear.
+- **Scheduled races per hour** counts the counted slots that are scheduled races, by their Eastern Time start hour, and how many started. The hourly rows have `scheduled_count` and `started_count`. The start rate is `started_count / scheduled_count`.
+- **Median racers per scheduled race** is, for each hour, the median of racers per scheduled race over that hour's scheduled races, never-started ones counting 0. `q1_racers` and `q3_racers` are the quartiles of the same values. All three are null when nothing was scheduled in the hour. A median of 0 is real: fewer than half of that hour's scheduled races started.
+- **Weekday-hour cells** are the same counts for each of the 168 weekday and Eastern hour combinations: `scheduled_count`, `started_count`, `entrant_total` and `average_racers`, which is `entrant_total / scheduled_count`, or null when nothing was scheduled.
+- **Bands** colour the weekday-hour cells, computed separately for all data and for each quarter:
+  - Only cells with at least 5 scheduled races (`BAND_MIN_SCHEDULED`) are banded and count toward the quartiles.
+  - `q1` and `q3` are the quartiles of those cells' `average_racers`.
+  - A cell is `prime` if its `average_racers` is at least `q3`, else `quiet` if it is at most `q1`, else `normal`. A tie at a quartile goes to `prime` or `quiet`.
+  - A cell with fewer than 5 scheduled races has no band, and when no cell qualifies none has one.
+- **Medians and quartiles** describe the observed distribution. Quartiles are the median of each half of the sorted values, leaving out the middle value when the count is odd. The 95% ranges are normal confidence intervals for the mean using the sample standard deviation, and the ranges for entry counts never go below zero. A group with fewer than two values has no range.
+- **Diagnostics** report `diagnostics.schedule`: `scheduled_count`, `started_count`, `pulled_count`, and `unscheduled_race_count`, the included races up to **counted through** that no slot became.
+
+Some of this is deliberate behaviour of the data, not a defect:
+
+- **Thin quarters.** A partial quarter, the current one included, has few scheduled races per cell, so most of its cells are unbanded until about mid-quarter. All data and full quarters are fully banded.
+- **A sawtooth in the hourly counts.** Every third hour (2, 5, 8 and so on to 23) has about two-thirds of the scheduled races of the others, because seasons alternate their hour grids.
+- **Overnight medians.** The median racers per scheduled race is 0 in the overnight hours, such as 1 to 6 AM, because fewer than half of those scheduled races start.
+- **Before the schedule.** A race that started before the first slot joins no slot, so the schedule panels leave it out. The first such races, in April 2025, are in the monthly turnout but not in a per-day value.
 
 ### Ladder rating
 
@@ -685,13 +722,13 @@ The page runs top to bottom:
 2. **01 Latest**: the newest results with their tags.
 3. **02 Racers**: the leaderboard, with the rating column.
 4. **03 Records**: the hall of records.
-5. **04-10**: the analytics panels, on schedule and participation.
+5. **04-07**: the Ladder Data panels, on the schedule, participation, traffic and turnout.
 
 Each racer also has a page with their rating, badges, personal bests, and charts (see [Racer pages](#racer-pages)).
 
 The masthead holds the category artwork, the title block, a racer comment and the visitor counter, with their tops aligned. The title block ends with **Data snapshot**, the age of the published data: "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering it shows the exact UTC time. The comment bubble is at most 450px wide. The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
 
-A nav bar under the masthead links to the ten sections, grouped as Racing (01-03) and Ladder Data (04-10). Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner sits between the nav bar and Latest, and is hidden on racer pages too.
+A nav bar under the masthead links to the seven sections, grouped as Racing (01-03) and Ladder Data (04-07), whose links are Schedule, Participation, Traffic and Turnout. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner sits between the nav bar and Latest, and is hidden on racer pages too.
 
 ### Top-rated banner
 
@@ -790,10 +827,14 @@ Records runs in three parts. Only By mode follows the mode picker.
 
 ### Ladder data panels
 
-Sections 04-10 chart `race-stats.json`. [Schedule and participation metrics](#schedule-and-participation-metrics) defines every number they show.
+Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](#schedule-and-participation-metrics) defines every number they show, and **Schedule** in [Definitions](#definitions) defines the slots they count.
 
-- The reporting-period toggle applies to these panels only; the leaderboard has its own date range.
-- The candidate rankings are observational leads for schedule experiments, not causal estimates. They do not control for announcements, competing events, holidays, organizer effects, or player availability, and sparse windows may look extreme by chance. Use the strongest windows to design prospective schedule tests and compare repeated outcomes before making permanent changes.
+- The reporting-period toggle applies to these panels only; the leaderboard has its own date range. The toolbar also shows **Scheduled races counted through** the Eastern Time date and hour in `source.schedule_counted_through`, the last slot the schedule panels count. Races later than that are not in them.
+- **04 Primetime heatmap:** a 7 by 24 grid of weekday against Eastern Time hour. A cell's colour is its band, primetime, normal or quiet, and its text is the racers per scheduled race to one decimal, or "·" when nothing was scheduled. The legend adds "Fewer than 5 scheduled races" for the cells without a band. A cell's tooltip gives its band, the racers per scheduled race, and how many of its scheduled races started.
+- **05 Turnout over time:** two monthly charts, the average racers per finished race and the race entries per scheduled day. Months without a scheduled day break the second line. Its tooltip gives the entries and the scheduled days behind each value, and the table lists the scheduled days.
+- **06 When races start:** the scheduled races per Eastern Time hour, as bars split into started and never started, with the start rate in the table.
+- **07 When races draw a crowd:** the median racers per scheduled race for each hour. Never-started races count 0, so overnight bars can be zero, which is real (see [Schedule and participation metrics](#schedule-and-participation-metrics)). The tooltip and table add the middle half and the start rate, so a 0 is explained.
+- The bands are observational leads for schedule experiments, not causal estimates. They do not control for announcements, competing events, holidays, organizer effects, or player availability, and cells with few scheduled races may look extreme by chance. Use the primetime cells to design prospective schedule tests and compare repeated outcomes before making permanent changes.
 
 ### Racer pages
 

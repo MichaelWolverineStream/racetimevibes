@@ -380,7 +380,9 @@ class PayloadShapeTests(unittest.TestCase):
             placed_race("ladder-test", ["ana", "ben"], mode="ladder test"),
             race("cancelled", entrants=[entrant("ana")], status="cancelled"),
         ]
-        stats = build_stats.aggregate_races(races, generated_at=GENERATED_AT)
+        stats = build_stats.aggregate_races(
+            races, schedule=[], modes=[], generated_at=GENERATED_AT
+        )
         result = payload(races)
         self.assertEqual(
             len(result["races"]), stats["source"]["included_race_count"]
@@ -951,10 +953,6 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         self.assertEqual(
             diagnostics["entry_count"] + diagnostics["unidentified_entry_count"],
             source["included_entrant_count"],
-        )
-        self.assertEqual(
-            diagnostics["player_count"],
-            self.stats["unique_players"]["identified_player_count"],
         )
 
     def test_indexes_stay_within_range(self):

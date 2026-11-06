@@ -17,3 +17,6 @@ jobs:
     uses: ./.github/workflows/update-data.yml
     with:
       sync-bios: true
+      # The schedule only gains race ids as races are created, so a daily sync keeps the
+      # schedule panels current.
+      sync-schedule: true

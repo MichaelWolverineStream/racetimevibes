@@ -35,11 +35,11 @@
 }
 
 .ui-avatar__monogram--tint-2 {
-  background: var(--cohort-3);
+  background: var(--teal);
 }
 
 .ui-avatar__monogram--tint-3 {
-  background: var(--cohort-4);
+  background: var(--teal-deep);
 }
 
 .ui-avatar__monogram--tint-4 {

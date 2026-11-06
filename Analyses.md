@@ -156,9 +156,7 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
 **History**
 
 - **Window.** The 365 days before the newest included race's start minus one day, counted by slot start. The last day is left out, because its rooms may not be archived yet. Included races are as defined in [README › Definitions](README.md#definitions).
-- **Join.**
-  1. A slot's `raceId` matches the number in an included race's `getseed.php?race=<n>`.
-  2. Failing that, it matches an included race without such a number, in the slot's category, that started between 5 minutes before and 30 minutes after the slot. Each race matches once.
+- **Join.** Slots join included races by the rules under **Schedule** in [README › Definitions](README.md#definitions), the same join the dashboard build uses. The planner reads a slot's race from it, and its category is the race's mode.
 - **Fired slot.** It counts the race's `entrants_count`, under the race's own mode as its category.
 - **Cancelled slot.** It has a `raceId` but no race. It counts 0, under the category of its mode's archetype.
 - **Left out of the history:**

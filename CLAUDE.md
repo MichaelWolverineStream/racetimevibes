@@ -13,9 +13,9 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    - **Pokédex:** `assets/pokemon/pokedex.json` comes from `python3 scripts/pokemon_avatars.py --refresh-pokedex`. Never hand-edit it.
    - **Sprites:** `assets/pokemon/*.png` comes from `python3 scripts/pokemon_images.py`, which fits the originals in `_tmp_assets/pokemon/` to the avatar frame. Never hand-edit a sprite; run `avatar_mirror.py` after converting.
    - **Asset stamps:** the `?v=` tokens in `site/index.html` and `site/version.json` come from `python3 scripts/version_assets.py`. Run it after any change to `site/` HTML, CSS or JS. A test fails if the stamp is stale.
-2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds, mirrors avatars, and commits `archive/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `.github/workflows/update-bios.yml` calls it once a day with `sync-bios` on, which also runs `racer_bios.py`.
+2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds, mirrors avatars, and commits `archive/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `.github/workflows/update-bios.yml` calls it once a day with `sync-bios` and `sync-schedule` on, which also run `racer_bios.py` and `schedule_archive.py`.
    - Pull before you start.
-   - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `build_stats.py` and `avatar_mirror.py`.
+   - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
 3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing ladder schedule in `archive/ladder-schedule/`.**
    - Never edit it by hand.
    - Never move or copy any of it into `site/`. It holds full user profiles, comments and `racer-bios.json` (verbatim profile bios, with the earlier versions seen), and it is deliberately never deployed.
@@ -31,7 +31,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
    | Dataset | Python | JS |
    |---|---|---|
    | `participants.json` | `PARTICIPANT_SCHEMA_VERSION` in `participant_stats.py` | `leaderboard.js` |
-   | `race-stats.json` | `"schema_version": 8` in `build_stats.py` | `validateData` in `app.js` |
+   | `race-stats.json` | `"schema_version": 9` in `build_stats.py` | `validateData` in `app.js` |
 
 6. **The README is the spec. Update it in the same change as any behaviour change.** It defines every metric, tag, badge, streak, record and UI rule precisely.
    - Badges have a fixed checklist in `Badge_Guide.md`: the table, the art, the tests and the README row.
@@ -52,7 +52,7 @@ This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.
 ```bash
 python3 scripts/race_archive.py     # network: incremental sync into archive/
 python3 scripts/racer_bios.py       # network, optional (the bot runs it daily): racer bios into archive/racer-bios.json
-python3 scripts/schedule_archive.py # network, by hand: the alttpr.racing ladder schedule into archive/ladder-schedule/
+python3 scripts/schedule_archive.py # network (the bot runs it daily): the alttpr.racing ladder schedule into archive/ladder-schedule/; the build reads it and refuses to run without it
 python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json
 python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars participants.json names
 ```
@@ -66,7 +66,8 @@ python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars par
   - `pokemon_avatars.py`: bio phrase match, Pokémon name match, favourite and random assignment, when a favourite last changed, sprite paths, and the pokédex refresh.
   - `racer_bios.py`: the bio sync, its bio history, and its loader.
   - `participant_stats.py` combines the two change times into `avatar_changes`, by which source the published avatar comes from.
-  - `schedule_archive.py`: the alttpr.racing schedule mirror and its loaders.
+  - `schedule_archive.py`: the alttpr.racing schedule mirror, its loaders, and the join of slots to races. The join is shared by the build and the planner.
+  - `build_stats.py`: the schedule metrics and bands (scheduled races, counted-through, scheduled days), beside the race aggregates.
 - `mode_overlap.py` is a standalone analysis. The build never runs it.
 - `rating_lab.py` is a standalone analysis. The build never runs it. Its tuning reads races before 2026-01-01 only.
 - `schedule_planner.py` is a standalone analysis. The build never runs it. It reads `schedule-plan.json` and `archive/ladder-schedule/`.
@@ -122,7 +123,7 @@ The scripts are classic `<script defer>` files that share one global scope. They
 
 Tokens live on `:root` in `styles.css`:
 - colours
-- data roles: `--series`, `--mode-*`, `--cohort-*`, `--tag-*`
+- data roles: `--series`, `--mode-*`, `--band-*`, `--tag-*`
 - the type scale: `--text-*`
 - `--shadow` and `--scrim`
 - the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`
@@ -132,6 +133,7 @@ Rules for using them:
 - A comment that mentions an overlay layer names the token, not a number.
 - **`--radius` is only for surfaces and controls.** Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - **Mode colours mean modes.** Don't use `--mode-*` for anything else.
+- **Band colours mean schedule bands.** `--band-prime`, `--band-normal` and `--band-quiet` are for the Primetime heatmap only.
 - **Tag colours mean tag kinds.** Each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new kind needs its own, checked against the others for colour-blind separation.
   - The exception is deliberate: `--tag-record` and `--tag-preset-record` alias `--tag-pb`, and the record tags' shine in `ui.css` sets them apart.
 

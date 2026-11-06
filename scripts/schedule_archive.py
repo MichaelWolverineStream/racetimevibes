@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Mirror the alttpr.racing ladder schedule and modes into archive/ladder-schedule/."""
+"""Mirror the alttpr.racing ladder schedule and modes into archive/ladder-schedule/.
+
+The module also joins the mirrored slots to the archived races they became, for the
+dashboard build and the schedule planner.
+"""
 
 from __future__ import annotations
 
@@ -11,7 +15,7 @@ import time
 import urllib.error
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +30,23 @@ BASE_URL = "https://alttpr.racing/api/v1"
 SCHEDULE_DIRECTORY = "ladder-schedule"
 MODES_FILE = "modes.json"
 SEASON_FILE = re.compile(r"season-(\d+)\.json")
+# alttpr.racing names no archetypes, so this map is checked against the races they became.
+ARCHETYPE_CATEGORIES = {
+    1: "simple",
+    2: "entrance",
+    3: "inverted",
+    4: "keys",
+    5: "glitched",
+    6: "fun",
+    7: "mystery",
+    9: "spoiler",
+}
+SEED_RACE_PATTERN = re.compile(r"getseed\.php\?race=(\d+)")
+# A race without a seed number joins a slot it started from 5 minutes before to 30 after.
+JOIN_EARLY = timedelta(minutes=5)
+JOIN_LATE = timedelta(minutes=30)
+# The newest day is left out, because its rooms may not be archived yet.
+SETTLE = timedelta(days=1)
 # Far above the real number of seasons; it only stops a server that never answers 404.
 MAX_SEASONS = 1000
 
@@ -172,6 +193,102 @@ def load_schedule(archive_dir: Path = race_archive.ARCHIVE_DIR) -> list[JsonObje
                     f"Schedule slot {row['id']} appears twice with different content"
                 )
     return list(slots.values())
+
+
+# The join -------------------------------------------------------------------
+
+
+def seed_race_id(info: Any) -> int | None:
+    """Return the alttpr.racing race id in a race's seed link, or None without one."""
+    match = SEED_RACE_PATTERN.search(info) if isinstance(info, str) else None
+    return int(match.group(1)) if match else None
+
+
+def slot_time(row: JsonObject) -> datetime:
+    return datetime.fromtimestamp(int(row["time"]), UTC)
+
+
+def mode_category(mode: JsonObject | None) -> str | None:
+    """The category of a mode's archetype, or None when unlisted or unmapped."""
+    return ARCHETYPE_CATEGORIES.get(mode["archetype"]) if mode else None
+
+
+@dataclass(frozen=True)
+class JoinedSlot:
+    """A slot and the included race it became, if any."""
+
+    row: JsonObject
+    started_at: datetime
+    # The slot's mode as modes.json lists it, or None when it is not listed.
+    mode: JsonObject | None
+    # The included race context it became, or None.
+    race: JsonObject | None
+
+    @property
+    def category(self) -> str | None:
+        return mode_category(self.mode)
+
+    @property
+    def pulled(self) -> bool:
+        """Whether the slot was pulled from the schedule: no race id and no race."""
+        return self.race is None and self.row["raceId"] is None
+
+
+def join_races(
+    rows: list[JsonObject],
+    modes: list[JsonObject],
+    contexts: list[JsonObject],
+    excluded_seeds: set[int],
+) -> list[JoinedSlot]:
+    """Join slots, in (time, id) order, to the included races they became.
+
+    `contexts` are included races as `build_stats.classify_race` returns them. A slot
+    takes the race whose seed link carries its `raceId`. Failing that, it takes a race
+    without a seed link, in the category of its mode's archetype, that started from
+    JOIN_EARLY before to JOIN_LATE after it; each such race joins once. A slot whose
+    `raceId` is in `excluded_seeds`, the races excluded for their mode, is left out.
+    """
+    modes_by_id = {mode["id"]: mode for mode in modes}
+    by_seed: dict[int, JsonObject] = {}
+    unseeded: list[JsonObject] = []
+    for context in contexts:
+        seed = seed_race_id(context["race"].get("info"))
+        if seed is None:
+            unseeded.append(context)
+        else:
+            by_seed[seed] = context
+
+    joined = []
+    used: set[str] = set()
+    for row in sorted(rows, key=lambda row: (int(row["time"]), row["id"])):
+        if row["raceId"] in excluded_seeds:
+            continue
+        started_at = slot_time(row)
+        mode = modes_by_id.get(row["mode"])
+        context = by_seed.get(row["raceId"]) or _race_by_time(
+            unseeded, started_at, mode_category(mode), used
+        )
+        if context is not None:
+            used.add(context["race"]["name"])
+        joined.append(JoinedSlot(row, started_at, mode, context))
+    return joined
+
+
+def _race_by_time(
+    contexts: list[JsonObject], started_at: datetime, category: str | None, used: set[str]
+) -> JsonObject | None:
+    """Return the race without a seed id that started at this slot in its category."""
+    for context in contexts:
+        if (
+            context["mode"] == category
+            and context["race"]["name"] not in used
+            and started_at - JOIN_EARLY <= context["started_at"] <= started_at + JOIN_LATE
+        ):
+            return context
+    return None
+
+
+# Sync -------------------------------------------------------------------------
 
 
 def _write_if_changed(

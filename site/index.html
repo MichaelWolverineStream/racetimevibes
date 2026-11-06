@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="76d7ef49799e">
+    <meta name="app-version" content="0aa623e33061">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="ui.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="feed.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="top-rated.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="records.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="racer-extras.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="share-card.css?v=76d7ef49799e">
-    <link rel="stylesheet" href="easter-eggs.css?v=76d7ef49799e">
+    <link rel="stylesheet" href="styles.css?v=0aa623e33061">
+    <link rel="stylesheet" href="ui.css?v=0aa623e33061">
+    <link rel="stylesheet" href="feed.css?v=0aa623e33061">
+    <link rel="stylesheet" href="top-rated.css?v=0aa623e33061">
+    <link rel="stylesheet" href="records.css?v=0aa623e33061">
+    <link rel="stylesheet" href="racer-extras.css?v=0aa623e33061">
+    <link rel="stylesheet" href="share-card.css?v=0aa623e33061">
+    <link rel="stylesheet" href="easter-eggs.css?v=0aa623e33061">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -67,12 +67,9 @@
         <div class="section-nav__group section-nav__group--data" role="group" aria-labelledby="section-nav-data">
           <span id="section-nav-data" class="section-nav__heading">Ladder Data</span>
           <a class="section-nav__link" href="#schedule">Schedule</a>
-          <a class="section-nav__link" href="#community">Community</a>
           <a class="section-nav__link" href="#participation">Participation</a>
           <a class="section-nav__link" href="#traffic">Traffic</a>
           <a class="section-nav__link" href="#turnout">Turnout</a>
-          <a class="section-nav__link" href="#volume">Volume</a>
-          <a class="section-nav__link" href="#modes">Modes</a>
         </div>
       </nav>
 
@@ -191,44 +188,29 @@
             aria-label="Choose a reporting period"
           ></div>
           <p class="period-current">Viewing <strong id="active-period-label">All data</strong></p>
+          <p id="schedule-counted-through" class="period-current period-counted" hidden></p>
         </section>
 
-        <article id="schedule" class="chart-panel chart-panel--decision" style="--i: 0">
+        <article id="schedule" class="chart-panel chart-panel--schedule" style="--i: 0">
           <header class="panel-heading">
             <div>
               <p class="panel-index">04 / Schedule</p>
-              <h2>Best times to start a race</h2>
+              <h2>Primetime heatmap</h2>
             </div>
-            <p>Compared with similar races</p>
+            <p>Racers per scheduled race</p>
           </header>
-          <div id="candidate-table" class="table-wrap table-wrap--candidates" aria-live="polite"></div>
+          <!-- The legend's 5 must match BAND_MIN_SCHEDULED in scripts/build_stats.py and site/app.js. -->
           <div class="heatmap-heading">
-            <h3>Opportunity map</h3>
-            <p><span class="heatmap-key heatmap-key--positive"></span>Above baseline <span class="heatmap-key heatmap-key--negative"></span>Below baseline <span class="heatmap-key heatmap-key--limited"></span>Limited evidence <span class="heatmap-key heatmap-key--top"></span>Top-ranked window</p>
+            <h3>Weekday and start hour</h3>
+            <p><span class="heatmap-key heatmap-key--prime"></span>Primetime <span class="heatmap-key heatmap-key--normal"></span>Normal <span class="heatmap-key heatmap-key--quiet"></span>Quiet <span class="heatmap-key heatmap-key--unbanded"></span>Fewer than 5 scheduled races</p>
           </div>
-          <div id="opportunity-heatmap" class="heatmap-host" aria-live="polite"></div>
+          <div id="primetime-heatmap" class="heatmap-host" aria-live="polite"></div>
         </article>
 
-        <article id="community" class="chart-panel chart-panel--community" style="--i: 1">
+        <article id="participation" class="chart-panel chart-panel--participation" style="--i: 1">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">05 / Community</p>
-              <h2>Who keeps coming back</h2>
-            </div>
-            <p>Racers grouped by how often they race</p>
-          </header>
-          <div id="community-orbit" class="orbit-host" aria-live="polite"></div>
-          <p id="community-coverage" class="community-coverage"></p>
-          <details class="data-details">
-            <summary>View cohort values</summary>
-            <div id="community-table" class="table-wrap"></div>
-          </details>
-        </article>
-
-        <article id="participation" class="chart-panel chart-panel--participation" style="--i: 2">
-          <header class="panel-heading">
-            <div>
-              <p class="panel-index">06 / Participation</p>
+              <p class="panel-index">05 / Participation</p>
               <h2>Turnout over time</h2>
             </div>
             <p>By calendar month</p>
@@ -244,7 +226,7 @@
             <div>
               <div class="heatmap-heading">
                 <h3>Race entries per day</h3>
-                <p>Calendar days</p>
+                <p>Days with scheduled races</p>
               </div>
               <div id="participation-entries-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
             </div>
@@ -256,13 +238,13 @@
         </article>
 
         <div class="hourly-grid">
-          <article id="traffic" class="chart-panel" style="--i: 3">
+          <article id="traffic" class="chart-panel" style="--i: 2">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">07 / Traffic</p>
+                <p class="panel-index">06 / Traffic</p>
                 <h2>When races start</h2>
               </div>
-              <p>Races per hour</p>
+              <p>Scheduled races per hour <span class="bar-key"><span class="heatmap-key heatmap-key--started"></span>Started <span class="heatmap-key heatmap-key--never"></span>Never started</span></p>
             </header>
             <div id="race-count-chart" class="chart-host" aria-live="polite"></div>
             <details class="data-details">
@@ -271,13 +253,13 @@
             </details>
           </article>
 
-          <article id="turnout" class="chart-panel" style="--i: 4">
+          <article id="turnout" class="chart-panel" style="--i: 3">
             <header class="panel-heading">
               <div>
-                <p class="panel-index">08 / Turnout</p>
+                <p class="panel-index">07 / Turnout</p>
                 <h2>When races draw a crowd</h2>
               </div>
-              <p>Average racers per race</p>
+              <p>Median racers per scheduled race</p>
             </header>
             <div id="hourly-average-chart" class="chart-host" aria-live="polite"></div>
             <details class="data-details">
@@ -285,50 +267,7 @@
               <div id="hourly-average-table" class="table-wrap"></div>
             </details>
           </article>
-
-          <article id="volume" class="chart-panel chart-panel--hourly-total" style="--i: 5">
-            <header class="panel-heading">
-              <div>
-                <p class="panel-index">09 / Volume</p>
-                <h2>Busiest hours</h2>
-              </div>
-              <p>Total racers · <span id="hourly-total-range">All data</span></p>
-            </header>
-            <div class="room-survival" aria-label="Finished and inferred cancelled room summary">
-              <div class="room-survival__metrics">
-                <div><span>Finished rooms</span><strong id="room-finished">--</strong></div>
-                <div><span>Est. cancelled</span><strong id="room-cancelled">--</strong></div>
-                <div><span>Est. cancelled share</span><strong id="room-cancelled-share">--</strong></div>
-                <div><span>Sensitivity range</span><strong id="room-sensitivity">--</strong></div>
-              </div>
-              <div class="room-survival__track" aria-hidden="true">
-                <span id="room-observed-bar" class="room-survival__observed"></span>
-                <span id="room-cancelled-bar" class="room-survival__cancelled"></span>
-              </div>
-              <p>Estimate assumes rooms opened uniformly by hour. The central baseline is the median finished-room count among the six busiest hours (<strong id="room-baseline">--</strong> rooms/hour).</p>
-            </div>
-            <div id="hourly-total-chart" class="chart-host" aria-live="polite"></div>
-            <details class="data-details">
-              <summary>View hourly values</summary>
-              <div id="hourly-total-table" class="table-wrap"></div>
-            </details>
-          </article>
         </div>
-
-        <article id="modes" class="chart-panel chart-panel--modes" style="--i: 6">
-          <header class="panel-heading">
-            <div>
-              <p class="panel-index">10 / Modes</p>
-              <h2>Which modes draw a crowd</h2>
-            </div>
-            <p>Biggest fields first</p>
-          </header>
-          <div id="mode-average-chart" class="chart-host chart-host--modes" aria-live="polite"></div>
-          <details class="data-details">
-            <summary>View mode values</summary>
-            <div id="mode-average-table" class="table-wrap"></div>
-          </details>
-        </article>
       </section>
 
       <section id="player-view" class="player-view" hidden aria-labelledby="player-name">
@@ -408,18 +347,18 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=76d7ef49799e" defer></script>
-    <script src="racer-charts.js?v=76d7ef49799e" defer></script>
-    <script src="store.js?v=76d7ef49799e" defer></script>
-    <script src="ui.js?v=76d7ef49799e" defer></script>
-    <script src="top-rated.js?v=76d7ef49799e" defer></script>
-    <script src="feed.js?v=76d7ef49799e" defer></script>
-    <script src="records.js?v=76d7ef49799e" defer></script>
-    <script src="racer-extras.js?v=76d7ef49799e" defer></script>
-    <script src="share-card.js?v=76d7ef49799e" defer></script>
-    <script src="easter-eggs.js?v=76d7ef49799e" defer></script>
-    <script src="leaderboard.js?v=76d7ef49799e" defer></script>
-    <script src="version-check.js?v=76d7ef49799e" defer></script>
-    <script src="visitor-counter.js?v=76d7ef49799e" defer></script>
+    <script src="app.js?v=0aa623e33061" defer></script>
+    <script src="racer-charts.js?v=0aa623e33061" defer></script>
+    <script src="store.js?v=0aa623e33061" defer></script>
+    <script src="ui.js?v=0aa623e33061" defer></script>
+    <script src="top-rated.js?v=0aa623e33061" defer></script>
+    <script src="feed.js?v=0aa623e33061" defer></script>
+    <script src="records.js?v=0aa623e33061" defer></script>
+    <script src="racer-extras.js?v=0aa623e33061" defer></script>
+    <script src="share-card.js?v=0aa623e33061" defer></script>
+    <script src="easter-eggs.js?v=0aa623e33061" defer></script>
+    <script src="leaderboard.js?v=0aa623e33061" defer></script>
+    <script src="version-check.js?v=0aa623e33061" defer></script>
+    <script src="visitor-counter.js?v=0aa623e33061" defer></script>
   </body>
 </html>

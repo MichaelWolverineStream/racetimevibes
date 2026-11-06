@@ -70,26 +70,10 @@ except ImportError:
     import race_archive
     import schedule_archive
 
-# alttpr.racing names no archetypes, so this map is checked against the races they became.
-ARCHETYPE_CATEGORIES = {
-    1: "simple",
-    2: "entrance",
-    3: "inverted",
-    4: "keys",
-    5: "glitched",
-    6: "fun",
-    7: "mystery",
-    9: "spoiler",
-}
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "schedule-plan.json"
 TIMEZONE = build_stats.SCHEDULE_TIMEZONE
-SEED_RACE_PATTERN = re.compile(r"getseed\.php\?race=(\d+)")
 
 HISTORY_DAYS = 365
-# The newest day is left out, because its rooms may not be archived yet.
-SETTLE = timedelta(days=1)
-JOIN_EARLY = timedelta(minutes=5)
-JOIN_LATE = timedelta(minutes=30)
 BLOCK_HOURS = 4
 SHRINK_SLOTS = 20
 FIT_PASSES = 2
@@ -391,15 +375,6 @@ class Race:
 # History ---------------------------------------------------------------------
 
 
-def seed_race_id(info: Any) -> int | None:
-    match = SEED_RACE_PATTERN.search(info) if isinstance(info, str) else None
-    return int(match.group(1)) if match else None
-
-
-def slot_time(row: JsonObject) -> datetime:
-    return datetime.fromtimestamp(int(row["time"]), UTC)
-
-
 def history_slots(
     schedule: list[JsonObject], modes: list[JsonObject], races: list[JsonObject]
 ) -> tuple[list[HistorySlot], datetime, datetime]:
@@ -407,65 +382,50 @@ def history_slots(
 
     Returns the slots and the window's UTC start and end.
     """
-    modes_by_id = {mode["id"]: mode for mode in modes}
-    by_seed: dict[int, JsonObject] = {}
-    unseeded: list[JsonObject] = []
+    contexts: list[JsonObject] = []
     excluded: set[int] = set()
-    newest = None
     for race in races:
         context, reason = build_stats.classify_race(race)
-        seed = seed_race_id(race.get("info"))
         if context is None:
+            seed = schedule_archive.seed_race_id(race.get("info"))
             if reason[0] == "mode" and seed is not None:
                 excluded.add(seed)
             continue
-        newest = max(newest or context["started_at"], context["started_at"])
-        if seed is None:
-            unseeded.append(context)
-        else:
-            by_seed[seed] = context
-    if newest is None:
+        contexts.append(context)
+    if not contexts:
         raise ScheduleError("The archive has no races to learn from")
-    end = newest - SETTLE
+    end = max(context["started_at"] for context in contexts) - schedule_archive.SETTLE
     start = end - timedelta(days=HISTORY_DAYS)
 
+    window = [row for row in schedule if start <= schedule_archive.slot_time(row) < end]
     slots = []
-    used: set[str] = set()
-    for row in sorted(schedule, key=lambda row: (int(row["time"]), row["id"])):
-        started_at = slot_time(row)
-        if not start <= started_at < end or row["raceId"] in excluded:
-            continue
-        mode = modes_by_id.get(row["mode"])
+    for joined in schedule_archive.join_races(window, modes, contexts, excluded):
+        row, mode = joined.row, joined.mode
         if mode is None:
             raise ScheduleError(f"Slot {row['id']} names mode {row['mode']}, which is not listed")
-        category = ARCHETYPE_CATEGORIES.get(mode["archetype"])
-        context = by_seed.get(row["raceId"]) or _race_by_time(
-            unseeded, started_at, category, used
-        )
-        if context is not None:
-            used.add(context["race"]["name"])
+        if joined.race is not None:
             slots.append(
                 HistorySlot(
-                    started_at=started_at,
+                    started_at=joined.started_at,
                     season=row["season"],
-                    category=context["mode"],
+                    category=joined.race["mode"],
                     mode_id=row["mode"],
-                    entrants=context["entrants_count"],
+                    entrants=joined.race["entrants_count"],
                     fired=True,
                 )
             )
-        elif row["raceId"] is None:
-            continue  # pulled from the schedule
-        elif category is None:
+        elif joined.pulled:
+            continue
+        elif joined.category is None:
             raise ScheduleError(
                 f"Mode {mode['name']} has archetype {mode['archetype']}, which has no category"
             )
         else:
             slots.append(
                 HistorySlot(
-                    started_at=started_at,
+                    started_at=joined.started_at,
                     season=row["season"],
-                    category=category,
+                    category=joined.category,
                     mode_id=row["mode"],
                     entrants=0,
                     fired=False,
@@ -474,20 +434,6 @@ def history_slots(
     if not slots:
         raise ScheduleError("No scheduled slots fall in the history window")
     return slots, start, end
-
-
-def _race_by_time(
-    contexts: list[JsonObject], started_at: datetime, category: str | None, used: set[str]
-) -> JsonObject | None:
-    """Return the race without a seed id that started at this slot in its category."""
-    for context in contexts:
-        if (
-            context["mode"] == category
-            and context["race"]["name"] not in used
-            and started_at - JOIN_EARLY <= context["started_at"] <= started_at + JOIN_LATE
-        ):
-            return context
-    return None
 
 
 # Demand model ----------------------------------------------------------------
@@ -707,7 +653,7 @@ def resolve_composition(
         modes = []
         for label in entry["modes"]:
             found = _find_mode(name, label, api_modes)
-            source = ARCHETYPE_CATEGORIES.get(found["archetype"])
+            source = schedule_archive.ARCHETYPE_CATEGORIES.get(found["archetype"])
             if source is None:
                 raise ScheduleError(
                     f"{name}: {found['name']} has archetype {found['archetype']}, "
@@ -909,7 +855,7 @@ def default_start(schedule: list[JsonObject]) -> date:
     """Return the first date whose midnight ET is at least two hours after the last slot."""
     if not schedule:
         raise ScheduleError("The schedule mirror is empty; run schedule_archive.py first")
-    last = max(slot_time(row) for row in schedule)
+    last = max(schedule_archive.slot_time(row) for row in schedule)
     day = last.astimezone(TIMEZONE).date()
     while datetime.combine(day, time(0), tzinfo=TIMEZONE) < last + RACE_LENGTH:
         day += timedelta(days=1)
@@ -1927,7 +1873,7 @@ def baseline(
     """Score the last season that finished inside the window, next to what happened."""
     season_end: dict[int, datetime] = {}
     for row in schedule:
-        started_at = slot_time(row)
+        started_at = schedule_archive.slot_time(row)
         season_end[row["season"]] = max(season_end.get(row["season"], started_at), started_at)
     finished = [season for season, last in season_end.items() if last < end]
     seasons = {slot.season for slot in slots} & set(finished)
@@ -2019,7 +1965,7 @@ def analyse(
         pairs = pair_scores(build_stats.included_race_contexts(races), sources)
 
     period_start, period_end = season_bounds(first_day, weeks, last_day)
-    known = set(ARCHETYPE_CATEGORIES.values()) | set(config["composition"])
+    known = set(schedule_archive.ARCHETYPE_CATEGORIES.values()) | set(config["composition"])
     events = expand_events(
         parse_events(config.get("events", []), known, period_start, period_end), categories
     )

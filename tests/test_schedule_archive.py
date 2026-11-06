@@ -3,7 +3,7 @@ import json
 import tempfile
 import unittest
 import urllib.error
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -217,6 +217,112 @@ class LoaderTests(ScheduleTestCase):
         (self.directory / schedule_archive.MODES_FILE).write_text("[]", encoding="utf-8")
         with self.assertRaises(race_archive.ArchiveError):
             schedule_archive.load_modes(self.archive)
+
+
+JOIN_AT = datetime(2026, 6, 1, 18, 0, tzinfo=UTC)
+JOIN_MODES = [
+    {"id": 11, "archetype": 1, "name": "Simple", "active": True},
+    {"id": 41, "archetype": 4, "name": "Keys", "active": True},
+    {"id": 80, "archetype": 8, "name": "Odd", "active": True},
+]
+
+
+def timed_slot(slot_id, race_id, started_at, mode=11):
+    return {
+        "id": slot_id,
+        "raceId": race_id,
+        "season": 1,
+        "time": str(int(started_at.timestamp())),
+        "mode": mode,
+    }
+
+
+def context(name, mode, started_at, seed=None):
+    info = f"Step Ladder Series - [{mode}] - Open"
+    if seed is not None:
+        info += f"\nopen - https://alttpr.racing/getseed.php?race={seed} - (x)"
+    return {
+        "race": {"name": name, "info": info},
+        "started_at": started_at,
+        "mode": mode,
+        "entrants_count": 5,
+    }
+
+
+class JoinTests(unittest.TestCase):
+    def join(self, rows, contexts, excluded=frozenset()):
+        return schedule_archive.join_races(rows, JOIN_MODES, contexts, set(excluded))
+
+    def test_reads_the_seed_number_from_a_race_info(self):
+        self.assertEqual(schedule_archive.seed_race_id(context("a", "keys", JOIN_AT, 42)["race"]["info"]), 42)
+        self.assertIsNone(schedule_archive.seed_race_id("Step Ladder Series - [keys] - Open"))
+        self.assertIsNone(schedule_archive.seed_race_id(None))
+
+    def test_seed_join_ignores_category_and_time(self):
+        race = context("seeded", "entrance", JOIN_AT + timedelta(hours=3), seed=42)
+        (joined,) = self.join([timed_slot(1, 42, JOIN_AT)], [race])
+        self.assertIs(joined.race, race)
+        self.assertEqual((joined.category, joined.pulled), ("simple", False))
+        self.assertEqual(joined.started_at, JOIN_AT)
+
+    def test_time_fallback_is_five_minutes_early_to_thirty_late(self):
+        for minutes, joins in ((-5, True), (-6, False), (30, True), (31, False)):
+            with self.subTest(minutes=minutes):
+                race = context("loose", "simple", JOIN_AT + timedelta(minutes=minutes))
+                (joined,) = self.join([timed_slot(1, 500, JOIN_AT)], [race])
+                self.assertEqual(joined.race is race, joins)
+
+    def test_time_fallback_needs_the_slot_category_and_no_seed(self):
+        other_category = context("entrance", "entrance", JOIN_AT)
+        seeded = context("seeded", "simple", JOIN_AT, seed=7)
+        (joined,) = self.join([timed_slot(1, 500, JOIN_AT)], [other_category, seeded])
+        self.assertIsNone(joined.race)
+
+    def test_a_race_without_a_seed_joins_only_one_slot(self):
+        race = context("loose", "simple", JOIN_AT + timedelta(minutes=5))
+        joined = self.join(
+            [timed_slot(2, 502, JOIN_AT + timedelta(minutes=10)), timed_slot(1, 501, JOIN_AT)],
+            [race],
+        )
+        self.assertEqual([slot.row["id"] for slot in joined], [1, 2])
+        self.assertEqual([slot.race is race for slot in joined], [True, False])
+
+    def test_orders_by_time_then_id(self):
+        rows = [
+            timed_slot(3, 503, JOIN_AT + timedelta(hours=1)),
+            timed_slot(2, 502, JOIN_AT),
+            timed_slot(1, 501, JOIN_AT),
+        ]
+        self.assertEqual([slot.row["id"] for slot in self.join(rows, [])], [1, 2, 3])
+
+    def test_drops_slots_of_excluded_races(self):
+        joined = self.join(
+            [timed_slot(1, 77, JOIN_AT), timed_slot(2, 78, JOIN_AT)], [], excluded={77}
+        )
+        self.assertEqual([slot.row["id"] for slot in joined], [2])
+
+    def test_a_slot_without_race_id_or_race_is_pulled(self):
+        (pulled,) = self.join([timed_slot(1, None, JOIN_AT)], [])
+        self.assertTrue(pulled.pulled)
+        race = context("loose", "simple", JOIN_AT)
+        (fired,) = self.join([timed_slot(1, None, JOIN_AT)], [race])
+        self.assertIs(fired.race, race)
+        self.assertFalse(fired.pulled)
+        (never_started,) = self.join([timed_slot(1, 999, JOIN_AT)], [])
+        self.assertFalse(never_started.pulled)
+        self.assertIsNone(never_started.race)
+
+    def test_unlisted_mode_and_unmapped_archetype_have_no_category(self):
+        seeded = context("odd", "fun", JOIN_AT, seed=42)
+        unlisted, odd = self.join(
+            [timed_slot(1, 500, JOIN_AT, mode=12345), timed_slot(2, 42, JOIN_AT, mode=80)],
+            [seeded],
+        )
+        self.assertIsNone(unlisted.mode)
+        self.assertIsNone(unlisted.category)
+        self.assertEqual(odd.mode["archetype"], 8)
+        self.assertIsNone(odd.category)
+        self.assertIs(odd.race, seeded)
 
 
 if __name__ == "__main__":

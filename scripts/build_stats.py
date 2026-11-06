@@ -23,6 +23,7 @@ try:
         pokemon_avatars,
         race_archive,
         racer_bios,
+        schedule_archive,
     )
 except ImportError:
     import comment_stats
@@ -30,6 +31,7 @@ except ImportError:
     import pokemon_avatars
     import race_archive
     import racer_bios
+    import schedule_archive
 
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
@@ -76,6 +78,9 @@ PRESET_URL_TAIL = re.compile(r"(?:^|\s+)(?:-\s*)?https?://.*$")
 PRESET_SLUG_TAIL = re.compile(r"\s+(?=[\w.-]*[A-Za-z])[\w.-]+/(?=[\w.-]*[A-Za-z])[\w.-]+$")
 GRAB_BAG_PATTERN = re.compile(r"Grab Bag\s*\(", re.IGNORECASE)
 EXCLUDED_MODES = {"ladder test", "ladder_test"}
+# A weekday-hour gets a band only with at least this many scheduled races.
+# Must match BAND_MIN_SCHEDULED in site/app.js and the heatmap legend in site/index.html.
+BAND_MIN_SCHEDULED = 5
 
 JsonObject = dict[str, Any]
 
@@ -185,47 +190,8 @@ def _entry_summary(values: list[int]) -> JsonObject:
     }
 
 
-def _estimated_cancelled_rooms(counts: list[int], top_hour_count: int) -> tuple[float, int]:
-    busiest_counts = sorted(counts, reverse=True)[:top_hour_count]
-    baseline = statistics.median(busiest_counts)
-    raw_estimate = sum(max(0, baseline - count) for count in counts)
-    return baseline, math.floor(raw_estimate + 0.5)
-
-
-def _room_cancellation_estimate(hourly_output: list[JsonObject]) -> JsonObject:
-    counts = [item["race_count"] for item in hourly_output]
-    if not counts:
-        raise DataError("Room cancellation estimate requires hourly observations")
-
-    baseline, estimated_cancelled = _estimated_cancelled_rooms(counts, 6)
-    _, lower_estimate = _estimated_cancelled_rooms(counts, 12)
-    upper_baseline, upper_estimate = _estimated_cancelled_rooms(counts, 1)
-    observed_finished = sum(counts)
-    estimated_opened = observed_finished + estimated_cancelled
-
-    return {
-        "method": "top_6_median_clamped_hourly_deficit",
-        "top_hour_count": 6,
-        "baseline_rooms_per_hour": baseline,
-        "observed_finished_rooms": observed_finished,
-        "estimated_cancelled_rooms": estimated_cancelled,
-        "estimated_opened_rooms": estimated_opened,
-        "estimated_cancelled_share": (
-            estimated_cancelled / estimated_opened if estimated_opened else 0
-        ),
-        "sensitivity": {
-            "lower_method": "top_12_median_clamped_hourly_deficit",
-            "lower_estimated_cancelled_rooms": lower_estimate,
-            "upper_method": "maximum_hour_clamped_hourly_deficit",
-            "upper_baseline_rooms_per_hour": upper_baseline,
-            "upper_estimated_cancelled_rooms": upper_estimate,
-        },
-    }
-
-
-def _entrant_identity_counts(
-    race: JsonObject, entrants_count: int
-) -> tuple[tuple[str, ...], int]:
+def _check_entrant_count(race: JsonObject, entrants_count: int) -> None:
+    """Refuse a race whose entrants array disagrees with its entrant count."""
     entrants = race.get("entrants")
     race_name = race.get("name", "<unnamed>")
     if not isinstance(entrants, list):
@@ -235,92 +201,6 @@ def _entrant_identity_counts(
             f"Race {race_name} reports {entrants_count} entrants but returned "
             f"{len(entrants)} entrant records"
         )
-
-    entrant_ids = []
-    unidentified_count = 0
-    for entrant in entrants:
-        user = entrant.get("user") if isinstance(entrant, dict) else None
-        user_id = user.get("id") if isinstance(user, dict) else None
-        if isinstance(user_id, str) and user_id:
-            entrant_ids.append(user_id)
-        else:
-            unidentified_count += 1
-
-    if len(set(entrant_ids)) != len(entrant_ids):
-        raise DataError(f"Race {race_name} contains a duplicate entrant user ID")
-    return tuple(entrant_ids), unidentified_count
-
-
-def _unique_player_summary(records: list[JsonObject]) -> JsonObject:
-    appearances: Counter[str] = Counter()
-    unidentified_entry_count = 0
-    for record in records:
-        appearances.update(record["entrant_ids"])
-        unidentified_entry_count += record["unidentified_entry_count"]
-
-    identified_entry_count = sum(appearances.values())
-    identified_player_count = len(appearances)
-    appearance_counts = list(appearances.values())
-    entrant_total = sum(record["entrants_count"] for record in records)
-    cohort_definitions = (
-        ("one_race", lambda count: count == 1),
-        ("occasional", lambda count: 2 <= count <= 5),
-        ("regular", lambda count: 6 <= count <= 20),
-        ("core", lambda count: count >= 21),
-    )
-    cohorts = []
-    for cohort_id, matches in cohort_definitions:
-        cohort_counts = [count for count in appearance_counts if matches(count)]
-        player_count = len(cohort_counts)
-        entry_count = sum(cohort_counts)
-        cohorts.append(
-            {
-                "id": cohort_id,
-                "player_count": player_count,
-                "player_share": (
-                    player_count / identified_player_count
-                    if identified_player_count
-                    else 0
-                ),
-                "entry_count": entry_count,
-                "entry_share": (
-                    entry_count / identified_entry_count if identified_entry_count else 0
-                ),
-            }
-        )
-
-    if identified_entry_count + unidentified_entry_count != entrant_total:
-        raise DataError("Entrant identity counts do not reconcile with entrant totals")
-
-    return {
-        "identified_player_count": identified_player_count,
-        "identified_entry_count": identified_entry_count,
-        "unidentified_entry_count": unidentified_entry_count,
-        "identity_coverage": (
-            identified_entry_count / entrant_total if entrant_total else 0
-        ),
-        "average_races_per_player": (
-            identified_entry_count / identified_player_count
-            if identified_player_count
-            else None
-        ),
-        "median_races_per_player": (
-            statistics.median(appearance_counts) if appearance_counts else None
-        ),
-        "repeat_player_count": sum(count >= 2 for count in appearance_counts),
-        "cohorts": cohorts,
-    }
-
-
-def _adjusted_summary(values: list[float]) -> JsonObject:
-    distribution = _distribution(values)
-    return {
-        "adjusted_average": distribution["mean"],
-        "adjusted_median": distribution["median"],
-        "adjusted_standard_deviation": distribution["standard_deviation"],
-        "adjusted_ci95_low": distribution["ci95_low"],
-        "adjusted_ci95_high": distribution["ci95_high"],
-    }
 
 
 def _date_range(started_at_values: list[datetime]) -> JsonObject | None:
@@ -332,69 +212,107 @@ def _date_range(started_at_values: list[datetime]) -> JsonObject | None:
     }
 
 
-def _aggregate_records(records: list[JsonObject]) -> JsonObject:
-    hourly: dict[int, list[int]] = {hour: [] for hour in range(24)}
-    weekdays: dict[int, list[int]] = {weekday: [] for weekday in range(7)}
-    weekday_hours: dict[tuple[int, int], list[JsonObject]] = {
+def _race_summary(records: list[JsonObject]) -> JsonObject:
+    """Summarize finished races: their entries and their date range."""
+    return _entry_summary([record["entrants_count"] for record in records]) | {
+        "included_date_range": _date_range([record["started_at"] for record in records]),
+    }
+
+
+def _slot_hourly(slots: list[JsonObject]) -> list[JsonObject]:
+    """Scheduled races per Eastern start hour, with racers per scheduled race."""
+    by_hour: dict[int, list[JsonObject]] = {hour: [] for hour in range(24)}
+    for slot in slots:
+        by_hour[slot["local_started_at"].hour].append(slot)
+    hourly = []
+    for hour, items in by_hour.items():
+        distribution = _distribution([slot["racers"] for slot in items])
+        hourly.append(
+            {
+                "hour": hour,
+                "scheduled_count": len(items),
+                "started_count": sum(slot["started"] for slot in items),
+                "median_racers": distribution["median"],
+                "q1_racers": distribution["q1"],
+                "q3_racers": distribution["q3"],
+            }
+        )
+    return hourly
+
+
+def _assign_bands(cells: list[JsonObject]) -> None:
+    """Band each weekday-hour against the quartiles of its racers per scheduled race.
+
+    Only cells with at least BAND_MIN_SCHEDULED scheduled races are banded or count
+    toward the quartiles; the others get no band.
+    """
+    eligible = [cell for cell in cells if cell["scheduled_count"] >= BAND_MIN_SCHEDULED]
+    quartiles = _distribution([cell["average_racers"] for cell in eligible])
+    for cell in cells:
+        if cell["scheduled_count"] < BAND_MIN_SCHEDULED:
+            cell["band"] = None
+        elif cell["average_racers"] >= quartiles["q3"]:
+            cell["band"] = "prime"
+        elif cell["average_racers"] <= quartiles["q1"]:
+            cell["band"] = "quiet"
+        else:
+            cell["band"] = "normal"
+
+
+def _slot_weekday_hourly(slots: list[JsonObject]) -> list[JsonObject]:
+    """Scheduled races per weekday and Eastern start hour, banded."""
+    cells: dict[tuple[int, int], list[JsonObject]] = {
         (weekday, hour): [] for weekday in range(7) for hour in range(24)
     }
-    modes: dict[str, list[int]] = defaultdict(list)
-
-    for record in records:
-        hour = record["local_started_at"].hour
-        weekday = record["local_started_at"].weekday()
-        mode = record["mode"]
-        entrants_count = record["entrants_count"]
-        hourly[hour].append(entrants_count)
-        weekdays[weekday].append(entrants_count)
-        weekday_hours[(weekday, hour)].append(record)
-        modes[mode].append(entrants_count)
-
-    hourly_output = [
-        {"hour": hour} | _entry_summary(values)
-        for hour, values in hourly.items()
-    ]
-    weekday_output = [
-        {
-            "weekday": weekday,
-            "label": WEEKDAY_LABELS[weekday],
-        }
-        | _entry_summary(values)
-        for weekday, values in weekdays.items()
-    ]
-    weekday_hour_output = []
-    for (weekday, hour), values in weekday_hours.items():
-        entrant_values = [record["entrants_count"] for record in values]
-        adjusted_values = [record["adjusted_entries"] for record in values]
-        weekday_hour_output.append(
+    for slot in slots:
+        local = slot["local_started_at"]
+        cells[(local.weekday(), local.hour)].append(slot)
+    output = []
+    for (weekday, hour), items in cells.items():
+        entrant_total = sum(slot["racers"] for slot in items)
+        output.append(
             {
                 "weekday": weekday,
                 "weekday_label": WEEKDAY_LABELS[weekday],
                 "hour": hour,
+                "scheduled_count": len(items),
+                "started_count": sum(slot["started"] for slot in items),
+                "entrant_total": entrant_total,
+                "average_racers": _average(entrant_total, len(items)),
             }
-            | _entry_summary(entrant_values)
-            | _adjusted_summary(adjusted_values)
         )
-    mode_output = [
-        {"mode": mode} | _entry_summary(values)
-        for mode, values in modes.items()
-    ]
-    mode_output.sort(
-        key=lambda item: (-(item["average_racers"] or 0), item["mode"])
-    )
-    started_at_values = [record["started_at"] for record in records]
-    overall = _entry_summary([record["entrants_count"] for record in records])
+    _assign_bands(output)
+    return output
 
-    return {
-        **overall,
-        "included_date_range": _date_range(started_at_values),
-        "hourly": hourly_output,
-        "weekdays": weekday_output,
-        "weekday_hourly": weekday_hour_output,
-        "modes": mode_output,
-        "unique_players": _unique_player_summary(records),
-        "room_cancellation_estimate": _room_cancellation_estimate(hourly_output),
-    }
+
+def _slot_summary(slots: list[JsonObject]) -> JsonObject:
+    return {"hourly": _slot_hourly(slots), "weekday_hourly": _slot_weekday_hourly(slots)}
+
+
+def _scheduled_days(
+    joined: list[schedule_archive.JoinedSlot], archive_start: date, archive_end: date
+) -> set[date]:
+    """Return the archive's Eastern dates that hold a slot, pulled slots included."""
+    days = set()
+    for slot in joined:
+        day = slot.started_at.astimezone(SCHEDULE_TIMEZONE).date()
+        if archive_start <= day <= archive_end:
+            days.add(day)
+    return days
+
+
+def _schedule_counted_through(
+    schedule: list[JsonObject], newest_started_at: datetime
+) -> datetime | None:
+    """Return the latest slot start the schedule panels count, or None when none can.
+
+    That is the earlier of a day before the newest race, whose rooms may still be open,
+    and the latest slot with a race id, which guards against a stale mirror.
+    """
+    created = [schedule_archive.slot_time(row) for row in schedule if row["raceId"] is not None]
+    if not created:
+        return None
+    return min(newest_started_at - schedule_archive.SETTLE, max(created))
 
 
 def quarter_period(local_started_at: date) -> JsonObject:
@@ -426,11 +344,17 @@ def _monthly_turnout(
     records: list[JsonObject],
     archive_start: date,
     archive_end: date,
+    scheduled_days: set[date],
 ) -> list[JsonObject]:
     month_values: dict[str, list[int]] = defaultdict(list)
+    scheduled_entries: Counter[str] = Counter()
     for record in records:
-        month = month_period(record["local_started_at"])
-        month_values[month["id"]].append(record["entrants_count"])
+        local_date = record["local_started_at"].date()
+        month_id = month_period(local_date)["id"]
+        month_values[month_id].append(record["entrants_count"])
+        if local_date in scheduled_days:
+            scheduled_entries[month_id] += record["entrants_count"]
+    scheduled_day_counts = Counter(month_period(day)["id"] for day in scheduled_days)
 
     monthly = []
     year, month = archive_start.year, archive_start.month
@@ -438,19 +362,22 @@ def _monthly_turnout(
         period = month_period(date(year, month, 1))
         month_start = date.fromisoformat(period["start"])
         month_end = date.fromisoformat(period["end"])
-        covered_start = max(archive_start, month_start)
-        covered_end = min(archive_end, month_end)
-        covered_day_count = (covered_end - covered_start).days + 1
-        summary = _entry_summary(month_values[period["id"]])
+        scheduled_day_count = scheduled_day_counts[period["id"]]
+        scheduled_day_entrant_total = scheduled_entries[period["id"]]
         monthly.append(
             period
             | {
                 "is_complete": archive_start <= month_start
                 and archive_end >= month_end,
-                "covered_day_count": covered_day_count,
+                "scheduled_day_count": scheduled_day_count,
+                "scheduled_day_entrant_total": scheduled_day_entrant_total,
             }
-            | summary
-            | {"entries_per_day": summary["entrant_total"] / covered_day_count}
+            | _entry_summary(month_values[period["id"]])
+            | {
+                "entries_per_day": _average(
+                    scheduled_day_entrant_total, scheduled_day_count
+                )
+            }
         )
         year, month = (year + 1, 1) if month == 12 else (year, month + 1)
     return monthly
@@ -536,12 +463,16 @@ def included_race_contexts(races: list[JsonObject]) -> list[JsonObject]:
 def aggregate_races(
     races: list[JsonObject],
     *,
+    schedule: list[JsonObject],
+    modes: list[JsonObject],
     generated_at: datetime | None = None,
 ) -> JsonObject:
-    """Filter and aggregate races into the static page's JSON schema."""
+    """Filter and aggregate races and the ladder schedule into the page's JSON schema."""
     excluded_statuses: Counter[str] = Counter()
     excluded_modes: Counter[str] = Counter()
     invalid_records: Counter[str] = Counter()
+    excluded_seeds: set[int] = set()
+    contexts: list[JsonObject] = []
     included_records: list[JsonObject] = []
     period_records: dict[str, list[JsonObject]] = defaultdict(list)
     period_metadata: dict[str, JsonObject] = {}
@@ -555,29 +486,25 @@ def aggregate_races(
                 excluded_statuses[detail] += 1
             elif kind == "mode":
                 excluded_modes[detail] += 1
+                seed = schedule_archive.seed_race_id(race.get("info"))
+                if seed is not None:
+                    excluded_seeds.add(seed)
             else:
                 invalid_records[detail] += 1
             continue
 
-        mode = context["mode"]
-        if mode == "unknown":
+        if context["mode"] == "unknown":
             unknown_mode_count += 1
+        _check_entrant_count(race, context["entrants_count"])
 
         local_started_at = context["local_started_at"]
-        entrants_count = context["entrants_count"]
-        entrant_ids, unidentified_entry_count = _entrant_identity_counts(
-            race, entrants_count
-        )
         period = quarter_period(local_started_at)
         record = {
             "started_at": context["started_at"],
             "local_started_at": local_started_at,
-            "entrants_count": entrants_count,
-            "entrant_ids": entrant_ids,
-            "unidentified_entry_count": unidentified_entry_count,
-            "mode": mode,
-            "period_id": period["id"],
+            "entrants_count": context["entrants_count"],
         }
+        contexts.append(context)
         included_records.append(record)
         period_records[period["id"]].append(record)
         period_metadata[period["id"]] = period
@@ -585,38 +512,73 @@ def aggregate_races(
     if not included_records:
         raise DataError("No races remained after filtering and validation")
 
-    mode_period_values: dict[tuple[str, str], list[int]] = defaultdict(list)
-    for record in included_records:
-        mode_period_values[(record["mode"], record["period_id"])].append(
-            record["entrants_count"]
-        )
-    mode_period_means = {
-        key: sum(values) / len(values) for key, values in mode_period_values.items()
-    }
-    for record in included_records:
-        baseline = mode_period_means[(record["mode"], record["period_id"])]
-        record["adjusted_entries"] = record["entrants_count"] - baseline
-
-    overall = _aggregate_records(included_records)
-    periods = []
     archive_start = min(record["local_started_at"].date() for record in included_records)
     archive_end = max(record["local_started_at"].date() for record in included_records)
+    newest_started_at = max(record["started_at"] for record in included_records)
+    counted_through = _schedule_counted_through(schedule, newest_started_at)
+
+    joined = schedule_archive.join_races(schedule, modes, contexts, excluded_seeds)
+    scheduled_days = _scheduled_days(joined, archive_start, archive_end)
+    slot_records: list[JsonObject] = []
+    period_slots: dict[str, list[JsonObject]] = defaultdict(list)
+    pulled_count = 0
+    for slot in joined:
+        local_started_at = slot.started_at.astimezone(SCHEDULE_TIMEZONE)
+        if (
+            counted_through is None
+            or slot.started_at > counted_through
+            or local_started_at.date() < archive_start
+        ):
+            continue
+        if slot.mode is None:
+            raise DataError(
+                f"Schedule slot {slot.row['id']} names mode {slot.row['mode']}, "
+                "which is not listed"
+            )
+        if slot.pulled:
+            pulled_count += 1
+            continue
+        period_id = quarter_period(local_started_at)["id"]
+        if period_id not in period_metadata:
+            raise DataError(
+                f"Schedule slot {slot.row['id']} falls in {period_id}, "
+                "which has no finished race"
+            )
+        slot_record = {
+            "local_started_at": local_started_at,
+            "racers": slot.race["entrants_count"] if slot.race else 0,
+            "started": slot.race is not None,
+        }
+        slot_records.append(slot_record)
+        period_slots[period_id].append(slot_record)
+
+    joined_races = {slot.race["race"]["name"] for slot in joined if slot.race}
+    unscheduled_race_count = 0
+    if counted_through is not None:
+        unscheduled_race_count = sum(
+            context["started_at"] <= counted_through
+            and context["race"]["name"] not in joined_races
+            for context in contexts
+        )
+
+    overall = _race_summary(included_records)
+    periods = []
     for period_id in sorted(period_records):
         records = period_records[period_id]
-        period = (
+        periods.append(
             period_metadata[period_id]
             | _period_coverage(
                 period_metadata[period_id], records, archive_start, archive_end
             )
-            | _aggregate_records(records)
+            | _race_summary(records)
+            | _slot_summary(period_slots[period_id])
         )
-        periods.append(period)
 
     generated = (generated_at or datetime.now(UTC)).astimezone(UTC)
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 8,
+        "schema_version": 9,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {
@@ -630,20 +592,28 @@ def aggregate_races(
             "included_entrant_count": overall["entrant_total"],
             "excluded_archived_race_count": len(races) - included_count,
             "included_date_range": overall["included_date_range"],
+            "schedule_counted_through": (
+                counted_through.astimezone(UTC).isoformat().replace("+00:00", "Z")
+                if counted_through
+                else None
+            ),
         },
-        "hourly": overall["hourly"],
-        "weekdays": overall["weekdays"],
-        "weekday_hourly": overall["weekday_hourly"],
-        "modes": overall["modes"],
-        "unique_players": overall["unique_players"],
-        "room_cancellation_estimate": overall["room_cancellation_estimate"],
+        **_slot_summary(slot_records),
         "periods": periods,
-        "monthly": _monthly_turnout(included_records, archive_start, archive_end),
+        "monthly": _monthly_turnout(
+            included_records, archive_start, archive_end, scheduled_days
+        ),
         "diagnostics": {
             "excluded_by_status": dict(sorted(excluded_statuses.items())),
             "excluded_by_mode": dict(sorted(excluded_modes.items())),
             "invalid_records": dict(sorted(invalid_records.items())),
             "unknown_mode_count": unknown_mode_count,
+            "schedule": {
+                "scheduled_count": len(slot_records),
+                "started_count": sum(slot["started"] for slot in slot_records),
+                "pulled_count": pulled_count,
+                "unscheduled_race_count": unscheduled_race_count,
+            },
         },
     }
 
@@ -661,9 +631,18 @@ def build(
         raise DataError(
             f"Archive {archive_dir} has no races; run scripts/race_archive.py first"
         )
+    schedule = schedule_archive.load_schedule(archive_dir)
+    modes = schedule_archive.load_modes(archive_dir)
+    if not schedule or not modes:
+        raise DataError(
+            f"Archive {archive_dir} has no ladder schedule; "
+            "run scripts/schedule_archive.py first"
+        )
     generated_at = datetime.now(UTC)
     contexts = included_race_contexts(races)
-    stats = aggregate_races(races, generated_at=generated_at)
+    stats = aggregate_races(
+        races, schedule=schedule, modes=modes, generated_at=generated_at
+    )
     participants = participant_stats.build_participant_payload(
         contexts,
         source_url=race_archive.SOURCE_URL,
