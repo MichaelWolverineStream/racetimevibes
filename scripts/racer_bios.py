@@ -98,19 +98,15 @@ def _check_time(value: Any, path: Path, what: str) -> None:
         raise race_archive.ArchiveError(f"{path} has a bio without a valid {what}") from error
 
 
-def _normalise_entry(entry: Any, path: Path) -> list:
-    """Validate one stored entry and return it in the 4-element form."""
+def _validated_entry(entry: Any, path: Path) -> list:
+    """Validate one stored entry and return a copy of it."""
     malformed = race_archive.ArchiveError(f"{path} is not a map of user IDs to bios")
-    if not isinstance(entry, list) or len(entry) not in (2, 4):
+    if not isinstance(entry, list) or len(entry) != 4:
         raise malformed
-    bio, checked_at = entry[0], entry[1]
+    bio, checked_at, since, earlier = entry
     if not (bio is None or isinstance(bio, str)):
         raise malformed
     _check_time(checked_at, path, "checked-at time")
-    if len(entry) == 2:
-        return [bio, checked_at, None, []]
-
-    since, earlier = entry[2], entry[3]
     if since is not None:
         _check_time(since, path, "since time")
     if not isinstance(earlier, list):
@@ -142,9 +138,7 @@ def load_racer_bios(
     earlier]`. `since` is when the current bio was first seen, None for an entry written
     before history was kept. `earlier` lists the racer's earlier bios, oldest first, each
     `[bio text or None, since timestamp or None]`; only the first may lack a time, and
-    `since` may be None only when `earlier` is empty. Legacy 2-element entries
-    `[bio, checked-at]` load as `[bio, checked-at, None, []]`, so every entry returned has
-    four elements.
+    `since` may be None only when `earlier` is empty.
     """
     path = archive_dir / RACER_BIOS_FILE
     if not path.exists():
@@ -155,7 +149,7 @@ def load_racer_bios(
         raise race_archive.ArchiveError(f"{path} is not valid JSON") from error
     if not isinstance(bios, dict):
         raise race_archive.ArchiveError(f"{path} is not a map of user IDs to bios")
-    return {user_id: _normalise_entry(entry, path) for user_id, entry in bios.items()}
+    return {user_id: _validated_entry(entry, path) for user_id, entry in bios.items()}
 
 
 def racers_to_check(envelopes: list[JsonObject], bios: Mapping[str, list]) -> list[str]:

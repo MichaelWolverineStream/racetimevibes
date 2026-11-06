@@ -87,13 +87,6 @@ class VariantTests(unittest.TestCase):
             self.assertTrue(by_key(key).plan_caps)
             self.assertTrue(by_key(key).holidays)
 
-    def test_no_variant_mentions_the_removed_pair_rules(self):
-        self.assertNotIn("pairs", {rule.name for rule in lab.fields(sp.Rules)})
-        for variant in lab.VARIANTS:
-            text = f"{variant.title} {variant.breaks} {variant.model_blind}".lower()
-            for gone in ("paired", "pair "):
-                self.assertNotIn(gone, text, variant.key)
-
     def test_the_model_blind_variants_say_why(self):
         blind = {variant.key: variant.model_blind for variant in lab.VARIANTS if variant.model_blind}
         self.assertEqual(set(blind), {"open-bands", "no-rotation", "no-between", "two-hour-gaps"})
@@ -550,11 +543,11 @@ class JobTests(unittest.TestCase):
 _CONTEXTS = {}
 
 
-def context_for(key, composition):
+def context_for(key, composition, season=fx.SEASON):
     if key not in _CONTEXTS:
         schedule, modes, races = fx.world()
         config = {"bands": fx.WORLD_BANDS, "composition": composition, "events": [],
-                  "season": fx.SEASON}
+                  "season": season}
         _CONTEXTS[key] = lab.build_context(
             schedule, modes, races, config, start=fx.START, pairs=fx.PAIRS
         )
@@ -601,7 +594,7 @@ class LeverThreadingTests(unittest.TestCase):
                 call, _proposal, _result = planner_call(variant)
                 self.assertEqual(call.kwargs["rules"], variant.rules)
 
-    def test_the_planner_gets_the_planning_halfs_history_and_no_seed(self):
+    def test_the_planner_gets_the_planning_halfs_history(self):
         context = limited_context()
         for plan, scored in lab.FOLDS:
             with self.subTest(plan=plan):
@@ -609,8 +602,6 @@ class LeverThreadingTests(unittest.TestCase):
                 self.assertIs(call.kwargs["history"], context.slots[plan])
                 self.assertIs(call.kwargs["model"], context.models[plan])
                 self.assertEqual(len(call.args), 1)
-                for gone in ("fired", "iterations", "seed"):
-                    self.assertNotIn(gone, call.kwargs)
 
     def test_every_set_reaches_the_planner(self):
         for race_set in sp.SETS:
@@ -965,10 +956,15 @@ _SMOKE = None
 
 
 def smoke_result():
-    """Compare every variant on the synthetic world once, in this process."""
+    """Compare every variant on the synthetic world once, in this process.
+
+    A two-week season keeps the full comparison, combined variant included, quick.
+    """
     global _SMOKE
     if _SMOKE is None:
-        context = limited_context()
+        context = context_for(
+            "smoke", LIMIT_BETWEEN_COMPOSITION, {**fx.SEASON, "weeks": 2}
+        )
         _SMOKE = context, lab.compare(context, workers=1)
     return _SMOKE
 
@@ -1005,8 +1001,6 @@ class SmokeTests(unittest.TestCase):
         for variant in lab.VARIANTS:
             self.assertIn(variant.key, keys)
         self.assertEqual(len(keys), len(set(keys)))
-        for gone in ("seeds", "iterations"):
-            self.assertNotIn(gone, result)
         for row in result["variants"]:
             self.assertIn("changes", row)
         self.assertEqual(result["variants"][0]["changes"], {})
@@ -1058,23 +1052,17 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("Diagnostics, Bonanza", text)
         self.assertIn("Recommended:", text)
 
-    def test_the_run_is_deterministic(self):
+    def test_one_variant_run_alone_matches_the_full_run_and_an_unknown_one_is_refused(self):
         context, result = smoke_result()
-        again = lab.compare(context, workers=1)
-        self.assertEqual(again["means"], result["means"])
-        self.assertEqual(again["judgements"], result["judgements"])
-
-    def test_one_variant_can_be_run_alone_and_an_unknown_one_is_refused(self):
-        context, _result = smoke_result()
         with self.assertRaises(lab.LabError):
             lab.compare(context, workers=1, only="nonsense")
         alone = lab.compare(context, workers=1, only="no-featured")
         self.assertEqual([v["key"] for v in alone["variants"]], ["shipped", "no-featured"])
         self.assertEqual(alone["combined_parts"], [])
-        self.assertEqual(
-            {(row["variant"], row["set"]) for row in alone["means"]},
-            {(key, name) for key in ("shipped", "no-featured") for name in SET_NAMES},
-        )
+        # A second run of the same jobs is identical: the comparison is deterministic.
+        kept = [row for row in result["means"] if row["variant"] in ("shipped", "no-featured")]
+        self.assertEqual(alone["means"], kept)
+        self.assertEqual(alone["judgements"], {"no-featured": result["judgements"]["no-featured"]})
 
 
 if __name__ == "__main__":

@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import sys
 import time
@@ -177,15 +176,6 @@ def _published_avatars(participants_path: Path) -> dict[str, str]:
         raise AvatarMirrorError(f"{participants_path} could not be read: {error}") from error
 
 
-def _write_atomic(data: bytes, path: Path) -> None:
-    temporary_path = path.with_name(f"{path.name}.tmp")
-    with temporary_path.open("wb") as output_file:
-        output_file.write(data)
-        output_file.flush()
-        os.fsync(output_file.fileno())
-    os.replace(temporary_path, path)
-
-
 def mirror(
     participants_path: Path = PARTICIPANTS_PATH,
     archive_dir: Path = race_archive.ARCHIVE_DIR,
@@ -254,7 +244,7 @@ def mirror(
             )
             failed += 1
             continue
-        _write_atomic(data, output_dir / name)
+        race_archive.write_bytes_atomic(data, output_dir / name)
         downloaded += 1
 
     copied = 0
@@ -277,7 +267,7 @@ def mirror(
             )
             failed += 1
             continue
-        _write_atomic(data, output_dir / name)
+        race_archive.write_bytes_atomic(data, output_dir / name)
         copied += 1
 
     removed = 0

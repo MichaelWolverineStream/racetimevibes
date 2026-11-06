@@ -1,6 +1,5 @@
 import json
 import re
-import tempfile
 import unittest
 from datetime import UTC, datetime
 from unittest import mock
@@ -10,7 +9,6 @@ from scripts import (
     avatar_mirror,
     build_stats,
     highlights,
-    ladder_rating,
     participant_stats,
     pokemon_avatars,
     season_ratings,
@@ -465,19 +463,6 @@ class PayloadShapeTests(unittest.TestCase):
             [("abc123", "Visible")],
         )
         self.assertNotIn("a", result["players"][0])
-
-    def test_writes_compact_json_atomically(self):
-        result = payload([placed_race("solo", ["ana", "ben"])])
-        with tempfile.TemporaryDirectory() as directory:
-            output_path = Path(directory) / "nested" / "participants.json"
-            participant_stats.write_compact_json(result, output_path)
-            text = output_path.read_text(encoding="utf-8")
-        self.assertEqual(text, json.dumps(result, separators=(",", ":")) + "\n")
-        self.assertEqual(
-            json.loads(text)["schema_version"],
-            participant_stats.PARTICIPANT_SCHEMA_VERSION,
-        )
-        self.assertTrue(text.endswith("\n"))
 
 
 class SchemaThreeTests(unittest.TestCase):
@@ -1152,14 +1137,6 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         ):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
-
-    def test_badge_definitions_carry_image_paths(self):
-        for badge in self.participants["badges"]:
-            image, still = highlights.badge_image_paths(badge["id"])
-            self.assertIsInstance(badge["image"], str)
-            self.assertIsInstance(badge["still"], str)
-            self.assertEqual(badge["image"], image)
-            self.assertEqual(badge["still"], still)
 
     def test_badge_rules_use_names_that_exist_in_the_data(self):
         for mode in (

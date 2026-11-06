@@ -11,7 +11,7 @@ DONE, DNF = 0, 1
 
 # One update from these (mu, sigma) pre-states, listed in finishing order, by openskill 6.2.0's
 # BradleyTerryFull with beta 12, kappa 1e-4 and tau 0: (mu, sigma^2) after the race. Generated
-# outside the repository; the same values come from tests/test_rating_lab.py's golden races.
+# outside the repository; the same values come from tests/analyses/test_rating_lab.py's golden races.
 GOLDEN_RACES = [
     [(25.0, 8.0), (25.0, 8.0)],
     [(31.5, 5.2), (40.0, 4.5), (18.0, 7.9)],

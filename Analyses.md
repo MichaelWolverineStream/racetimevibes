@@ -456,7 +456,7 @@ All of these were fixed before the comparison first ran.
 
 ### How it was tested
 
-`tests/test_schedule_lab.py` uses the shared fixtures in `tests/schedule_fixtures.py`, a synthetic world with four categories, and never touches the network. It covers these:
+`tests/analyses/test_schedule_lab.py` uses the shared fixtures in `tests/analyses/schedule_fixtures.py`, a synthetic world with four categories, and never touches the network. It covers these:
 - each variant changes exactly the levers it names, every `Rules` field is broken by some variant, and the combined variant merges them;
 - the plan caps are stripped from the plan file only when lifted, `between` and the bands stay, and the input is never changed;
 - the context carries the plan file's bands, and the planner gets them as `layout`;
@@ -469,7 +469,7 @@ All of these were fixed before the comparison first ran.
 - the combined rule;
 - each lever reaches the planner and changes something on the fixture world, and the band rule does so on a history where a band is closed;
 - no-holidays plans with a holiday-free model and scores with holidays;
-- a smoke run of every variant, which is also run twice to check it is deterministic.
+- a smoke run of every variant on a 2-week season, which a variant run alone matches.
 
 ### Result
 
@@ -582,13 +582,46 @@ The weakest category is glitched in every row.
 
 ## Rating comparison
 
-`scripts/rating_lab.py` compares other rating algorithms with the [ladder rating](README.md#ladder-rating), on the [backtest](README.md#backtest)'s pairs and under the ladder's promises. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. Its recommendation, the retune below, was adopted on 2026-11-01. Throughout this section, **shipped** means the rating it was compared with ($\beta = 12$, $\sigma_0 = 8$, floor 4, no damping), which the lab keeps as its baseline so the comparison stays reproducible.
+`scripts/rating_lab.py` compares other rating algorithms with the [ladder rating](README.md#ladder-rating), on the [backtest](#backtest)'s pairs and under the ladder's promises. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. Its recommendation, the retune below, was adopted on 2026-11-01. Throughout this section, **shipped** means the rating it was compared with ($\beta = 12$, $\sigma_0 = 8$, floor 4, no damping), which the lab keeps as its baseline so the comparison stays reproducible.
 
 ```bash
 python3 scripts/rating_lab.py --tune               # each candidate's setting, from races before 2026 (several minutes)
 python3 scripts/rating_lab.py --tune --family elo  # one candidate only
 python3 scripts/rating_lab.py                      # re-derive CHOSEN from --tune, then the comparison
 ```
+
+### Backtest
+
+`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The mode ratings are scored on the same pairs, each predicted from the two racers' ratings in the race's mode. The report also counts winners whose displayed points fell, overall and in their race's mode, and the median points a veteran (past their 50th race) moves per race.
+
+On the archive as of 2026-11-01. The figures move a little with every data refresh.
+
+```text
+                                     pairs  accuracy  log loss
+From 2026-01-01 (out of sample)
+  ladder rating                     47,654     0.728     0.534
+  ladder rating, own mode only      47,654     0.720     0.546
+  racetime.gg recorded score        47,654     0.695     0.587  best-fit logistic, in-sample
+Before 2026-01-01 (tuning period)
+  ladder rating                     26,796     0.707     0.555
+  ladder rating, own mode only      26,796     0.687     0.580
+  racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
+Winners who lost points: 0 of 3,259
+Mode winners who lost points: 0 of 3,259
+Median veteran move per race (past race 50): 8 points
+```
+
+**How racetime.gg differs.** racetime.gg runs TrueSkill with default parameters on finishing order only, ties every DNF and DQ behind the last finisher, shows $\max(0, \mathrm{round}((\mu - 2\sigma) \cdot 100))$ so newcomers start at 833 and the score climbs with volume as $\sigma$ shrinks, and keeps one leaderboard per goal. Both ratings read placement only. The ladder rating rates all modes together and each mode on its own, starts everyone at 1000, shows points on an Elo-style scale, and its floor keeps scores responsive.
+
+**Trade-offs of the ladder rating:**
+
+- A crushing win counts the same as a narrow one.
+- Experience is rewarded: a prodigy with few races sits below established racers until $\sigma$ shrinks.
+- A mode rating knows only its mode: a racer strong elsewhere starts a new mode at 1000 and climbs like any newcomer.
+- Early on, even a loss can add points, because uncertainty falls faster than skill.
+- Clearly weaker racers still drift down, because the number stays honest.
+- A big race moves a rating less than its number of opponents suggests. Damping trades the swing of a large field for steadier, more accurate ratings.
+- Predictions trail the old margin-based model slightly (73.3% against 72.8% of 2026 pairs), in exchange for no lost winners and scores that climb. They stay well ahead of racetime.gg's.
 
 ### Candidates
 
@@ -657,7 +690,7 @@ All of these were fixed before any 2026 race was scored for a candidate.
 
 ### Result
 
-On the archive as of the lab run on 2026-11-01: 47,576 pairs in 1,979 races from 2026-01-01. These figures are a frozen snapshot; the README's [Backtest](README.md#backtest) runs on the current archive, so its pair counts are higher. Δ is the change in log loss against shipped, below 0 is better, with its 95% interval.
+On the archive as of the lab run on 2026-11-01: 47,576 pairs in 1,979 races from 2026-01-01. These figures are a frozen snapshot; the [Backtest](#backtest) runs on the current archive, so its pair counts are higher. Δ is the change in log loss against shipped, below 0 is better, with its 95% interval.
 
 ```text
                        setting                          accuracy  log loss  Δ (95% CI)                  per race

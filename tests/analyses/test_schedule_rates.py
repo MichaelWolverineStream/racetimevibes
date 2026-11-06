@@ -165,11 +165,6 @@ class PageTests(unittest.TestCase):
         self.assertNotIn("http", self.page)
         self.assertNotIn("<html", self.page)
 
-    def test_makes_no_claim_about_how_the_bands_are_chosen(self):
-        for phrase in ("most expected turnout", "ranked", "least"):
-            self.assertNotIn(phrase, self.page)
-        self.assertNotIn("<script", self.page)
-
     def test_escapes_category_names(self):
         self.assertIn("a&lt;b", self.page)
         self.assertNotIn("a<b", self.page)

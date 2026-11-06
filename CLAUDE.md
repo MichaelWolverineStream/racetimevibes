@@ -1,177 +1,121 @@
 # CLAUDE.md
 
-This repo is a static dashboard for the ALTTPR Step Ladder category on racetime.gg.
+A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 - Python scripts in `scripts/` sync raw races into `archive/` and build JSON datasets into `site/data/`.
 - `site/` is a no-build HTML/CSS/JS page, deployed to GitHub Pages.
-- `README.md` is the full spec. `Badge_Guide.md` explains how to add or remove a badge. `Analyses.md` documents the standalone analyses: mode overlap, the race schedule proposals, the schedule strategy comparison and the rating comparison.
+- `README.md` is the full spec. `Badge_Guide.md` explains how to add or remove a badge. `Analyses.md` documents the standalone analyses and the rating backtest. `Racetime_API.md` lists the racetime.gg endpoints and fields the scripts read.
 
 ## The most important rules
 
-1. **Never hand-edit generated files. Regenerate them, and expect the tests to check.**
-   - **Datasets:** `site/data/*.json` comes from `python3 scripts/build_stats.py`. `test_matches_a_rebuild_from_the_archive` rebuilds them from `archive/` and fails on any difference, ignoring `generated_at`.
-   - **Avatars:** `site/avatars/` comes from `python3 scripts/avatar_mirror.py`, run after `build_stats.py`. It downloads racetime.gg avatars and copies Pokémon sprites from `assets/pokemon/`. Never add, edit or delete a file there by hand, and never hand-pick a sprite into it.
-   - **Pokédex:** `assets/pokemon/pokedex.json` comes from `python3 scripts/pokemon_avatars.py --refresh-pokedex`. Never hand-edit it.
-   - **Sprites:** `assets/pokemon/*.png` comes from `python3 scripts/pokemon_images.py`, which fits the originals in `_tmp_assets/pokemon/` to the avatar frame. Never hand-edit a sprite; run `avatar_mirror.py` after converting.
-   - **Asset stamps:** the `?v=` tokens in `site/index.html` and `site/version.json` come from `python3 scripts/version_assets.py`. Run it after any change to `site/` HTML, CSS or JS. A test fails if the stamp is stale.
-   - **Season ledgers:** `season-ratings/season-N.json` is written once by `python3 scripts/build_stats.py --lock-seasons`. Never hand-edit or regenerate one. Deleting a ledger is the only way to lock that season again, with the current rating, so do it only on purpose.
-2. **A bot commits to `main` every two hours.** `.github/workflows/update-data.yml` syncs, builds with `--lock-seasons`, mirrors avatars, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `.github/workflows/update-bios.yml` calls it once a day with `sync-bios` and `sync-schedule` on, which also run `racer_bios.py` and `schedule_archive.py`.
+1. **Never hand-edit generated files. Regenerate them; the tests check.**
+   - `site/data/*.json`: `python3 scripts/build_stats.py`. `test_matches_a_rebuild_from_the_archive` rebuilds them from `archive/` and fails on any difference but `generated_at`.
+   - `site/avatars/`: `python3 scripts/avatar_mirror.py`, after `build_stats.py`. It downloads racetime.gg avatars and copies Pokémon sprites from `assets/pokemon/`. Never add, edit, delete or hand-pick a file there.
+   - `assets/pokemon/pokedex.json`: `python3 scripts/pokemon_avatars.py --refresh-pokedex`.
+   - `assets/pokemon/*.png`: `python3 scripts/pokemon_images.py`, from the originals in `_tmp_assets/pokemon/`. Run `avatar_mirror.py` after.
+   - The `?v=` stamps in `site/index.html` and `site/version.json`: `python3 scripts/version_assets.py`, after any change to `site/` HTML, CSS or JS. A test fails if a stamp is stale.
+   - `season-ratings/season-N.json`: written once by `build_stats.py --lock-seasons`. Never edit or regenerate one. Deleting a ledger relocks that season with today's rating, so do it only on purpose.
+2. **A bot commits to `main` every two hours.** `update-data.yml` syncs, builds with `--lock-seasons`, mirrors avatars, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `update-bios.yml` calls it daily with `sync-bios` and `sync-schedule`, which also run `racer_bios.py` and `schedule_archive.py`.
    - Pull before you start.
-   - If a pull conflicts in `archive/`: discard your local archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
-   - If a pull conflicts in `season-ratings/`: take upstream. The ledgers are deterministic. Run local builds without `--lock-seasons`; only the bot locks.
-3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing ladder schedule in `archive/ladder-schedule/`.**
-   - Never edit it by hand.
-   - Never move or copy any of it into `site/`. It holds full user profiles, comments and `racer-bios.json` (verbatim profile bios, with the earlier versions seen), and it is deliberately never deployed.
-4. **Publish only what the privacy contract allows** (README › Privacy). Any new field in a published dataset must fit it.
+   - Conflict in `archive/`: discard your archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
+   - Conflict in `season-ratings/`: take upstream; the ledgers are deterministic. Build locally without `--lock-seasons`; only the bot locks.
+3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing schedule in `archive/ladder-schedule/`.** Never edit it, and never move or copy any of it into `site/`: it holds full profiles, comments and verbatim bios with their history, and is never deployed.
+4. **Publish only what the privacy contract allows** (README › Privacy). Any new published field must fit it.
    - `race-stats.json` is anonymous: no IDs, names or entrant arrays.
-   - `participants.json` may carry only display names, stable user IDs and mirrored avatar file names. A name is either the hash of a `racetime.gg/media/` raster URL plus its extension, or `pokemon-` plus a sprite file name from `assets/pokemon/`. Never publish bio text.
-   - `participants.json` may also carry `avatar_changes`: the Eastern Time date the archive first saw a racer's avatar change, from their racetime.gg upload or the favourite Pokémon in their bio. Never the old avatar, and never anything else from the bio.
+   - `participants.json` carries only display names, stable user IDs and mirrored avatar file names: the hash of a `racetime.gg/media/` raster URL plus its extension, or `pokemon-` plus a sprite file name. Plus `avatar_changes`, the Eastern date an avatar change (upload or bio favourite) was first seen, never the old avatar or anything else from the bio.
    - `site/avatars/` holds exactly the files `participants.json` names, as validated raster images.
    - `comments.json` carries comments capped at 500 characters.
-   - `season-ratings/` holds user IDs and season points. It sits beside `archive/` and is never deployed.
-   - Never publish full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
-5. **Each dataset's schema version is set in Python and checked in JS. Bump both sides together.** The page refuses data whose version doesn't match, and shows "could not be loaded".
-
-   | Dataset | Python | JS |
-   |---|---|---|
-   | `participants.json` | `PARTICIPANT_SCHEMA_VERSION` in `participant_stats.py` | `leaderboard.js` |
-   | `race-stats.json` | `"schema_version": 9` in `build_stats.py` | `validateData` in `app.js` |
-
-6. **The README is the spec. Update it in the same change as any behaviour change.** It defines every metric, tag, badge, streak, record and UI rule precisely.
-   - Badges have a fixed checklist in `Badge_Guide.md`: the table, the art, the tests and the README row.
-7. **No third-party dependencies and no build step.**
-   - Python is stdlib-only, version 3.11 or newer.
-   - The site is plain files.
-   - ImageMagick 7 is needed only by `scripts/badge_images.py` and `scripts/pokemon_images.py`.
-8. **Ladder rating invariants are tested across the whole archive, for the overall rating, every mode rating, and every season and season-mode track:**
-   - A winner's points never fall.
-   - Mode and season ratings use the overall parameters, untuned, and every racer debuts at 1000 in every season. A locked season is never recomputed: its ledger wins over whatever the rating computes today. Predictions (win chance, Upset, God Route, Big Routing, Upsetti) always use the overall rating.
-   - Finish times never affect the rating.
-   - `β`, `σ₀` and the field-size damping `α` were tuned by `scripts/rating_lab.py` on races before 2026-01-01, so that 2026 results stay out of sample. Do not retune on 2026 data. Use `python3 scripts/ladder_rating.py --backtest` to evaluate.
-9. **All dates, hours and day buckets are in `America/New_York` (Eastern Time).** The `ladder_test` mode is excluded from everything.
-10. **Frontend scripts share one global scope.** No script may touch another script's globals while it loads; see below.
+   - `season-ratings/` (user IDs and season points) sits beside `archive/` and is never deployed.
+   - Never publish bio text, full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
+5. **Schema versions are set in Python and checked in JS. Bump both together**, or the page shows "could not be loaded".
+   - `participants.json`: `PARTICIPANT_SCHEMA_VERSION` in `participant_stats.py` and `leaderboard.js`.
+   - `race-stats.json`: `"schema_version"` in `build_stats.py` and `validateData` in `app.js`.
+6. **The README is the spec.** Update it in the same change as any behaviour change. Badges also follow the checklist in `Badge_Guide.md`.
+7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.11+. The site is plain files. ImageMagick 7 is needed only by `badge_images.py` and `pokemon_images.py`.
+8. **Ladder rating invariants are tested across the whole archive**, for the overall, every mode, and every season and season-mode track:
+   - A winner's points never fall. Finish times never affect the rating.
+   - Mode and season ratings use the overall parameters, untuned; every racer debuts at 1000 in every season. A locked season's ledger wins over what the rating computes today.
+   - Predictions (win chance, Upset, God Route, Big Routing, Upsetti) always use the overall rating.
+   - `β`, `σ₀` and `α` were tuned by `rating_lab.py` on races before 2026-01-01. Never retune on 2026 data. Evaluate with `python3 scripts/ladder_rating.py --backtest`.
+9. **All dates, hours and day buckets are `America/New_York`.** The `ladder_test` mode is excluded from everything.
+10. **Frontend scripts share one global scope.** No script may touch another script's globals while it loads (see below).
 
 ## Data pipeline
 
 ```bash
 python3 scripts/race_archive.py     # network: incremental sync into archive/
-python3 scripts/racer_bios.py       # network, optional (the bot runs it daily): racer bios into archive/racer-bios.json
-python3 scripts/schedule_archive.py # network (the bot runs it daily): the alttpr.racing ladder schedule into archive/ladder-schedule/; the build reads it and refuses to run without it
-python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json. `--lock-seasons` (the bot only) also writes the ledger of each finished, settled season into season-ratings/
+python3 scripts/racer_bios.py       # network, daily in CI: bios into archive/racer-bios.json
+python3 scripts/schedule_archive.py # network, daily in CI: archive/ladder-schedule/; the build needs it
+python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json
 python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars participants.json names
 ```
 
-- **Where the logic lives:**
-  - `participant_stats.py`: the per-racer dataset.
-  - `ladder_rating.py`: the overall rating, the per-mode ratings and the per-season ratings (`rate_by_season`).
-  - `season_ratings.py`: season membership with the ledgers, the lock conditions, and the ledger files.
-  - `highlights.py`: tags, badges, streaks, presets, records and facts, all in one chronological pass. Thresholds are constants at the top of the module.
-  - `comment_stats.py`: comments and the chest-count parser.
-  - `avatar_mirror.py`: avatar file names, which observation is current, when an upload last changed, and the mirror into `site/avatars/`.
-  - `pokemon_avatars.py`: bio phrase match, Pokémon name match, favourite and random assignment, when a favourite last changed, sprite paths, and the pokédex refresh.
-  - `racer_bios.py`: the bio sync, its bio history, and its loader.
-  - `participant_stats.py` combines the two change times into `avatar_changes`, by which source the published avatar comes from.
-  - `schedule_archive.py`: the alttpr.racing schedule mirror, its loaders, and the join of slots to races. The join is shared by the build and the planner. It also holds the season start rule (`season_starts`, `season_of`).
-  - `build_stats.py`: the schedule metrics and bands (scheduled races, counted-through, scheduled days), beside the race aggregates.
-- `mode_overlap.py` is a standalone analysis. The build never runs it.
-- `rating_lab.py` is a standalone analysis. The build never runs it. Its tuning reads races before 2026-01-01 only.
-- `schedule_planner.py` is a standalone analysis. The build never runs it. It reads `schedule-plan.json` and `archive/ladder-schedule/`.
-- `schedule_lab.py` is a standalone analysis. The build never runs it. It runs `schedule_planner.py` under other `Rules` and needs worker processes (`--jobs 1` inside a sandbox).
-- **Tests never use the network**, because API responses are mocked. After changing any build script, rebuild the data and include `site/data` in the change.
-- **A new race mode needs a colour slot** in `MODE_COLOR_SLOTS` (`site/racer-charts.js`). Without one it falls back to a muted grey. The order of `--mode-1..8` keeps neighbouring violins distinguishable for colour-blind viewers, so don't reorder them.
+Where the logic lives:
+- `participant_stats.py`: the per-racer dataset, including `avatar_changes`.
+- `ladder_rating.py`: overall, per-mode and per-season (`rate_by_season`) ratings. `season_ratings.py`: season membership, lock conditions and ledger files.
+- `highlights.py`: tags, badges, streaks, presets, records and facts in one chronological pass; thresholds are constants at the top.
+- `comment_stats.py`: comments and the chest-count parser.
+- `avatar_mirror.py`: avatar file names, the current observation, upload change times, and the mirror.
+- `pokemon_avatars.py`: bio phrase and name match, favourite and random assignment, favourite change times, sprite paths, pokédex refresh.
+- `racer_bios.py`: the bio sync, bio history and loader.
+- `schedule_archive.py`: the schedule mirror, loaders, the slot-to-race join (shared by the build and the planner), and the season rule (`season_starts`, `season_of`).
+- `build_stats.py`: race aggregates and schedule metrics and bands.
+- `race_archive.py` also holds the shared atomic writers, `write_json_atomic` (minified JSON) and `write_bytes_atomic`. Reuse them for archive and dataset files. Ledgers use `season_ratings.write_ledger`, which refuses to replace a file.
+- Standalone analyses the build never runs: `mode_overlap.py`, `rating_lab.py` (tunes on pre-2026 races only), `schedule_planner.py` (reads `schedule-plan.json` and the schedule mirror) and `schedule_lab.py` (needs worker processes; `--jobs 1` in a sandbox).
+
+A new race mode needs a colour slot in `MODE_COLOR_SLOTS` (`site/racer-charts.js`), or it falls back to grey. Don't reorder `--mode-1..8`: the order keeps neighbouring violins distinguishable for colour-blind viewers.
+
+## Tests
+
+- `python3 -m unittest discover -s tests`: the production suite, a few seconds. `pages.yml` runs it and gates deploys.
+- `python3 -m unittest discover -s tests/analyses`: the analysis suite, about 25 s. `analysis-tests.yml` runs it on changes to `scripts/` or `tests/analyses/`. `tests/analyses/` has no `__init__.py`, so the first command skips it.
+- Tests never use the network; API responses are mocked. After changing a build script, rebuild and commit `site/data` with the change.
 
 ## Frontend scripts (`site/*.js`)
 
-The scripts are classic `<script defer>` files that share one global scope. They load in the order given in `index.html`.
+Classic `<script defer>` files sharing one global scope, loaded in `index.html` order.
 
-### Load order and module shape
+**Load order and module shape**
+- Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras` checks in `leaderboard.js` would take down `loadParticipants`.
+- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `EasterEggs`, `Store`, `Following`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
+- Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
-- **Use another script's globals only inside functions that run later**: render, init or event handlers. Never use them at a file's top level, or at the top level of an IIFE body.
-  - Why: if `const X = (() => …)()` throws, `X` can never be read again. Even `typeof X !== "undefined"` then throws. The `typeof Feed`, `typeof Records` and `typeof RacerExtras` checks in `leaderboard.js` would take down `loadParticipants`.
-- **Module shape:**
-  - A feature with an API is `const Name = (() => { …; return { … }; })();`. Examples: `UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `EasterEggs`, `Store`, `Following`.
-  - A self-running script is a bare `(() => { … })();`. Examples: `version-check.js`, `visitor-counter.js`.
-  - Declare at the top level only helpers meant to be shared.
-  - `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
+**Shared helpers: reuse, don't rebuild**
+- `app.js` is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, and formatters such as `formatModeName`.
+- `leaderboard.js` owns data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
+  - `ratingCategories()` is the one definition of a rating category (overall plus every mode but `unknown`), used by the top-rated banner and the featured racer.
+  - `currentSeason()` returns the newest season or null. A season is a number; `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rank helpers take an optional `season`, so callers passing nothing stay all-time. Predictions (`hasRating`, `winChance`), the racer page's rating strip and chart, and the player card never pass one.
+  - ▲/▼ is for rank movement only. A points change shows as +N, −N or ±0.
+- `ui.js` exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
+- The private `element(tag, className, text)` copies in `ui.js`, `feed.js`, `records.js`, `racer-extras.js` and `share-card.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
 
-### Shared helpers: reuse, don't rebuild
+**Modals and events**
+- Modals use `holdModal(close)` in `ui.js`: it makes `main` and `footer` inert, closes on Escape and restores focus. A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`, which returns `{ panel, close }`.
+- Close a modal in exactly this order: remove its nodes, clear `openDialog`, call `release()` (lifts `inert`, then restores focus), call `onClose`. Focus can't move into an inert page, and an `onClose` that opens a dialog must find `openDialog` cleared.
+- Non-modal toasts never touch `inert`. Custom event names are constants, such as `FOLLOWING_EVENT` in `store.js`.
 
-- **`app.js`** is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, and formatters such as `formatModeName`.
-- **`leaderboard.js`** owns the data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
-  - `ratingCategories()` is the one definition of a rating category: overall plus every mode except `unknown`. The top-rated banner and the featured daily racer both use it.
-  - **Season helpers:** `currentSeason()` returns the newest season, or null when there are none. A season is a number and `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rating-rank helpers take an optional `season` argument, so every caller that passes nothing stays all-time. Predictions (`hasRating`, `winChance`), the racer page's rating strip and chart, and the player card never pass one.
-  - **▲/▼ is for rank movement only.** A points change shows as +N, −N or ±0, with no arrow.
-- **`ui.js`** exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
-- **The private `element(tag, className, text)` copies** in `ui.js`, `feed.js`, `records.js`, `racer-extras.js` and `share-card.js` are deliberate. Sharing one would need either a dependency at load time or renaming about 140 call sites.
-
-### Modals and events
-
-- **Modals use `holdModal(close)` in `ui.js`.** It makes `main` and `footer` inert, closes on Escape, and restores focus.
-- **A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`.** It returns `{ panel, close }`: an open, focused box holding only its close button, already following the close order below. The badge panel and the share card use it.
-- **Close a modal in exactly this order:**
-  1. Remove its nodes.
-  2. Clear `openDialog`.
-  3. Call `release()`, which lifts `inert` and then restores focus.
-  4. Call `onClose`.
-
-  Focus can't move into an inert page. An `onClose` that opens a new dialog must find `openDialog` already cleared.
-- **Non-modal toasts never touch `inert`.**
-- **Custom event names are constants**, such as `FOLLOWING_EVENT` in `store.js`.
-
-### Data and markup
-
-- **Mode labels are for display only.** `modeLabel` and `formatModeName` produce text such as "Entrance". Lookups always take the raw mode id: `modeColor`, `participants.modes` and hash routes.
-- **No `innerHTML`.** Build the DOM with `element`/`svgElement` and `textContent`, because racer names and comments are user data.
-- **Values that JS mirrors from CSS carry a "must match" comment**, for example `BADGE_TILE_*` and `MONOGRAM_TINTS` in `ui.js`. Change both sides together.
+**Data and markup**
+- Mode labels (`modeLabel`, `formatModeName`) are display only. Lookups take the raw mode id: `modeColor`, `participants.modes`, hash routes.
+- No `innerHTML`: build the DOM with `element`/`svgElement` and `textContent`, because names and comments are user data.
+- Values JS mirrors from CSS carry a "must match" comment (`BADGE_TILE_*`, `MONOGRAM_TINTS` in `ui.js`). Change both sides together.
 
 ## CSS (`site/*.css`)
 
-### Tokens
-
-Tokens live on `:root` in `styles.css`:
-- colours
-- data roles: `--series`, `--mode-*`, `--band-*`, `--tag-*`
-- the type scale: `--text-*`
-- `--shadow` and `--scrim`
-- the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`
-
-Rules for using them:
-- Prefer tokens over literals.
-- A comment that mentions an overlay layer names the token, not a number.
-- **`--radius` is only for surfaces and controls.** Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
-- **Mode colours mean modes.** Don't use `--mode-*` for anything else.
-- **Band colours mean schedule bands.** `--band-prime`, `--band-normal` and `--band-quiet` are for the Primetime heatmap only.
-- **Tag colours mean tag kinds.** Each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new kind needs its own, checked against the others for colour-blind separation.
-  - The exception is deliberate: `--tag-record` and `--tag-preset-record` alias `--tag-pb`, and the record tags' shine in `ui.css` sets them apart.
-
-### Global rules
-
-- `[hidden]` is globally `display: none !important`. Don't add `[hidden]` rules per component.
-- `a` and `summary` get a global `:focus-visible` ring. Every new interactive element needs a visible focus state.
-- Reduced motion is handled globally at the end of `styles.css`.
-
-### Mobile
-
-- **The site is desktop-first, but it must stay usable at phone width.**
-- Reuse the `620px` and `980px` breakpoints.
-- A component's stylesheet loads after `styles.css` and its selectors often win. Put the component's mobile overrides in that same file.
-
-### Organisation
-
-- `styles.css` is organised by `/* Section */` comments.
-- Add new rules to the matching section.
-- Never reorder existing rules: the cascade depends on their order.
+- Tokens live on `:root` in `styles.css`: colours, data roles (`--series`, `--mode-*`, `--band-*`, `--tag-*`), the type scale `--text-*`, `--shadow`, `--scrim`, and the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`. Prefer tokens over literals, and name the token, not a number, when a comment mentions a layer.
+- `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
+- `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart.
+- `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. Reduced motion is handled at the end of `styles.css`.
+- Desktop-first, but usable at phone width. Reuse the `620px` and `980px` breakpoints. A component's stylesheet loads after `styles.css`, so put its mobile overrides in that file.
+- `styles.css` is organised by `/* Section */` comments. Add rules to the matching section and never reorder existing ones: the cascade depends on order.
 
 ## Before handing work back
 
 ```bash
-for f in site/*.js; do node --check "$f"; done   # if JS changed
-python3 scripts/build_stats.py                   # if scripts/ changed
-python3 scripts/version_assets.py                # if site/ HTML, CSS or JS changed
-python3 -m unittest discover -s tests
-python3 -m http.server 8000 -d site              # the page needs HTTP, not file://
+for f in site/*.js; do node --check "$f"; done    # if JS changed
+python3 scripts/build_stats.py                    # if scripts/ changed
+python3 scripts/version_assets.py                 # if site/ HTML, CSS or JS changed
+python3 -m unittest discover -s tests             # always
+python3 -m unittest discover -s tests/analyses    # if scripts/ or tests/analyses/ changed
+python3 -m http.server 8000 -d site               # the page needs HTTP, not file://
 ```
 
-Visual checks with headless Chrome:
-- **Phone widths:** Chrome won't go below a window about 500px wide. Use a 390px iframe in a wrapper page instead.
-- **Window height:** tall windows inflate `vh` containers. The leaderboard is `max-height: 70vh`.
-- **Sandbox:** in a sandboxed Claude Code session, headless Chrome must run outside the sandbox.
+Visual checks with headless Chrome: Chrome won't go below a window about 500px wide, so test phone widths with a 390px iframe in a wrapper page. Tall windows inflate `vh` containers (the leaderboard is `max-height: 70vh`). In a sandboxed session, headless Chrome must run outside the sandbox.

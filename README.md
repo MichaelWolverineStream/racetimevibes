@@ -14,17 +14,15 @@ Other documents:
 
 - [Badge_Guide.md](Badge_Guide.md): how to add, remove or change a badge.
 - [Analyses.md](Analyses.md): the standalone analyses, mode overlap, race schedule proposals, the schedule strategy comparison and the rating comparison.
-- [Racetime_API.md](Racetime_API.md): racetime.gg API behavior and field definitions.
+- [Racetime_API.md](Racetime_API.md): the racetime.gg endpoints and fields the scripts read.
 
 ## Running the project
 
 ### Requirements
 
-- Python 3.11 or newer
-- A network connection when refreshing the data, including the optional bio sync and the schedule sync
-- ImageMagick 7, only for `scripts/badge_images.py`, which converts badge art, and `scripts/pokemon_images.py`, which fits Pokémon sprites to the avatar frame
-
-The data builder and web page have no third-party runtime dependencies.
+- Python 3.11 or newer, standard library only. The site is plain files with no build step.
+- A network connection for the syncs and the avatar mirror.
+- ImageMagick 7, only for `scripts/badge_images.py` (badge art) and `scripts/pokemon_images.py` (sprite framing).
 
 ### Quick start
 
@@ -35,169 +33,100 @@ python3 scripts/schedule_archive.py   # mirror the alttpr.racing ladder schedule
 python3 scripts/build_stats.py        # build site/data/*.json from archive/ (offline)
 python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/ (network)
 python3 scripts/version_assets.py     # restamp the asset URLs after editing site/
-python3 -m unittest discover -s tests -v
-python3 -m http.server 8000 -d site   # preview at http://localhost:8000
+python3 -m unittest discover -s tests
+python3 -m http.server 8000 -d site   # preview at http://localhost:8000; the page needs HTTP, not file://
 ```
 
 ### Refreshing the data
 
-A refresh is the race sync, the schedule sync, the build and the mirror, in that order, with the optional bio sync between the race sync and the build:
+Run the steps in the quick-start order:
 
-1. `race_archive.py` saves new raw race records, racer names and racer avatar observations from racetime.gg into `archive/` (see [The race archive](#the-race-archive)).
-2. `racer_bios.py` saves the profile bios of racers who raced since their bio was last checked into `archive/racer-bios.json` (see [Bios](#bios)). It reads the races `race_archive.py` just saved, so it runs after it and before `build_stats.py`, which turns the bios into Pokémon avatars (see [Pokémon avatars](#pokémon-avatars)). The scheduled job runs it once a day.
-3. `schedule_archive.py` saves the alttpr.racing ladder schedule into `archive/ladder-schedule/` (see [Ladder schedule mirror](#ladder-schedule-mirror)). The build joins every slot to the race it became (see [Definitions](#definitions)), so `build_stats.py` refuses an archive without a mirror and asks you to run it first. The scheduled job runs it once a day.
-4. `build_stats.py` builds the dashboard datasets from that archive alone; it makes no network requests (see [Published datasets](#published-datasets)). With `--lock-seasons` it then locks every season that has ended and settled into `season-ratings/` (see [Season ratings](#season-ratings)). Only the scheduled job passes it.
-5. `avatar_mirror.py` runs last, because it reads the avatar file names that `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
+1. `race_archive.py` saves new races, racer names and avatar observations into `archive/` (see [The race archive](#the-race-archive)).
+2. `racer_bios.py` saves the bios of racers who raced since their last check (see [Bios](#bios)). It reads the races just synced, and the build turns bios into [Pokémon avatars](#pokémon-avatars).
+3. `schedule_archive.py` mirrors the ladder schedule (see [Ladder schedule mirror](#ladder-schedule-mirror)). The build joins every slot to its race, so it refuses an archive without a mirror.
+4. `build_stats.py` builds the [published datasets](#published-datasets) from the archive alone. `--lock-seasons` also writes the ledger of every ended, settled season into `season-ratings/` (see [Season ratings](#season-ratings)); only the scheduled job passes it.
+5. `avatar_mirror.py` runs last, because it reads the file names `build_stats.py` wrote to `participants.json` (see [Avatar mirror](#avatar-mirror)).
 
-Options:
-
-- `--archive` on `race_archive.py`, `racer_bios.py`, `schedule_archive.py` or `build_stats.py` points at a different archive.
-- `--output`, `--participants-output` and `--comments-output` on `build_stats.py` redirect each dataset.
-- `--participants`, `--archive` and `--output` on `avatar_mirror.py` point it elsewhere.
-- `--lock-seasons` on `build_stats.py` also writes a ledger in `season-ratings/` for every season that is ready to lock. Without it a build never writes one.
-- `--pokemon` on `build_stats.py`, `avatar_mirror.py` and `pokemon_avatars.py` points at a different directory of Pokémon sprites and pokédex. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites the pokédex (see [Pokémon avatars](#pokémon-avatars)).
-
-### Previewing the site
-
-`python3 -m http.server 8000 -d site` serves the page at <http://localhost:8000>. The page must be served over HTTP because it loads the generated JSON with `fetch`; opening `site/index.html` directly will not work in browsers that restrict local file requests.
+Options: `--archive` points the syncs and the build at another archive. `--output`, `--participants-output` and `--comments-output` redirect each dataset. `avatar_mirror.py` takes `--participants`, `--archive` and `--output`. `--pokemon` on `build_stats.py`, `avatar_mirror.py` and `pokemon_avatars.py` points at another sprite directory, and `pokemon_avatars.py --refresh-pokedex` rewrites the pokédex.
 
 ### Versioning static assets
 
-Run `python3 scripts/version_assets.py` after editing `site/index.html` or any versioned asset listed in `VERSIONED_ASSETS` in `scripts/version_assets.py`, then commit the result. It hashes the markup and those assets into a single token, rewrites every reference to `asset?v=<token>`, and writes `site/version.json`.
-
-A deploy therefore changes the asset URLs, so returning visitors always fetch the new files instead of a cached copy, and an open page reloads itself onto the new version (see [Automatic updates](#automatic-updates)).
-
-`python3 scripts/version_assets.py --check` reports staleness without writing. The test suite runs the same check, so CI fails if an asset changed without a restamp.
-
-The self-hosted Barlow fonts in `site/assets/fonts/` are referenced from `styles.css`, not stamped. Their filenames carry the family and weight, so replace a font by adding a file under a new name rather than overwriting an existing one.
+Run `python3 scripts/version_assets.py` after editing `site/index.html` or any file in `VERSIONED_ASSETS`. It hashes them into one token, rewrites every reference to `asset?v=<token>` and writes `site/version.json`. A deploy therefore changes the asset URLs, so browsers never use a stale cached copy, and an open page reloads onto the new version (see [Automatic updates](#automatic-updates)). `--check` reports staleness without writing, and a test runs the same check. The Barlow fonts in `site/assets/fonts/` are not stamped: replace one by adding a file under a new name.
 
 ### Tests
 
 ```bash
-python3 -m unittest discover -s tests -v
+python3 -m unittest discover -s tests             # production suite, a few seconds; gates every deploy
+python3 -m unittest discover -s tests/analyses    # analysis suite, about half a minute
 ```
 
-Tests use mocked API responses and do not require network access.
+No test uses the network. The production suite rebuilds all three datasets from the committed `archive/` and `season-ratings/` and fails on any difference from `site/data` other than `generated_at`, so commit a rebuild with every build change. It also checks the committed assets: every file in `site/avatars/` is named by `participants.json` and is a valid raster image (a missing one does not fail, so a vanished upload cannot block a deploy), every `pokemon-*` avatar is a byte copy of its sprite, and `assets/pokemon/` holds one square palette PNG of at least 256 pixels for every species from 1 to 1025.
 
-- The suite rebuilds all three datasets from the committed `archive/` and `season-ratings/` and fails if they differ from the committed `site/data` files, ignoring `generated_at`. After changing `scripts/build_stats.py`, `scripts/participant_stats.py` or any module they call, run `python3 scripts/build_stats.py` and commit the result.
-- The avatar tests include a check that every file in the committed `site/avatars/` is named by the committed `participants.json` and is a valid raster image. A named file that is missing does not fail it, so an avatar that racetime.gg stops serving cannot block a deploy.
-- Another check requires every `pokemon-*` file in the committed `site/avatars/` to be a byte-for-byte copy of its sprite in `assets/pokemon/`.
-- The Pokémon tests check the committed `assets/pokemon/`: every file but `pokedex.json` is a PNG named `<pokédex number>.png` or `<number>-<variant>.png` for a Pokémon in the pokédex, every species from 1 to 1025 has a sprite, and there is no `0.png`. Every sprite is also a square palette PNG at least 256 pixels on a side, as `pokemon_images.py` writes it.
+`tests/analyses/` covers the standalone analyses in [Analyses.md](Analyses.md). It has no `__init__.py`, so the production discovery skips it.
 
 ### Deployment
 
-#### GitHub Pages
-
-The workflow in `.github/workflows/pages.yml` runs the test suite and deploys the `site` directory, with the committed datasets and avatars, whenever `main` is pushed. It can also be started manually from the repository's **Actions** tab.
-
-For the first deployment:
-
-1. Push the repository to GitHub.
-2. Open **Settings > Pages** in the GitHub repository.
-3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-4. Open **Actions > Deploy GitHub Pages** and run the workflow, or push another commit to `main`.
+`.github/workflows/pages.yml` runs the production suite and deploys `site/` whenever `main` is pushed, or from **Actions › Deploy GitHub Pages**. Pages must be set to deploy from GitHub Actions. `.github/workflows/analysis-tests.yml` runs the analysis suite on changes to `scripts/`, `tests/analyses/` or `schedule-plan.json`, weekly against the newest archive, and on demand; it never blocks a deploy.
 
 #### Scheduled data refresh
 
-The workflow in `.github/workflows/update-data.yml` runs `scripts/race_archive.py`, `scripts/build_stats.py --lock-seasons` and `scripts/avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC. It can also be started manually from **Actions > Update race data**. It can also be called with two inputs, both off by default: `sync-bios` adds a `scripts/racer_bios.py` step right after the race sync, and `sync-schedule` adds a `scripts/schedule_archive.py` step after the bios step and before the build. Starting it manually from **Actions** offers neither input.
+`.github/workflows/update-data.yml` runs `race_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC, or from **Actions › Update race data**. Two inputs, both off by default and not offered on a manual run, add steps before the build: `sync-bios` runs `racer_bios.py`, and `sync-schedule` runs `schedule_archive.py`.
 
-- Whenever the sync added or refreshed race files, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`. A newly locked season's ledger changes no site file, so it counts as an archive change, and the push redeploys the unchanged site.
-- When anything other than `generated_at` differs in the dashboard datasets, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow then starts **Deploy GitHub Pages**. That start has to be explicit: pushes made with the workflow's `GITHUB_TOKEN` do not trigger other workflows.
-- Runs that find nothing new commit nothing, and a failed sync, build or mirror commits nothing.
+- When the sync added or refreshed a race, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`.
+- When the datasets changed beyond `generated_at`, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow starts **Deploy GitHub Pages** explicitly, because pushes made with `GITHUB_TOKEN` trigger no workflows.
+- A run that finds nothing new, or whose sync, build or mirror fails, commits nothing.
 
-The workflow in `.github/workflows/update-bios.yml` runs once a day, at 05:47 UTC, between the even-hour data runs. It can also be started manually from **Actions > Update racer bios**. It does nothing itself: it calls `update-data.yml` with `sync-bios` and `sync-schedule` on, so a bio run is a data run that also syncs bios and the ladder schedule, with the same build, mirror, commit and deploy steps. A manual run of **Update racer bios** is therefore how to sync both on demand.
+`.github/workflows/update-bios.yml` runs daily at 05:47 UTC, between data runs, and only calls `update-data.yml` with both inputs on. A manual **Update racer bios** run is how to sync bios and the schedule on demand.
 
-- The bios sync before the build, so a new favourite Pokémon reaches `participants.json` in the same run.
-- The schedule syncs before the build too, so the schedule panels use the newest race ids in the same run. A failed schedule sync fails the run, like the other syncs, and commits nothing.
-- `update-bios.yml` sets no `concurrency` group on purpose. The called workflow's `update-data` group already queues a bio run behind any data run in progress. The same group on the caller would hold it while the callee waits for it, and the run would deadlock.
-- GitHub keeps only one waiting run per group, so a data run that starts waiting behind the same run cancels a waiting bio run. Nothing is lost: a racer stays due until their profile is checked, so the next day's run catches up.
+- It sets no `concurrency` group on purpose: the callee's `update-data` group already queues it behind a running data run, and the same group on the caller would deadlock.
+- GitHub keeps one waiting run per group, so a data run can cancel a waiting bio run. Nothing is lost: a racer stays due until checked.
 
 #### Refreshing by hand
 
-You can still refresh by hand with the four refresh commands, `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`, and commit `archive/`, `site/data` and `site/avatars`. Run `build_stats.py` without `--lock-seasons`: locking is the bot's job, so a ledger is never written by a local build by accident. Running `racer_bios.py` by hand is optional: without it, `build_stats.py` uses the bios already in `archive/racer-bios.json`, and the daily job brings them up to date. The same goes for `schedule_archive.py`, as long as `archive/ladder-schedule/` exists. Pull first, because the scheduled job may have pushed a data commit since your last sync. If a pull conflicts in `archive/`, discard your local archive changes, pull, and run `race_archive.py`, `schedule_archive.py` and `build_stats.py` again, then `avatar_mirror.py`. If a pull conflicts in `season-ratings/`, take the upstream files: a ledger is deterministic, so the bot's copy is the one to keep.
+Pull first, because the bot may have pushed since your last sync. Run the refresh steps and commit `archive/`, `site/data` and `site/avatars`. Never pass `--lock-seasons` locally: locking is the bot's job. `racer_bios.py` and `schedule_archive.py` are optional by hand, as long as `archive/ladder-schedule/` exists. If a pull conflicts in `archive/`, discard your archive changes, pull, and rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`. If it conflicts in `season-ratings/`, take upstream: ledgers are deterministic.
 
 ### Project layout
 
 ```text
-scripts/race_archive.py           Incremental sync of raw races, racer names and avatar observations
-scripts/build_stats.py            Archive validation and aggregation, including the schedule panels and their bands
+scripts/race_archive.py           Incremental sync of races, racer names and avatar observations; the atomic file writers
+scripts/racer_bios.py             Sync of racers' profile bios, with their history, and its loader
+scripts/schedule_archive.py       alttpr.racing schedule mirror, its loaders, the slot-to-race join and the season start rule
+scripts/build_stats.py            Archive validation and aggregation, including the schedule panels and bands
 scripts/participant_stats.py      Per-racer dataset: records, avatars and assembly
-scripts/avatar_mirror.py          Avatar file names and the mirror of them in site/avatars/, including Pokémon sprite copies
-scripts/pokemon_avatars.py        Favourite Pokémon from bios, random Pokémon, sprite paths and the pokédex refresh
-scripts/racer_bios.py             Sync of racers' profile bios into archive/racer-bios.json, and its loader
-scripts/ladder_rating.py          Ladder rating model, overall, per mode and per season, and backtest
-scripts/season_ratings.py         Season membership, the lock conditions, and the season ledgers
+scripts/ladder_rating.py          Ladder rating, overall, per mode and per season, and its backtest
+scripts/season_ratings.py         Season membership, the lock conditions and the season ledgers
 scripts/highlights.py             Tags, badges, streaks, presets, records, claims and facts
-scripts/comment_stats.py          Racer comments dataset
-scripts/mode_overlap.py           Mode overlap analysis and report (see Analyses.md)
-scripts/schedule_archive.py       Mirror of the alttpr.racing ladder schedule and modes, its loaders, the join of slots to races, and the season start rule
-scripts/schedule_planner.py       Schedule proposals from past participation (see Analyses.md)
-scripts/schedule_lab.py           Comparison of schedule strategies with the planner's rules (see Analyses.md)
-scripts/rating_lab.py             Comparison of rating algorithms with the ladder rating (see Analyses.md)
-scripts/badge_images.py           Converts badge art to the standard WebP pair (needs ImageMagick 7)
-scripts/pokemon_images.py         Fits Pokémon sprites to the avatar frame (needs ImageMagick 7)
+scripts/comment_stats.py          Racer comments dataset and the chest-count parser
+scripts/avatar_mirror.py          Avatar file names and the mirror in site/avatars/, including Pokémon copies
+scripts/pokemon_avatars.py        Favourite and random Pokémon, sprite paths and the pokédex refresh
+scripts/badge_images.py           Badge art to the standard WebP pair (ImageMagick 7)
+scripts/pokemon_images.py         Pokémon sprites fitted to the avatar frame (ImageMagick 7)
 scripts/version_assets.py         Content versioning for the static assets
-tests/test_race_archive.py        Archive sync unit tests
-tests/test_avatar_mirror.py       Avatar naming, precedence and mirror unit tests, including Pokémon copies
-tests/test_pokemon_avatars.py     Phrase and name matching, assignment, sprite paths and the committed sprites
-tests/test_racer_bios.py          Bio extraction, who is due, sync pacing and failure handling
-tests/test_pokemon_images.py      Sprite framing geometry and PNG header checks
-tests/test_build_stats.py         Pipeline unit tests
-tests/test_participant_stats.py   Racer dataset unit tests
-tests/test_ladder_rating.py       Rating model unit tests
-tests/test_season_ratings.py      Season membership, locking and ledger unit tests
-tests/test_highlights.py          Tag, badge, streak and record unit tests
-tests/test_comment_stats.py       Comments dataset unit tests
-tests/test_mode_overlap.py        Mode overlap unit tests
-tests/test_schedule_archive.py    Schedule mirror unit tests
-tests/test_schedule_planner.py    Schedule planner unit tests, including the committed schedule mirror
-tests/test_schedule_report.py     Schedule planner report, HTML page, CSV and JSON tests
-tests/test_schedule_rates.py      Schedule planner success-rate CSV and page tests
-tests/schedule_fixtures.py        Shared fixtures for the schedule planner, report, rates and lab tests
-tests/test_schedule_lab.py        Schedule strategy comparison: variants, scoring and rules
-tests/test_rating_lab.py          Rating comparison: golden values, properties and statistics
-tests/test_site_globals.py        Checks that site scripts declare no clashing globals
-tests/test_badge_assets.py        Badge image pair checks
-tests/test_version_assets.py      Asset versioning unit tests
-.github/workflows/pages.yml       Test and deploy to GitHub Pages
-.github/workflows/update-data.yml Scheduled archive sync, data build, commit, and deploy
-.github/workflows/update-bios.yml Daily run of update-data.yml with the bio and schedule syncs on
-archive/races/                    Raw race records, one file per race
-archive/racer-names.json          Current racer display names
-archive/racer-avatars.json        Last observed leaderboard avatar of each racer
-archive/racer-bios.json           Profile bio of each racer checked, with the time it was checked
-archive/ladder-schedule/          alttpr.racing ladder schedule and modes, one file per season
-season-ratings/                   Ledger of each locked season's ratings, written once by the bot, never deployed
-assets/pokemon/                   Pokémon sprites and pokedex.json, committed and never deployed
-site/data/race-stats.json         Generated aggregate dataset
-site/data/participants.json       Generated per-racer dataset
-site/data/comments.json           Generated racer comments, loaded lazily
-site/avatars/                     Mirrored avatar images, one for each avatar participants.json names
+scripts/mode_overlap.py, schedule_planner.py, schedule_lab.py, rating_lab.py
+                                  Standalone analyses, never run by the build (see Analyses.md)
+tests/test_<module>.py            Production suite, one file per module, plus site globals and badge assets
+tests/analyses/                   Analysis suite and its schedule fixtures
+.github/workflows/                pages.yml (test and deploy), analysis-tests.yml, update-data.yml, update-bios.yml
+archive/                          Verbatim racetime.gg races, racer names, avatars and bios, plus ladder-schedule/; never deployed
+season-ratings/                   One ledger per locked season, written once by the bot; never deployed
+assets/pokemon/                   Pokémon sprites and pokedex.json; never deployed
+schedule-plan.json                Season, bands, composition and events for the schedule planner
+site/data/                        Generated race-stats.json, participants.json and comments.json (loaded lazily)
+site/avatars/                     Mirrored avatars, exactly those participants.json names
 site/version.json                 Generated content version manifest
-site/index.html                   Static dashboard document
-site/app.js                       Native SVG chart rendering
-site/racer-charts.js              Finish-time violins, presets table, and step charts
-site/leaderboard.js               Racer leaderboard and head-to-head views
-site/store.js                     Local storage wrapper and followed racers
-site/ui.js, ui.css                Shared avatars, speech bubbles, tags, badges, and dialogs
-site/top-rated.js, .css           Top-rated banner
-site/feed.js, feed.css            Latest results feed, on the home page and racer pages
-site/records.js, records.css      Hall of records
-site/racer-extras.js, .css        Racer page heading, badges, rating strip, and rating chart
-site/share-card.js, .css          Racer player card: a 600 x 300 PNG drawn in the browser
-site/easter-eggs.js, .css         Hidden extras
-site/version-check.js             Reloads the page when a new version ships
-site/visitor-counter.js           Masthead visitor counter
-site/styles.css                   Responsive visual system
-site/assets/alttpr-ladder.png     Category artwork
-site/assets/fonts/                Self-hosted Barlow fonts (SIL Open Font License)
-site/assets/badges/               Badge images, an animated WebP and a still for each badge
-README.md                         This spec
-Analyses.md                       Standalone analyses: mode overlap, race schedule proposals, schedule strategy comparison, rating comparison
-Badge_Guide.md                    How to add or remove a badge
-Racetime_API.md                   racetime.gg API behavior and field definitions
-CLAUDE.md                         Working rules for AI coding agents in this repository
-schedule-plan.json                Season, bands, composition and external events for the schedule planner
+site/index.html, styles.css       Page and responsive visual system
+site/app.js                       Base layer: SVG charts, tooltips and formatters
+site/leaderboard.js               Data loading, routing, the leaderboard and head-to-head views
+site/racer-charts.js              Finish-time violins, presets table and step charts
+site/store.js                     Local storage and followed racers
+site/ui.js, ui.css                Shared avatars, speech bubbles, tags, badges and dialogs
+site/top-rated, feed, records, racer-extras, share-card, easter-eggs (.js, .css)
+                                  Top-rated banner, latest results, hall of records, racer page extras, player card, hidden extras
+site/version-check.js, visitor-counter.js
+                                  Reload on a new version; masthead visitor counter
+site/assets/                      Category artwork, Barlow fonts (SIL OFL) and badge images
+README.md, Analyses.md, Badge_Guide.md, Racetime_API.md, CLAUDE.md
+                                  This spec, the analyses, the badge checklist, the API notes and the agent rules
 ```
 
 ## The data
@@ -217,7 +146,7 @@ Everything in this part is computed by the Python scripts in `scripts/` and publ
 - The archive covers every race in the category from 2025-04-20; the builder drops only the `ladder_test` mode.
 - `archive/racer-names.json` maps each racer's stable user ID to their current display name.
 - `archive/racer-avatars.json` maps it to the avatar URL (or `null`) the category leaderboards last showed for them, with the time the sync first saw that value.
-- `archive/racer-bios.json` maps it to `[bio text or null, checked-at time]`, written by `racer_bios.py`, not by the race sync (see [Bios](#bios)).
+- `archive/racer-bios.json` maps it to their bio and its history, written by `racer_bios.py`, not by the race sync (see [Bios](#bios)).
 - Every archive file is minified JSON: no whitespace between tokens, and one trailing newline.
 
 What the archive contains, and why it is never deployed, is under [Privacy](#privacy).
@@ -247,7 +176,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 
 - **Bio:** the text or `null`. **Checked-at time:** when the profile was last fetched.
 - **Since:** when the current bio was first seen. **Earlier:** the racer's earlier bios, oldest first, each `[bio, since]`. A fetch that finds a different bio moves the old one, with its time, to the end of `earlier`; one that finds the same bio changes only the checked-at time. A racer's first fetch is not a change.
-- The history began on 2026-11-05. An entry from before then was `[bio, checked-at time]`; it loads with an unknown `since` and no earlier bios, and is written in the new form the next time the file is. So only the first earlier bio, or `since` when there are none, can be unknown (`null`).
+- The history began on 2026-11-05, so an entry stored before then has an unknown `since` and no earlier bios. Only the first earlier bio, or `since` when there are none, can be unknown (`null`). Any other entry shape is refused.
 - Earlier bios are kept so a change of [favourite Pokémon](#pokémon-avatars) can be dated (see [Latest results](#latest-results)). Like the rest of `archive/`, they are never deployed.
 
 - **Who is due:** a racer of an included race (see [Definitions](#definitions)) with no stored entry, or who entered an included race that finished after the time of their entry. A racer who has not raced since their bio was checked costs nothing, so a normal daily run fetches only the racers who raced that day.
@@ -346,23 +275,11 @@ So `Mr. Mime` and `mrmime` give Mr. Mime, `Mega Charizard X` gives `charizard-me
 
 A Pokémon can have several sprites, such as the Unown letters. The racer gets the sprite file, favourite or random, that the fewest racers use, with the same tie-break from the SHA-256 of `<user id>/<file name>`. A published name is `pokemon-` plus the file name, for example `pokemon-201-b.png`. There is no limit on how many racers share a Pokémon: once every one is in use, the least used are picked. If `assets/pokemon/` has no species, nobody gets a random Pokémon.
 
-**Stability.** The order depends only on racers' first races, so a new racer joins at the end, and a new racer who gets a random Pokémon changes nobody else's avatar. The one exception is a race that reaches the archive after a later-starting race: a new racer whose first race started before another racer's first race sorts ahead of them. A random pick is the racer's best-ranked Pokémon among the least used when their turn comes, so it changes only when what came before their turn changes:
+**Stability.** The order depends only on racers' first races, so a new racer joins at the end and their random Pokémon changes nobody else's, unless a race reaches the archive after a later-starting one. A random pick changes only when something before the racer's turn changes: a favourite is added, changed or removed, or an earlier racer enters or leaves the random pass by gaining or losing an upload or a favourite, or, while they have an upload, by naming or dropping `random`. A favourite Pokémon changes only with the bio, but its sprite can change when an earlier racer starts or stops favouring the same Pokémon.
 
-- a favourite Pokémon is added, changed or removed, or
-- a racer earlier in the order enters or leaves the random pass, by gaining or losing a racetime.gg avatar or a favourite Pokémon, or, while they have a racetime.gg avatar, by naming or dropping `random`.
+**The pokédex.** `assets/pokemon/` is committed and never deployed; `site/avatars/` gets copies of the sprites in use. It holds the sprites, named `<pokédex number>.png` or `<number>-<variant>.png`, and `pokedex.json`, which maps ids to names for `pokemon` and `species`. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites `pokedex.json` from PokeAPI's `/pokemon/` and `/pokemon-species/` lists, following their `next` links, and writes nothing if a list is incomplete, changes while it is read, or links outside PokeAPI. CI never runs it. A new generation also needs its sprites added.
 
-Either can take a racer's Pokémon, or free one they rank higher. A favourite Pokémon changes only when the bio does, but its sprite can change when another racer earlier in the order starts or stops favouring the same Pokémon.
-
-**The pokédex.** `assets/pokemon/` is committed and never deployed. It holds 1,537 sprites, named `<pokédex number>.png` or `<number>-<variant>.png`, and `pokedex.json`, which maps ids to names for `pokemon` (1,351 entries) and `species` (1,025). Only `site/avatars/` is deployed, with copies of the sprites in use. `python3 scripts/pokemon_avatars.py --refresh-pokedex` rewrites `pokedex.json` from PokeAPI. It follows the `next` links of PokeAPI's `/pokemon/` and `/pokemon-species/` lists and fails, writing nothing, if a list is incomplete, changes while it is read, or links outside PokeAPI. CI never runs it. A new generation also needs its sprites added to `assets/pokemon/`.
-
-**The sprites.** The committed sprites are processed copies of 96 × 96 originals, which live in `_tmp_assets/pokemon/` and are not committed. `python3 scripts/pokemon_images.py` converts every original whose name is a sprite name, so the `0.png` placeholder is skipped, and never touches `pokedex.json`. Run `avatar_mirror.py` afterwards so `site/avatars/` gets the new copies. For each sprite it:
-
-1. Trims the transparent margin.
-2. Centres the creature in a square whose side is its longest side divided by 0.875 (`FILL_RATIO`), so every creature fills 7/8 of the frame, with a 1/16 margin on each side, however small it was drawn.
-3. Scales the square up by the smallest whole factor that makes it at least 256 pixels on a side (`MIN_SIDE`), with nearest-neighbour sampling, so the pixel art stays exact. 256 is four times the 64-pixel racer-page avatar, so every avatar on the page, up to 3× screens and the 72-pixel player card, scales the sprite down.
-4. Writes a palette PNG.
-
-Running it again on its own output changes nothing, because the factor is then 1.
+**The sprites.** `python3 scripts/pokemon_images.py` generates the committed sprites from 96 × 96 originals in `_tmp_assets/pokemon/`, which are not committed. It skips the `0.png` placeholder and never touches `pokedex.json`; run `avatar_mirror.py` afterwards. Each sprite is trimmed of its transparent margin, centred in a square whose side is its longest side ÷ 0.875 (`FILL_RATIO`, so a 1/16 margin), scaled up with nearest-neighbour sampling by the smallest whole factor that reaches 256 pixels (`MIN_SIDE`, four times the 64-pixel racer-page avatar, so every avatar scales it down), and written as a palette PNG. Rerunning it on its own output changes nothing.
 
 ### Privacy
 
@@ -437,9 +354,8 @@ These terms use the [ladder schedule mirror](#ladder-schedule-mirror). `schedule
 These terms drive the [season ratings](#season-ratings). `schedule_archive.season_starts` and `season_of` implement them.
 
 - **Season start:** season 1 starts at its first slot. Every later season starts at its first slot after the middle of the season before it, which is the later of that season's start and the median time of its slots. A season with no slot after that point has no start yet. alttpr.racing lists no future slots, so a season's end is only known once the next season's first slot appears.
-  - A race's season comes from this rule, not from the season number its slot carries. alttpr.racing files the odd slot under the wrong season: 3 season 1 slots on 2026-09-03 and 04 inside season 9, 1 season 2 slot on 2025-05-15 before season 1, and 1 season 6 slot on 2025-11-08 inside season 5. The rule keeps such a slot from moving a boundary. `diagnostics.seasons.stray_slots` counts the slots outside their own season's run (5 today).
-  - The starts today are 2025-05-18, 2025-07-01, 2025-08-04, 2025-10-03, 2025-11-07, 2026-01-02, 2026-03-01, 2026-05-04, 2026-07-04 and 2026-09-07.
-- **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start until 5 minutes before the next season's start. A race belongs to the season its start falls in. Races before season 1's span have none, and `diagnostics.seasons.races_without_season` counts them (5 today).
+  - A race's season comes from this rule, not from the season number its slot carries. alttpr.racing files the odd slot under the wrong season, such as 3 season 1 slots inside season 9, and the rule keeps such a slot from moving a boundary. `diagnostics.seasons.stray_slots` counts the slots outside their own season's run.
+- **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start until 5 minutes before the next season's start. A race belongs to the season its start falls in. Races before season 1's span have none, and `diagnostics.seasons.races_without_season` counts them.
 - **Current season:** the newest season holding at least one included race.
 
 ### Schedule and participation metrics
@@ -531,8 +447,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 
 - **Full reset:** every racer debuts at exactly 1000 in every season, and again in every mode of it, however they rated before. A racer is provisional in a season, or in a season's mode, until they have 5 finishes there.
 - **Standings only:** season ratings carry no $\mu$ or $\sigma$. Predictions stay on the all-time overall rating, as they do for mode ratings: win chance, the Upset tag, and the top-rated racer of God Route, Big Routing and Upsetti.
-- **Which season a race is in:** a race belongs to the season whose start, less 5 minutes (`JOIN_EARLY`), is at or before the race's start, until the next season's start. Every included race counts, scheduled or not. A race in the break between two seasons counts toward the earlier one. The 5 races before season 1 (2025-04-20 and 21, 2025-05-15 and 16) have no season. The **current season** is the newest season that holds at least one included race.
-- **Why the start rule is not the API's seasons:** alttpr.racing files the odd slot under the wrong season, such as 3 season 1 slots on 2026-09-03 and 04, inside season 9. The start rule in [Definitions](#definitions) keeps such a slot from moving a boundary. The 5 `JOIN_EARLY` minutes let a race that started just before its first slot count.
+- **Which season a race is in:** the season whose span holds its start (see [Definitions](#definitions)). Every included race counts, scheduled or not, and a race in the break between two seasons counts toward the earlier one. The 5 `JOIN_EARLY` minutes let a race that started just before its first slot count.
 - **Schedule lag:** the schedule mirror syncs once a day and races every two hours, so a new season's first day can count toward the old season until the next daily schedule sync. This is display only: it cannot lock a wrong boundary (see below).
 
 **Locking.** A season's ratings are locked once the season has ended and none of its races awaits recording, so they never change again, even if the rating model does. `python3 scripts/build_stats.py --lock-seasons` builds as usual and then locks every season without a ledger, once all four hold:
@@ -552,42 +467,9 @@ Only the data bot passes `--lock-seasons` (see [Scheduled data refresh](#schedul
 - **What the build does with it:** a locked season's races and points come from its ledger, whatever the rating computes today. A race the spans place in a locked season that the ledger does not hold, or a ledger race whose mode or entrants no longer match, gets no season and is never re-rated. Both are counted in `diagnostics.seasons` (`left_out_of_locked_seasons`, `mismatched_locked_races`).
 - **No visible change:** while the rating is unchanged, locking changes no published byte. Changing the rating changes the open season only.
 
-Today seasons 1 to 9 are locked and season 10 is open.
-
-#### What racetime.gg does differently
-
-racetime.gg runs TrueSkill with default parameters on finishing order only, ties every DNF and DQ behind the last finisher, shows $\max(0, \mathrm{round}((\mu - 2\sigma) \cdot 100))$ so newcomers start at 833 and the score climbs with volume as $\sigma$ shrinks, and keeps one leaderboard per goal. Both ratings read placement only. The ladder rating rates all modes together and each mode on its own, starts everyone at 1000, shows points on an Elo-style scale, and its floor keeps scores responsive.
-
 #### Backtest
 
-`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The mode ratings are scored on the same pairs, each predicted from the two racers' ratings in the race's mode. The report also counts winners whose displayed points fell, overall and in their race's mode, and the median points a veteran (past their 50th race) moves per race. Other algorithms are compared on the same pairs in [Rating comparison](Analyses.md#rating-comparison).
-
-On the archive as of 2026-11-01. The figures move a little with every data refresh.
-
-```text
-                                     pairs  accuracy  log loss
-From 2026-01-01 (out of sample)
-  ladder rating                     47,654     0.728     0.534
-  ladder rating, own mode only      47,654     0.720     0.546
-  racetime.gg recorded score        47,654     0.695     0.587  best-fit logistic, in-sample
-Before 2026-01-01 (tuning period)
-  ladder rating                     26,796     0.707     0.555
-  ladder rating, own mode only      26,796     0.687     0.580
-  racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
-Winners who lost points: 0 of 3,259
-Mode winners who lost points: 0 of 3,259
-Median veteran move per race (past race 50): 8 points
-```
-
-#### Trade-offs
-
-- A crushing win counts the same as a narrow one.
-- Experience is rewarded: a prodigy with few races sits below established racers until $\sigma$ shrinks.
-- A mode rating knows only its mode: a racer strong elsewhere starts a new mode at 1000 and climbs like any newcomer.
-- Early on, even a loss can add points, because uncertainty falls faster than skill.
-- Clearly weaker racers still drift down, because the number stays honest.
-- A big race moves a rating less than its number of opponents suggests. Damping trades the swing of a large field for steadier, more accurate ratings.
-- Predictions trail the old margin-based model slightly (73.3% against 72.8% of 2026 pairs), in exchange for no lost winners and scores that climb. They stay well ahead of racetime.gg's.
+`python3 scripts/ladder_rating.py --backtest` replays the archive and, before each race, predicts every decisive pair of entrants from the overall rating, from the race's mode rating and from racetime.gg's recorded `score`. It also counts winners whose points fell and the median move of a veteran. The method, the latest figures, how racetime.gg's own rating differs, and the rating's trade-offs are in [Backtest](Analyses.md#backtest).
 
 ### Highlights
 
@@ -680,7 +562,7 @@ Each badge records the index of the race that unlocked it.
 
 A badge is either a counter, which unlocks when a count reaches its target, or a one-race badge, which unlocks on a single result. In the notes below, a **finish** is a finisher's result, and **day**, **week** and **field** are as defined under [Definitions](#definitions). How the page shows badges is under [Racer pages](#racer-pages).
 
-- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. Double D, Quarter Pounder and Full Pounder count wins, in a row or not. On the Ped and Ped Regular use the podium run (places 1-3), which, unlike the finish run, has no DNF exception. >174 counts every race entered and not won, DNFs included. The Glitched badges count finishes in the glitched mode, The Upside Down and Mirror Universe count finishes in the inverted mode, I Like It Here and BUSTIN' count finishes in the mystery mode, Keys and Locksmith count finishes in the keys mode, Simpler Times and Simpler Life count finishes in the simple mode, and Had Fun and Kept Having Fun count finishes in the fun mode.
+- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. Double D, Quarter Pounder and Full Pounder count wins, in a row or not. On the Ped and Ped Regular use the podium run (places 1-3), which, unlike the finish run, has no DNF exception. >174 counts every race entered and not won, DNFs included. A mode's count badges count finishes in that mode.
 - **Bridesmaid:** 2nd places in a row in the racer's own race sequence. Any other result ends the run, a DNF included, even in a field of two.
 - **Connoisseur:** distinct seed presets finished. A preset is one row of the published preset list, so a name that two modes share, such as MMMM (Not Slow), counts twice.
 - **Rival:** finishes ahead of one opponent, across all modes. Like an H2H win, it counts each opponent who placed lower or didn't finish. An equal place counts for neither racer.
@@ -851,7 +733,7 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 
 ### Racer leaderboard
 
-- **Season:** a **Season** select above the table picks the scope: **Season 10** (the current season, the default), **Season 9** and so on down to **Season 1**, newest first, then **All seasons**. With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
+- **Season:** a **Season** select above the table picks the scope: every season, newest first and the current one by default, then **All seasons**. With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
   - Under a season, every column except Badges is calculated from the races of that season, and of the selected mode when one is picked, with the rules under [Racer statistics](#racer-statistics). That includes H2H win %.
   - Under **All seasons**, every column covers the whole archive.
   - A racer with no race in the scope has no row. The table's status text names the season.

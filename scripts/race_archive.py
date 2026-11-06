@@ -161,16 +161,21 @@ def is_settled(race: JsonObject, now: datetime) -> bool:
     )
 
 
-def write_json_atomic(payload: JsonObject, output_path: Path) -> None:
-    """Write the payload without whitespace between tokens, replacing any old file."""
+def write_bytes_atomic(data: bytes, output_path: Path) -> None:
+    """Write the bytes through a temporary file beside the output, replacing any old file."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
-    with temporary_path.open("w", encoding="utf-8") as output_file:
-        json.dump(payload, output_file, separators=(",", ":"), sort_keys=False)
-        output_file.write("\n")
+    temporary_path = output_path.with_name(f"{output_path.name}.tmp")
+    with temporary_path.open("wb") as output_file:
+        output_file.write(data)
         output_file.flush()
         os.fsync(output_file.fileno())
     os.replace(temporary_path, output_path)
+
+
+def write_json_atomic(payload: JsonObject, output_path: Path) -> None:
+    """Write the payload without whitespace between tokens, replacing any old file."""
+    text = json.dumps(payload, separators=(",", ":")) + "\n"
+    write_bytes_atomic(text.encode("utf-8"), output_path)
 
 
 def load_races(archive_dir: Path = ARCHIVE_DIR) -> list[JsonObject]:

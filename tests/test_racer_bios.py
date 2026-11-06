@@ -131,13 +131,6 @@ class LoadRacerBiosTests(unittest.TestCase):
         data = {"a": ["hello", EARLIER, None, []], "b": [None, LATER, EARLIER, []]}
         self.assertEqual(self.load(json.dumps(data)), data)
 
-    def test_a_legacy_entry_loads_in_the_four_element_form(self):
-        data = {"a": ["hello", EARLIER], "b": [None, LATER]}
-        self.assertEqual(
-            self.load(json.dumps(data)),
-            {"a": ["hello", EARLIER, None, []], "b": [None, LATER, None, []]},
-        )
-
     def test_the_history_form_round_trips(self):
         data = {
             "a": ["new", LATER, LATER, [["first", None], ["second", EARLIER], [None, EARLIER]]],
@@ -156,6 +149,7 @@ class LoadRacerBiosTests(unittest.TestCase):
             ["x", LATER, LATER, [["a", "yesterday"]]],
             ["x", "yesterday", LATER, []],
             # Bad shapes.
+            ["x", LATER],
             ["x", LATER, LATER, "none"],
             ["x", LATER, LATER, [["a"]]],
             ["x", LATER, LATER, [[1, EARLIER]]],
@@ -189,19 +183,19 @@ class RacersToCheckTests(unittest.TestCase):
 
     def test_a_racer_who_raced_after_the_check_is_due(self):
         races = [envelope("a-1", ["u1"])]
-        bios = {"u1": [None, "2026-10-01T13:00:00Z"]}
+        bios = {"u1": [None, "2026-10-01T13:00:00Z", None, []]}
         self.assertEqual(racer_bios.racers_to_check(races, bios), ["u1"])
 
     def test_a_racer_who_raced_before_the_check_is_not_due(self):
         races = [envelope("a-1", ["u1"])]
-        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER]}), [])
+        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER, None, []]}), [])
 
     def test_the_latest_race_decides(self):
         races = [
             envelope("a-1", ["u1"], ended_at="2026-09-01T00:00:00Z"),
             envelope("a-2", ["u1"], ended_at="2026-10-09T00:00:00Z"),
         ]
-        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER]}), ["u1"])
+        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER, None, []]}), ["u1"])
 
     def test_unidentified_entrants_are_skipped(self):
         races = [envelope("a-1", [None, "u1"])]
@@ -285,7 +279,7 @@ class SyncTests(unittest.TestCase):
 
     def test_a_failed_fetch_keeps_the_old_entry_and_stays_due(self):
         write_race(self.archive, "a-1", ["u1", "u2"])
-        race_archive.write_json_atomic({"u1": ["old", EARLIER]}, self.path)
+        race_archive.write_json_atomic({"u1": ["old", EARLIER, None, []]}, self.path)
         loader = FakeLoader({"u1": race_archive.ArchiveError("HTTP 500"), "u2": BIO_PAGE})
         summary = self.run_sync(loader)
         self.assertEqual(summary, {"due": 2, "checked": 1, "failed": 1, "stopped": False})
@@ -306,9 +300,9 @@ class SyncTests(unittest.TestCase):
             self.stored()["u1"], [None, "2026-11-02T00:00:00Z", "2026-09-02T00:00:00Z", history]
         )
 
-    def test_a_changed_bio_appends_the_old_one_from_a_legacy_entry(self):
+    def test_a_changed_bio_without_a_since_time_starts_the_history(self):
         write_race(self.archive, "a-1", ["u1"])
-        race_archive.write_json_atomic({"u1": ["old", EARLIER]}, self.path)
+        race_archive.write_json_atomic({"u1": ["old", EARLIER, None, []]}, self.path)
         self.run_sync(FakeLoader({"u1": BIO_PAGE}), FixedClock(datetime(2026, 11, 2, tzinfo=UTC)))
         entry = self.stored()["u1"]
         self.assertEqual(entry[1:], ["2026-11-02T00:00:00Z", "2026-11-02T00:00:00Z", [["old", None]]])
@@ -401,7 +395,7 @@ class SyncTests(unittest.TestCase):
 
     def test_nothing_due_makes_no_requests(self):
         write_race(self.archive, "a-1", ["u1"])
-        race_archive.write_json_atomic({"u1": ["x", LATER]}, self.path)
+        race_archive.write_json_atomic({"u1": ["x", LATER, None, []]}, self.path)
         before = self.path.read_text(encoding="utf-8")
         loader = FakeLoader({})
         summary = self.run_sync(loader)

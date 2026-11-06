@@ -3,14 +3,11 @@
 
 from __future__ import annotations
 
-import json
-import os
 import re
 import statistics
 from collections import Counter
 from collections.abc import Mapping
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -507,15 +504,3 @@ def build_participant_payload(
             "highlights": derived["diagnostics"],
         },
     }
-
-
-def write_compact_json(payload: JsonObject, output_path: Path) -> None:
-    """Write the payload without indentation so the browser download stays small."""
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = output_path.with_suffix(f"{output_path.suffix}.tmp")
-    with temporary_path.open("w", encoding="utf-8") as output_file:
-        json.dump(payload, output_file, separators=(",", ":"), sort_keys=False)
-        output_file.write("\n")
-        output_file.flush()
-        os.fsync(output_file.fileno())
-    os.replace(temporary_path, output_path)

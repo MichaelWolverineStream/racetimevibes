@@ -12,7 +12,6 @@ from schedule_fixtures import (
     BASE_COMPOSITION,
     EASTERN,
     EVENTS,
-    HAND_MODEL,
     LAYOUT,
     MODES,
     NEWEST,
@@ -171,12 +170,11 @@ class ModelTests(unittest.TestCase):
         for empty in (0, 1, 2, 4):
             self.assertAlmostEqual(model.fill["simple"][empty], 4 / 6)
 
-    def test_hour_is_a_dict_of_24_factors_per_group_and_there_is_no_day_factor(self):
+    def test_hour_is_a_dict_of_24_factors_per_group(self):
         model = fitted()
         self.assertEqual(set(model.hour), set(sp.DAY_GROUPS))
         for group in sp.DAY_GROUPS:
             self.assertEqual(len(model.hour[group]), 24)
-        self.assertFalse(hasattr(model, "day"))
 
     def test_each_blocks_twelve_group_hours_average_one(self):
         for model in (
@@ -237,10 +235,6 @@ class CategoryTests(unittest.TestCase):
         single = mixed_category("s", ("keys", 1.0, 50), ("keys", 2.0, 50))
         self.assertEqual(single.sources, ("keys",))
         self.assertFalse(single.mixed)
-
-    def test_there_is_no_daily_property_any_more(self):
-        self.assertFalse(hasattr(plain_category("a"), "daily"))
-        self.assertFalse(hasattr(plain_category("a"), "featured_mode"))
 
     def test_expected_entrants_are_the_mean_over_the_modes_at_their_own_sources(self):
         model = flat_model(["keys", "mystery"], {"keys": 2.0, "mystery": 6.0})
@@ -2637,8 +2631,6 @@ class BetweenProposalTests(unittest.TestCase):
         counts = {c["category"]: c for c in plan["categories"]}
         self.assertEqual(counts["m"]["between"], plan["between"])
         self.assertEqual(counts["a"]["between"], 0)
-        self.assertNotIn("paired", counts["a"])
-        self.assertTrue(all("allowed" not in row for row in plan["pairs"]))
         for key in ("races", "between", "between_categories", "short_gaps", "unbracketed"):
             self.assertIn(key, plan)
 
@@ -3355,7 +3347,6 @@ class RulesTests(unittest.TestCase):
             (True, "entrants", True, True, True, True, True),
         )
         self.assertEqual(sp.SHARES, ("entrants", "fill", "equal"))
-        self.assertFalse(hasattr(sp.SHIPPED, "pairs"))
 
     def test_rules_are_frozen(self):
         with self.assertRaises(Exception):

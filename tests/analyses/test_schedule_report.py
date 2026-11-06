@@ -11,8 +11,6 @@ from pathlib import Path
 import schedule_fixtures as fx
 from scripts import schedule_planner as sp
 
-REMOVED_WORDS = ("hourly", "seed", "daily race", "timetable", "iteration", "paired", "allowed pair", "first week")
-
 
 class OutputTests(unittest.TestCase):
     @classmethod
@@ -325,28 +323,17 @@ class RenderHtmlTests(unittest.TestCase):
             if proposal["shortfall"]:
                 self.assertIn("Short of races on:", page)
 
-    def test_the_method_note_describes_the_new_method(self):
-        page = self.page
-        for phrase in ("day groups", "Work (Monday to Wednesday)", "featured race", "favourite",
-                       "between category", "short gap", "lookahead", "set by hand", "share",
-                       "fewer than two"):
-            self.assertIn(phrase, page.replace("Days fall into three groups", "day groups"))
-        self.assertIn("less than 10%", page)
-        self.assertIn("1 or 2 hours after one main race", page)
-        self.assertIn("Spoiler&rsquo;s overlap scores are weak evidence and high", page)
-        self.assertIn("bands are set by hand, not learned", page)
-        self.assertNotIn("most expected turnout", page)
+    def test_the_method_note_describes_the_method(self):
+        for phrase in ("Work (Monday to Wednesday)", "featured race", "favourite", "between category",
+                       "short gap", "lookahead", "share", "fewer than two", "less than 10%",
+                       "1 or 2 hours after one main race", "bands are set by hand, not learned",
+                       "Spoiler&rsquo;s overlap scores are weak evidence and high"):
+            self.assertIn(phrase, self.page)
 
     def test_the_method_note_names_the_bands_of_each_group(self):
         note = sp._method_note(self.result)
         for group in sp.DAY_GROUPS:
             self.assertIn(sp._band_sentence(self.result, group), note)
-
-    def test_it_mentions_no_removed_concept(self):
-        for page in (self.page, sp.render_html(fx.mixed_result())):
-            text = page.lower()
-            for word in REMOVED_WORDS + ("recipe", "spotlight", "every category races"):
-                self.assertNotIn(word, text)
 
 
 class ReportTests(unittest.TestCase):
@@ -418,12 +405,6 @@ class ReportTests(unittest.TestCase):
         self.assertIn("Event Tournament: block, dated, 1 in the period.", text)
         self.assertIn("2026-09-07", text)
 
-    def test_the_report_has_no_removed_concept(self):
-        for result in (fx.main_result(), fx.mixed_result()):
-            text = sp.format_report(result).lower()
-            for word in REMOVED_WORDS:
-                self.assertNotIn(word, text)
-
     def test_the_helpers(self):
         self.assertEqual(sp._hour_ranges([5, 0, 1, 2, 23]), "00:00 to 02:00, 05:00, 23:00")
         many = [f"2026-09-{day:02d}" for day in range(1, 13)]
@@ -436,17 +417,12 @@ class ArgumentTests(unittest.TestCase):
         with mock.patch("sys.argv", ["schedule_planner.py", *argv]):
             return sp.parse_args()
 
-    def test_there_is_no_seed_option(self):
-        with self.assertRaises(SystemExit), mock.patch("sys.stderr"):
-            self.parse("--seed", "3")
-
-    def test_the_options_that_remain(self):
+    def test_the_options(self):
         args = self.parse("--weeks", "3", "--start", "2026-09-01", "--out", "x")
         self.assertEqual((args.weeks, args.start.isoformat(), args.out), (3, "2026-09-01", Path("x")))
         self.assertEqual((self.parse().weeks, self.parse().start), (None, None))
-        for removed in (("--weeks", "0"), ("--months", "2")):
-            with self.subTest(removed), self.assertRaises(SystemExit), mock.patch("sys.stderr"):
-                self.parse(*removed)
+        with self.assertRaises(SystemExit), mock.patch("sys.stderr"):
+            self.parse("--weeks", "0")
 
 
 if __name__ == "__main__":

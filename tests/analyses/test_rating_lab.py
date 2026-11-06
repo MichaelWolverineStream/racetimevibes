@@ -11,7 +11,7 @@ from unittest import mock
 from scripts import ladder_rating, rating_lab
 
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DONE, DNF = 0, 1
 
 

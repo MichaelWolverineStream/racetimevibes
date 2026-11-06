@@ -668,8 +668,8 @@ def build(
         contexts, generated_at=generated_at
     )
     race_archive.write_json_atomic(stats, output_path)
-    participant_stats.write_compact_json(participants, participants_output_path)
-    participant_stats.write_compact_json(comments, comments_output_path)
+    race_archive.write_json_atomic(participants, participants_output_path)
+    race_archive.write_json_atomic(comments, comments_output_path)
     return stats, participants, comments
 
 

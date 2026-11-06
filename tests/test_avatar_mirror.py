@@ -79,47 +79,21 @@ class CurrentAvatarUrlsTests(unittest.TestCase):
     A = f"{ORIGIN}a.png"
     B = f"{ORIGIN}b.png"
 
-    def test_a_newer_race_beats_an_older_observation(self):
-        urls = avatar_mirror.current_avatar_urls(
-            [envelope("r1", "2026-10-02T00:00:00Z", {"u1": self.B})],
-            {"u1": [self.A, "2026-10-01T00:00:00Z"]},
-        )
-        self.assertEqual(urls, {"u1": self.B})
-
-    def test_a_newer_observation_beats_an_older_race(self):
-        urls = avatar_mirror.current_avatar_urls(
-            [envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.B})],
-            {"u1": [self.A, "2026-10-02T00:00:00Z"]},
-        )
-        self.assertEqual(urls, {"u1": self.A})
-
-    def test_a_tie_goes_to_the_leaderboard(self):
-        urls = avatar_mirror.current_avatar_urls(
-            [envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.B})],
-            {"u1": [self.A, "2026-10-01T00:00:00Z"]},
-        )
-        self.assertEqual(urls, {"u1": self.A})
-
-    def test_times_are_compared_as_instants_not_text(self):
-        urls = avatar_mirror.current_avatar_urls(
-            [envelope("r1", "2026-10-01T02:00:00+02:00", {"u1": self.B})],
-            {"u1": [self.A, "2026-09-30T23:30:00Z"]},
-        )
-        self.assertEqual(urls, {"u1": self.B})
-
-    def test_a_null_observation_removes_the_avatar(self):
-        urls = avatar_mirror.current_avatar_urls(
-            [envelope("r1", "2026-10-01T00:00:00Z", {"u1": self.A})],
-            {"u1": [None, "2026-10-02T00:00:00Z"]},
-        )
-        self.assertEqual(urls, {})
-
-    def test_a_newer_race_without_an_avatar_removes_it(self):
-        urls = avatar_mirror.current_avatar_urls(
-            [envelope("r1", "2026-10-02T00:00:00Z", {"u1": None})],
-            {"u1": [self.A, "2026-10-01T00:00:00Z"]},
-        )
-        self.assertEqual(urls, {})
+    def test_the_newer_of_race_and_leaderboard_observation_wins(self):
+        a, b, first, second = self.A, self.B, "2026-10-01T00:00:00Z", "2026-10-02T00:00:00Z"
+        for case, race_at, race_url, seen, expected in (
+            ("a newer race", second, b, [a, first], b),
+            ("a newer observation", first, b, [a, second], a),
+            ("a tie goes to the leaderboard", first, b, [a, first], a),
+            ("instants, not text", "2026-10-01T02:00:00+02:00", b, [a, "2026-09-30T23:30:00Z"], b),
+            ("a null observation removes it", first, a, [None, second], None),
+            ("a newer race without one removes it", second, None, [a, first], None),
+        ):
+            with self.subTest(case):
+                urls = avatar_mirror.current_avatar_urls(
+                    [envelope("r1", race_at, {"u1": race_url})], {"u1": seen}
+                )
+                self.assertEqual(urls, {"u1": expected} if expected else {})
 
     def test_unmirrorable_winners_have_no_entry_even_over_an_older_good_one(self):
         urls = avatar_mirror.current_avatar_urls(

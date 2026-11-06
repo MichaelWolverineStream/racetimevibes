@@ -137,6 +137,3 @@ def build_comments_payload(
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "races": races,
     }
-
-
-write_compact_json = participant_stats.write_compact_json

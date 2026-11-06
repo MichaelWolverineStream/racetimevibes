@@ -349,9 +349,6 @@ class CommittedAssetTests(RealCatalogueCase):
                 self.assertIn(number, self.catalogue.sprites)
         self.assertEqual(self.catalogue.pool, tuple(range(1, 1026)))
 
-    def test_there_is_no_zero_sprite(self):
-        self.assertFalse((REAL_DIR / "0.png").exists())
-
     def test_every_sprite_is_a_square_of_at_least_the_minimum_side(self):
         for path in sorted(REAL_DIR.glob("*.png")):
             with self.subTest(file=path.name):

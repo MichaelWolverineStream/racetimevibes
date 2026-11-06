@@ -1,0 +1,38 @@
+name: Analysis tests
+
+# The standalone analyses' tests. They never gate a deploy: pages.yml runs only tests/.
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/**"
+      - "tests/analyses/**"
+      - "schedule-plan.json"
+      - ".github/workflows/analysis-tests.yml"
+  pull_request:
+    paths:
+      - "scripts/**"
+      - "tests/analyses/**"
+      - "schedule-plan.json"
+      - ".github/workflows/analysis-tests.yml"
+  schedule:
+    # Weekly, so the bot's archive commits are checked against the analyses too.
+    - cron: "41 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Run analysis tests
+        run: python -m unittest discover -s tests/analyses
