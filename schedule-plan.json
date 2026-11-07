@@ -6,23 +6,23 @@
     "prime": { "prime": "11-18", "quiet": "2-4" }
   },
   "composition": {
-    "entrance": { "modes": ["Crosskeys", "Crosskeys 2024"] },
-    "keys": { "modes": ["Cabookey", "AD Keysanity"] },
-    "simple": { "modes": ["Casual Boots", "Open"] },
+    "entrance": { "modes": ["Crosskeys", "Crosskeys 2024"], "everyHour": true },
+    "keys": { "modes": ["Cabookey", "AD Keysanity"], "everyHour": true },
+    "simple": { "modes": ["Casual Boots", "Open"], "everyHour": true },
     "glitched": { "between": true, "dailyMax": 1, "modes": ["HMG (VT)", "No Logic Double-Rods (DR)"] },
     "mystery": { "modes": ["MMMM (Custom Weights)"] },
     "fun": { "modes": [] },
     "inverted": { "modes": [] },
     "spoiler": { "between": true, "modes": ["Spoiler - No GT Boots - Open 7/7"] },
-    "throwback": { "weeklyMax": 4, "onlyPrimeTime": true, "modes": ["Influkeys", "Standard", "XD Hunt", "Crisscross", "Pots and bones", "Ludicrous Speed"] }
+    "throwback": { "weeklyMax": 4, "onlyPrimeTime": true, "modes": ["Influkeys", "Standard", "XDHunt Plus", "Crisscross", "Pots and bones", "Ludicrous Speed"] }
   },
   "events": [
     {
       "name": "Weekly Entrance race",
-      "weekly": "monday",
+      "weekly": "tuesday",
       "start": "01:00",
       "timezone": "UTC",
-      "hours": 3,
+      "hours": 4,
       "effect": "avoid",
       "categories": ["entrance"]
     }

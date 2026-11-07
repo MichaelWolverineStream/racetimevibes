@@ -22,14 +22,22 @@ its own. Its between categories (glitched and spoiler) race only between two
 other races; every other category is a main category. Each set runs a fixed
 number of main races a day per day group, and the between races come on top.
 Each category first gets a featured race in prime time, on a weekday of its own,
-at the same hour all season. Each date then takes its main races at the hours
-that hold the most prime races, at least two hours apart and, outside prime
-time, preferably three, while leaving the next date room for its races. Each
-race goes to the main category furthest below its share of that band, by
-expected turnout. A between category races in a gap 1 to 2 hours after one main
-race and 1 to 2 hours before the next whenever it is behind its own share. A
-category never races in a band where its rooms almost never fired. The planner
-is deterministic.
+alternating week by week between two adjacent hours. Each date then takes its
+main races at the hours that hold the most prime races, at least two hours apart
+and, outside prime time, preferably three, while leaving the next date room for
+its races and ranking its hours together with the next date's best hours after
+them. Hours that a category marked everyHour has not raced at yet come
+before the preference for three hours apart, so such a category races at every
+hour of the season. Among the hour sets that are otherwise equally good, the
+date draws one, with odds by expected turnout. Each race goes to an everyHour
+category that lacks its hour, else to the main category furthest below its
+share of that band, by expected turnout. A between category races in a gap 1 to
+2 hours after one main race and 1 to 2 hours before the next whenever it is
+behind its own share. A category never races in a band where its rooms almost
+never fired. Last, in every second week, races other than the featured ones move
+an hour earlier or later so that the two-hour sections the week before left
+empty get main races too. The draw is seeded, so the same inputs and seed always
+give the same proposals.
 """
 
 from __future__ import annotations
@@ -38,6 +46,7 @@ import argparse
 import calendar
 import csv
 import difflib
+import hashlib
 import json
 import math
 import re
@@ -109,10 +118,12 @@ MIN_MODE_SLOTS = 20
 # A season runs DEFAULT_WEEKS weeks, pause included, and its races end at midnight
 # after its last DEFAULT_LAST_DAY.
 DEFAULT_WEEKS = 9
+# The seed of the hour draw when none is given.
+DEFAULT_SEED = 1
 DEFAULT_LAST_DAY = "thursday"
 EFFECTS = ("avoid", "single", "block")
 WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
-CATEGORY_KEYS = {"modes", "dailyMax", "weeklyMax", "onlyPrimeTime", "between"}
+CATEGORY_KEYS = {"modes", "dailyMax", "weeklyMax", "onlyPrimeTime", "between", "everyHour"}
 CONFIG_KEYS = {"bands", "composition", "events", "season"}
 SEASON_KEYS = {"start", "weeks", "lastDay"}
 EVENT_KEYS = {"name", "weekly", "date", "start", "timezone", "hours", "effect", "categories"}
@@ -188,6 +199,15 @@ class Rules:
     favourite: bool = True
     # A race avoids the category that ran at its hour a week and a day earlier.
     rotation: bool = True
+    # In alternate weeks, races move an hour to reach the two-hour sections the week
+    # before left empty.
+    stagger: bool = True
+    # A category marked everyHour gets a race at every hour of its open bands: such hours
+    # come first after prime time, and the category takes them first.
+    every_hour: bool = True
+    # Each date draws its hours among the equally good sets, with odds by their value,
+    # rather than taking the highest value.
+    draw: bool = True
 
     def __post_init__(self) -> None:
         if self.shares not in SHARES:
@@ -240,6 +260,13 @@ def day_group(day: date, holidays: bool = True) -> str:
     if holidays and is_holiday(day):
         return "prime"
     return WEEKDAY_GROUPS[day.weekday()]
+
+
+def period_week(day: date, first: date) -> int:
+    """Return a date's week of the period, counted from 1 in Monday to Sunday weeks; the
+    week of `first` is week 1, maybe partial."""
+    monday = first - timedelta(days=first.weekday())
+    return (day - monday).days // 7 + 1
 
 
 @dataclass(frozen=True)
@@ -297,6 +324,8 @@ class Category:
     only_prime: bool = False
     # Its races start only between two main races.
     between: bool = False
+    # It should race at least once at every hour of its open bands over the period.
+    every_hour: bool = False
 
     @property
     def sources(self) -> tuple[str, ...]:
@@ -359,6 +388,8 @@ class Start:
     band: str
     # The band value: the plan categories' mean expected entrants at the group-hour.
     value: float
+    # The draw key: ln(value) plus the seeded noise of this start (see draw_noise).
+    draw: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -370,6 +401,21 @@ class Race:
     featured: bool
     # A race of a between category, which starts only between two main races.
     between: bool
+    # Hours the alternate weeks moved it on the wall clock: -1, 0 or +1.
+    moved: int = 0
+
+
+@dataclass(frozen=True)
+class FeaturedSlot:
+    """A category's featured race: its weekday, and the two adjacent hours it alternates
+    between, the first in weeks 1, 3, 5 and so on, the second in weeks 2, 4, 6."""
+
+    weekday: int
+    hours: tuple[int, int]
+
+    def hour(self, week: int) -> int:
+        """The hour in a week of the period, counted from 1."""
+        return self.hours[(week - 1) % 2]
 
 
 # History ---------------------------------------------------------------------
@@ -646,6 +692,11 @@ def resolve_composition(
         between = entry.get("between", False)
         if not isinstance(between, bool):
             raise ScheduleError(f"{name}: between must be true or false")
+        every_hour = entry.get("everyHour", False)
+        if not isinstance(every_hour, bool):
+            raise ScheduleError(f"{name}: everyHour must be true or false")
+        if every_hour and between:
+            raise ScheduleError(f"{name}: a between category cannot be everyHour")
         if not entry["modes"]:
             left_out.append(name)
             continue
@@ -684,6 +735,7 @@ def resolve_composition(
                 weekly_max=entry.get("weeklyMax"),
                 only_prime=only_prime,
                 between=between,
+                every_hour=every_hour,
             )
         )
 
@@ -1027,17 +1079,20 @@ def featured_slots(
     open_by_name: dict[str, tuple[str, ...]],
     events: list[Event],
     dates: list[date],
-) -> dict[str, tuple[int, int]]:
-    """Give each category a weekday of its own and a prime hour on it, for the whole season.
+) -> dict[str, FeaturedSlot]:
+    """Give each category a weekday of its own and two adjacent prime hours on it, which
+    its featured race alternates between week by week, for the whole season.
 
-    A candidate is a prime hour of the weekday's own day group, unless a weekly event
+    A candidate hour is a prime hour of the weekday's own day group, unless a weekly event
     rules its race out in any week of the period: a block event, or an avoid event that
     lists the category. A between category's candidates run from 01:00 to 22:00 only, so
-    its bracket can lie on the same date. Each category's best candidate on a weekday has the highest
+    its bracket can lie on the same date. An hour scores
     `(entrants + FEATURED_SHRINK · E) / (slots + FEATURED_SHRINK)`, from its sources' past
-    slots at that weekday-hour, ties to the earlier hour. The weekdays are assigned to
-    maximise the summed score; on a tie the first assignment found, in weekday order,
-    wins. Returns {category: (weekday, hour)}.
+    slots at that weekday-hour. A pair is two candidate hours h and h + 1 of the same date,
+    and it scores the mean of its two hours. Each category's best pair on a weekday has the
+    highest score, ties to the earlier pair; its better hour, or its earlier one on a tie,
+    runs in weeks 1, 3, 5 and so on. The weekdays are assigned to maximise the summed
+    score; on a tie the first assignment found, in weekday order, wins.
     """
     if len(categories) > len(WEEKDAYS):
         raise ScheduleError(
@@ -1063,14 +1118,14 @@ def featured_slots(
                 return True
         return False
 
-    best: dict[str, dict[int, tuple[float, int]]] = {}
+    best: dict[str, dict[int, tuple[float, tuple[int, int]]]] = {}
     for category in categories:
         best[category.name] = {}
         if "prime" not in open_by_name[category.name]:
             continue
         for weekday in range(7):
             group = WEEKDAY_GROUPS[weekday]
-            options = []
+            scores: dict[int, float] = {}
             for hour in range(24):
                 if (
                     bands[group, hour][0] != "prime"
@@ -1087,11 +1142,18 @@ def featured_slots(
                     expected = model.at(
                         category.sources[0], category.favourite_mode.factor, group, hour
                     )
-                score = (entrants + FEATURED_SHRINK * expected) / (races + FEATURED_SHRINK)
-                options.append((score, -hour))
-            if options:
-                score, negative_hour = max(options)
-                best[category.name][weekday] = (score, -negative_hour)
+                scores[hour] = (entrants + FEATURED_SHRINK * expected) / (races + FEATURED_SHRINK)
+            # max keeps the first pair on a tie, which is the earlier one.
+            pairs = [(hour, hour + 1) for hour in range(23) if {hour, hour + 1} <= scores.keys()]
+            if pairs:
+                pair = max(pairs, key=lambda pair: (scores[pair[0]] + scores[pair[1]]) / 2)
+                first, second = pair
+                if scores[second] > scores[first]:
+                    first, second = second, first
+                best[category.name][weekday] = (
+                    (scores[first] + scores[second]) / 2,
+                    (first, second),
+                )
 
     names = [category.name for category in categories]
     chosen: tuple[float, tuple[int, ...]] | None = None
@@ -1103,16 +1165,38 @@ def featured_slots(
             chosen = (total, weekdays)
     if chosen is None:
         raise ScheduleError(
-            "The featured races cannot each have a weekday of their own with a prime hour "
-            "left"
+            "The featured races cannot each have a weekday of their own with two adjacent "
+            "prime hours left"
         )
-    return {name: (weekday, best[name][weekday][1]) for name, weekday in zip(names, chosen[1])}
+    return {
+        name: FeaturedSlot(weekday, best[name][weekday][1])
+        for name, weekday in zip(names, chosen[1])
+    }
 
 
 # Filling ---------------------------------------------------------------------
 
 
-HourScore = tuple[int, int, int, int, int, float]
+# A date's hours: (hours, next date's hours, prime, coverage, -short gaps, normal, value or
+# draw).
+HourScore = tuple[int, int, int, int, int, int, float]
+# The next date's best pick, as the look-ahead sees it: (hours, prime, coverage, -short gaps,
+# normal, value or draw).
+NextScore = tuple[int, int, int, int, int, float]
+# Alternate weeks: (sections gained, prime, -short gaps, -moves, normal, value).
+MoveScore = tuple[int, int, int, int, int, float]
+
+
+def draw_noise(seed: int, utc: datetime) -> float:
+    """Return a start's seeded noise: a standard Gumbel variable, -ln(-ln u), with u from the
+    SHA-256 of the seed and the start's UTC time, strictly between 0 and 1.
+
+    A draw key is ln(value) plus this noise. The highest key among tied hours is then a
+    draw with odds proportional to their values, and the same seed always draws the same.
+    """
+    digest = hashlib.sha256(f"{seed}:{utc.isoformat()}".encode()).digest()
+    uniform = (int.from_bytes(digest[:8], "big") + 0.5) / 2**64
+    return -math.log(-math.log(uniform))
 
 
 def choose_hours(
@@ -1123,7 +1207,9 @@ def choose_hours(
     forced: Sequence[Start] = (),
     previous: Start | None = None,
     wide_gaps: bool = True,
-    following: Callable[[Start | None], int] | None = None,
+    following: Callable[[Start | None], NextScore] | None = None,
+    lacking: Callable[[Start], int] | None = None,
+    draw: bool = False,
 ) -> tuple[HourScore, list[Start]] | None:
     """Pick a date's main race hours.
 
@@ -1131,13 +1217,18 @@ def choose_hours(
     taken. Any of `options` may be picked. Every two taken starts are at least a race length
     apart, and at most `need` starts are picked, forced ones included. Among such picks the
     winner has the most hours; then the most hours `following` gives the next date, from the
-    last main race taken (or `previous`); then the most prime; then the fewest short gaps;
-    then the most normal; then the highest value; then the earliest hours. A short gap is two
-    consecutive main races, counted on from `previous`, less than WIDE_GAP apart unless both
-    are prime; it counts only with `wide_gaps`.
+    last main race taken (or `previous`); then the most prime; then the most coverage: what
+    `lacking` counts for the picked starts; then the fewest short gaps; then the most normal;
+    then, with `draw`, the highest summed draw key, else the highest value; then the earliest
+    hours. `following` scores the next date's best pick after the last race taken, and its
+    prime, coverage, short gaps, normal and value add to this date's, so a late race pays
+    for what it takes from the next date. A short gap is two consecutive main races, counted
+    on from `previous`, less than WIDE_GAP apart unless both are prime; it counts only with
+    `wide_gaps`.
 
-    Returns the score `(hours, next hours, prime, -short gaps, normal, value)` and the picked
-    starts in time order, or None when the fixed and forced starts cannot all be taken.
+    Returns the score `(hours, next hours, prime, coverage, -short gaps, normal, value)`,
+    where value is the summed draw key with `draw`, and the picked starts in time order, or
+    None when the fixed and forced starts cannot all be taken.
     """
     items = sorted(
         [(start, "fixed") for start in fixed]
@@ -1159,14 +1250,20 @@ def choose_hours(
             and not (first.band == "prime" and second.band == "prime")
         )
 
+    def covers(start: Start) -> int:
+        return lacking(start) if lacking is not None else 0
+
+    def worth(start: Start) -> float:
+        return start.draw if draw else start.value
+
     @cache
     def best(last: int, left: int) -> tuple[HourScore, tuple[int, ...]] | None:
         # `last` is the index of the latest start taken, or -1 before the first.
         before = items[last][0] if last >= 0 else previous
         found = []
         if not bound[last + 1]:
-            following_hours = following(before) if following is not None else 0
-            found.append(((0, following_hours, 0, 0, 0, 0.0), ()))
+            ahead = following(before) if following is not None else (0, 0, 0, 0, 0, 0.0)
+            found.append(((0, *ahead), ()))
         for index in range(last + 1, count):
             start, kind = items[index]
             if last >= 0 and start.utc - items[last][0].utc < RACE_LENGTH:
@@ -1177,16 +1274,17 @@ def choose_hours(
             if not picked or left > 0:
                 rest = best(index, left - picked)
                 if rest is not None:
-                    (hours, following_hours, prime, gaps, normal, value), picks = rest
+                    (hours, next_hours, prime, coverage, gaps, normal, value), picks = rest
                     found.append(
                         (
                             (
                                 hours + picked,
-                                following_hours,
+                                next_hours,
                                 prime + (picked and start.band == "prime"),
+                                coverage + (picked and covers(start)),
                                 gaps - short(before, start),
                                 normal + (picked and start.band == "normal"),
-                                value + (start.value if picked else 0.0),
+                                value + (worth(start) if picked else 0.0),
                             ),
                             (index, *picks) if picked else picks,
                         )
@@ -1233,7 +1331,8 @@ class Filler:
 
     Featured races come first. Each date then picks its main race hours (choose_hours) and
     gives them main categories, prime first. A date's between races go into the gaps
-    between its main races once the next date's main races are placed.
+    between its main races once the next date's main races are placed. `seed` seeds the
+    hour draw (see draw_noise).
     """
 
     def __init__(
@@ -1245,6 +1344,7 @@ class Filler:
         weights: dict[str, dict[str, float]],
         events: list[Event],
         rules: Rules,
+        seed: int = DEFAULT_SEED,
     ) -> None:
         self.names = [category.name for category in categories]
         self.between_set = {
@@ -1261,6 +1361,13 @@ class Filler:
         self.open = open_by_name
         self.weights = weights
         self.rules = rules
+        self.seed = seed
+        # The categories that should race at every hour of their open bands.
+        self.every_hour = (
+            [category.name for category in categories if category.every_hour]
+            if rules.every_hour
+            else []
+        )
         self.by_effect = {
             effect: [event for event in events if event.effect == effect] for effect in EFFECTS
         }
@@ -1278,6 +1385,10 @@ class Filler:
         # Races so far per band and category, and per band, for the shares.
         self.taken: Counter[tuple[str, str]] = Counter()
         self.band_races: Counter[str] = Counter()
+        # Races so far per category and Eastern Time hour, for the every-hour categories.
+        self.hour_count: Counter[tuple[str, int]] = Counter()
+        # The starts the alternate weeks may not move (see stagger).
+        self.anchors: set[datetime] = set()
         self.band_weight = {
             band: sum(weights[name][band] for name in self.names) for band in BANDS
         }
@@ -1295,10 +1406,18 @@ class Filler:
             return None
         group = self.model.group(day)
         band, value = self.bands[group, hour]
-        return Start(utc=local.astimezone(UTC), local=local, group=group, band=band, value=value)
+        utc = local.astimezone(UTC)
+        draw = (math.log(value) if value > 0 else -math.inf) + draw_noise(self.seed, utc)
+        return Start(utc=utc, local=local, group=group, band=band, value=value, draw=draw)
 
-    def place(self, start: Start, name: str, *, featured: bool = False) -> None:
-        race = Race(start=start, category=name, featured=featured, between=name in self.between_set)
+    def place(self, start: Start, name: str, *, featured: bool = False, moved: int = 0) -> None:
+        race = Race(
+            start=start,
+            category=name,
+            featured=featured,
+            between=name in self.between_set,
+            moved=moved,
+        )
         day = start.local.date()
         insort(self.times, start.utc)
         if not race.between:
@@ -1311,6 +1430,24 @@ class Filler:
         self.week_count[self._week(day), name] += 1
         self.taken[start.band, name] += 1
         self.band_races[start.band] += 1
+        self.hour_count[name, start.local.hour] += 1
+
+    def unplace(self, race: Race) -> None:
+        """Take a placed race out again: the exact inverse of place."""
+        start, name = race.start, race.category
+        day = start.local.date()
+        self.times.remove(start.utc)
+        if not race.between:
+            self.main_times.remove(start.utc)
+            self.day_races[day] -= 1
+        del self.placed[start.utc]
+        self.on_day[day].remove(race)
+        del self.by_local[start.local.replace(tzinfo=None)]
+        self.day_count[day, name] -= 1
+        self.week_count[self._week(day), name] -= 1
+        self.taken[start.band, name] -= 1
+        self.band_races[start.band] -= 1
+        self.hour_count[name, start.local.hour] -= 1
 
     def neighbours(
         self, utc: datetime, *, main: bool = False
@@ -1363,17 +1500,29 @@ class Filler:
             or self.single_clash(start.utc)
         )
 
+    def lacks(self, start: Start) -> int:
+        """How many every-hour categories open in the start's band have no race yet at its
+        Eastern Time hour."""
+        hour = start.local.hour
+        return sum(
+            self.hour_count[name, hour] == 0 and start.band in self.open[name]
+            for name in self.every_hour
+        )
+
     def choose(self, start: Start, names: list[str]) -> str:
-        """Pick among fitting categories: not last week's at this hour, then the one furthest
-        below its share of the band, then not yesterday's at this hour, then plan order."""
+        """Pick among fitting categories: an every-hour category with no race yet at this
+        hour, then not last week's at this hour, then the one furthest below its share of the
+        band, then not yesterday's at this hour, then plan order."""
         naive = start.local.replace(tzinfo=None)
         week = self.by_local.get(naive - timedelta(days=7))
         day = self.by_local.get(naive - timedelta(days=1))
         rotate = self.rules.rotation
+        hour = start.local.hour
 
-        def key(name: str) -> tuple[bool, float, bool, int]:
+        def key(name: str) -> tuple[bool, bool, float, bool, int]:
             weight = self.weights[name][start.band]
             return (
+                not (name in self.every_hour and self.hour_count[name, hour] == 0),
                 rotate and week is not None and week.category == name,
                 self.taken[start.band, name] / weight if weight > 0 else math.inf,
                 rotate and day is not None and day.category == name,
@@ -1436,21 +1585,22 @@ class Filler:
         )
 
     def place_featured(
-        self, featured: dict[str, tuple[int, int]], dates: list[date], wanted: dict[date, int]
+        self, featured: dict[str, FeaturedSlot], dates: list[date], wanted: dict[date, int]
     ) -> dict[str, list[str]]:
         """Place every featured race of the period; return each category's skipped dates.
 
-        A featured race is skipped where DST removes its hour, a block event covers it or an
-        avoid event that lists its category covers it. A between category's featured race is
-        also skipped on a date that wants fewer than two main races or has no open bracket.
-        Two featured races less than a race length apart are an error.
+        A featured race starts at its slot's hour for the date's week of the period. It is
+        skipped where DST removes that hour, a block event covers it or an avoid event that
+        lists its category covers it. A between category's featured race is also skipped on
+        a date that wants fewer than two main races or has no open bracket. Two featured
+        races less than a race length apart are an error.
         """
         skipped: dict[str, list[str]] = defaultdict(list)
         for day in dates:
-            for name, (weekday, hour) in featured.items():
-                if day.weekday() != weekday:
+            for name, slot in featured.items():
+                if day.weekday() != slot.weekday:
                     continue
-                start = self.start(day, hour)
+                start = self.start(day, slot.hour(period_week(day, dates[0])))
                 if (
                     start is None
                     or self.touches("block", start.utc)
@@ -1477,24 +1627,42 @@ class Filler:
         index = bisect_left(self.main_times, midnight)
         return self.placed[self.main_times[index - 1]].start if index else None
 
-    def capacity(self, day: date, wanted: int) -> Callable[[Start | None], int]:
-        """How many main races a date could still take, at most `wanted` with its featured
-        ones, after a main race at the given start (or none)."""
+    def next_date(self, day: date, wanted: int) -> Callable[[Start | None], NextScore]:
+        """The look-ahead: how a date would score its best pick of main races, at most
+        `wanted` with its featured ones, after a main race at the given start (or none).
+
+        The pick keeps every rule of choose_hours but its own look-ahead. The given start counts
+        as the race before its first one, so a short gap across midnight counts against it.
+        Returns `(hours, prime, coverage, -short gaps, normal, value or draw)`."""
         options = self.open_hours(day)
         fixed = [race.start for race in self.on_day[day] if not race.between]
-        first = options[0].utc if options else None
+        first = min((start.utc for start in [*options, *fixed]), default=None)
+        reach = WIDE_GAP if self.rules.wide_gaps else RACE_LENGTH
+
+        def after(last: Start | None) -> NextScore:
+            # A race that far before the date's first start neither cuts its options nor
+            # makes a short gap, so it scores as no race at all.
+            if last is not None and (first is None or last.utc + reach <= first):
+                last = None
+            return score(last)
 
         @cache
-        def count(cutoff: datetime | None) -> int:
-            usable = [start for start in options if cutoff is None or start.utc >= cutoff]
-            result = choose_hours(usable, need=wanted - len(fixed), fixed=fixed, wide_gaps=False)
-            return result[0][0] if result is not None else 0
-
-        def after(last: Start | None) -> int:
+        def score(last: Start | None) -> NextScore:
             cutoff = None if last is None else last.utc + RACE_LENGTH
-            if cutoff is not None and first is not None and cutoff <= first:
-                cutoff = None
-            return count(cutoff)
+            usable = [start for start in options if cutoff is None or start.utc >= cutoff]
+            result = choose_hours(
+                usable,
+                need=wanted - len(fixed),
+                fixed=fixed,
+                previous=last,
+                wide_gaps=self.rules.wide_gaps,
+                lacking=self.lacks,
+                draw=self.rules.draw,
+            )
+            if result is None:
+                return (0, 0, 0, 0, 0, 0.0)
+            hours, _next_hours, *rest = result[0]
+            return (hours, *rest)
 
         return after
 
@@ -1502,12 +1670,16 @@ class Filler:
         """Bring a date up to `wanted` main races.
 
         Its hours also keep as many main races as they can for the next date, which wants
-        `next_wanted`. A between race already on the date must get a main race 1 to 2 hours
-        on each side; when no pick can do that, the date picks without it. A picked hour that
-        no main category fits stays empty and counts in `empty`.
+        `next_wanted`, and its pick counts together with the next date's best pick after it
+        (see next_date), so a late race pays for the hours it takes from the next date. A
+        between race already on the date must get a main race 1 to 2 hours on each side; when
+        no pick can do that, the date picks without it. The picked hours an every-hour category
+        lacks take their categories first, in time order, then the others by band, prime first,
+        in time order. A picked hour that no main category fits stays empty and counts in
+        `empty`.
         """
         following = (
-            self.capacity(day + timedelta(days=1), next_wanted)
+            self.next_date(day + timedelta(days=1), next_wanted)
             if next_wanted is not None
             else None
         )
@@ -1539,6 +1711,8 @@ class Filler:
                 previous=self.previous_main(day),
                 wide_gaps=self.rules.wide_gaps,
                 following=following,
+                lacking=self.lacks,
+                draw=self.rules.draw,
             )
             if result is not None:
                 found.append(result)
@@ -1550,6 +1724,8 @@ class Filler:
                 previous=self.previous_main(day),
                 wide_gaps=self.rules.wide_gaps,
                 following=following,
+                lacking=self.lacks,
+                draw=self.rules.draw,
             )
             if result is None:
                 raise ScheduleError(f"The featured races of {day} cannot all be kept")
@@ -1559,15 +1735,19 @@ class Filler:
             found,
             key=lambda entry: (entry[0], [-start.utc.timestamp() for start in entry[1]]),
         )
-        for band in BANDS:
-            for start in picked:
-                if start.band != band:
-                    continue
-                names = [name for name in self.main_names if self.fits(start, name)]
-                if names:
-                    self.place(start, self.choose(start, names))
-                else:
-                    self.empty += 1
+        # Hours an every-hour category lacks take their categories first, so that no other
+        # hour takes the category next to them; then the others in band order.
+        lacking = [start for start in picked if self.lacks(start)]
+        others = sorted(
+            (start for start in picked if start not in lacking),
+            key=lambda start: BANDS.index(start.band),
+        )
+        for start in lacking + others:
+            names = [name for name in self.main_names if self.fits(start, name)]
+            if names:
+                self.place(start, self.choose(start, names))
+            else:
+                self.empty += 1
 
     def fill_between(self, day: date) -> None:
         """Place a date's between races in the gaps between its main races.
@@ -1592,6 +1772,177 @@ class Filler:
                 ]
                 if names:
                     self.place(start, self.choose(start, names))
+
+    def moves(self, race: Race) -> list[Start]:
+        """The starts a race may take in a moving week: its own first, then the hour before
+        and the hour after on its own date. Each lies in a band open to the category and
+        outside every block event and every avoid event that lists it; a prime-time race
+        stays in prime time. A featured race already alternates between its two hours, and
+        an anchor (see stagger) keeps its every-hour category at its hour, so neither moves."""
+        start = race.start
+        if race.featured or start.utc in self.anchors:
+            return [start]
+        day, hour = start.local.date(), start.local.hour
+        found = [start]
+        for other in (hour - 1, hour + 1):
+            if not 0 <= other < 24:
+                continue
+            moved = self.start(day, other)
+            if (
+                moved is not None
+                and moved.band in self.open[race.category]
+                and (start.band != "prime" or moved.band == "prime")
+                and not self.touches("block", moved.utc)
+                and not self.touches("avoid", moved.utc, race.category)
+            ):
+                found.append(moved)
+        return found
+
+    def stagger(self, dates: list[date]) -> int:
+        """Move races of alternate weeks an hour, into the two-hour sections that held no
+        main race a week earlier. Returns how many races moved.
+
+        The period's Monday to Sunday weeks count from 1 (period_week), and each race of
+        weeks 2, 4, 6 and so on may take one of its moves; a featured race has none, and nor
+        has an anchor: the earliest race of each every-hour category at each hour. The
+        races keep their order, main races stay a race length apart, a bracketed between
+        race stays bracketed, and two races less than a race length apart stay outside every
+        single event. Among such moves a dynamic program over every race in time order takes
+        the most main races in a section (hour // 2) that held no main race on the date a
+        week earlier; then, as choose_hours ranks hours, the most prime races and the fewest
+        short gaps; then the fewest moves; then the most normal races; then the highest
+        value; then, race by race in time order, staying, then the earlier hour.
+        """
+        races = self.races()
+        if not races or not dates:
+            return 0
+        anchored: set[tuple[str, int]] = set()
+        for race in races:
+            cell = (race.category, race.start.local.hour)
+            if race.category in self.every_hour and cell not in anchored:
+                anchored.add(cell)
+                self.anchors.add(race.start.utc)
+        moving = [period_week(race.start.local.date(), dates[0]) % 2 == 0 for race in races]
+        options = [
+            self.moves(race) if move else [race.start] for race, move in zip(races, moving)
+        ]
+        # The weeks before a moving week never move, so today's positions are the reference.
+        covered = {
+            (race.start.local.date(), race.start.local.hour // 2)
+            for race in races
+            if not race.between
+        }
+        bracketed = [race.between and self.bracketed(race.start.utc) for race in races]
+        single = [[self.touches("single", start.utc) for start in starts] for starts in options]
+        # The index of the last main race before each race, or None.
+        last_main: list[int | None] = []
+        latest = None
+        for index, race in enumerate(races):
+            last_main.append(latest)
+            if not race.between:
+                latest = index
+        hour, week = timedelta(hours=1), timedelta(days=7)
+
+        def score(index: int, choice: int, main_start: Start | None) -> MoveScore:
+            race, start = races[index], options[index][choice]
+            gained = (
+                moving[index]
+                and not race.between
+                and (start.local.date() - week, start.local.hour // 2) not in covered
+            )
+            short = (
+                self.rules.wide_gaps
+                and main_start is not None
+                and not race.between
+                and start.utc - main_start.utc < WIDE_GAP
+                and not (main_start.band == "prime" and start.band == "prime")
+            )
+            return (
+                int(gained),
+                int(start.band == "prime"),
+                -int(short),
+                -int(choice > 0),
+                int(start.band == "normal"),
+                start.value,
+            )
+
+        def fits(index: int, choice: int, before: int | None, main_choice: int | None) -> bool:
+            """Whether a race's choice keeps the joint rules with the race before it and the
+            last main race before it."""
+            start = options[index][choice]
+            if before is not None:
+                apart = start.utc - options[index - 1][before].utc
+                if apart <= timedelta(0):
+                    return False
+                if apart < RACE_LENGTH and (single[index][choice] or single[index - 1][before]):
+                    return False
+                if (bracketed[index] or bracketed[index - 1]) and not hour <= apart <= RACE_LENGTH:
+                    return False
+            main = last_main[index]
+            if not races[index].between and main is not None and main_choice is not None:
+                if start.utc - options[main][main_choice].utc < RACE_LENGTH:
+                    return False
+            return True
+
+        # best[index][before, main]: the best score of the races from index on and the choice
+        # of race index, given the choices of the race before it and of the last main race
+        # before it. Walking back lets max keep the first choice on a tie, so earlier races
+        # settle their ties first.
+        best: list[dict[tuple[int | None, int | None], tuple[MoveScore, int]]] = [
+            {} for _ in races
+        ]
+        for index in range(len(races) - 1, -1, -1):
+            main = last_main[index]
+            befores = [None] if index == 0 else list(range(len(options[index - 1])))
+            mains = [None] if main is None else list(range(len(options[main])))
+            for before, main_choice in product(befores, mains):
+                if main is not None and main == index - 1 and main_choice != before:
+                    continue
+                main_start = None if main is None else options[main][main_choice]
+                found: tuple[MoveScore, int] | None = None
+                for choice in range(len(options[index])):
+                    if not fits(index, choice, before, main_choice):
+                        continue
+                    total = score(index, choice, main_start)
+                    if index + 1 < len(races):
+                        after_main = main_choice if races[index].between else choice
+                        rest = best[index + 1].get((choice, after_main))
+                        if rest is None:
+                            continue
+                        total = tuple(a + b for a, b in zip(total, rest[0]))
+                    if found is None or total > found[0]:
+                        found = (total, choice)
+                if found is not None:
+                    best[index][before, main_choice] = found
+
+        choices = []
+        before, main_choice = None, None
+        for index, race in enumerate(races):
+            entry = best[index].get((before, main_choice))
+            if entry is None:
+                # Every race staying put keeps every rule, so this cannot happen.
+                raise ScheduleError("The alternate weeks found no way to keep every rule")
+            choice = entry[1]
+            choices.append(choice)
+            before = choice
+            if not race.between:
+                main_choice = choice
+
+        moved = [
+            (race, options[index][choice])
+            for index, (race, choice) in enumerate(zip(races, choices))
+            if choice
+        ]
+        for race, _ in moved:
+            self.unplace(race)
+        for race, start in moved:
+            self.place(
+                start,
+                race.category,
+                featured=race.featured,
+                moved=1 if start.utc > race.start.utc else -1,
+            )
+        return len(moved)
 
     def short_gaps(self) -> int:
         """Consecutive main races less than WIDE_GAP apart, unless both start in prime time."""
@@ -1629,13 +1980,14 @@ def plan_proposal(
     period_start: datetime,
     period_end: datetime,
     rules: Rules,
+    seed: int = DEFAULT_SEED,
 ) -> JsonObject:
     """Place one set's races over the period.
 
     `layout` is the plan file's bands (see parse_bands), `pairs` scores the plan categories
     (see category_pairs), and the avoid events already avoid each plan category with a mode
     from a category they list (see expand_events). `rules` is SHIPPED for the report;
-    schedule_lab.py passes others.
+    schedule_lab.py passes others. `seed` seeds the hour draw.
     """
     if not rules.between:
         categories = [replace(category, between=False) for category in categories]
@@ -1655,7 +2007,7 @@ def plan_proposal(
         else {}
     )
 
-    filler = Filler(categories, model, bands, open_by_name, weights, events, rules)
+    filler = Filler(categories, model, bands, open_by_name, weights, events, rules, seed)
     wanted = {day: race_set.per_day[model.group(day)] for day in dates}
     skipped = filler.place_featured(featured, dates, wanted)
     for index, day in enumerate(dates):
@@ -1665,6 +2017,7 @@ def plan_proposal(
             filler.fill_between(dates[index - 1])
     if dates:
         filler.fill_between(dates[-1])
+    moved = filler.stagger(dates) if rules.stagger else 0
     placed = filler.races()
 
     turn: Counter[str] = Counter()
@@ -1697,6 +2050,7 @@ def plan_proposal(
                 "fill": model.fill[mode.source][start.local.hour // BLOCK_HOURS],
                 "featured": race.featured,
                 "between": race.between,
+                "moved": race.moved,
             }
         )
 
@@ -1721,11 +2075,14 @@ def plan_proposal(
         name: Counter({"prime": 0, "normal": 0, "quiet": 0, "featured": 0, "between": 0})
         for name in names
     }
+    # Each category's races by Eastern Time start hour, over the whole period.
+    by_hour = {name: [0] * 24 for name in names}
     for race in races:
         counts = split[race["category"]]
         counts[race["band"]] += 1
         counts["featured"] += race["featured"]
         counts["between"] += race["between"]
+        by_hour[race["category"]][race["hour"]] += 1
     featured_races = Counter(race["category"] for race in races if race["featured"])
     per_date = Counter({day.isoformat(): 0 for day in dates})
     per_date.update(race["date"] for race in races if not race["between"])
@@ -1735,6 +2092,21 @@ def plan_proposal(
         if per_date[day.isoformat()] < wanted[day]
     ]
     unbracketed = filler.unbracketed()
+    # The hours of an every-hour category's open bands, in any day group, without a race.
+    uncovered = {
+        name: [
+            hour
+            for hour in range(24)
+            if by_hour[name][hour] == 0
+            and any(bands[group, hour][0] in open_by_name[name] for group in DAY_GROUPS)
+        ]
+        for name in filler.every_hour
+    }
+    missing = [
+        f"{name} {', '.join(f'{hour:02d}:00' for hour in hours)}"
+        for name, hours in uncovered.items()
+        if hours
+    ]
     notices = []
     if shortfall:
         notices.append(
@@ -1746,6 +2118,11 @@ def plan_proposal(
     if unbracketed:
         notices.append(
             f"{unbracketed} between races lack a main race 1 to 2 hours on one side."
+        )
+    if missing:
+        count = sum(len(hours) for hours in uncovered.values())
+        notices.append(
+            f"Every-hour categories lack races at {count} hours: {'; '.join(missing)}."
         )
     description = race_set.description
     if filler.between_names:
@@ -1765,6 +2142,7 @@ def plan_proposal(
                 "weekly_max": category.weekly_max,
                 "only_prime": category.only_prime,
                 "between": category.name in filler.between_set,
+                "every_hour": category.every_hour,
                 "favourite_mode": None if category.mixed else category.favourite_mode.name,
                 "open_bands": list(open_by_name[category.name]),
                 "weights": weights[category.name],
@@ -1800,8 +2178,9 @@ def plan_proposal(
         "featured": [
             {
                 "category": name,
-                "weekday": weekday,
-                "hour": hour,
+                "weekday": slot.weekday,
+                # The hour of weeks 1, 3, 5 and so on, then of weeks 2, 4, 6.
+                "hours": list(slot.hours),
                 "between": name in filler.between_set,
                 # A mixed category's featured race takes its modes in turn.
                 "mode": None if by_name[name].mixed else by_name[name].favourite_mode.name,
@@ -1812,7 +2191,7 @@ def plan_proposal(
                 "races": featured_races[name],
                 "skipped": skipped.get(name, []),
             }
-            for name, (weekday, hour) in featured.items()
+            for name, slot in featured.items()
         ],
         "races": len(races),
         "between": sum(race["between"] for race in races),
@@ -1825,12 +2204,20 @@ def plan_proposal(
         "empty_hours": filler.empty,
         "short_gaps": filler.short_gaps(),
         "unbracketed": unbracketed,
+        "moved": moved,
         "expected_entrants": sum(race["expected"] for race in races) - lost,
         "expected_cancelled": sum(1 - race["fill"] for race in races),
         "event_conflicts": event_conflicts(races, events),
         "repeats": repeats,
+        # Each every-hour category's hours without a race; empty without the rule.
+        "uncovered": uncovered,
         "categories": [
-            {"category": category, "races": sum(counts[band] for band in BANDS), **counts}
+            {
+                "category": category,
+                "races": sum(counts[band] for band in BANDS),
+                **counts,
+                "by_hour": by_hour[category],
+            }
             for category, counts in split.items()
         ],
         "holidays": [day.isoformat() for day in dates if model.holidays and is_holiday(day)],
@@ -1949,11 +2336,12 @@ def analyse(
     weeks: int | None = None,
     pairs: dict[Pair, PairScore] | None = None,
     generated_at: datetime | None = None,
+    seed: int = DEFAULT_SEED,
 ) -> JsonObject:
     """Learn the demand, then build one proposal per set as plain data for the reports.
 
     `start` and `weeks` override the plan file's season. `pairs` scores categories, not
-    plan categories.
+    plan categories. `seed` seeds the hour draw.
     """
     first_day, weeks, last_day = plan_season(config, schedule, start, weeks)
     slots, history_start, history_end = history_slots(schedule, modes, races)
@@ -1982,6 +2370,7 @@ def analyse(
             period_start=period_start,
             period_end=period_end,
             rules=SHIPPED,
+            seed=seed,
         )
         for race_set in SETS
     ]
@@ -2009,6 +2398,7 @@ def analyse(
             "featured_shrink": FEATURED_SHRINK,
             "min_mode_slots": MIN_MODE_SLOTS,
             "low_rate": LOW_RATE,
+            "seed": seed,
         },
         "history": {
             "start": history_start.astimezone(TIMEZONE).date().isoformat(),
@@ -2079,6 +2469,8 @@ def _limits(category: JsonObject) -> list[str]:
         notes.append(f"at most {category['weekly_max']} a week")
     if category["only_prime"]:
         notes.append("prime time only")
+    if category["every_hour"]:
+        notes.append("every hour")
     return notes
 
 
@@ -2146,11 +2538,13 @@ def _shortfall(proposal: JsonObject) -> str:
 
 
 def _featured_text(item: JsonObject) -> str:
+    """One featured race, its hour of weeks 1, 3, 5 first, as 'entrance Tue 14:00/15:00 ...'."""
     mode = item["mode"] or f"rotates: {', '.join(item['rotates'])}"
     skipped = f", skipped {_dates(item['skipped'])}" if item["skipped"] else ""
     between = ", between race" if item["between"] else ""
+    odd, even = item["hours"]
     return (
-        f"{item['category']} {WEEKDAY_SHORT[item['weekday']]} {item['hour']:02d}:00 {mode} "
+        f"{item['category']} {WEEKDAY_SHORT[item['weekday']]} {odd:02d}:00/{even:02d}:00 {mode} "
         f"({item['races']} races{between}{skipped})"
     )
 
@@ -2213,6 +2607,7 @@ def format_report(result: JsonObject) -> str:
         f"The next season starts on {period['next_season']}.",
         f"Learned from {history['slots']:,} scheduled slots, {history['start']} to "
         f"{history['end']}: {history['fired']:,} fired, {history['cancelled']:,} cancelled.",
+        f"Hours drawn with seed {result['parameters']['seed']}; --seed draws another season.",
     ]
     lines += [_event_text(event) for event in result["events"]]
     holidays = period["holidays"]
@@ -2293,7 +2688,8 @@ def format_report(result: JsonObject) -> str:
             f"({_per_race(proposal):.2f} a race), "
             f"{proposal['expected_cancelled']:,.0f} expected cancelled rooms, "
             f"{proposal['short_gaps']} short gaps, {proposal['repeats']} weekly repeats, "
-            f"{proposal['event_conflicts']} event conflicts.",
+            f"{proposal['event_conflicts']} event conflicts, "
+            f"{proposal['moved']} races moved an hour in alternate weeks.",
         ]
         if proposal["shortfall"]:
             lines.append(f"  Short of races on: {_shortfall(proposal)}.")
@@ -2410,6 +2806,9 @@ section { display: grid; gap: 12px; min-width: 0; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
 th, td { padding: 6px 10px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--line); }
 .summary th { white-space: normal; vertical-align: bottom; }
+.hours th, .hours td { padding: 4px 6px; }
+.hours td.gap { font-weight: 700; color: var(--high); }
+.hours tr.all td { border-top: 2px solid var(--line); font-weight: 600; }
 th { color: var(--muted); font-weight: 600; }
 tr:last-child td, tr:last-child th { border-bottom: 0; }
 .num { text-align: right; }
@@ -2758,6 +3157,8 @@ def _week_grid(
                 title += ", featured"
             if race["between"]:
                 title += ", between race"
+            if race["moved"]:
+                title += f", moved an hour {'later' if race['moved'] > 0 else 'earlier'}"
             if race["between"]:
                 kind = "btw-feat" if race["featured"] else "btw"
             else:
@@ -2812,15 +3213,24 @@ def _featured_table(proposal: JsonObject) -> str:
         [
             _esc(item["category"]) + ('<span class="badge">between race</span>' if item["between"] else ""),
             _WEEKDAY_LONG[item["weekday"]],
-            f"{item['hour']:02d}:00",
+            f"{item['hours'][0]:02d}:00",
+            f"{item['hours'][1]:02d}:00",
             _esc(item["mode"] or f"rotates: {', '.join(item['rotates'])}"),
             str(item["races"]),
             _esc(", ".join(item["skipped"]) or "none"),
         ]
         for item in proposal["featured"]
     ]
-    head = ["Category", "Weekday", "Hour (ET)", "Mode", "Races", "Skipped dates"]
-    return _table(head, rows, {4})
+    head = [
+        "Category",
+        "Weekday",
+        "Weeks 1, 3, 5&hellip; (ET)",
+        "Weeks 2, 4, 6&hellip; (ET)",
+        "Mode",
+        "Races",
+        "Skipped dates",
+    ]
+    return _table(head, rows, {5})
 
 
 def _categories_table(proposal: JsonObject) -> str:
@@ -2840,6 +3250,53 @@ def _categories_table(proposal: JsonObject) -> str:
     return _table(head, rows, set(range(1, 7)))
 
 
+# The darkest shading of a races-by-hour cell, in percent of --seq over the surface.
+_HOURS_SHADE = 35
+
+
+def _hours_table(proposal: JsonObject) -> str:
+    """Each category's races by Eastern Time start hour over the period, with an All row of
+    the hour totals and a Total column. A category's cells are shaded by count; zero cells
+    are blank, except the hours the proposal lists as uncovered for a category marked every
+    hour: those show a bold 0, unshaded, with a title that names the missing race."""
+    rows = proposal["categories"]
+    uncovered = proposal["uncovered"]
+    peak = max((count for row in rows for count in row["by_hour"]), default=0)
+
+    def cell(count: int, title: str, shade: bool, gap: bool = False) -> str:
+        if gap:
+            return f'<td class="num gap" title="{_esc(title)}">0</td>'
+        if not count:
+            return '<td class="num"></td>'
+        style = (
+            f' style="background:color-mix(in srgb, var(--seq) '
+            f'{round(_HOURS_SHADE * count / peak)}%, var(--surface))"'
+            if shade
+            else ""
+        )
+        return f'<td class="num"{style} title="{_esc(title)}">{count}</td>'
+
+    def line(name: str, counts: list[int], shade: bool, css: str = "") -> str:
+        missing = uncovered.get(name, [])
+        cells = "".join(
+            cell(count, f"{name}, {hour:02d}:00 ET: {count} races", shade)
+            if hour not in missing
+            else cell(0, f"{name}: no race at {hour:02d}:00 ET", False, gap=True)
+            for hour, count in enumerate(counts)
+        )
+        return f"<tr{css}><td>{_esc(name)}</td>{cells}<td class=\"num\">{sum(counts)}</td></tr>"
+
+    totals = [sum(row["by_hour"][hour] for row in rows) for hour in range(24)]
+    body = "".join(line(row["category"], row["by_hour"], True) for row in rows)
+    body += line("All", totals, False, ' class="all"')
+    head = "<th>Category</th>" + "".join(f'<th class="num">{hour}</th>' for hour in range(24))
+    head += '<th class="num">Total</th>'
+    return (
+        f'<div class="hours"><div class="wrap"><table><thead><tr>{head}</tr></thead>'
+        f"<tbody>{body}</tbody></table></div></div>"
+    )
+
+
 def _proposal_section(result: JsonObject, proposal: JsonObject, is_first: bool) -> str:
     notice = (
         f'<p class="notice"><strong>Notice.</strong> {_esc(proposal["notice"])}</p>'
@@ -2851,6 +3308,11 @@ def _proposal_section(result: JsonObject, proposal: JsonObject, is_first: bool) 
         if proposal["shortfall"]
         else ""
     )
+    every_hour_note = (
+        " A 0 marks an hour a category marked every hour has no race at."
+        if any(proposal["uncovered"].values())
+        else ""
+    )
     return (
         f"<details{' open' if is_first else ''}>"
         f"<summary>{_name(proposal)}: {proposal['weekly_races']} main races a week, "
@@ -2859,12 +3321,21 @@ def _proposal_section(result: JsonObject, proposal: JsonObject, is_first: bool) 
         "<h3>Full schedule</h3>"
         '<p class="note">Every date of the period by start hour, Eastern Time, one grid for '
         "each Monday to Sunday week. Cells are shaded by the band of that date&rsquo;s day "
-        "group, and a holiday takes the Prime group&rsquo;s bands. Hover a race for its date, "
-        f"hour, band, category and mode.</p>{_SCHEDULE_KEY}{_full_schedule(result, proposal)}"
+        "group, and a holiday takes the Prime group&rsquo;s bands. In weeks 2, 4, 6 and so on, "
+        f"{proposal['moved']:,} races moved an hour into the two-hour sections the week before "
+        "left empty. Featured races never move: they alternate between their two hours "
+        "instead. Hover a race for its date, hour, band, category and mode, and whether it "
+        f"moved.</p>{_SCHEDULE_KEY}{_full_schedule(result, proposal)}"
         "<h3>Featured races</h3>"
+        '<p class="note">Each featured race alternates week by week between two adjacent '
+        "hours: the first in weeks 1, 3, 5 and so on, the second in weeks 2, 4, 6.</p>"
         f"{_featured_table(proposal)}"
         "<h3>Categories</h3>"
-        f"{_categories_table(proposal)}</section></details>"
+        f"{_categories_table(proposal)}"
+        "<h3>Races by hour</h3>"
+        '<p class="note">How many races of each category start at each Eastern Time hour '
+        "over the whole period, featured and between races included. Empty cells are zero."
+        f"{every_hour_note}</p>{_hours_table(proposal)}</section></details>"
     )
 
 
@@ -2908,7 +3379,7 @@ def _holiday_section(result: JsonObject) -> str:
         f"<section><h2>Holidays</h2><p>{body}</p>"
         f'<p class="note">The planner treats these as holidays: {_esc(names)}. A holiday '
         "takes the Prime day group, with its bands and its races a day. Featured races keep "
-        "their weekday and hour.</p></section>"
+        "their weekday and their two hours.</p></section>"
     )
 
 
@@ -2940,15 +3411,23 @@ def _method_note(result: JsonObject) -> str:
         "races. Each set runs a fixed number of main races a day in the Work, Casual and "
         f"Prime groups: {_esc(sets)}.</p>"
         "<p>Each category first gets a featured race in prime time, on a weekday of its own, "
-        "at the same hour every week, picked from its own record at that hour. Each date "
+        "alternating week by week between two adjacent hours, picked from its own record at "
+        "those hours. Each date "
         f"then takes its main races at least {p['race_hours']} hours apart, at the hours "
-        "that hold the most prime races, then the most normal ones. Outside prime time "
+        "that hold the most prime races. Next come the hours a category marked every hour "
+        "still lacks, so such a category races at every hour of the season; then the fewest "
+        "short gaps and the most normal hours. Among the hour sets equal by all of these, "
+        "the date draws one, with odds by the hours&rsquo; expected turnout, using seed "
+        f"{p['seed']} (another <code>--seed</code> draws another season). Outside prime time "
         f"{p['wide_gap_hours']} hours apart is preferred, so a race goes to a quiet hour "
         "before a normal-hour gap shrinks to 2 hours. A short gap is two consecutive main "
         f"races less than {p['wide_gap_hours']} hours apart, unless both start in prime time. "
-        "A lookahead keeps a date from ending so late that the next date cannot reach its "
-        "races a day.</p>"
-        "<p>Main prime-time races are given out first, then normal, then quiet. Each race goes "
+        "A lookahead ranks each date&rsquo;s hours together with the next date&rsquo;s best "
+        "hours after them, so the next date keeps room for its races a day and a late race "
+        "pays for the early hours and short gaps it costs the next date.</p>"
+        "<p>Main prime-time races are given out first, then normal, then quiet, and the hours "
+        "a category marked every hour lacks are given out before the others. A category "
+        "marked every hour that has no race yet at an hour takes it first. Each race goes "
         "to the main category furthest below its share of that band, and a band is shared by "
         "expected turnout. A race avoids the category that ran at the same hour a week "
         "earlier, then the one that ran a day earlier, and never breaks a daily or weekly "
@@ -3157,6 +3636,12 @@ def parse_args() -> argparse.Namespace:
         f"else {DEFAULT_WEEKS})",
     )
     parser.add_argument(
+        "--seed",
+        type=int,
+        default=DEFAULT_SEED,
+        help=f"seed of the hour draw; another seed draws another season (default: {DEFAULT_SEED})",
+    )
+    parser.add_argument(
         "--out",
         type=Path,
         default=None,
@@ -3190,6 +3675,7 @@ def main() -> int:
             load_config(args.config),
             start=args.start,
             weeks=args.weeks,
+            seed=args.seed,
         )
     except (
         ScheduleError,

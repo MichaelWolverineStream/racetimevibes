@@ -40,7 +40,7 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 `scripts/schedule_planner.py` proposes one season of ladder races as four sets, *Light*, *Medium*, *Full* and *Bonanza*, from 55 to 76 races a week plus the races that start between them. All four run exactly the categories and modes that the plan file lists. It learns from how many racers came to every slot the alttpr.racing schedule ever held, including the cancelled ones. The rules this section describes are `SHIPPED` in the code, and [Schedule strategy comparison](#schedule-strategy-comparison) tests deviations from them.
 
-It reads the race archive and the schedule mirror (see [Ladder schedule mirror](archive.md#ladder-schedule-mirror)), so refresh both first. `--out` writes each proposal as CSV and as JSON, and the success rates as CSV. `--html` writes a report page and `--rates` a success-rate page. The planner is deterministic: the same archive, plan file and start date always give the same proposals.
+It reads the race archive and the schedule mirror (see [Ladder schedule mirror](archive.md#ladder-schedule-mirror)), so refresh both first. `--out` writes each proposal as CSV and as JSON, and the success rates as CSV. `--html` writes a report page and `--rates` a success-rate page. The planner is deterministic: the same archive, plan file, start date and seed always give the same proposals. `--seed N` (1 by default) sets the seed of the draw of hours, and another seed draws another season.
 
 ```bash
 python3 scripts/schedule_archive.py                     # refresh the schedule mirror (network)
@@ -49,6 +49,7 @@ python3 scripts/schedule_planner.py --out proposals     # also write CSV and JSO
 python3 scripts/schedule_planner.py --rates rates.html  # also write the success-rate page
 python3 scripts/schedule_planner.py --start 2027-01-11 --weeks 9 --html report.html
 python3 scripts/schedule_planner.py --config other-plan.json
+python3 scripts/schedule_planner.py --seed 2            # another draw of the hours
 ```
 
 ### Terms
@@ -80,12 +81,13 @@ Glitched and Spoiler are **between categories**. They share few racers with the 
 | Full | 9 | 10 | 11 | 69 |
 | Bonanza | 10 | 11 | 12 | 76 |
 
-Today's grid has 12 races a day, 84 a week. The planner fills the season in four steps:
+Today's grid has 12 races a day, 84 a week. The planner fills the season in five steps:
 
-1. **Featured races.** Each plan category gets one race in prime time, on a weekday of its own, at the same hour every week. The hour is picked from the category's own record at it, never inside a weekly event that rules the category out. A featured Glitched or Spoiler race is a between race like any other.
-2. **Hours.** Main races start at least 2 hours apart. Each date takes its main races at the hours that hold the most prime races. Outside prime time, 3 hours apart is preferred: a race goes to a quiet hour before a normal-hour gap shrinks to 2 hours. After that come the most normal races. So the hours shift from day to day, and quiet races do not always start at the same hour.
-3. **Categories.** Prime-time races are given out first, then normal, then quiet. Each race goes to the main category furthest below its share of that band. A band is shared by expected turnout. A race avoids the category that ran at the same hour a week earlier, then the one that ran there a day earlier.
+1. **Featured races.** Each plan category gets one race in prime time, on a weekday of its own, alternating week by week between two adjacent prime hours. The pair of hours is picked from the category's own record at them, never inside a weekly event that rules the category out. A featured Glitched or Spoiler race is a between race like any other.
+2. **Hours.** Main races start at least 2 hours apart. Each date takes its main races at the hours that hold the most prime races, then the most hours that a category marked `everyHour` still lacks, so that such a category races at every hour of the season. Outside prime time, 3 hours apart is preferred: a race goes to a quiet hour before a normal-hour gap shrinks to 2 hours. After that come the most normal races. Among the sets that are equally good by every rule, the date draws one, with odds by expected turnout. A date also looks one date ahead: it ranks its hours together with the next date's best hours after them, so a race at 23:00 pays for the 00:00 it takes from the next date and the short gap it makes at 01:00. So the hours shift from day to day, and quiet races do not always start at the same hour.
+3. **Categories.** An every-hour category that has no race yet at the hour goes first. Hours that an every-hour category lacks are given out first, then prime-time races, then normal, then quiet. Otherwise each race goes to the main category furthest below its share of that band. A band is shared by expected turnout. A race avoids the category that ran at the same hour a week earlier, then the one that ran there a day earlier.
 4. **Between races.** A between category races whenever it is behind its own turnout share of a band, in a gap between two main races: 1 or 2 hours after one and 1 or 2 hours before the next. A gap holds at most one between race.
+5. **Alternate weeks.** In every second week, races may start an hour earlier or later, so that the two-hour sections the week before left empty get main races too. Every rule above still holds. A prime-time race stays in prime time, and each every-hour category's first race at an hour never moves. Featured races never move: they already alternate between their two hours.
 
 **A category never races where it almost never fired.** If a category's rooms fired less than 10% of the time in a band, it never races in that band. A category with `onlyPrimeTime` races only in prime time. A category's prime-time races run its most popular mode, and its other races take its modes in turn.
 
@@ -116,8 +118,9 @@ So a 9-week season that starts on Monday 2026-11-09 races until Thursday 2027-01
 - **`weeklyMax`**: at most this many races in any Monday to Sunday week.
 - **`onlyPrimeTime: true`**: races in prime time only.
 - **`between: true`**: a between category, whose races start only between two main races.
+- **`everyHour: true`**: the category gets at least one race at every one of its **target hours** over the season: the Eastern Time hours 0–23 whose band is open to it in at least one day group. With `onlyPrimeTime`, those are prime hours only. The shipped file sets it on entrance, keys and simple.
 
-Both limits are whole numbers of at least 1. They are caps, never targets: a category gets its share, which may be less. `onlyPrimeTime` and `between` are `true` or `false`. If every plan category is a between category, that is an error.
+Both limits are whole numbers of at least 1. They are caps, never targets: a category gets its share, which may be less. `onlyPrimeTime`, `between` and `everyHour` are `true` or `false`, and `everyHour` is `false` by default. If every plan category is a between category, that is an error. So is a category that is both `between: true` and `everyHour: true`: a between category cannot be everyHour.
 
 **Mode names.**
 
@@ -201,6 +204,11 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
 
 - **Bands.** Each group-hour is **prime**, **quiet** or **normal**, as the plan file's `bands` say.
 - **Value.** Each of the 72 group-hours gets a value: the mean, over the plan categories, of their expected entrants there.
+- **Draw key.** Every start gets one: $\ln(\mathit{value}) + G$, where value is its group-hour's value.
+  - $G = -\ln(-\ln u)$, with $u$ = (the first 8 bytes of the SHA-256 of the text `"{seed}:{start's UTC time in ISO 8601}"`, read as a big-endian integer, + 0.5) / $2^{64}$.
+  - A value of 0 or less gives a key of $-\infty$.
+  - Among tied hours, the highest key is a draw with odds proportional to value (the Gumbel-max trick). For several hours, it favours dearer sets the same way.
+  - The seed is `--seed`, 1 by default. `analyse(seed=...)` and `plan_proposal(seed=...)` take it.
 - **Fire rate.** A category's fire rate in a band is its fired window slots in that band divided by all its window slots there. A slot's band is the band of its own date's group at its hour. A band with no slots has a rate of 0.
 - **Open bands.** A plan category may race in a band when every one of its sources has a fire rate of at least 10% there. With `onlyPrimeTime`, it may race only in prime time, and only if prime time is open. A plan category with no open band is an error.
 
@@ -218,21 +226,23 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
 - **Skipped candidates.** A candidate is skipped if, in any week of the period, its race would be inside either of these:
   - a weekly `block` event;
   - a weekly `avoid` event that lists the category.
-- **Score.** `(entrants in its sources' past slots at that weekday-hour + 5 · E) / (those slots + 5)`.
+- **Pairs.** A pair is two candidate hours h and h + 1 of the same date, so 23:00 never pairs with 00:00. A weekday with no pair has no candidate.
+- **Score.** The score of an hour is `(entrants in its sources' past slots at that weekday-hour + 5 · E) / (those slots + 5)`. A pair scores the mean of its two hours' scores.
   - $E$ is the expected entrants of the category's most popular mode, at that weekday's group and hour. For a mixed category, it is the expected entrants of the plan category.
-  - A category's best candidate on a weekday is the one with the highest score. Ties go to the earlier hour.
+  - A category's best pair on a weekday is the one with the highest score. Ties go to the earlier pair.
+  - Within the pair, the hour with the higher score runs in odd weeks, the earlier one on a tie. The other hour runs in even weeks. Weeks are the period's Monday to Sunday weeks counted from 1, the first maybe partial, as under *Alternate weeks*.
 - **Assignment.**
-  - Each plan category gets a weekday of its own, and its best candidate on that weekday. Between categories take part like the others.
-  - The assignment with the highest summed score wins. Ties go to the first assignment in order, with the categories in plan order and the weekdays counted from Monday.
+  - Each plan category gets a weekday of its own, and its best pair on that weekday. Between categories take part like the others.
+  - The assignment with the highest summed pair score wins. Ties go to the first assignment in order, with the categories in plan order and the weekdays counted from Monday.
   - More than 7 plan categories is an error. So is having no assignment.
-- **Dating.** A featured race keeps its weekday and hour all season, on holidays too.
-  - It is skipped on a date where daylight saving skips its hour, where a `block` event covers it, or where an `avoid` event that lists its category covers it. Its hour is then open to other races.
-  - A featured race of a between category is a between race. It is also skipped on a date whose N is below 2, and on a date with no open **bracket**: two start times on the same date, one 1 or 2 hours before the race and one 1 or 2 hours after it, each outside every `block` event.
+- **Dating.** A featured race keeps its weekday all season, on holidays too. In odd weeks it takes the pair's first hour, in even weeks the other.
+  - It is skipped on a date where daylight saving skips that week's hour, where a `block` event covers it, or where an `avoid` event that lists its category covers it. There is no fallback to the other hour. Its hour is then open to other races.
+  - A featured race of a between category is a between race. It is also skipped on a date whose N is below 2, and on a date with no open **bracket** at that week's hour: two start times on the same date, one 1 or 2 hours before the race and one 1 or 2 hours after it, each outside every `block` event.
   - Two featured races less than 2 hours apart are an error.
 
 #### Placement
 
-The featured races of the whole period come first. Then each date, in order, takes its main races. A date's between races follow right after the next date's main races, and the last date's at the end, so that a gap across midnight has its main races on both sides.
+The featured races of the whole period come first. Then each date, in order, takes its main races. A date's between races follow right after the next date's main races, and the last date's at the end, so that a gap across midnight has its main races on both sides. Last, the races of alternate weeks may move an hour (see *Alternate weeks*).
 
 - **Hours.**
   - **Open hours** are the date's start times that meet all of these:
@@ -242,27 +252,30 @@ The featured races of the whole period come first. Then each date, in order, tak
     - if a race placed so far starts less than 2 hours from it, neither is inside a `single` event.
   - **Choice.** From the open hours, the date takes a set whose hours are at least 2 hours apart from each other and from the date's featured main race. The set holds at most N less the main races the date already has.
   - **Bracket.** On a date with a featured between race, the set must hold an hour 1 or 2 hours before that race and one 1 or 2 hours after it. A main race already placed there counts. If no set can, the date takes its best set without the bracket.
+  - **Next date's best choice.** For a set, the set the next date of the period would then take by the rules of *Choice* and of *Order* below, except rule 2: from its open hours at least 2 hours after the set's last race, up to its N less its main races already placed, counted with only the races placed so far. That last race starts the next date's first gap. The last date of the period has none.
   - **Order.** Among the sets allowed, the date takes the one with, in order:
     1. the most hours;
-    2. the most hours left for the next date of the period: how many hours it could then take by the rules of *Choice*, up to its N less its featured main races, counted with only its featured races placed;
+    2. the most hours left for the next date of the period: the hours of the next date's best choice;
     3. the most prime hours;
-    4. the fewest **short gaps**: two consecutive main races less than 3 hours apart, unless both start in prime time. The gaps counted run from the last main race placed before the date's first one, through the date's chosen hours and its featured main race;
-    5. the most normal hours;
-    6. the highest total value;
-    7. the earliest hours.
+    4. the most **coverage**: for each chosen hour, the number of every-hour categories, open in its band, that have no race yet at that Eastern Time hour on any date of the period (featured races count), summed over the chosen hours;
+    5. the fewest **short gaps**: two consecutive main races less than 3 hours apart, unless both start in prime time. The gaps counted run from the last main race placed before the date's first one, through the date's chosen hours and its featured main race;
+    6. the most normal hours;
+    7. the highest total **draw key**;
+    8. the earliest hours.
 
-    A dynamic program finds it. Rule 2 keeps a date from ending so late that a 12-race date after it cannot start at midnight.
+    Rules 3 to 7 count the set's hours together with the next date's best choice after it. A dynamic program finds it. Rule 2 keeps a date from ending so late that a 12-race date after it cannot start at midnight. Counting the next date's best choice in rules 3 to 7 makes a late race pay for what it costs the next date: a race at 23:00 takes the next date's 00:00 and makes its 01:00 a short gap, and a date leaves the next date an hour that a category still lacks. With `Rules.draw` off (lab variant `no-draw`), rule 7 is the highest total value instead.
 - **Fit.** A category fits a start when all of these hold:
   - its band is open to the category;
   - it is not inside an `avoid` event that lists the category;
   - the category is under its `dailyMax` on that date and its `weeklyMax` in that Monday to Sunday week;
   - the race just before it and the race just after it, in time, are of other categories. For a main category these are the main races just before and after it, so a between race in a gap does not let a category run twice in a row;
   - if a race starts less than 2 hours from it, neither is inside a `single` event.
-- **Categories.** The chosen hours take main categories in band order: prime, then normal, then quiet, each in time order. Each hour takes one of the main categories that fit there, chosen by these rules in turn:
-  1. not the category of the race at the same wall-clock time 7 days earlier;
-  2. the lowest **share ratio**: the category's races so far in that band, featured races included, divided by its **weight** in the band;
-  3. not the category of the race at the same wall-clock time 1 day earlier;
-  4. plan order.
+- **Categories.** The chosen hours that an every-hour category lacks take their categories first, in time order. Then the other chosen hours follow in band order: prime, then normal, then quiet, each in time order. So no other hour takes the category next to a lacking hour first, which would stop it running there, as no category races twice in a row. Each hour takes one of the main categories that fit there, chosen by these rules in turn:
+  1. an every-hour category with no race yet at the start's Eastern Time hour, on any date so far;
+  2. not the category of the race at the same wall-clock time 7 days earlier;
+  3. the lowest **share ratio**: the category's races so far in that band, featured races included, divided by its **weight** in the band;
+  4. not the category of the race at the same wall-clock time 1 day earlier;
+  5. plan order.
 
   An hour that no main category fits stays without a race. It is an **empty hour**, and the proposal's notice counts it.
 - **Weight.** A category's weight in an open band is its mean expected entrants over the band's weekday-hours. In a closed band, or a band with no hours, the weight is 0, and the share ratio of a category with weight 0 is infinite.
@@ -273,6 +286,33 @@ The featured races of the whole period come first. Then each date, in order, tak
   - **Order.** The date's gap hours are tried in band order, prime then normal then quiet. Within a band they go by value, highest first, and ties go to the earlier time. Each takes one of the between categories that are due in its band and fit, chosen by the rules of *Categories*, or stays free. Due and gaps are checked again before each gap hour, so a gap takes at most one between race.
   - A between category that finds no gap hour stays due. Between races never make a date short.
 - **Shortfall.** A date that ends with fewer than N main races is in the proposal's **shortfall**, and its notice counts it.
+- **Alternate weeks.** After featured, main and between races are all placed, and before modes are assigned, races of alternate weeks may move an hour, so a moved race's mode follows its new band.
+  - **Moving weeks.** The period's Monday to Sunday weeks count from 1, the first maybe partial. Races of weeks 2, 4, 6 and so on may move. The others never do.
+  - **Section.** A start's two-hour section is its Eastern Time hour halved, rounded down: 0–1, 2–3, … 22–23.
+  - **Featured races.** A featured race never moves. It alternates between its two hours instead (see *Featured races*).
+  - **Anchors.** Before the alternate weeks move anything, the earliest race of each every-hour category at each Eastern Time hour is its **anchor**. An anchor never moves, so the step never empties an hour a category had covered.
+  - **Moves.** Any other race of a moving week may stay, start an hour earlier, or start an hour later. The new start must:
+    - be on the same date, so 23:00 never moves past midnight and the daily and weekly limits cannot change;
+    - exist, as daylight saving may skip an hour;
+    - be outside every `block` event;
+    - be in a band open to the category;
+    - be outside every `avoid` event that lists the category;
+    - be a prime-time start, if the race starts in prime time: it never leaves prime time.
+  - **Rules kept.** Between consecutive races in time order:
+    - the races keep their order;
+    - main races stay at least 2 hours apart;
+    - a between race with a main race 1 or 2 hours on each side keeps one there;
+    - two races less than 2 hours apart may not have either inside a `single` event.
+  - **Order.** Among the moves allowed, the plan takes the one with, in order:
+    1. the most main races in a section that held no main race on the date 7 days earlier;
+    2. the most races in prime time;
+    3. the fewest short gaps, as defined under *Hours*;
+    4. the fewest moves;
+    5. the most races in normal time;
+    6. the highest total value;
+    7. race by race in time order: staying, then the earlier hour.
+
+    A dynamic program finds it. The weeks before a moving week never move, so "a week earlier" is the placement as it was.
 - **Modes.**
   - A featured race, and every prime-time race, of a plan category with one source runs its most popular mode.
   - Every other race takes its plan category's modes in turn, in list order and time order. So does every race of a mixed category, featured ones included, which makes a mixed category's featured mode rotate.
@@ -287,15 +327,19 @@ The featured races of the whole period come first. Then each date, in order, tak
 - **Weekly repeats** counts the races whose category also ran at the same wall-clock time 7 days earlier, when neither race is a featured race.
 - **Ranking.** The report ranks the four proposals by expected entrants per race, between races included, and marks the best one.
 - **Races.** Every race of the proposal, and the between races among them.
+- **Moved races.** The races that *Alternate weeks* moved an hour. The report counts them in each proposal's text line and in the note above its full schedule, which adds that featured races never move: they alternate between their two hours instead. A featured entry has no `moved` count. Each race of a proposal's schedule carries `moved`: -1 an hour earlier, 0 not moved, 1 an hour later. The CSV and JSON files leave it out.
+- **Races by hour.** Each row of a proposal's `categories` has `by_hour`: 24 counts, the category's races starting at each Eastern Time hour (0–23) over the whole period, featured and between races included. The CSV and JSON files leave it out.
 - **Races a day.** The fewest and the most main races on any date of the proposal.
 - **Short gaps.** The proposal's consecutive main races less than 3 hours apart, unless both start in prime time.
 - **Unbracketed.** The between races without a main race 1 or 2 hours before them and another 1 or 2 hours after them. Only a featured between race can be one.
 - **Composition.** For each plan category, the report lists:
   - its modes with their factors, the most popular mode, retired modes, and modes with no slots in the window;
-  - its limits, whether it is a between category, its open bands and its weights.
+  - its limits, whether it is a between category, whether it is an every-hour category (`every_hour`), its open bands and its weights.
 
   It also lists the plan categories left out.
-- **Notices.** A proposal's notice counts its shortfall dates, its empty hours and its unbracketed races.
+- **Uncovered.** Each proposal has `uncovered`: for each every-hour category, its target hours with no race over the period, an empty list when it covers them all. It is an empty object when the `every_hour` rule is off or no category is marked.
+- **Seed.** The result's `parameters` carry `seed`.
+- **Notices.** A proposal's notice counts its shortfall dates, its empty hours and its unbracketed races. When anything is uncovered, it adds a sentence like `Every-hour categories lack races at 2 hours: entrance 04:00; keys 22:00.`, in the form `Every-hour categories lack races at {N} hours: {category} {HH:00, HH:00}; {category} {HH:00}.`
 - **Today's baseline** is the newest season that ended inside the history window, scored with the same model, next to its actual entrants and cancelled rooms.
 - **CSV.** `--out DIR` writes `schedule-<set>.csv`, with the columns `date,time,category,mode,mode_id,utc`:
   - `date` and `time` are Eastern Time;
@@ -303,7 +347,10 @@ The featured races of the whole period come first. Then each date, in order, tak
   - `mode` and `mode_id` are the alttpr.racing mode, whose own category the race counts under;
   - `utc` is ISO 8601.
 - **JSON.** It writes `schedule-<set>.json` as `[{"time": "<unix seconds>", "mode": <id>}]`, the shape of the schedule API's rows.
-- **Report.** `--html PATH` shows, for each proposal, its full schedule: one date-by-hour grid per Monday to Sunday week of the period, with every race in its hour and the featured and between races marked.
+- **Report.** `--html PATH` shows, for each proposal, its full schedule: one date-by-hour grid per Monday to Sunday week of the period, with every race in its hour and the featured and between races marked. Hovering a race says whether it moved an hour earlier or later.
+  - Each featured entry carries `hours: [odd, even]`, and its text line reads like `entrance Tue 14:00/15:00 Crosskeys (9 races)`. The featured table has the columns Category, Weekday, Weeks 1, 3, 5… (ET), Weeks 2, 4, 6… (ET), Mode, Races and Skipped dates, under a note that each featured race alternates week by week between two adjacent hours.
+  - After the Categories table, each proposal shows a Races-by-hour table: one row per plan category, columns 0 to 23 and Total, and an All row of the hour totals. Zero cells are blank, except a target hour that an every-hour category lacks: it shows a visible 0 with a tooltip, and the table's note says so. A category's cells are shaded by count.
+  - The composition lists "every hour" among a category's limits. The method note says the hours are drawn with odds by value, and gives the seed. The text report gives the seed too.
 
 #### Success rates
 
@@ -336,15 +383,19 @@ Thresholds are constants at the top of the module.
 - **Shares by turnout.** The strongest categories take the most races, and Entrance often runs three times a day. The demand model cannot see that a category's races draw fewer racers the more of them run on one date. [Schedule strategy comparison](#schedule-strategy-comparison) corrects for that.
 - **Band rule.** It pools each band over the three groups. A category that fires one time in ten is allowed. A band can be closed by bad luck in a category with few slots.
 - **Hours before categories.** A date's hours are chosen before its categories, so an hour may stay empty when no category fits it. The notice counts such hours.
+- **One date ahead.** A date looks only one date ahead, and the next date's best choice is counted without its own lookahead. Under the 3-hour preference outside prime time, the evening steps from the end of prime time to 20:00 or 21:00 and on to 23:00 or 00:00, so 19:00 and 22:00 stay thinner than their neighbours.
+- **Coverage.** It is best effort. An hour that a category cannot get, for example under a tight `weeklyMax`, is listed in `uncovered` and the notice.
+- **The draw.** Drawing costs some expected entrants against always taking the best-value hours, about 1–4% on today's archive. The model counts that cost and cannot see the variety it buys.
 - **Between races.** The ladder has rarely run races an hour apart, so their clash cost comes from the Mode overlap score, which is an upper bound. Spoiler's scores are weak evidence and high, so its between races score low even though the plan file treats it as a category that shares few racers. The cap keeps a race between two others from losing more than its own entrants.
 - **Featured weekdays.** With more than 7 plan categories, they cannot all have a weekday of their own.
+- **Alternate weeks.** The demand model prices only what each move costs at its new hour. It never prices the racers a move reaches who are free only at hours a fixed weekly grid leaves empty. A section with no race within an hour of it on that weekday stays empty, as on Light's quiet early hours.
 - **Cancelled rooms.** A cancelled room may have had one entrant. It counts as zero.
 - **Mixed categories and old modes.** A mixed category is assumed to draw the mean of its modes, each like its own category at the same hours. A mode with no slots in the window, such as a long-retired one, is assumed to draw like its category's average.
 - **Baseline.** It is scored by a model fitted on the same window, so it flatters the model. The proposals are scored out of sample.
 
 ## Schedule strategy comparison
 
-`scripts/schedule_lab.py` breaks the [race schedule proposals](#race-schedule-proposals)' rules one at a time, in ten variants plus a combined eleventh, and compares each with the shipped rules. It runs `scripts/schedule_planner.py` under other `Rules`, so it needs the same archive and schedule mirror. The printed report gives each variant's measures, verdicts and the recommendation.
+`scripts/schedule_lab.py` breaks the [race schedule proposals](#race-schedule-proposals)' rules one at a time, in thirteen variants plus a combined fourteenth, and compares each with the shipped rules. It runs `scripts/schedule_planner.py` under other `Rules`, so it needs the same archive and schedule mirror. The printed report gives each variant's measures, verdicts and the recommendation.
 
 ```bash
 python3 scripts/schedule_lab.py                      # the full comparison
@@ -354,14 +405,14 @@ python3 scripts/schedule_lab.py --jobs 1             # no worker processes
 ```
 
 - `--archive`, `--config`, `--start` and `--weeks` work as in the planner.
-- `--variant` takes the key of one of variants 1 to 10. `combined` is not a choice: it only runs in the full comparison.
+- `--variant` takes the key of one of variants 1 to 13. `combined` is not a choice: it only runs in the full comparison.
 - The runner uses worker processes, one per CPU by default, which need POSIX semaphores. Inside a sandbox that denies them, use `--jobs 1`.
 
 ### In plain words
 
 The planner keeps a fixed set of rules, and each rule may cost some turnout. Each variant breaks one rule and plans the same season, for all four sets, with the shipped rules as the comparison. The plan file's bands, composition and events stay as they are in every run: the bands are set by hand, so no variant ranks them.
 
-The planner is deterministic, so there are no seeds and no search budget. A variant, a set and a fold run once.
+The planner is deterministic, and the lab plans every variant with the default seed, so there is no search budget. A variant, a set and a fold run once.
 
 A variant is judged on proposals scored out of sample, so a rule that only overfits the history cannot win. The planner computes the open bands (the band rule) and the featured record from the history it is given, so the lab hands it one half and both are out of sample too. The demand model also cannot see that a category's races draw fewer racers the more of them run on one date, so every race is scored with a correction for that. A variant that piles races onto the strongest categories would otherwise look better than it is.
 
@@ -369,21 +420,24 @@ The Weekly Entrance `avoid` event is an external fact, so it stays in every vari
 
 ### Variants
 
-Each of variants 1 to 10 breaks exactly one rule. The **lever** is what the lab changes: a field of `Rules` in the planner (`SHIPPED` holds the rules this section calls shipped), or a lab lever that is not a `Rules` field. A **model-blind** variant may gain from something the demand model cannot price.
+Each of variants 1 to 13 breaks exactly one rule. The **lever** is what the lab changes: a field of `Rules` in the planner (`SHIPPED` holds the rules this section calls shipped), or a lab lever that is not a `Rules` field. A **model-blind** variant may gain from something the demand model cannot price.
 
 | # | Variant | Rule it breaks | Lever | Model-blind |
 |---|---|---|---|---|
 | 1 | `open-bands`, Every band open | A category never races in a band where its rooms fired less than 10% of the time | `band_rule` off | Yes: a category races in bands where it almost never fired, and the model extrapolates |
-| 2 | `no-featured`, No featured races | Each plan category gets one race in prime time, on a weekday of its own, at the same hour every week | `featured` off | No |
+| 2 | `no-featured`, No featured races | Each plan category gets one race in prime time, on a weekday of its own, alternating week by week between two adjacent hours | `featured` off | No |
 | 3 | `fill-shares`, Shares by fill | A band is shared by expected turnout | `shares` is `fill`: by how often its rooms fired in the band | No |
 | 4 | `equal-shares`, Equal shares | A band is shared by expected turnout | `shares` is `equal`: alike | No |
 | 5 | `no-between`, No between races | Glitched and Spoiler are between categories: their races always start between two other races, never in a slot of their own, and come on top of the main races a day | `between` off: the plan file's between categories are main categories like the others | Yes: a between race's clash cost comes from Mode overlap scores, an upper bound that is weak evidence for Spoiler, so the model may overcharge the shipped rule |
 | 6 | `two-hour-gaps`, Two-hour gaps | Outside prime time, 3 hours apart is preferred | `wide_gaps` off: main races are still at least 2 hours apart, but 2-hour gaps cost nothing | Yes: the model cannot see that racers join consecutive races more easily, or that a long race overlaps the next one, when races start 3 hours apart rather than 2 |
 | 7 | `no-favourite`, No favourite mode | A category's prime-time races run its most popular mode | `favourite` off | No |
 | 8 | `no-rotation`, No rotation | A race avoids the category that ran at the same hour a week earlier, then the one that ran there a day earlier | `rotation` off | Yes: racers do not tire of one category at a repeated hour |
-| 9 | `no-plan-caps`, No plan caps | The plan file's `dailyMax`, `weeklyMax` and `onlyPrimeTime` | The caps are removed from the plan file. `between` is not a cap, so it stays, and so do the bands | No |
+| 9 | `no-plan-caps`, No plan caps | The plan file's `dailyMax`, `weeklyMax` and `onlyPrimeTime` | The caps are removed from the plan file. `between` and `everyHour` are not caps, so they stay, and so do the bands | No |
 | 10 | `no-holidays`, No holidays | A holiday counts as a prime-group day, with that group's factors, bands and races a day | Lab lever `holidays` off: the planning model is fitted without holidays. The scoring model always counts them | No |
-| 11 | `combined`, Combined | Every rule that variants 1 to 10 broke and won | The levers of the combining variants, merged | Marked when any part is |
+| 11 | `no-stagger`, No alternate weeks | In every second week, races move an hour to reach the two-hour sections the week before left empty | `stagger` off | Yes: the model cannot see the racers who can only join at hours a fixed weekly grid leaves empty, so it counts only the cost of moving races |
+| 12 | `no-every-hour`, No every-hour floor | A category marked `everyHour` gets at least one race at every hour of its open bands | `every_hour` off | Yes: the model cannot see the racers who can only join at the hours a category would leave empty, so it counts only the cost of covering them |
+| 13 | `no-draw`, Best hours | Each date draws its hours among the equally good sets, with odds by their value | `draw` off: each date takes its highest-value set again | Yes: the model cannot see the racers who can only join at hours the best-value grid never uses, so it counts only the cost of the draw |
+| 14 | `combined`, Combined | Every rule that variants 1 to 13 broke and won | The levers of the combining variants, merged | Marked when any part is |
 
 - `two-hour-gaps` leaves main races at least 2 hours apart. Only the preference for 3-hour gaps outside prime time goes, so more short gaps appear.
 - `fill-shares` and `equal-shares` both set `shares`, so they cannot be merged. The combined variant's rule is fixed under [Measures and rules](#measures-and-rules).
@@ -419,7 +473,8 @@ All of these were fixed before the comparison first ran.
   - between races;
   - short gaps: consecutive main races less than 3 hours apart, unless both start in prime time;
   - dates with fewer main races than the day group asks for;
-  - picked hours that no category could take.
+  - picked hours that no category could take;
+  - hours an every-hour category lacks, judged by the plan file's `everyHour` flags whatever the variant's rules, so `no-every-hour` shows the gaps it leaves.
 
 ### Scoring
 
@@ -439,9 +494,9 @@ All of these were fixed before the comparison first ran.
 
 - **Observational.** The turnout and fill rates are what past slots drew. They do not control for announcements, competing events or player availability.
 - **Saturation.** It is measured from history, where a category rarely had more than 3 races a date. The 4 or more bucket rests on few slots.
-- **Model-blind variants.** Open bands extrapolate to bands where a category almost never fired. No rotation assumes racers do not tire of a repeated hour. Two-hour gaps assume racers join races as easily 2 hours apart as 3, and that a long race does not overlap the next. No between races leans on a clash cost that is an upper bound and, for Spoiler, weak evidence. Their gains need a real trial.
+- **Model-blind variants.** Open bands extrapolate to bands where a category almost never fired. No rotation assumes racers do not tire of a repeated hour. Two-hour gaps assume racers join races as easily 2 hours apart as 3, and that a long race does not overlap the next. No between races leans on a clash cost that is an upper bound and, for Spoiler, weak evidence. No alternate weeks cannot see the racers who can only join at hours a fixed weekly grid leaves empty, so it counts only the cost of moving races. No every-hour floor cannot see the racers who can only join at the hours a category would leave empty, and Best hours cannot see those who can only join at hours the best-value grid never uses. Their gains need a real trial.
 - **Noisier halves.** Each half holds half the history, so its model, its band rates and its featured record are noisier than the whole year's. That is the point of scoring out of sample, but it costs precision.
-- **Determinism.** The planner is deterministic, so each variant, set and fold runs once. There is no spread across seeds to show how far a verdict near the tolerance could move, and only two folds back each verdict.
+- **Determinism.** The planner is deterministic, so each variant, set and fold runs once. Every variant is planned with the default seed, so all variants see the same draw key at the same start time. The lab does not average over several seeds, so a verdict near the 0.5% tolerance may still be draw noise, and only two folds back each verdict.
 - **Judgement calls.** The 75% guard and the 0.5% tolerance were chosen, not derived.
 
 ## Rating comparison

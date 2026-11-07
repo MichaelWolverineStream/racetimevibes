@@ -191,8 +191,9 @@ class RenderHtmlTests(unittest.TestCase):
             )
             self.assertEqual(grid.count('class="btw"'), proposal["between"] - featured_between)
             self.assertEqual(grid.count('class="btw-feat"'), featured_between)
+            moved_suffix = re.compile(r", moved an hour (earlier|later)$")
             self.assertEqual(
-                sum(t.endswith("featured") for t in titles)
+                sum(moved_suffix.sub("", t).endswith("featured") for t in titles)
                 + sum(", featured, between race" in t for t in titles),
                 sum(r["featured"] for r in proposal["schedule"]),
             )
@@ -206,6 +207,39 @@ class RenderHtmlTests(unittest.TestCase):
             f"{race['category']}, {race['mode']}", grid
         )
         self.assertIn(", between race", grid)
+
+    def test_the_full_schedule_hover_says_which_way_a_race_moved(self):
+        for proposal in self.result["proposals"]:
+            with self.subTest(set=proposal["set"]):
+                grid = sp._full_schedule(self.result, proposal)
+                titles = re.findall(r"<g><title>(.*?)</title>", grid)
+                earlier = [t for t in titles if t.endswith(", moved an hour earlier")]
+                later = [t for t in titles if t.endswith(", moved an hour later")]
+                rows = proposal["schedule"]
+                self.assertEqual(len(earlier), sum(r["moved"] < 0 for r in rows))
+                self.assertEqual(len(later), sum(r["moved"] > 0 for r in rows))
+                self.assertEqual(len(earlier) + len(later), proposal["moved"])
+                # Every title is one row, in order, and a race that stayed has no suffix.
+                for row in rows:
+                    head = (f"{row['date']} {row['hour']:02d}:00 ET, ")
+                    mine = [t for t in titles if t.startswith(head) or f"{row['date']} (holiday) {row['hour']:02d}:00 ET, " in t]
+                    suffix = ", moved an hour later" if row["moved"] > 0 else (
+                        ", moved an hour earlier" if row["moved"] < 0 else None)
+                    self.assertEqual(len(mine), 1)
+                    if suffix:
+                        self.assertTrue(mine[0].endswith(suffix), mine[0])
+                    else:
+                        self.assertNotIn("moved an hour", mine[0])
+        self.assertTrue(any(p["moved"] for p in self.result["proposals"]))
+
+    def test_the_hover_suffix_follows_featured_and_between_ones(self):
+        proposal = fx.proposal(self.result, "light")
+        row = next(r for r in proposal["schedule"] if r["featured"] and not r["between"])
+        for moved, suffix in ((1, ", moved an hour later"), (-1, ", moved an hour earlier"), (0, "")):
+            with self.subTest(moved=moved):
+                rows = [dict(r, moved=moved) if r is row else r for r in proposal["schedule"]]
+                grid = sp._full_schedule(self.result, {**proposal, "schedule": rows})
+                self.assertIn(f"{row['category']}, {row['mode']}, featured{suffix}</title>", grid)
 
     def test_the_full_schedule_marks_holidays_with_the_prime_groups_bands(self):
         self.assertEqual(self.result["period"]["holidays"], ["2026-09-07"])
@@ -291,6 +325,40 @@ class RenderHtmlTests(unittest.TestCase):
         self.assertIn('mystery<span class="badge">between race</span>', table)
         self.assertNotIn("between race", sp._featured_table(fx.proposal(fx.main_result(), "light")))
 
+    def test_the_featured_table_has_both_hours_between_races_and_skipped_dates(self):
+        proposal = fx.proposal(self.result, "light")
+        table = sp._featured_table(proposal)
+        heads = re.findall(r"<th(?: [^>]*)?>(.*?)</th>", table.split("<tbody>")[0])
+        self.assertEqual(heads, [
+            "Category", "Weekday", "Weeks 1, 3, 5&hellip; (ET)", "Weeks 2, 4, 6&hellip; (ET)",
+            "Mode", "Races", "Skipped dates",
+        ])
+        self.assertNotIn("Moved", table)
+        rows = re.findall(r"<tr>(.*?)</tr>", table.split("<tbody>")[1], re.S)
+        self.assertEqual(len(rows), len(proposal["featured"]))
+        for row, item in zip(rows, proposal["featured"]):
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)
+            self.assertEqual(len(cells), 7)
+            self.assertEqual(cells[2], f"{item['hours'][0]:02d}:00")
+            self.assertEqual(cells[3], f"{item['hours'][1]:02d}:00")
+            self.assertEqual(abs(item["hours"][0] - item["hours"][1]), 1)
+            self.assertEqual(cells[5], str(item["races"]))
+            self.assertIn('<td class="num">' + str(item["races"]) + "</td>", row)
+            self.assertEqual(len(re.findall(r'<td class="num"', row)), 1)
+
+    def test_the_proposal_note_states_how_many_races_moved(self):
+        proposal = fx.proposal(self.result, "light")
+        section = sp._proposal_section(self.result, proposal, True)
+        self.assertGreater(proposal["moved"], 0)
+        self.assertIn(
+            f"In weeks 2, 4, 6 and so on, {proposal['moved']:,} races moved an hour into the "
+            "two-hour sections the week before left empty.", section)
+        self.assertIn("and whether it moved.", section)
+        bigger = dict(proposal, moved=1234)
+        self.assertIn("1,234 races moved an hour", sp._proposal_section(self.result, bigger, True))
+        self.assertIn("0 races moved an hour", sp._proposal_section(self.result, dict(proposal, moved=0), True))
+        self.assertIn("races moved an hour", self.page)
+
     def test_the_categories_table_has_a_between_column(self):
         proposal = fx.proposal(self.result, "light")
         table = sp._categories_table(proposal)
@@ -325,7 +393,8 @@ class RenderHtmlTests(unittest.TestCase):
 
     def test_the_method_note_describes_the_method(self):
         for phrase in ("Work (Monday to Wednesday)", "featured race", "favourite", "between category",
-                       "short gap", "lookahead", "share", "fewer than two", "less than 10%",
+                       "short gap", "lookahead", "next date&rsquo;s best hours", "share",
+                       "fewer than two", "less than 10%",
                        "1 or 2 hours after one main race", "bands are set by hand, not learned",
                        "Spoiler&rsquo;s overlap scores are weak evidence and high"):
             self.assertIn(phrase, self.page)
@@ -387,7 +456,11 @@ class ReportTests(unittest.TestCase):
         self.assertIn("mystery + entrance: 0.20 (weak evidence)", text)
         self.assertIn("charged to the smaller race", text)
         self.assertIn("[between category]", text)
-        self.assertIn("mystery Wed 20:00 Myst A (5 races, between race)", text)
+        for each in fx.between_result()["proposals"]:
+            entry = next(e for e in each["featured"] if e["between"])
+            self.assertEqual(entry["category"], "mystery")
+            self.assertIn(sp._featured_text(entry), text)
+            self.assertRegex(sp._featured_text(entry), r"^mystery \w{3} \d\d:00/\d\d:00 .*between race")
         proposal = fx.proposal(fx.between_result(), "light")
         # The between races are counted among the races, not among the cancelled rooms.
         week = proposal["between"] / proposal["days"] * 7
@@ -398,6 +471,39 @@ class ReportTests(unittest.TestCase):
         )
         self.assertNotIn("cancelled rooms, " + str(proposal["between"]) + " of them", text)
         self.assertIn(f"{proposal['short_gaps']} short gaps", text)
+
+    def test_the_report_counts_the_races_moved_an_hour_in_alternate_weeks(self):
+        for result in (fx.main_result(), fx.between_result()):
+            text = sp.format_report(result)
+            for proposal in result["proposals"]:
+                with self.subTest(set=proposal["set"]):
+                    self.assertGreater(proposal["moved"], 0)
+                    self.assertIn(
+                        f"{proposal['event_conflicts']} event conflicts, "
+                        f"{proposal['moved']} races moved an hour in alternate weeks.\n", text + "\n")
+        text = sp.format_report(fx.main_result())
+        self.assertEqual(text.count("races moved an hour in alternate weeks."), len(sp.SETS))
+
+    def test_a_featured_entry_names_both_hours_and_no_moved_clause(self):
+        item = {"category": "simple", "weekday": 1, "hours": [13, 14], "mode": "Simple Old",
+                "rotates": [], "races": 5, "between": False, "skipped": []}
+        self.assertEqual(sp._featured_text(item), "simple Tue 13:00/14:00 Simple Old (5 races)")
+        self.assertEqual(
+            sp._featured_text(dict(item, between=True)),
+            "simple Tue 13:00/14:00 Simple Old (5 races, between race)")
+        self.assertEqual(
+            sp._featured_text(dict(item, skipped=["2026-09-14"])),
+            "simple Tue 13:00/14:00 Simple Old (5 races, skipped 2026-09-14)")
+        both = dict(item, between=True, skipped=["2026-09-08"])
+        self.assertEqual(
+            sp._featured_text(both),
+            "simple Tue 13:00/14:00 Simple Old (5 races, between race, skipped 2026-09-08)")
+        for proposal in fx.main_result()["proposals"]:
+            for entry in proposal["featured"]:
+                self.assertNotIn("moved", entry)
+                text = sp._featured_text(entry)
+                self.assertIn(f"{entry['hours'][0]:02d}:00/{entry['hours'][1]:02d}:00", text)
+                self.assertNotIn("moved", text)
 
     def test_the_report_names_the_events_and_the_holidays(self):
         text = sp.format_report(fx.main_result())
@@ -410,6 +516,211 @@ class ReportTests(unittest.TestCase):
         many = [f"2026-09-{day:02d}" for day in range(1, 13)]
         self.assertEqual(sp._dates(many).count(","), sp._LISTED_DATES - 1)
         self.assertTrue(sp._dates(many).endswith("and 4 more"))
+
+
+class HoursTableTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.result = fx.main_result()
+
+    @staticmethod
+    def rows(table):
+        out = {}
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", table.split("<tbody>")[1], re.S):
+            cells = re.findall(r"<td([^>]*)>(.*?)</td>", row, re.S)
+            out[cells[0][1]] = cells[1:]
+        return out
+
+    def test_each_category_row_counts_the_schedule_by_hour(self):
+        for proposal in self.result["proposals"]:
+            with self.subTest(set=proposal["set"]):
+                table = sp._hours_table(proposal)
+                self.assertTrue(table.startswith('<div class="hours"><div class="wrap"><table>'))
+                heads = re.findall(r"<th[^>]*>([^<]*)</th>", table.split("<tbody>")[0])
+                self.assertEqual(heads, ["Category", *map(str, range(24)), "Total"])
+                rows = self.rows(table)
+                self.assertEqual(list(rows), [c["category"] for c in proposal["categories"]] + ["All"])
+                every = [0] * 24
+                for category in proposal["categories"]:
+                    counts = [0] * 24
+                    for race in proposal["schedule"]:
+                        if race["category"] == category["category"]:
+                            counts[race["hour"]] += 1
+                    every = [a + b for a, b in zip(every, counts)]
+                    cells = rows[category["category"]]
+                    self.assertEqual(len(cells), 25)
+                    self.assertEqual(
+                        [text for _, text in cells[:24]],
+                        [str(n) if n else "" for n in counts])
+                    self.assertEqual(cells[24][1], str(category["races"]))
+                    self.assertEqual(sum(counts), category["races"])
+                    self.assertEqual(category["by_hour"], counts)
+                    self.assertEqual(sum(category["by_hour"]), category["races"])
+                total = rows["All"]
+                self.assertEqual([t for _, t in total[:24]], [str(n) if n else "" for n in every])
+                self.assertEqual(total[24][1], str(proposal["races"]))
+                self.assertIn('<tr class="all">', table)
+
+    def test_cells_are_shaded_by_count_with_the_largest_at_the_maximum(self):
+        for proposal in self.result["proposals"]:
+            with self.subTest(set=proposal["set"]):
+                table = sp._hours_table(proposal)
+                rows = self.rows(table)
+                peak = max(n for c in proposal["categories"] for n in c["by_hour"])
+                shade = "background:color-mix(in srgb, var(--seq) {}%, var(--surface))"
+                self.assertIn(shade.format(35), table)
+                for category in proposal["categories"]:
+                    for hour, count in enumerate(category["by_hour"]):
+                        attrs, text = rows[category["category"]][hour]
+                        if not count:
+                            self.assertEqual((attrs, text), (' class="num"', ""))
+                            continue
+                        self.assertIn(shade.format(round(35 * count / peak)), attrs)
+                        self.assertIn(
+                            f'title="{category["category"]}, {hour:02d}:00 ET: {count} races"',
+                            attrs)
+                for attrs, text in rows["All"]:
+                    self.assertNotIn("style=", attrs)
+                for cells in rows.values():
+                    self.assertNotIn("style=", cells[24][0])
+
+    def test_the_page_has_one_races_by_hour_section_in_each_proposal(self):
+        page = sp.render_html(self.result)
+        self.assertEqual(page.count("<h3>Races by hour</h3>"), len(sp.SETS))
+        sections = re.findall(r"<details.*?</details>", page, re.S)
+        self.assertEqual(len(sections), len(self.result["proposals"]))
+        for section, proposal in zip(sections, self.result["proposals"]):
+            self.assertEqual(section.count("<h3>Races by hour</h3>"), 1)
+            self.assertIn(sp._hours_table(proposal), section)
+            self.assertGreater(
+                section.index("<h3>Races by hour</h3>"), section.index("<h3>Categories</h3>"))
+
+    def test_each_proposal_explains_the_alternating_featured_hours(self):
+        page = sp.render_html(self.result)
+        sections = re.findall(r"<details.*?</details>", page, re.S)
+        self.assertEqual(len(sections), len(sp.SETS))
+        for section in sections:
+            self.assertIn(
+                "Each featured race alternates week by week between two adjacent hours: the "
+                "first in weeks 1, 3, 5 and so on, the second in weeks 2, 4, 6.", section)
+            self.assertIn(
+                "Featured races never move: they alternate between their two hours instead.",
+                section)
+
+
+class EveryHourReportTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.marked = fx.every_hour_result()
+        cls.plain = fx.main_result()
+
+    @staticmethod
+    def with_gap(proposal, category, hour):
+        """Return a copy of the proposal with no race of the category at the hour, listed
+        as uncovered."""
+        categories = [
+            {**row, "by_hour": [0 if h == hour else n for h, n in enumerate(row["by_hour"])]}
+            if row["category"] == category else row
+            for row in proposal["categories"]
+        ]
+        return {**proposal, "categories": categories, "uncovered": {category: [hour]}}
+
+    def test_limits_name_a_category_marked_every_hour_only(self):
+        for category in self.marked["proposals"][0]["composition"]:
+            self.assertEqual(
+                "every hour" in sp._limits(category),
+                category["category"] in ("simple", "entrance"), category["category"])
+        for category in self.plain["proposals"][0]["composition"]:
+            self.assertFalse(category["every_hour"])
+            self.assertNotIn("every hour", sp._limits(category))
+        self.assertEqual(sp._limits(
+            {"daily_max": 2, "weekly_max": None, "only_prime": True, "every_hour": True}),
+            ["at most 2 a day", "prime time only", "every hour"])
+
+    def test_an_uncovered_hour_shows_a_zero_with_the_gap_class_and_title(self):
+        proposal = self.marked["proposals"][0]
+        hour = 3
+        edited = self.with_gap(proposal, "simple", hour)
+        rows = HoursTableTests.rows(sp._hours_table(edited))
+        plain_rows = HoursTableTests.rows(sp._hours_table(
+            {**edited, "uncovered": {}}))
+        attrs, text = rows["simple"][hour]
+        self.assertEqual(text, "0")
+        self.assertEqual(
+            attrs, f' class="num gap" title="simple: no race at {hour:02d}:00 ET"')
+        self.assertNotIn("style=", attrs)
+        # Nothing else changes: other cells, the Total column and the All row.
+        self.assertEqual(plain_rows["simple"][hour], (' class="num"', ""))
+        self.assertEqual(rows["All"][hour][1], plain_rows["All"][hour][1])
+        for name, cells in rows.items():
+            for index, cell in enumerate(cells):
+                if (name, index) != ("simple", hour):
+                    self.assertEqual(cell, plain_rows[name][index], (name, index))
+
+    def test_other_zero_cells_stay_blank(self):
+        proposal = self.marked["proposals"][0]
+        hour = 3
+        edited = self.with_gap(proposal, "simple", hour)
+        rows = HoursTableTests.rows(sp._hours_table(edited))
+        for category in edited["categories"]:
+            for other, count in enumerate(category["by_hour"]):
+                if not count and (category["category"], other) != ("simple", hour):
+                    self.assertEqual(
+                        rows[category["category"]][other], (' class="num"', ""),
+                        (category["category"], other))
+        # The same hour of an unmarked category is not a gap.
+        other_name = next(
+            c["category"] for c in edited["categories"]
+            if c["category"] != "simple" and not c["by_hour"][hour])
+        self.assertEqual(rows[other_name][hour], (' class="num"', ""))
+        self.assertNotIn("gap", rows["All"][hour][0])
+
+    def test_a_fully_covered_proposal_has_no_gap_cell(self):
+        for proposal in self.marked["proposals"]:
+            self.assertEqual(proposal["uncovered"], {"simple": [], "entrance": []})
+            self.assertNotIn('class="num gap"', sp._hours_table(proposal))
+
+    def test_the_gap_style_is_bold_and_coloured(self):
+        self.assertRegex(sp._CSS, r"\.hours td\.gap \{[^}]*font-weight: 700;[^}]*var\(--high\)")
+
+    def test_the_hours_note_explains_a_zero_only_when_something_is_uncovered(self):
+        sentence = "A 0 marks an hour a category marked every hour has no race at."
+        result = {**self.marked, "proposals": [
+            self.with_gap(self.marked["proposals"][0], "simple", 3),
+            *self.marked["proposals"][1:]]}
+        sections = re.findall(r"<details.*?</details>", sp.render_html(result), re.S)
+        self.assertIn(sentence, sections[0])
+        for section in sections[1:]:
+            self.assertNotIn(sentence, section)
+        for section in re.findall(r"<details.*?</details>", sp.render_html(self.plain), re.S):
+            self.assertNotIn(sentence, section)
+
+    def test_the_uncovered_notice_reaches_the_html(self):
+        text = "Every-hour categories lack races at 2 hours: entrance 04:00; keys 22:00."
+        proposal = {**self.marked["proposals"][0], "notice": text}
+        section = sp._proposal_section(self.marked, proposal, True)
+        self.assertIn(f'<p class="notice"><strong>Notice.</strong> {escape(text)}</p>', section)
+
+    def test_the_method_note_names_the_draw_and_the_seed(self):
+        result = {**self.marked, "parameters": {**self.marked["parameters"], "seed": 7}}
+        note = sp._method_note(result)
+        for phrase in ("seed 7", "draws one", "expected turnout", "every hour",
+                       "another <code>--seed</code> draws another season",
+                       "has no race yet at an hour takes it first"):
+            self.assertIn(phrase, note)
+        self.assertNotIn("seed 1 ", note)
+
+    def test_the_text_report_has_the_seed_line_and_the_every_hour_limit(self):
+        result = {**self.marked, "parameters": {**self.marked["parameters"], "seed": 7}}
+        lines = sp.format_report(result).splitlines()
+        self.assertIn("Hours drawn with seed 7; --seed draws another season.", lines)
+        learned = next(i for i, line in enumerate(lines) if line.startswith("Learned from"))
+        self.assertTrue(lines[learned + 1].startswith("Hours drawn with seed"))
+        for name in ("simple", "entrance"):
+            line = next(l for l in lines if l.startswith(f"  {name}"))
+            self.assertIn("every hour", line.split(";")[0])
+        keys = next(l for l in lines if l.startswith("  keys"))
+        self.assertNotIn("every hour", keys)
 
 
 class ArgumentTests(unittest.TestCase):

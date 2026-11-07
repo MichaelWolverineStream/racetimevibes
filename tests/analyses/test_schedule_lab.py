@@ -72,6 +72,9 @@ class VariantTests(unittest.TestCase):
                 "no-rotation": {"rules.rotation": False},
                 "no-plan-caps": {"plan_caps": False},
                 "no-holidays": {"holidays": False},
+                "no-stagger": {"rules.stagger": False},
+                "no-every-hour": {"rules.every_hour": False},
+                "no-draw": {"rules.draw": False},
             },
         )
 
@@ -89,7 +92,10 @@ class VariantTests(unittest.TestCase):
 
     def test_the_model_blind_variants_say_why(self):
         blind = {variant.key: variant.model_blind for variant in lab.VARIANTS if variant.model_blind}
-        self.assertEqual(set(blind), {"open-bands", "no-rotation", "no-between", "two-hour-gaps"})
+        self.assertEqual(
+            set(blind), {"open-bands", "no-rotation", "no-between", "two-hour-gaps", "no-stagger",
+             "no-every-hour", "no-draw"}
+        )
         self.assertIn("3 hours apart", blind["two-hour-gaps"])
         self.assertIn("overlap", blind["no-between"])
 
@@ -172,6 +178,13 @@ class VariantConfigTests(unittest.TestCase):
     def test_other_levers_leave_the_caps_alone(self):
         variant = lab.Variant("x", "X", "y", holidays=False, rules=with_rules(between=False))
         self.assertEqual(lab.variant_config(self.CONFIG, variant), self.CONFIG)
+
+    def test_lifting_the_caps_keeps_the_every_hour_flag(self):
+        config = copy.deepcopy(self.CONFIG)
+        config["composition"]["d"]["everyHour"] = True
+        config["composition"]["d"]["dailyMax"] = 2
+        lifted = lab.variant_config(config, lab.Variant("x", "X", "y", plan_caps=False))
+        self.assertEqual(lifted["composition"]["d"], {"modes": ["Four"], "between": True, "everyHour": True})
 
     def test_lifting_the_caps_keeps_between_and_the_bands(self):
         lifted = lab.variant_config(self.CONFIG, lab.Variant("x", "X", "y", plan_caps=False))
@@ -473,6 +486,7 @@ def result_row(variant, set_name, plan, scored, per_race=10.0, **extra):
         "cancelled": 20.0, "categories": {"a": {"races": 60, "entrants": 600.0},
                                           "b": {"races": 40, "entrants": 200.0}},
         "closed": 0, "crowded": 2, "between": 3, "short_gaps": 4, "shortfall": 1, "empty_hours": 0,
+        "uncovered": 0,
         "weekly_races": 49, "notice": None,
     }
     row.update(extra)
@@ -668,20 +682,27 @@ class LeverThreadingTests(unittest.TestCase):
         self.assertNotAlmostEqual(with_holidays["total"], without["total"])
 
     def test_every_lever_changes_something_on_the_fixture_world(self):
-        context = limited_context()
+        limited = limited_context()
+        # The capped world has three main categories, and no category may race twice in a
+        # row, so nearly every hour there has one category that fits and rotation has no say.
+        # Rotation is checked in the world without caps or between categories instead.
+        uncapped = context_for("base", fx.BASE_COMPOSITION)
+        # The every-hour floor only acts where the plan file marks categories.
+        marked = context_for("every-hour", fx.EVERY_HOUR_COMPOSITION)
+        own_context = {"no-rotation": uncapped, "no-every-hour": marked}
         keys = ("races", "per_race", "weakest", "total", "cancelled", "closed", "crowded",
-                "between", "short_gaps", "shortfall", "empty_hours")
+                "between", "short_gaps", "shortfall", "empty_hours", "uncovered")
 
-        def numbers(variant):
+        def numbers(variant, context):
             *_rest, result = planner_call(variant, "bonanza", context=context)
             return {key: round(result[key], 6) for key in keys}, result["categories"]
 
-        shipped = numbers(lab.SHIPPED)
         # Every fixture history fires in every band, so the band rule has its own test.
         for variant in lab.VARIANTS:
             if variant.key != "open-bands":
+                context = own_context.get(variant.key, limited)
                 with self.subTest(variant.key):
-                    self.assertNotEqual(numbers(variant), shipped)
+                    self.assertNotEqual(numbers(variant, context), numbers(lab.SHIPPED, context))
 
     def test_the_band_rule_reaches_the_planner_where_a_band_is_closed(self):
         context = limited_context()
@@ -705,6 +726,75 @@ class LeverThreadingTests(unittest.TestCase):
         self.assertEqual(mystery["open_bands"], ["prime"])
         opened_mystery = next(c for c in opened["composition"] if c["category"] == "mystery")
         self.assertEqual(opened_mystery["open_bands"], ["prime", "normal", "quiet"])
+
+
+def hand_proposal():
+    """Two day groups; hours 0 to 2 are quiet, normal, prime. Both marked categories race at
+    hour 1 only, and the unmarked one never races."""
+    return {
+        "composition": [
+            {"category": "a", "every_hour": True, "open_bands": ["normal", "prime"]},
+            {"category": "b", "every_hour": True, "open_bands": ["quiet"]},
+            {"category": "c", "every_hour": False, "open_bands": ["quiet", "normal", "prime"]},
+        ],
+        "bands": [
+            {"group": group, "hour": hour, "band": band, "value": 1.0}
+            for group in ("weekday", "weekend")
+            for hour, band in enumerate(("quiet", "normal", "prime"))
+        ],
+        "categories": [
+            {"category": "a", "by_hour": [0, 2, 0]},
+            {"category": "b", "by_hour": [0, 1, 0]},
+            {"category": "c", "by_hour": [0, 0, 0]},
+        ],
+    }
+
+
+class UncoveredTests(unittest.TestCase):
+    def test_an_empty_open_hour_of_a_marked_category_counts(self):
+        # a is open at hours 1 and 2 and empty at 2; b is open at hour 0 only and empty there.
+        self.assertEqual(lab.uncovered_cells(hand_proposal()), 2)
+
+    def test_a_closed_hour_and_an_unmarked_category_never_count(self):
+        proposal = hand_proposal()
+        proposal["categories"][0]["by_hour"] = [0, 2, 1]
+        proposal["categories"][1]["by_hour"] = [1, 0, 0]
+        self.assertEqual(lab.uncovered_cells(proposal), 0)
+
+    def test_an_hour_open_in_one_group_only_counts(self):
+        proposal = hand_proposal()
+        proposal["bands"][5]["band"] = "quiet"
+        proposal["categories"][0]["by_hour"] = [0, 1, 0]
+        # a is empty at hour 2 (prime on weekdays); b is now open at hours 0 and 2, empty at both.
+        self.assertEqual(lab.uncovered_cells(proposal), 3)
+        # Once hour 2 is quiet in both groups it is closed to a and still open to b.
+        proposal["bands"][2]["band"] = "quiet"
+        self.assertEqual(lab.uncovered_cells(proposal), 2)
+
+    def test_every_variant_is_judged_by_the_plan_files_flags(self):
+        context = context_for("every-hour", fx.EVERY_HOUR_COMPOSITION)
+        for plan, scored in (("A", "B"), ("B", "A")):
+            with self.subTest(plan=plan):
+                _call, shipped, shipped_row = planner_call(
+                    lab.SHIPPED, "bonanza", plan, scored, context=context)
+                _call, off, off_row = planner_call(
+                    by_key("no-every-hour"), "bonanza", plan, scored, context=context)
+                self.assertEqual(shipped_row["uncovered"], 0)
+                self.assertEqual(shipped_row["uncovered"], sum(map(len, shipped["uncovered"].values())))
+                self.assertGreater(off_row["uncovered"], 0)
+                # The planner reports nothing with the rule off; the lab still sees the gaps.
+                self.assertEqual(off["uncovered"], {})
+
+    def test_nothing_marked_means_nothing_uncovered(self):
+        _call, _proposal, row = planner_call(lab.SHIPPED, "bonanza")
+        self.assertEqual(row["uncovered"], 0)
+
+    def test_the_report_has_the_column(self):
+        _context, result = smoke_result()
+        text = lab.format_report(result)
+        self.assertIn("empty hours, uncovered hours:", text)
+        for entry in result["means"]:
+            self.assertIn("uncovered", entry)
 
 
 class HalfCoverageTests(unittest.TestCase):

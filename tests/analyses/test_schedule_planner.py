@@ -1,5 +1,7 @@
 import itertools
 import json
+import math
+import random
 import tempfile
 import unittest
 from collections import Counter
@@ -21,6 +23,7 @@ from schedule_fixtures import (
     flat_model,
     history,
     between_result,
+    every_hour_result,
     main_result,
     mixed_category,
     mixed_result,
@@ -335,15 +338,18 @@ class ConfigTests(unittest.TestCase):
             with self.subTest(source):
                 self.assertEqual(self.one({"modes": [name]}, name="x").modes[0].source, source)
 
-    def test_the_allowed_keys_are_modes_the_limits_and_the_two_flags(self):
+    def test_the_allowed_keys_are_modes_the_limits_and_the_three_flags(self):
         category = self.one({"modes": ["Crosskeys"], "dailyMax": 2, "weeklyMax": 9,
-                             "onlyPrimeTime": True})
-        self.assertEqual((category.daily_max, category.weekly_max, category.only_prime, category.between),
-                         (2, 9, True, False))
+                             "onlyPrimeTime": True, "everyHour": True})
+        self.assertEqual((category.daily_max, category.weekly_max, category.only_prime, category.between,
+                          category.every_hour),
+                         (2, 9, True, False, True))
         plain = self.one({"modes": ["Crosskeys"]})
-        self.assertEqual((plain.daily_max, plain.weekly_max, plain.only_prime, plain.between),
-                         (None, None, False, False))
-        self.assertEqual(set(sp.CATEGORY_KEYS), {"modes", "dailyMax", "weeklyMax", "onlyPrimeTime", "between"})
+        self.assertEqual((plain.daily_max, plain.weekly_max, plain.only_prime, plain.between,
+                          plain.every_hour),
+                         (None, None, False, False, False))
+        self.assertEqual(set(sp.CATEGORY_KEYS),
+                         {"modes", "dailyMax", "weeklyMax", "onlyPrimeTime", "between", "everyHour"})
         self.rejected({"entrance": {"modes": ["Crosskeys"], "optional": True}}, "entrance")
         self.rejected({"entrance": {"modes": ["Crosskeys"], "like": "simple"}}, "entrance")
 
@@ -385,6 +391,20 @@ class ConfigTests(unittest.TestCase):
                                      "keys": {"modes": ["K One"]}})
             self.assertEqual(chosen[0].between, good)
             self.assertFalse(chosen[1].between)
+
+    def test_every_hour_must_be_a_boolean(self):
+        for bad in ("yes", 1, 0, None, "true"):
+            with self.subTest(bad=bad):
+                self.rejected({"entrance": {"modes": ["Crosskeys"], "everyHour": bad}}, "everyHour")
+        for good in (True, False):
+            self.assertEqual(self.one({"modes": ["Crosskeys"], "everyHour": good}).every_hour, good)
+
+    def test_a_between_category_cannot_be_every_hour(self):
+        self.rejected({"entrance": {"modes": ["Crosskeys"], "between": True, "everyHour": True},
+                       "keys": {"modes": ["K One"]}}, "entrance", "between", "everyHour")
+        chosen, _left = compose({"entrance": {"modes": ["Crosskeys"], "between": True, "everyHour": False},
+                                 "keys": {"modes": ["K One"], "everyHour": True}})
+        self.assertEqual([(c.between, c.every_hour) for c in chosen], [(True, False), (False, True)])
 
     def test_every_category_being_a_between_category_is_an_error(self):
         self.rejected({"entrance": {"modes": ["Crosskeys"], "between": True}}, "between")
@@ -981,7 +1001,16 @@ def featured(categories, entries=(), *, events=(), bands=LAYOUT, model=None, ope
                              list(events), dates)
 
 
+def featured_slot(weekday, odd, even):
+    """A featured slot: its hour in weeks 1, 3, 5 and so on, then in weeks 2, 4, 6."""
+    return sp.FeaturedSlot(weekday, (odd, even))
+
+
 class FeaturedSlotTests(unittest.TestCase):
+    def test_a_slot_takes_its_first_hour_in_odd_weeks_and_its_second_in_even_weeks(self):
+        entry = featured_slot(2, 14, 13)
+        self.assertEqual([entry.hour(week) for week in range(1, 6)], [14, 13, 14, 13, 14])
+
     def test_candidates_are_the_prime_hours_of_the_weekdays_own_group(self):
         def own_prime(group, hour):
             first = {"work": 10, "casual": 12, "prime": 14}[group]
@@ -997,40 +1026,80 @@ class FeaturedSlotTests(unittest.TestCase):
             return replace(base, hour={group: list(factors) for group in sp.DAY_GROUPS})
 
         # Hour 11 is prime only on work days, hour 17 on casual and prime days, hour 19 only on
-        # prime days: the first such weekday from Monday takes the race.
-        self.assertEqual(featured([a], bands=bands, model=peaked(11)), {"a": (0, 11)})
-        self.assertEqual(featured([a], bands=bands, model=peaked(17)), {"a": (3, 17)})
-        self.assertEqual(featured([a], bands=bands, model=peaked(19)), {"a": (5, 19)})
+        # prime days: the first such weekday from Monday takes the race, with the peak in odd
+        # weeks and its neighbour of the earlier tied pair in even weeks.
+        self.assertEqual(featured([a], bands=bands, model=peaked(11)), {"a": featured_slot(0, 11, 10)})
+        self.assertEqual(featured([a], bands=bands, model=peaked(17)), {"a": featured_slot(3, 17, 16)})
+        self.assertEqual(featured([a], bands=bands, model=peaked(19)), {"a": featured_slot(5, 19, 18)})
         # Hour 3 is prime nowhere, so it is never a candidate however good it looks.
-        self.assertEqual(featured([a], bands=bands, model=peaked(3)), {"a": (0, 10)})
+        self.assertEqual(featured([a], bands=bands, model=peaked(3)), {"a": featured_slot(0, 10, 11)})
 
     def test_a_between_categorys_candidates_run_from_one_to_twenty_two(self):
-        late = fx.bands_by(lambda group, hour: ("prime" if hour in (0, 22, 23) else "normal", 1.0))
+        late = fx.bands_by(
+            lambda group, hour: ("prime" if hour in (0, 21, 22, 23) else "normal", 1.0)
+        )
         factors = [1.0] * 24
         factors[23] = 5.0
         model = replace(flat_model(["a"]), hour={group: list(factors) for group in sp.DAY_GROUPS})
-        # A main category takes its best prime hour, 23:00. A between race there could have
-        # no bracket on its own date, so a between category takes 22:00 instead.
-        self.assertEqual(featured([plain_category("a")], bands=late, model=model), {"a": (0, 23)})
+        # A main category takes its best pair, 22:00 and 23:00. A between race at 23:00 could
+        # have no bracket on its own date, so a between category takes 21:00 and 22:00 instead.
         self.assertEqual(
-            featured([plain_category("a", between=True)], bands=late, model=model), {"a": (0, 22)}
+            featured([plain_category("a")], bands=late, model=model), {"a": featured_slot(0, 23, 22)}
         )
-        edges = fx.bands_by(lambda group, hour: ("prime" if hour in (0, 23) else "normal", 1.0))
+        self.assertEqual(
+            featured([plain_category("a", between=True)], bands=late, model=model),
+            {"a": featured_slot(0, 21, 22)},
+        )
+        edges = fx.bands_by(lambda group, hour: ("prime" if hour in (0, 22, 23) else "normal", 1.0))
         with self.assertRaises(sp.ScheduleError):
             featured([plain_category("a", between=True)], bands=edges, model=model)
 
-    def test_a_category_with_a_tie_between_hours_takes_the_earlier_hour(self):
-        self.assertEqual(featured([plain_category("a")]), {"a": (0, 12)})
+    def test_23_never_pairs_with_0_of_the_next_date(self):
+        edges = fx.bands_by(lambda group, hour: ("prime" if hour in (0, 23) else "normal", 1.0))
+        with self.assertRaisesRegex(sp.ScheduleError, "two adjacent prime hours"):
+            featured([plain_category("a")], bands=edges)
+
+    def test_a_weekday_without_two_adjacent_candidates_has_no_candidate(self):
+        def gapped(group, hour):
+            prime = (12, 14) if group == "work" else (12, 13)
+            return ("prime" if hour in prime else "normal"), 1.0
+
+        a = plain_category("a")
+        # Monday 12:00 has the best record, but 12 and 14 are no pair: Thursday takes it.
+        entries = source_slots("a", 0, 12, 95)
+        self.assertEqual(featured([a], entries, bands=fx.bands_by(gapped)), {"a": featured_slot(3, 12, 13)})
+        apart = fx.bands_by(lambda group, hour: ("prime" if hour in (12, 14) else "normal", 1.0))
+        with self.assertRaisesRegex(sp.ScheduleError, "two adjacent prime hours"):
+            featured([a], bands=apart)
+
+    def test_a_tie_between_pairs_takes_the_earlier_pair_and_its_earlier_hour_first(self):
+        self.assertEqual(featured([plain_category("a")]), {"a": featured_slot(0, 12, 13)})
+
+    def test_the_better_hour_of_the_pair_runs_in_odd_weeks(self):
+        a = plain_category("a")
+        # Monday 13:00 scores (95 + 5) / (5 + 5) = 10. The pairs 12-13 and 13-14 tie at 5.5, so
+        # the earlier pair wins, and 13 is its better hour.
+        self.assertEqual(featured([a], source_slots("a", 0, 13, 95)), {"a": featured_slot(0, 13, 12)})
+
+    def test_a_pair_scores_the_mean_of_its_two_hours(self):
+        a = plain_category("a")
+        # Monday: 12 scores 10 and 15 scores 9; Tuesday: 14 and 15 score 6 each. A pair
+        # around Monday's best hour scores (10 + 1) / 2 = 5.5, below Tuesday's 6.
+        entries = (
+            source_slots("a", 0, 12, 95) + source_slots("a", 0, 15, 85)
+            + source_slots("a", 1, 14, 55) + source_slots("a", 1, 15, 55)
+        )
+        self.assertEqual(featured([a], entries), {"a": featured_slot(1, 14, 15)})
 
     def test_the_score_blends_the_past_slots_with_five_times_the_expected_entrants(self):
         a = plain_category("a")
         # Tuesday at 13: two slots with 21 entrants; (21 + 5 * 1) / (2 + 5) beats the 1 elsewhere.
         entries = source_slots("a", 1, 13, 20, 2)
         entries[0] = (*entries[0][:3], 11, True)
-        self.assertEqual(featured([a], entries), {"a": (1, 13)})
+        self.assertEqual(featured([a], entries), {"a": featured_slot(1, 13, 12)})
         # A bad record scores below the expected entrants of 1 and is avoided.
         bad = source_slots("a", 0, 12, 0, 5)
-        self.assertEqual(featured([a], bad), {"a": (0, 13)})
+        self.assertEqual(featured([a], bad), {"a": featured_slot(0, 13, 14)})
 
     def test_a_mixed_category_counts_the_slots_of_every_source(self):
         t = mixed_category("t", ("keys", 1.0, 50), ("mystery", 1.0, 50))
@@ -1039,31 +1108,34 @@ class FeaturedSlotTests(unittest.TestCase):
             source_slots("keys", 2, 13, 20, 1) + source_slots("mystery", 2, 13, 20, 1)
             + source_slots("keys", 3, 13, 30, 1)
         )
-        # Wednesday: (40 + 5 * 3) / 7 = 7.86; Thursday: (30 + 5 * 3) / 6 = 7.5.
-        self.assertEqual(featured([t], entries, model=model), {"t": (2, 13)})
+        # Wednesday 13: (40 + 5 * 3) / 7 = 7.86; Thursday 13: (30 + 5 * 3) / 6 = 7.5. Each
+        # pairs with 12, which scores 3.
+        self.assertEqual(featured([t], entries, model=model), {"t": featured_slot(2, 13, 12)})
         # Counting one source only would have picked Thursday.
         keys_only = mixed_category("t", ("keys", 1.0, 50))
-        self.assertEqual(featured([keys_only], entries, model=model), {"t": (3, 13)})
+        self.assertEqual(featured([keys_only], entries, model=model), {"t": featured_slot(3, 13, 12)})
 
     def test_the_assignment_maximises_the_summed_score_not_the_strongest_first(self):
         a, b = plain_category("a"), plain_category("b")
-        # Scores are (entrants + 5) / (5 + 5): a has 10 on Monday and 9 on Tuesday, b has 9.5 on
-        # Monday and 1 elsewhere. Strongest first would give Monday to a and leave b 1: 11 in all.
+        # Hours score (entrants + 5) / (5 + 5): a has 10 on Monday and 9 on Tuesday at 12, b
+        # has 9.5 on Monday at 12, and every other hour 1. So a's best pairs score 5.5 on Monday
+        # and 5 on Tuesday, and b's 5.25 on Monday. Strongest first would give Monday to a and
+        # leave b 1: 6.5 in all, against 10.25.
         entries = (
             source_slots("a", 0, 12, 95) + source_slots("a", 1, 12, 85)
             + source_slots("b", 0, 12, 90)
         )
-        self.assertEqual(featured([a, b], entries), {"a": (1, 12), "b": (0, 12)})
+        self.assertEqual(featured([a, b], entries), {"a": featured_slot(1, 12, 13), "b": featured_slot(0, 12, 13)})
 
     def test_a_tie_goes_to_the_first_assignment_in_plan_order_from_monday(self):
         a, b = plain_category("a"), plain_category("b")
-        self.assertEqual(featured([a, b]), {"a": (0, 12), "b": (1, 12)})
-        self.assertEqual(featured([b, a]), {"b": (0, 12), "a": (1, 12)})
+        self.assertEqual(featured([a, b]), {"a": featured_slot(0, 12, 13), "b": featured_slot(1, 12, 13)})
+        self.assertEqual(featured([b, a]), {"b": featured_slot(0, 12, 13), "a": featured_slot(1, 12, 13)})
 
     def test_every_category_gets_a_weekday_of_its_own(self):
         cats = [plain_category(name) for name in "abcdefg"]
         result = featured(cats)
-        self.assertEqual(sorted(weekday for weekday, _hour in result.values()), list(range(7)))
+        self.assertEqual(sorted(entry.weekday for entry in result.values()), list(range(7)))
 
     def test_more_than_seven_categories_is_an_error(self):
         cats = [plain_category(name) for name in "abcdefgh"]
@@ -1081,36 +1153,44 @@ class FeaturedSlotTests(unittest.TestCase):
     def test_a_weekly_block_event_skips_the_hours_it_covers_in_any_week(self):
         a = plain_category("a")
         entries = source_slots("a", 0, 12, 95)
-        self.assertEqual(featured([a], entries), {"a": (0, 12)})
+        self.assertEqual(featured([a], entries), {"a": featured_slot(0, 12, 13)})
         # Monday 11:00 to 14:00 touches the races at 12 and 13 but not 14.
         block = weekly_event("block", 0, 11, 3)
-        self.assertEqual(featured([a], entries, events=[block]), {"a": (0, 14)})
+        self.assertEqual(featured([a], entries, events=[block]), {"a": featured_slot(0, 14, 15)})
         # An event of one week only still rules the hour out, since a weekly event repeats.
         third = weekly_event("block", 0, 11, 3, dates=[d for d in SEPTEMBER if d.day == 21])
         self.assertEqual(len(third.windows), 1)
-        self.assertEqual(featured([a], entries, events=[third]), {"a": (0, 14)})
+        self.assertEqual(featured([a], entries, events=[third]), {"a": featured_slot(0, 14, 15)})
+
+    def test_a_weekly_event_over_one_hour_of_a_pair_rules_the_pair_out(self):
+        a = plain_category("a")
+        entries = source_slots("a", 0, 13, 95)
+        self.assertEqual(featured([a], entries), {"a": featured_slot(0, 13, 12)})
+        # Monday 12:00 to 13:00 touches the race at 12 but not the one at 13.
+        block = weekly_event("block", 0, 12, 1)
+        self.assertEqual(featured([a], entries, events=[block]), {"a": featured_slot(0, 13, 14)})
 
     def test_a_weekly_avoid_event_skips_only_the_categories_it_lists(self):
         a, b = plain_category("a"), plain_category("b")
         entries = source_slots("a", 0, 12, 95) + source_slots("b", 0, 12, 95)
         avoid_a = weekly_event("avoid", 0, 11, 3, categories=["a"])
         result = featured([a, b], entries, events=[avoid_a])
-        self.assertEqual(result["a"][0], 1)
-        self.assertEqual(result["b"], (0, 12))
+        self.assertEqual(result["a"].weekday, 1)
+        self.assertEqual(result["b"], featured_slot(0, 12, 13))
 
     def test_a_dated_event_and_a_weekly_single_event_never_skip_a_candidate(self):
         a = plain_category("a")
         entries = source_slots("a", 0, 12, 95)
         dated = replace(weekly_event("block", 0, 11, 3), weekly=False)
         single = weekly_event("single", 0, 11, 3)
-        self.assertEqual(featured([a], entries, events=[dated, single]), {"a": (0, 12)})
+        self.assertEqual(featured([a], entries, events=[dated, single]), {"a": featured_slot(0, 12, 13)})
 
     def test_a_weekly_event_outside_the_period_dates_skips_nothing(self):
         a = plain_category("a")
         entries = source_slots("a", 0, 12, 95)
         october = [date(2026, 10, 5)]
         away = weekly_event("block", 0, 11, 3, dates=october)
-        self.assertEqual(featured([a], entries, events=[away]), {"a": (0, 12)})
+        self.assertEqual(featured([a], entries, events=[away]), {"a": featured_slot(0, 12, 13)})
 
 
 class EventTests(unittest.TestCase):
@@ -1255,9 +1335,14 @@ def hours_of(starts):
 SEP1, SEP2, SEP3, SEP4, SEP5, SEP6, SEP7, SEP8 = (date(2026, 9, day) for day in range(1, 9))
 
 
-def st(hour, band="normal", value=1.0, day=SEP2):
-    """A start at an Eastern hour with the given band and value."""
-    return start_at(local_at(day, hour), band, value)
+def ahead(hours=0, prime=0, coverage=0, gaps=0, normal=0, value=0.0):
+    """What a look-ahead says of the next date's best pick."""
+    return (hours, prime, coverage, gaps, normal, value)
+
+
+def st(hour, band="normal", value=1.0, day=SEP2, draw=0.0):
+    """A start at an Eastern hour with the given band, value and draw key."""
+    return replace(start_at(local_at(day, hour), band, value), draw=draw)
 
 
 def day_starts(day, rule=fx.layout):
@@ -1272,6 +1357,10 @@ def day_starts(day, rule=fx.layout):
         starts.append(sp.Start(at, local, group, band, value))
         at += timedelta(hours=1)
     return starts
+
+
+# The shipped rules without the hour draw, for tests of the value order it replaces.
+NO_DRAW = replace(sp.SHIPPED, draw=False)
 
 
 def make_filler(names="abc", *, between=(), events=(), rules=sp.SHIPPED, limits=None,
@@ -1312,8 +1401,9 @@ def clock(day, hour, minute=0):
 
 
 class ChooseHoursTests(unittest.TestCase):
-    """The objective is, in order: hours, the next date's hours, prime, fewer short gaps, normal,
-    value, then the earlier hours. Each test lets a criterion decide only among ties above it."""
+    """The objective is, in order: hours, the next date's hours, prime, coverage, fewer short
+    gaps, normal, value (or with draw, the draw keys), then the earlier hours. Each test lets a
+    criterion decide only among ties above it."""
 
     @staticmethod
     def pick(options, **kwargs):
@@ -1331,13 +1421,14 @@ class ChooseHoursTests(unittest.TestCase):
         self.assertEqual(self.pick([st(10), st(12)])[1], [10, 12])
         self.assertEqual(len(self.pick([st(10), st(11)])[1]), 1)
 
-    def test_the_score_is_hours_next_hours_prime_minus_short_gaps_normal_value(self):
+    def test_the_score_is_hours_next_hours_prime_coverage_minus_short_gaps_normal_value(self):
         score, picked = self.pick(
-            [st(10, "normal", 1.5), st(13, "prime", 2.5), st(16, "quiet", 4.0), st(19, "prime", 0.5)]
+            [st(10, "normal", 1.5), st(13, "prime", 2.5), st(16, "quiet", 4.0), st(19, "prime", 0.5)],
+            lacking=lambda start: start.local.hour in (13, 16),
         )
         self.assertEqual(picked, [10, 13, 16, 19])
-        self.assertEqual(score[:5], (4, 0, 2, 0, 1))
-        self.assertAlmostEqual(score[5], 8.5)
+        self.assertEqual(score[:6], (4, 0, 2, 2, 0, 1))
+        self.assertAlmostEqual(score[6], 8.5)
 
     def test_it_picks_at_most_the_number_needed_and_none_for_zero(self):
         options = [st(h) for h in range(0, 24)]
@@ -1349,7 +1440,7 @@ class ChooseHoursTests(unittest.TestCase):
         self.assertEqual(self.pick(options, need=-3)[1], [])
         # Fewer options than needed return the most that fit.
         self.assertEqual(self.pick([st(10), st(11), st(20)], need=9)[1], [10, 20])
-        self.assertEqual(self.pick([], need=3), ((0, 0, 0, 0, 0, 0.0), []))
+        self.assertEqual(self.pick([], need=3), ((0, 0, 0, 0, 0, 0, 0.0), []))
 
     def test_the_most_hours_beat_the_most_prime_hours(self):
         # 11 and 13 are two normal races; 12 alone is one prime race.
@@ -1358,17 +1449,17 @@ class ChooseHoursTests(unittest.TestCase):
     def test_the_next_dates_hours_beat_prime_and_the_rest(self):
         options = [st(20, "prime", 9.0), st(22, "normal", 1.0)]
         # Only a last race at 22 leaves the next date its hours.
-        following = lambda last: 5 if last is not None and last.local.hour == 22 else 1  # noqa: E731
+        following = lambda last: ahead(5) if last is not None and last.local.hour == 22 else ahead(1, prime=3)  # noqa: E731
         score, picked = self.pick(options, need=1, following=following)
         self.assertEqual(picked, [22])
         self.assertEqual(score[:3], (1, 5, 0))
         # With equal lookahead the prime hour wins as usual.
-        self.assertEqual(self.pick(options, need=1, following=lambda last: 3)[1], [20])
+        self.assertEqual(self.pick(options, need=1, following=lambda last: ahead(3))[1], [20])
         self.assertEqual(self.pick(options, need=1)[1], [20])
 
     def test_the_lookahead_is_asked_from_the_last_pick_or_from_the_previous_race(self):
         def following(last):
-            return -1 if last is None else last.local.hour
+            return ahead(-1) if last is None else ahead(last.local.hour)
 
         # The score carries what the lookahead says of the last race taken.
         self.assertEqual(self.pick([st(10), st(12)], need=2, following=following)[0][1], 12)
@@ -1386,17 +1477,17 @@ class ChooseHoursTests(unittest.TestCase):
         # (10, 12) and (12, 14) hold a short gap and a prime hour; (10, 14) none and no prime.
         score, picked = self.pick([st(10), st(12, "prime"), st(14)], need=2)
         self.assertEqual(picked, [10, 12])
-        self.assertEqual(score[2:5], (1, -1, 1))
+        self.assertEqual(score[2:6], (1, 0, -1, 1))
 
     def test_fewer_short_gaps_beat_more_normal_hours(self):
         # A quiet 13 keeps the gap at 3 hours, where the normal 12 would shrink it to 2.
         score, picked = self.pick([st(10), st(12), st(13, "quiet")], need=2)
         self.assertEqual(picked, [10, 13])
-        self.assertEqual(score[3:5], (0, 1))
+        self.assertEqual(score[4:6], (0, 1))
         # Without the short-gap term the normal pair wins.
         score, picked = self.pick([st(10), st(12), st(13, "quiet")], need=2, wide_gaps=False)
         self.assertEqual(picked, [10, 12])
-        self.assertEqual(score[3], 0)
+        self.assertEqual(score[4], 0)
 
     def test_a_gap_is_short_below_three_hours_unless_both_races_are_prime(self):
         cases = (
@@ -1412,20 +1503,20 @@ class ChooseHoursTests(unittest.TestCase):
             with self.subTest(hours=hours_of(options), gaps=gaps):
                 score, picked = self.pick(options, need=2)
                 self.assertEqual(len(picked), 2)
-                self.assertEqual(score[3], gaps)
+                self.assertEqual(score[4], gaps)
 
     def test_the_previous_main_race_counts_for_the_first_gap(self):
         previous = start_at(local_at(SEP1, 23))
         # 01:00 would be 2 hours after a race at 23:00 the day before; 02:00 is 3 hours after.
         options = [st(1), st(2)]
         score, picked = self.pick(options, need=1, previous=previous)
-        self.assertEqual((picked, score[3]), ([2], 0))
+        self.assertEqual((picked, score[4]), ([2], 0))
         score, picked = self.pick(options, need=1, previous=previous, wide_gaps=False)
         self.assertEqual(picked, [1])
         # Two prime races are never a short gap, and no previous race is no gap.
         prime = start_at(local_at(SEP1, 23), "prime")
         score, picked = self.pick([st(1, "prime"), st(2, "prime")], need=1, previous=prime)
-        self.assertEqual((picked, score[3]), ([1], 0))
+        self.assertEqual((picked, score[4]), ([1], 0))
         self.assertEqual(self.pick(options, need=1)[1], [1])
 
     def test_the_most_normal_hours_break_a_tie_in_short_gaps(self):
@@ -1433,7 +1524,7 @@ class ChooseHoursTests(unittest.TestCase):
         options = [st(8), st(11, "normal", 1.0), st(14, "quiet", 9.0)]
         score, picked = self.pick(options, need=2)
         self.assertEqual(picked, [8, 11])
-        self.assertEqual(score[4], 2)
+        self.assertEqual(score[5], 2)
 
     def test_the_highest_total_value_breaks_a_tie_in_bands(self):
         self.assertEqual(self.pick([st(10, value=1.0), st(11, value=2.0)], need=1)[1], [11])
@@ -1447,12 +1538,86 @@ class ChooseHoursTests(unittest.TestCase):
         self.assertEqual(self.pick([st(h) for h in range(24)], need=12, wide_gaps=False)[1],
                          list(range(0, 24, 2)))
 
+    def test_coverage_breaks_a_tie_in_prime_but_never_beats_it(self):
+        lacking = lambda start: start.local.hour == 10  # noqa: E731
+        # 10 lacks a covered category; 11 does not, and is dearer.
+        score, picked = self.pick([st(10), st(11, value=5.0)], need=1, lacking=lacking)
+        self.assertEqual((picked, score[3]), ([10], 1))
+        # A prime hour still wins over a lacking normal one.
+        self.assertEqual(self.pick([st(10), st(11, "prime")], need=1, lacking=lacking)[1], [11])
+
+    def test_coverage_counts_every_category_that_lacks_the_hour(self):
+        lacking = lambda start: {10: 2, 11: 1}.get(start.local.hour, 0)  # noqa: E731
+        score, picked = self.pick([st(10), st(11, value=5.0)], need=1, lacking=lacking)
+        self.assertEqual((picked, score[3]), ([10], 2))
+        # Two hours each lacking one category weigh as much as one lacking two.
+        lacking = lambda start: {8: 2, 10: 1, 13: 1}.get(start.local.hour, 0)  # noqa: E731
+        score, _picked = self.pick([st(8), st(10), st(13)], need=2, lacking=lacking, wide_gaps=False)
+        self.assertEqual(score[3], 3)
+
+    def test_coverage_beats_short_gaps_and_normal_hours(self):
+        lacking = lambda start: start.local.hour == 12  # noqa: E731
+        # (10, 13) has no short gap; (10, 12) has one, but 12 lacks a covered category.
+        score, picked = self.pick([st(10), st(12, "quiet"), st(13)], need=2, lacking=lacking)
+        self.assertEqual(picked, [10, 12])
+        self.assertEqual(score[3:6], (1, -1, 1))
+        self.assertEqual(self.pick([st(10), st(12, "quiet"), st(13)], need=2)[1], [10, 13])
+
+    def test_the_next_dates_best_pick_adds_to_this_dates_rule_by_rule(self):
+        options = [st(22, value=1.0), st(23, value=2.0)]
+        # Alone, the dearer 23 wins.
+        self.assertEqual(self.pick(options, need=1)[1], [23])
+        cases = (
+            # 23 leaves the next date one prime hour less.
+            (ahead(5, prime=1), ahead(5, prime=0), (1, 5, 1, 0, 0, 1, 1.0)),
+            # 23 makes the next date's first race a short gap.
+            (ahead(5, gaps=0), ahead(5, gaps=-1), (1, 5, 0, 0, 0, 1, 1.0)),
+            # 23 takes a normal hour from the next date.
+            (ahead(5, normal=4), ahead(5, normal=3), (1, 5, 0, 0, 0, 5, 1.0)),
+            # 23 costs the next date more value than it gains.
+            (ahead(5, value=9.0), ahead(5, value=7.0), (1, 5, 0, 0, 0, 1, 10.0)),
+        )
+        for after_22, after_23, score in cases:
+            with self.subTest(after_22=after_22, after_23=after_23):
+                following = lambda last: after_23 if last is not None and last.local.hour == 23 else after_22  # noqa: E731
+                self.assertEqual(self.pick(options, need=1, following=following), (score, [22]))
+        # The next date's hours still come before all of it.
+        following = lambda last: ahead(5) if last is not None and last.local.hour == 23 else ahead(4, prime=9)  # noqa: E731
+        self.assertEqual(self.pick(options, need=1, following=following)[1], [23])
+
+    def test_the_next_dates_coverage_counts_with_this_dates(self):
+        options = [st(20, value=1.0), st(22, value=9.0)]
+        # A last race at 20 leaves the next date one lacking hour; both leave it 3 hours.
+        following = lambda last: ahead(3, coverage=1 if last is not None and last.local.hour == 20 else 0)  # noqa: E731
+        score, picked = self.pick(options, need=1, following=following)
+        self.assertEqual((picked, score[1], score[3]), ([20], 3, 1))
+        self.assertEqual(self.pick(options, need=1, following=lambda last: ahead(3))[1], [22])
+        # This date's own lacking hour counts the same as the next date's, so the value decides.
+        lacking = lambda start: start.local.hour == 22  # noqa: E731
+        score, picked = self.pick(options, need=1, following=following, lacking=lacking)
+        self.assertEqual((picked, score[3]), ([22], 1))
+
+    def test_with_draw_the_highest_draw_keys_replace_the_value(self):
+        # The value prefers 10, the draw key 11.
+        options = [st(10, value=5.0, draw=0.1), st(11, value=1.0, draw=2.0)]
+        self.assertEqual(self.pick(options, need=1)[1], [10])
+        score, picked = self.pick(options, need=1, draw=True)
+        self.assertEqual(picked, [11])
+        self.assertAlmostEqual(score[6], 2.0)
+
+    def test_the_draw_never_beats_normal_hours_or_short_gaps(self):
+        # The quiet 11 has the higher key, but the normal 10 wins.
+        self.assertEqual(self.pick([st(10, draw=0.0), st(11, "quiet", draw=9.0)], need=1, draw=True)[1], [10])
+        # (10, 12) is a short gap whatever its keys; (10, 13) is not.
+        options = [st(10), st(12, draw=9.0), st(13, draw=-9.0)]
+        self.assertEqual(self.pick(options, need=2, draw=True)[1], [10, 13])
+
     def test_fixed_starts_are_kept_apart_but_never_returned_or_counted(self):
         options = [st(10), st(12), st(16), st(17)]
         score, picked = self.pick(options, need=2, fixed=[st(14)])
         # 10 and 17 leave 4 and 3 hours either side of the fixed race: no short gap.
         self.assertEqual(picked, [10, 17])
-        self.assertEqual(score[:4], (2, 0, 0, 0))
+        self.assertEqual(score[:5], (2, 0, 0, 0, 0))
         # A pick one hour from the fixed race is not allowed.
         self.assertEqual(self.pick([st(13), st(15)], need=2, fixed=[st(14)])[1], [])
         # Fixed races do not count against the number needed.
@@ -1460,9 +1625,9 @@ class ChooseHoursTests(unittest.TestCase):
 
     def test_a_fixed_race_counts_for_short_gaps_with_the_races_around_it(self):
         score, picked = self.pick([st(12), st(16)], need=1, fixed=[st(14)], wide_gaps=True)
-        self.assertEqual(score[3], -1)
+        self.assertEqual(score[4], -1)
         score, _ = self.pick([st(11, "prime"), st(16)], need=1, fixed=[st(13, "prime")])
-        self.assertEqual(score[3], 0)
+        self.assertEqual(score[4], 0)
 
     def test_forced_starts_are_always_picked_and_count_against_need(self):
         options = [st(10), st(13), st(14), st(15)]
@@ -1484,7 +1649,7 @@ class ChooseHoursTests(unittest.TestCase):
         self.assertIsNone(self.pick([], fixed=[st(12), st(13)]))
 
     @staticmethod
-    def brute(options, need, fixed, forced, previous, wide_gaps, following):
+    def brute(options, need, fixed, forced, previous, wide_gaps, following, lacking=None, draw=False):
         """The spec's objective by trying every subset of the free starts."""
         best = None
         for size in range(len(options) + 1):
@@ -1503,10 +1668,14 @@ class ChooseHoursTests(unittest.TestCase):
                         short += 1
                     before = start
                 last = taken[-1] if taken else previous
+                hours, prime, coverage, gaps, normal, value = following(last) if following else ahead()
                 score = (
-                    len(picked), following(last) if following else 0,
-                    sum(s.band == "prime" for s in picked), -short,
-                    sum(s.band == "normal" for s in picked), sum(s.value for s in picked),
+                    len(picked), hours,
+                    prime + sum(s.band == "prime" for s in picked),
+                    coverage + sum(bool(lacking and lacking(s)) for s in picked),
+                    gaps - short,
+                    normal + sum(s.band == "normal" for s in picked),
+                    value + sum(s.draw if draw else s.value for s in picked),
                 )
                 key = (score, [-start.utc.timestamp() for start in picked])
                 if best is None or key > best[0]:
@@ -1519,7 +1688,8 @@ class ChooseHoursTests(unittest.TestCase):
         bands = ("prime", "normal", "quiet")
         for case in range(250):
             hours = rng.sample(range(0, 14), rng.randint(0, 9))
-            starts = [st(h, rng.choice(bands), rng.choice((1.0, 1.5, 2.0, 2.5))) for h in hours]
+            starts = [st(h, rng.choice(bands), rng.choice((1.0, 1.5, 2.0, 2.5)),
+                         draw=rng.choice((-1.0, 0.0, 0.5, 2.0))) for h in hours]
             kinds = [rng.choice(("free", "free", "free", "fixed", "forced")) for _ in starts]
             options = [s for s, k in zip(starts, kinds) if k == "free"]
             fixed = [s for s, k in zip(starts, kinds) if k == "fixed"]
@@ -1527,18 +1697,25 @@ class ChooseHoursTests(unittest.TestCase):
             previous = rng.choice((None, st(rng.randint(0, 22), rng.choice(bands), 1.0, SEP1)))
             lookahead = rng.choice((None, "late"))
             following = None if lookahead is None else (
-                lambda last: 0 if last is None else (last.local.hour * 7) % 5)
+                lambda last: ahead() if last is None else ahead(
+                    (last.local.hour * 7) % 5, last.local.hour % 3, last.local.hour % 2,
+                    -(last.local.hour % 2), last.local.hour % 4, (last.local.hour % 5) / 2))
+            lacked = set(rng.sample(range(0, 14), rng.randint(0, 4)))
+            lacking = rng.choice((None, lambda start: start.local.hour in lacked))
+            draw = rng.choice((True, False))
             need = rng.randint(0, 7)
             wide = rng.choice((True, False))
-            expected = self.brute(options, need, fixed, forced, previous, wide, following)
+            expected = self.brute(options, need, fixed, forced, previous, wide, following, lacking, draw)
             actual = sp.choose_hours(options, need=need, fixed=fixed, forced=forced,
-                                     previous=previous, wide_gaps=wide, following=following)
-            with self.subTest(case=case, hours=hours, kinds=kinds, need=need, wide=wide):
+                                     previous=previous, wide_gaps=wide, following=following,
+                                     lacking=lacking, draw=draw)
+            with self.subTest(case=case, hours=hours, kinds=kinds, need=need, wide=wide, draw=draw):
                 if expected is None:
                     self.assertIsNone(actual)
                 else:
                     self.assertIsNotNone(actual)
-                    self.assertEqual(actual[0], expected[0])
+                    self.assertEqual(actual[0][:6], expected[0][:6])
+                    self.assertAlmostEqual(actual[0][6], expected[0][6])
                     self.assertEqual(hours_of(actual[1]), hours_of(expected[1]))
 
     def test_the_spring_day_has_23_hours_and_still_reaches_12_races(self):
@@ -1559,6 +1736,45 @@ class ChooseHoursTests(unittest.TestCase):
             for first, second in zip(picked, picked[1:]):
                 self.assertGreaterEqual(second.utc - first.utc, sp.RACE_LENGTH)
         self.assertEqual(len(sp.choose_hours(starts, need=14)[1]), 13)
+
+
+class DrawTests(unittest.TestCase):
+    """The draw key of a start is ln(value) plus the seeded Gumbel noise of its UTC time."""
+
+    TIMES = [datetime(2026, 9, 1, tzinfo=UTC) + timedelta(hours=n) for n in range(4000)]
+
+    def test_the_noise_is_the_same_for_the_same_seed_and_time_and_differs_by_seed(self):
+        at = self.TIMES[0]
+        self.assertEqual(sp.draw_noise(1, at), sp.draw_noise(1, at))
+        self.assertNotEqual(sp.draw_noise(1, at), sp.draw_noise(2, at))
+        self.assertNotEqual(sp.draw_noise(1, at), sp.draw_noise(1, self.TIMES[1]))
+
+    def test_the_noise_is_a_standard_gumbel_variable(self):
+        noise = [sp.draw_noise(7, at) for at in self.TIMES]
+        self.assertTrue(all(map(math.isfinite, noise)))
+        # Its mean is the Euler-Mascheroni constant.
+        self.assertAlmostEqual(sum(noise) / len(noise), 0.5772, delta=0.05)
+
+    def test_the_highest_key_draws_with_odds_proportional_to_value(self):
+        # One start of value 1 against the next of value 3, over 4000 pairs: about 3 in 4.
+        dear = sum(
+            math.log(3.0) + sp.draw_noise(1, self.TIMES[2 * n + 1])
+            > math.log(1.0) + sp.draw_noise(1, self.TIMES[2 * n])
+            for n in range(len(self.TIMES) // 2)
+        )
+        self.assertAlmostEqual(dear / (len(self.TIMES) // 2), 0.75, delta=0.03)
+
+    def test_a_fillers_start_carries_its_draw_key(self):
+        filler = make_filler()
+        filler.seed = 9
+        start = filler.start(SEP2, 14)
+        self.assertAlmostEqual(start.draw, math.log(start.value) + sp.draw_noise(9, start.utc))
+        filler.seed = 10
+        self.assertNotAlmostEqual(filler.start(SEP2, 14).draw, start.draw)
+
+    def test_a_start_worth_nothing_is_never_drawn(self):
+        filler = make_filler(bands=fx.bands_by(lambda group, hour: ("normal", 0.0)))
+        self.assertEqual(filler.start(SEP2, 14).draw, -math.inf)
 
 
 class StartTests(unittest.TestCase):
@@ -1855,6 +2071,44 @@ class ChooseTests(unittest.TestCase):
         self.assertEqual(filler.choose(start, ["c", "b"]), "b")
         self.assertEqual(filler.choose(start, ["c", "a", "b"]), "a")
 
+    def test_an_hour_is_lacking_until_every_hour_category_open_there_has_raced_at_it(self):
+        filler = make_filler(limits={"a": {"every_hour": True}},
+                             open_bands={"a": ("normal", "quiet"), "b": sp.BANDS, "c": sp.BANDS})
+        # Prime time is closed to a, so it never lacks a race there.
+        self.assertFalse(filler.lacks(filler.start(SEP3, 14)))
+        self.assertTrue(filler.lacks(filler.start(SEP3, 8)))
+        # A race of another category, or of a at another hour, does not cover 08:00.
+        put(filler, "b", SEP1, 8)
+        put(filler, "a", SEP1, 10)
+        self.assertTrue(filler.lacks(filler.start(SEP3, 8)))
+        # A race of a at 08:00 on any date does, and so for every date.
+        put(filler, "a", SEP2, 8)
+        self.assertFalse(filler.lacks(filler.start(SEP3, 8)))
+        self.assertFalse(filler.lacks(filler.start(date(2026, 9, 20), 8)))
+        # It counts the every-hour categories that lack the hour.
+        both = make_filler(limits={"a": {"every_hour": True}, "b": {"every_hour": True}})
+        self.assertEqual(both.lacks(both.start(SEP3, 8)), 2)
+        put(both, "b", SEP1, 8)
+        self.assertEqual(both.lacks(both.start(SEP3, 8)), 1)
+        # Without the rule, or without an every-hour category, no hour lacks a race.
+        off = make_filler(limits={"a": {"every_hour": True}}, rules=replace(sp.SHIPPED, every_hour=False))
+        self.assertFalse(off.lacks(off.start(SEP3, 8)))
+        self.assertFalse(make_filler().lacks(make_filler().start(SEP3, 8)))
+
+    def test_an_every_hour_category_lacking_the_hour_comes_first(self):
+        weights = {"a": {band: 1.0 for band in sp.BANDS}, "b": {band: 0.01 for band in sp.BANDS}}
+        filler = make_filler("ab", weights=weights, limits={"b": {"every_hour": True}})
+        put(filler, "b", SEP1, 8)
+        start = filler.start(SEP3, 12)
+        # b's ratio is 100 times a's, yet it has no race at 12:00.
+        self.assertEqual(filler.choose(start, ["a", "b"]), "b")
+        put(filler, "b", SEP2, 12)
+        self.assertEqual(filler.choose(start, ["a", "b"]), "a")
+        off = make_filler("ab", weights=weights, limits={"b": {"every_hour": True}},
+                          rules=replace(sp.SHIPPED, every_hour=False))
+        put(off, "b", SEP1, 8)
+        self.assertEqual(off.choose(start, ["a", "b"]), "a")
+
 
 class PlaceFeaturedTests(unittest.TestCase):
     WANTED = {day: 7 for day in SEPTEMBER}
@@ -1862,13 +2116,24 @@ class PlaceFeaturedTests(unittest.TestCase):
     def place(self, filler, featured, wanted=None):
         return filler.place_featured(featured, SEPTEMBER, wanted or self.WANTED)
 
-    def test_a_featured_race_keeps_its_weekday_and_hour_all_period_and_on_holidays(self):
+    def test_period_weeks_count_from_one_in_monday_to_sunday_weeks(self):
+        # The period starts on Tuesday 1 September, so its first week is partial.
+        first = SEPTEMBER[0]
+        self.assertEqual(first.weekday(), 1)
+        weeks = {day.day: sp.period_week(day, first) for day in SEPTEMBER}
+        self.assertEqual([weeks[day] for day in (1, 6, 7, 13, 14, 28, 30)], [1, 1, 2, 2, 3, 5, 5])
+
+    def test_a_featured_race_keeps_its_weekday_and_alternates_its_hours_on_holidays_too(self):
         filler = make_filler()
-        skipped = self.place(filler, {"a": (0, 13)})
+        skipped = self.place(filler, {"a": featured_slot(0, 13, 14)})
         races = filler.races()
         self.assertEqual(skipped, {})
-        self.assertEqual([race.start.local.date().day for race in races], [7, 14, 21, 28])
-        self.assertTrue(all(race.featured and race.start.local.hour == 13 for race in races))
+        # Monday 7 is in week 2, 14 in week 3, 21 in week 4 and 28 in week 5.
+        self.assertEqual(
+            [(race.start.local.date().day, race.start.local.hour) for race in races],
+            [(7, 14), (14, 13), (21, 14), (28, 13)],
+        )
+        self.assertTrue(all(race.featured for race in races))
         self.assertFalse(any(race.between for race in races))
         # Labor Day, 2026-09-07, is a Monday and a holiday, and the race still runs.
         self.assertIn(SEP7, [race.start.local.date() for race in races])
@@ -1877,40 +2142,58 @@ class PlaceFeaturedTests(unittest.TestCase):
 
     def test_a_block_event_skips_that_dates_race_and_lists_it(self):
         filler = make_filler(events=[block(date(2026, 9, 14), 12, 14)])
-        skipped = self.place(filler, {"a": (0, 13), "b": (1, 13)})
+        skipped = self.place(filler, {"a": featured_slot(0, 13, 14), "b": featured_slot(1, 13, 14)})
         self.assertEqual(skipped, {"a": ["2026-09-14"]})
         self.assertEqual(Counter(race.category for race in filler.races()), {"a": 3, "b": 5})
+
+    def test_a_skip_is_judged_at_the_hour_of_that_week_with_no_fallback(self):
+        # The event touches the race at 12 but not the one at 13. Monday 14 is in week 3.
+        event = block(date(2026, 9, 14), 12, 13)
+        odd_twelve = make_filler(events=[event])
+        self.assertEqual(self.place(odd_twelve, {"a": featured_slot(0, 12, 13)}), {"a": ["2026-09-14"]})
+        self.assertEqual([race.start.local.day for race in odd_twelve.races()], [7, 21, 28])
+        even_twelve = make_filler(events=[event])
+        self.assertEqual(self.place(even_twelve, {"a": featured_slot(0, 13, 12)}), {})
+        self.assertEqual(
+            [(race.start.local.day, race.start.local.hour) for race in even_twelve.races()],
+            [(7, 12), (14, 13), (21, 12), (28, 13)],
+        )
 
     def test_an_avoid_event_skips_only_its_listed_categories_races(self):
         avoid = block(date(2026, 9, 14), 12, 14, effect="avoid", name="av", categories="a")
         filler = make_filler(events=[avoid])
-        skipped = self.place(filler, {"a": (0, 13), "b": (0, 15)})
+        skipped = self.place(filler, {"a": featured_slot(0, 13, 14), "b": featured_slot(0, 15, 16)})
         self.assertEqual(skipped, {"a": ["2026-09-14"]})
         self.assertEqual(Counter(race.category for race in filler.races()), {"a": 3, "b": 4})
 
     def test_a_skipped_race_leaves_its_hour_open_to_other_races(self):
         filler = make_filler(events=[block(date(2026, 9, 14), 12, 14)])
-        self.place(filler, {"a": (0, 13)})
+        self.place(filler, {"a": featured_slot(0, 13, 14)})
         self.assertNotIn(local_at(date(2026, 9, 14), 13).astimezone(UTC), filler.placed)
 
     def test_the_hour_daylight_saving_skips_is_skipped_that_date(self):
         filler = make_filler()
         dates = [date(2026, 3, 1) + timedelta(days=offset) for offset in range(15)]
-        skipped = filler.place_featured({"a": (6, 2)}, dates, {day: 7 for day in dates})
+        # Sunday 1 March is week 1, so Sunday 8 March, when 02:00 never happens, is week 2.
+        skipped = filler.place_featured({"a": featured_slot(6, 3, 2)}, dates, {day: 7 for day in dates})
         self.assertEqual(skipped, {"a": ["2026-03-08"]})
         self.assertEqual([race.start.local.day for race in filler.races()], [1, 15])
 
     def test_two_featured_races_less_than_two_hours_apart_are_an_error(self):
         filler = make_filler("ab")
         with self.assertRaises(sp.ScheduleError):
-            self.place(filler, {"a": (0, 12), "b": (0, 13)})
+            self.place(filler, {"a": featured_slot(0, 12, 13), "b": featured_slot(0, 13, 14)})
+        # Two hours apart in odd weeks, but one hour apart in even weeks.
+        crossing = make_filler("ab")
+        with self.assertRaises(sp.ScheduleError):
+            self.place(crossing, {"a": featured_slot(0, 12, 13), "b": featured_slot(0, 15, 14)})
         far = make_filler("ab")
-        self.place(far, {"a": (0, 12), "b": (0, 14)})
+        self.place(far, {"a": featured_slot(0, 12, 13), "b": featured_slot(0, 14, 15)})
         self.assertEqual(len(far.races()), 8)
 
     def test_a_featured_between_race_is_a_between_race_that_counts_no_main_race(self):
         filler = make_filler(between="c")
-        self.assertEqual(self.place(filler, {"c": (0, 14)}), {})
+        self.assertEqual(self.place(filler, {"c": featured_slot(0, 14, 15)}), {})
         races = filler.races()
         self.assertEqual(len(races), 4)
         self.assertTrue(all(race.between and race.featured for race in races))
@@ -1919,42 +2202,46 @@ class PlaceFeaturedTests(unittest.TestCase):
     def test_a_featured_between_race_is_skipped_on_a_date_that_wants_fewer_than_two_main_races(self):
         filler = make_filler(between="c")
         wanted = {**self.WANTED, date(2026, 9, 14): 1, date(2026, 9, 21): 2}
-        self.assertEqual(self.place(filler, {"c": (0, 14)}, wanted), {"c": ["2026-09-14"]})
+        self.assertEqual(self.place(filler, {"c": featured_slot(0, 14, 15)}, wanted), {"c": ["2026-09-14"]})
         self.assertEqual([race.start.local.day for race in filler.races()], [7, 21, 28])
         # A featured main race is not skipped for it.
         main = make_filler(between="c")
-        self.assertEqual(self.place(main, {"a": (0, 14)}, wanted), {})
+        self.assertEqual(self.place(main, {"a": featured_slot(0, 14, 15)}, wanted), {})
 
     def test_a_featured_between_race_is_skipped_on_a_date_without_an_open_bracket(self):
         day = date(2026, 9, 14)
+        # Monday 14 is in week 3, so the race starts at 15 then, and at 16 on the other Mondays.
+        featured = {"m": featured_slot(0, 15, 16)}
         # The event touches the starts at 12, 13 and 14, so nothing before 15 is left.
         before = make_filler("abm", between="m", events=[block(day, 13, 15)])
-        self.assertEqual(self.place(before, {"m": (0, 15)}), {"m": ["2026-09-14"]})
+        self.assertEqual(self.place(before, featured), {"m": ["2026-09-14"]})
         self.assertEqual(len(before.races()), 3)
         # The event touches the starts at 16 and 17 and the hours after.
         after = make_filler("abm", between="m", events=[block(day, 17, 19)])
-        self.assertEqual(self.place(after, {"m": (0, 15)}), {"m": ["2026-09-14"]})
+        self.assertEqual(self.place(after, featured), {"m": ["2026-09-14"]})
         # With 14 left outside the event a start one hour before is enough.
         some = make_filler("abm", between="m", events=[block(day, 12, 14)])
-        self.assertEqual(self.place(some, {"m": (0, 15)}), {})
+        self.assertEqual(self.place(some, featured), {})
         self.assertEqual(len(some.races()), 4)
         # A date with the bracket taken by earlier races has none open either.
         taken = make_filler("abm", between="m")
         for hour in (13, 14):
             put(taken, "a", day, hour)
-        self.assertEqual(self.place(taken, {"m": (0, 15)}), {"m": ["2026-09-14"]})
+        self.assertEqual(self.place(taken, featured), {"m": ["2026-09-14"]})
 
     def test_featured_main_races_two_hours_from_a_featured_between_race_leave_its_bracket_open(self):
         filler = make_filler("abm", between="m")
-        self.assertEqual(self.place(filler, {"a": (0, 13), "m": (0, 15), "b": (0, 17)}), {})
+        featured = {"a": featured_slot(0, 13, 14), "m": featured_slot(0, 15, 16), "b": featured_slot(0, 17, 18)}
+        self.assertEqual(self.place(filler, featured), {})
         self.assertEqual(len(filler.races()), 12)
         other = make_filler("abm", between="m")
-        self.assertEqual(self.place(other, {"m": (0, 15), "b": (0, 17), "a": (0, 13)}), {})
+        reordered = {"m": featured_slot(0, 15, 16), "b": featured_slot(0, 17, 18), "a": featured_slot(0, 13, 14)}
+        self.assertEqual(self.place(other, reordered), {})
 
     def test_a_featured_race_less_than_two_hours_from_a_between_one_is_an_error_too(self):
         filler = make_filler("abc", between="c")
         with self.assertRaises(sp.ScheduleError):
-            self.place(filler, {"c": (0, 14), "a": (0, 15)})
+            self.place(filler, {"c": featured_slot(0, 14, 15), "a": featured_slot(0, 15, 16)})
 
 
 class BracketTests(unittest.TestCase):
@@ -2047,13 +2334,33 @@ class FillMainsTests(unittest.TestCase):
         self.assertEqual(filler.day_races[SEP2], 7)
 
     def test_the_picked_hours_are_the_ones_with_most_prime_then_fewest_short_gaps(self):
-        filler = make_filler()
+        filler = make_filler(rules=NO_DRAW)
         filler.fill_mains(SEP2, 7)
         hours = hours_of([race.start for race in filler.races()])
         # Prime time 12 to 17 holds three races two hours apart; the others keep three hours.
         self.assertEqual([hour for hour in hours if 12 <= hour <= 17], [13, 15, 17])
         self.assertEqual(hours, [7, 10, 13, 15, 17, 20, 23])
         self.assertEqual(filler.short_gaps(), 0)
+
+    def test_the_draw_keeps_the_rules_above_it_and_draws_among_equal_sets(self):
+        def picks(seed, rules=sp.SHIPPED):
+            filler = make_filler(rules=rules)
+            filler.seed = seed
+            filler.fill_mains(SEP2, 7)
+            races = filler.races()
+            prime = sum(race.start.band == "prime" for race in races)
+            normal = sum(race.start.band == "normal" for race in races)
+            return hours_of([race.start for race in races]), prime, filler.short_gaps(), normal
+
+        best = picks(1, NO_DRAW)
+        drawn = {seed: picks(seed) for seed in range(1, 9)}
+        # Every draw has as many hours, prime hours, short gaps and normal hours as the best set.
+        for seed, (hours, prime, gaps, normal) in drawn.items():
+            with self.subTest(seed=seed):
+                self.assertEqual((len(hours), prime, gaps, normal), (7, *best[1:]))
+        # The same seed draws the same, and the seeds do not all draw the same hours.
+        self.assertEqual(picks(3), drawn[3])
+        self.assertGreater(len({tuple(hours) for hours, *_ in drawn.values()}), 1)
 
     def test_categories_take_prime_time_first_then_normal_each_by_share_and_without_repeats(self):
         filler = make_filler()
@@ -2138,7 +2445,7 @@ class FillMainsTests(unittest.TestCase):
         # Tomorrow has a featured race at 12:00, so it needs the even hours, and a race today
         # at 23:00 would take its 00:00 and leave it 11 races instead of 12.
         def run(next_wanted):
-            filler = make_filler()
+            filler = make_filler(rules=NO_DRAW)
             put(filler, "a", SEP3, 12, featured=True)
             filler.fill_mains(SEP2, 12, next_wanted)
             return hours_of([race.start for race in filler.races() if race.start.local.date() == SEP2])
@@ -2148,6 +2455,65 @@ class FillMainsTests(unittest.TestCase):
         self.assertEqual(run(None), [0, *range(3, 24, 2)])
         # A next date that wants few races does not need its midnight.
         self.assertEqual(run(3), [0, *range(3, 24, 2)])
+
+    def test_a_date_leaves_the_next_date_the_midnight_an_every_hour_category_lacks(self):
+        # a has raced at every hour but 00:00, in August, and the first date's own midnight
+        # is blocked, so only the second date can give a its 00:00.
+        def run(rules):
+            filler = make_filler(limits={"a": {"every_hour": True}}, rules=rules,
+                                 events=[block(SEP2, 0, 1)])
+            for hour in range(1, 24):
+                put(filler, "a", date(2026, 8, 1) + timedelta(days=hour), hour)
+            filler.fill_mains(SEP2, 7, 7)
+            filler.fill_mains(SEP3, 7)
+            first = [race for race in filler.races() if race.start.local.date() == SEP2]
+            second = [race for race in filler.races() if race.start.local.date() == SEP3]
+            return first[-1].start.local.hour, (second[0].start.local.hour, second[0].category)
+
+        # The first date ends at 21:00: 22:00 would make the next date's 00:00 a short gap, which
+        # the look-ahead counts. a takes 00:00 before any other hour of the second date.
+        self.assertEqual(run(NO_DRAW), (21, (0, "a")))
+        # Without the rule the first date ends at 23:00, which keeps the second from midnight.
+        last, (hour, _name) = run(replace(NO_DRAW, every_hour=False))
+        self.assertEqual(last, 23)
+        self.assertGreater(hour, 0)
+
+    def test_the_look_ahead_scores_the_next_dates_whole_pick_after_the_last_race(self):
+        filler = make_filler(rules=NO_DRAW)
+        after = filler.next_date(SEP3, 7)
+        options = filler.open_hours(SEP3)
+
+        def pick(last):
+            cutoff = None if last is None else last.utc + sp.RACE_LENGTH
+            usable = [start for start in options if cutoff is None or start.utc >= cutoff]
+            score, _ = sp.choose_hours(usable, need=7, previous=last, lacking=filler.lacks)
+            return (score[0], *score[2:])
+
+        late = filler.start(SEP2, 23)
+        self.assertEqual(after(None), pick(None))
+        self.assertEqual(after(late), pick(late))
+        self.assertEqual(len(after(None)), 6)
+        # A race 3 hours or more before the next date's first start changes nothing there.
+        self.assertEqual(after(filler.start(SEP2, 20)), after(None))
+        # A next date of 12 races still fits them after 22:00 or 23:00, but with more short gaps,
+        # which the whole score counts: one after 22:00, two after 23:00.
+        full = filler.next_date(SEP3, 12)
+        gaps = {hour: full(filler.start(SEP2, hour))[3] for hour in (21, 22, 23)}
+        self.assertEqual({hour: full(filler.start(SEP2, hour))[0] for hour in gaps}, {21: 12, 22: 12, 23: 12})
+        self.assertEqual(gaps, {21: full(None)[3], 22: full(None)[3] - 1, 23: full(None)[3] - 2})
+
+    def test_with_the_next_dates_value_counted_23_is_no_longer_free(self):
+        # 00:00 on the next date is worth more than 23:00 is worth over 22:00.
+        bands = fx.bands_by(lambda group, hour: ("normal", {22: 1.0, 23: 1.5, 0: 2.0}.get(hour, 1.0)))
+        # Three races fit 14:00 to 23:00 three hours apart either as 17, 20, 23 or ending earlier.
+        filler = make_filler(rules=NO_DRAW, bands=bands, events=[block(SEP2, 0, 14)])
+        filler.fill_mains(SEP2, 3, 4)
+        hours = [race.start.local.hour for race in filler.races() if race.start.local.date() == SEP2]
+        self.assertEqual(hours, [14, 17, 20])
+        # Without a next date to look at, the date ends at the dearer 23:00.
+        alone = make_filler(rules=NO_DRAW, bands=bands, events=[block(SEP2, 0, 14)])
+        alone.fill_mains(SEP2, 3)
+        self.assertEqual(alone.races()[-1].start.local.hour, 23)
 
     def test_twelve_races_a_day_two_dates_in_a_row_reach_twelve_each(self):
         filler = make_filler("abcd")
@@ -2189,8 +2555,8 @@ class FillMainsTests(unittest.TestCase):
             filler.fill_mains(SEP2, 12)
             return hours_of([race.start for race in filler.races()]), filler.short_gaps()
 
-        wide_hours, wide_short = picks(sp.SHIPPED)
-        loose_hours, loose_short = picks(sp.Rules(wide_gaps=False))
+        wide_hours, wide_short = picks(NO_DRAW)
+        loose_hours, loose_short = picks(sp.Rules(wide_gaps=False, draw=False))
         # Twelve races a day are two hours apart: the term cannot be kept, and the dearer odd
         # hours win when it is off.
         self.assertEqual(loose_hours, list(range(1, 24, 2)))
@@ -2466,7 +2832,7 @@ class RulesBetweenTests(unittest.TestCase):
     def test_a_featured_race_of_a_between_category_is_a_main_race_with_the_lever_off(self):
         filler = make_filler("abm", between="m", rules=sp.Rules(between=False))
         wanted = {day: 1 for day in SEPTEMBER}
-        self.assertEqual(filler.place_featured({"m": (0, 14)}, SEPTEMBER, wanted), {})
+        self.assertEqual(filler.place_featured({"m": featured_slot(0, 14, 15)}, SEPTEMBER, wanted), {})
         self.assertEqual(len(filler.races()), 4)
         self.assertFalse(any(race.between for race in filler.races()))
 
@@ -2478,6 +2844,502 @@ class RulesBetweenTests(unittest.TestCase):
         on = make_filler("abm", between="m")
         on.fill_mains(SEP2, 6)
         self.assertNotIn("m", {race.category for race in on.races()})
+
+
+class StaggerTests(unittest.TestCase):
+    """Alternate weeks: the races of weeks 2, 4, 6 may move an hour inside the date.
+
+    The fixture period is SEPTEMBER, from Tuesday 1 September, so Monday to Sunday weeks 1 to 5
+    start on 31 August, 7, 14, 21 and 28 September. Wednesday of each is W1 to W5.
+    """
+
+    W1, W2, W3, W4, W5 = (date(2026, 9, day) for day in (2, 9, 16, 23, 30))
+    SUN2, MON3 = date(2026, 9, 13), date(2026, 9, 14)
+
+    @staticmethod
+    def bands(prime=(), quiet=()):
+        """Every hour normal but the prime and quiet ones, all worth the same."""
+        return fx.bands_by(
+            lambda group, hour: ("prime" if hour in prime else "quiet" if hour in quiet else "normal", 1.0)
+        )
+
+    @staticmethod
+    def spots(filler):
+        """Every race as (date, hour, category, moved)."""
+        return [(race.start.local.date(), race.start.local.hour, race.category, race.moved)
+                for race in filler.races()]
+
+    @staticmethod
+    def hours(starts):
+        return [(start.local.date(), start.local.hour) for start in starts]
+
+    def test_a_race_in_week_two_moves_an_hour_into_a_section_that_held_no_main_race_a_week_earlier(self):
+        # 12 and 13 share a section, so the race at 13 can only gain by taking 14.
+        for earlier, day in ((self.W1, self.W2), (self.W3, self.W4)):
+            with self.subTest(week=day):
+                filler = make_filler()
+                put(filler, "b", earlier, 12)
+                put(filler, "a", day, 13)
+                self.assertEqual(filler.stagger(SEPTEMBER), 1)
+                self.assertEqual(self.spots(filler), [(earlier, 12, "b", 0), (day, 14, "a", 1)])
+
+    def test_races_in_weeks_one_three_and_five_never_move(self):
+        # 13 is the only normal hour among 12 to 14, so a race there would gladly move.
+        filler = make_filler(bands=self.bands(prime=(12, 14)))
+        for day in (self.W1, self.W2, self.W3, self.W4, self.W5):
+            put(filler, "a", day, 13)
+        self.assertEqual(filler.stagger(SEPTEMBER), 2)
+        self.assertEqual(
+            [(day.day, hour, moved) for day, hour, _name, moved in self.spots(filler)],
+            [(2, 13, 0), (9, 14, 1), (16, 13, 0), (23, 14, 1), (30, 13, 0)],
+        )
+
+    def test_a_race_whose_section_held_a_main_race_a_week_earlier_stays(self):
+        filler = make_filler()
+        put(filler, "b", self.W1, 12)
+        put(filler, "c", self.W1, 14)
+        put(filler, "a", self.W2, 13)
+        # 12 and 14 hold sections 6 and 7 a week earlier: 12, 13 and 14 all repeat them.
+        self.assertEqual(filler.stagger(SEPTEMBER), 0)
+        self.assertEqual(self.spots(filler)[-1], (self.W2, 13, "a", 0))
+
+    def test_with_no_section_to_gain_a_move_into_prime_time_still_wins(self):
+        filler = make_filler()
+        put(filler, "b", self.W1, 10)
+        put(filler, "c", self.W1, 12)
+        put(filler, "a", self.W2, 11)
+        # 10, 11 and 12 all sit in sections the week before held; only 12 is prime time.
+        self.assertEqual(filler.stagger(SEPTEMBER), 1)
+        self.assertEqual(self.spots(filler)[-1], (self.W2, 12, "a", 1))
+
+    def test_a_race_with_nothing_to_gain_or_win_stays(self):
+        # Equal in every way: the race keeps its hour, and a lone race has no week before it.
+        filler = make_filler(bands=self.bands())
+        put(filler, "a", self.W2, 13)
+        self.assertEqual(filler.stagger(SEPTEMBER), 0)
+        self.assertEqual(self.spots(filler), [(self.W2, 13, "a", 0)])
+
+    def test_a_tie_between_the_hour_before_and_the_hour_after_goes_to_the_hour_before(self):
+        # Neither 11 nor 13 is worse than the other, and both beat the race's own normal hour.
+        filler = make_filler(bands=self.bands(prime=(11, 13)))
+        put(filler, "a", self.W2, 12)
+        self.assertEqual(filler.stagger(SEPTEMBER), 1)
+        self.assertEqual(self.spots(filler), [(self.W2, 11, "a", -1)])
+
+    def test_a_tie_between_staying_and_the_hour_before_goes_to_staying(self):
+        filler = make_filler(bands=self.bands(prime=(11, 12)))
+        put(filler, "a", self.W2, 12)
+        self.assertEqual(filler.stagger(SEPTEMBER), 0)
+        self.assertEqual(self.spots(filler), [(self.W2, 12, "a", 0)])
+
+    def test_a_featured_race_never_moves(self):
+        # A featured race already alternates between its two hours, so it stays even where a
+        # race of its own category would move to the prime hour next to it.
+        for hour, prime in ((14, 13), (14, 15), (13, 14), (13, 12)):
+            with self.subTest(hour=hour, prime=prime):
+                plain = make_filler(bands=self.bands(prime=(prime,)))
+                put(plain, "a", self.W2, hour)
+                self.assertEqual(plain.stagger(SEPTEMBER), 1)
+                self.assertEqual(self.spots(plain), [(self.W2, prime, "a", prime - hour)])
+                filler = make_filler(bands=self.bands(prime=(prime,)))
+                put(filler, "a", self.W2, hour, featured=True)
+                (race,) = filler.races()
+                self.assertEqual(filler.moves(race), [race.start])
+                self.assertEqual(filler.stagger(SEPTEMBER), 0)
+                self.assertEqual(self.spots(filler), [(self.W2, hour, "a", 0)])
+                self.assertTrue(filler.races()[0].featured)
+
+    def test_the_first_race_of_an_every_hour_category_at_each_hour_never_moves(self):
+        # a races at 13 in weeks 2 and 4; 14 is prime time and a section neither week before held.
+        def run(every_hour):
+            limits = {"a": {"every_hour": True}} if every_hour else None
+            filler = make_filler(bands=self.bands(prime=(14,)), limits=limits)
+            put(filler, "a", self.W2, 13)
+            put(filler, "a", self.W4, 13)
+            put(filler, "b", self.W4, 20)
+            moved = filler.stagger(SEPTEMBER)
+            return moved, [(day.day, hour, name) for day, hour, name, _m in self.spots(filler)]
+
+        self.assertEqual(run(False), (2, [(9, 14, "a"), (23, 14, "a"), (23, 20, "b")]))
+        # The race of week 2 anchors a at 13, so it stays; the one of week 4 may still move.
+        self.assertEqual(run(True), (1, [(9, 13, "a"), (23, 14, "a"), (23, 20, "b")]))
+
+    def test_the_anchors_are_the_earliest_race_of_each_every_hour_category_at_each_hour(self):
+        filler = make_filler(limits={"a": {"every_hour": True}})
+        for name, day, hour in (("a", self.W3, 13), ("a", self.W2, 13), ("a", self.W2, 16),
+                                ("b", self.W1, 13), ("a", self.W4, 16)):
+            put(filler, name, day, hour)
+        filler.stagger(SEPTEMBER)
+        anchored = sorted((start.astimezone(EASTERN).day, start.astimezone(EASTERN).hour)
+                          for start in filler.anchors)
+        self.assertEqual(anchored, [(9, 13), (9, 16)])
+        # Without the rule there are no anchors.
+        filler = make_filler(limits={"a": {"every_hour": True}}, rules=replace(sp.SHIPPED, every_hour=False))
+        put(filler, "a", self.W2, 13)
+        filler.stagger(SEPTEMBER)
+        self.assertEqual(filler.anchors, set())
+
+    def test_a_race_at_23_never_moves_to_the_next_date_and_one_at_0_never_to_the_previous(self):
+        late = make_filler(bands=self.bands(prime=(0,)))
+        put(late, "a", self.W2, 23)
+        (race,) = late.races()
+        self.assertEqual(self.hours(late.moves(race)), [(self.W2, 23), (self.W2, 22)])
+        late.stagger(SEPTEMBER)
+        self.assertEqual(self.spots(late), [(self.W2, 23, "a", 0)])
+        early = make_filler(bands=self.bands(prime=(23,)))
+        put(early, "a", self.W2, 0)
+        (race,) = early.races()
+        self.assertEqual(self.hours(early.moves(race)), [(self.W2, 0), (self.W2, 1)])
+        early.stagger(SEPTEMBER)
+        self.assertEqual(self.spots(early), [(self.W2, 0, "a", 0)])
+
+    def test_a_race_on_the_last_evening_of_a_week_never_moves_into_the_next_week(self):
+        filler = make_filler(bands=self.bands(prime=(0,)))
+        put(filler, "a", self.SUN2, 23)
+        filler.stagger(SEPTEMBER)
+        self.assertEqual(self.spots(filler), [(self.SUN2, 23, "a", 0)])
+
+    def test_a_closed_band_is_never_taken(self):
+        def run(open_bands):
+            filler = make_filler(open_bands=open_bands)
+            put(filler, "b", self.W1, 10)
+            put(filler, "a", self.W2, 11)
+            (_, race) = filler.races()
+            hours = [start.local.hour for start in filler.moves(race)]
+            return filler.stagger(SEPTEMBER), hours, self.spots(filler)[-1]
+
+        # 12 is prime time and the only section the week before left empty.
+        self.assertEqual(run(None), (1, [11, 10, 12], (self.W2, 12, "a", 1)))
+        closed = {"a": ("normal", "quiet"), "b": sp.BANDS, "c": sp.BANDS}
+        self.assertEqual(run(closed), (0, [11, 10], (self.W2, 11, "a", 0)))
+
+    def test_a_prime_time_race_stays_in_prime_time(self):
+        # 11 is normal time, and the only section the week before left empty: a prime race at
+        # 12 may not take it, whichever bands its category may race in.
+        for open_bands in (None, {"a": ("prime",), "b": sp.BANDS, "c": sp.BANDS}):
+            with self.subTest(open_bands=open_bands):
+                filler = make_filler(open_bands=open_bands)
+                put(filler, "b", self.W1, 12)
+                put(filler, "a", self.W2, 12)
+                (_, race) = filler.races()
+                self.assertEqual([start.local.hour for start in filler.moves(race)], [12, 13])
+                self.assertEqual(filler.stagger(SEPTEMBER), 0)
+                self.assertEqual(self.spots(filler)[-1], (self.W2, 12, "a", 0))
+        # A normal-time race may still move into prime time.
+        filler = make_filler()
+        put(filler, "a", self.W2, 11)
+        (race,) = filler.races()
+        self.assertEqual([start.local.hour for start in filler.moves(race)], [11, 10, 12])
+
+    def test_an_avoid_event_listing_the_category_or_a_block_event_is_never_run_into(self):
+        # The race at 13 would gain by taking 14, which runs into 15:00 to 16:00.
+        def run(event):
+            filler = make_filler(events=[event])
+            put(filler, "b", self.W1, 12)
+            put(filler, "a", self.W2, 13)
+            (_, race) = filler.races()
+            hours = [start.local.hour for start in filler.moves(race)]
+            return filler.stagger(SEPTEMBER), hours, self.spots(filler)[-1]
+
+        elsewhere = block(self.W2, 15, 16, effect="avoid", categories=("b",))
+        self.assertEqual(run(elsewhere), (1, [13, 12, 14], (self.W2, 14, "a", 1)))
+        for event in (
+            block(self.W2, 15, 16, effect="avoid", categories=("a", "b")),
+            block(self.W2, 15, 16),
+        ):
+            with self.subTest(effect=event.effect):
+                self.assertEqual(run(event), (0, [13, 12], (self.W2, 13, "a", 0)))
+
+    def test_two_races_less_than_two_hours_apart_stay_outside_a_single_event(self):
+        # Mains at 12 and 15 with a between race at 14; 13 is prime time and 14 is not, so the
+        # between race would take 13, an hour after the first main race.
+        def run(events):
+            filler = make_filler("abm", between="m", events=events, bands=self.bands(prime=(12, 13, 15)))
+            put(filler, "a", self.W2, 12)
+            put(filler, "m", self.W2, 14)
+            put(filler, "b", self.W2, 15)
+            return filler.stagger(SEPTEMBER), [(hour, moved) for _d, hour, _n, moved in self.spots(filler)]
+
+        self.assertEqual(run([]), (1, [(12, 0), (13, -1), (15, 0)]))
+        # A single event over 13:00 to 14:00 would be run into by both races at 12 and 13.
+        single = block(self.W2, 13, 14, effect="single")
+        self.assertEqual(run([single]), (0, [(12, 0), (14, 0), (15, 0)]))
+
+    def test_the_hour_daylight_saving_skips_is_never_taken(self):
+        dates = [date(2027, 3, 1) + timedelta(days=n) for n in range(14)]
+        saturday, sunday = date(2027, 3, 13), date(2027, 3, 14)
+        filler = make_filler(bands=self.bands(prime=(2,)))
+        put(filler, "a", saturday, 3)
+        put(filler, "a", sunday, 3)
+        saturday_race, sunday_race = filler.races()
+        self.assertEqual([start.local.hour for start in filler.moves(saturday_race)], [3, 2, 4])
+        self.assertEqual([start.local.hour for start in filler.moves(sunday_race)], [3, 4])
+        # 2:00 does not exist on the Sunday, so only the Saturday race takes it.
+        self.assertEqual(filler.stagger(dates), 1)
+        self.assertEqual([(d.day, hour, moved) for d, hour, _n, moved in self.spots(filler)],
+                         [(13, 2, -1), (14, 3, 0)])
+        early = make_filler(bands=self.bands(prime=(2,)))
+        put(early, "a", sunday, 1)
+        (race,) = early.races()
+        self.assertEqual([start.local.hour for start in early.moves(race)], [1, 0])
+
+    def test_main_races_stay_two_hours_apart_across_the_week_boundary(self):
+        # 23:00 is prime time: the Sunday race at 22 would take it, but not next to Monday 00:00.
+        def run(monday):
+            filler = make_filler(bands=self.bands(prime=(23,)), rules=sp.Rules(wide_gaps=False))
+            put(filler, "a", self.SUN2, 22)
+            if monday:
+                put(filler, "b", self.MON3, 0)
+            return filler.stagger(SEPTEMBER), self.spots(filler)[0]
+
+        self.assertEqual(run(False), (1, (self.SUN2, 23, "a", 1)))
+        self.assertEqual(run(True), (0, (self.SUN2, 22, "a", 0)))
+
+    def test_main_races_stay_two_hours_apart_across_midnight(self):
+        # Both 23 and 0 are prime time, yet 23:00 then 00:00 would be an hour apart.
+        filler = make_filler(bands=self.bands(prime=(0, 23)), rules=sp.Rules(wide_gaps=False))
+        put(filler, "a", self.W2, 22)
+        put(filler, "b", self.W2 + timedelta(days=1), 0)
+        before = [race.start.utc for race in filler.races()]
+        filler.stagger(SEPTEMBER)
+        after = [race.start.utc for race in filler.races()]
+        self.assertGreaterEqual(after[1] - after[0], sp.RACE_LENGTH)
+        self.assertEqual(after, before)
+
+    def test_a_bracketed_between_race_stays_bracketed_and_moves_with_its_mains(self):
+        # Odd hours 13 to 17 are prime time: the main races take 13 and 17, so the between
+        # race must take 15 to keep a main race two hours on each side.
+        filler = make_filler("abm", between="m", bands=self.bands(prime=(13, 15, 17)))
+        put(filler, "a", self.W2, 12)
+        put(filler, "m", self.W2, 14)
+        put(filler, "b", self.W2, 16)
+        self.assertTrue(filler.bracketed(filler.start(self.W2, 14).utc))
+        self.assertEqual(filler.stagger(SEPTEMBER), 3)
+        self.assertEqual(self.spots(filler), [(self.W2, 13, "a", 1), (self.W2, 15, "m", 1), (self.W2, 17, "b", 1)])
+        self.assertEqual(filler.unbracketed(), 0)
+
+    def test_a_between_race_that_was_not_bracketed_is_free_to_move_alone(self):
+        filler = make_filler("abm", between="m", bands=self.bands(prime=(21,)))
+        put(filler, "a", self.W2, 12)
+        put(filler, "m", self.W2, 20)
+        self.assertEqual(filler.unbracketed(), 1)
+        filler.stagger(SEPTEMBER)
+        self.assertEqual(self.spots(filler), [(self.W2, 12, "a", 0), (self.W2, 21, "m", 1)])
+
+    def test_the_order_of_the_races_and_so_their_neighbours_is_unchanged(self):
+        filler = make_filler("abcm", between="m")
+        days = SEPTEMBER[:21]
+        for day in days:
+            filler.fill_mains(day, 6, 6)
+        for day in days:
+            filler.fill_between(day)
+        before = filler.races()
+        unbracketed = filler.unbracketed()
+        moved = filler.stagger(SEPTEMBER)
+        after = filler.races()
+        self.assertGreater(moved, 0)
+        self.assertEqual([race.category for race in after], [race.category for race in before])
+        self.assertEqual([race.start.local.date() for race in after],
+                         [race.start.local.date() for race in before])
+        self.assertEqual([race.featured for race in after], [race.featured for race in before])
+        starts = [race.start.utc for race in after]
+        self.assertEqual(starts, sorted(set(starts)))
+        mains = [race.start.utc for race in after if not race.between]
+        for first, second in zip(mains, mains[1:]):
+            self.assertGreaterEqual(second - first, sp.RACE_LENGTH)
+        self.assertEqual(filler.unbracketed(), unbracketed)
+        for was, now in zip(before, after):
+            self.assertLessEqual(abs(now.start.local.hour - was.start.local.hour), 1)
+
+    def test_unplace_is_the_exact_inverse_of_place(self):
+        filler = make_filler("abm", between="m")
+        put(filler, "a", self.W2, 12)
+        put(filler, "m", self.W2, 13)
+        put(filler, "b", self.W2, 15, featured=True)
+
+        def state():
+            return (
+                list(filler.times),
+                list(filler.main_times),
+                dict(filler.placed),
+                {day: list(races) for day, races in filler.on_day.items() if races},
+                dict(filler.by_local),
+                *({key: n for key, n in counter.items() if n} for counter in (
+                    filler.day_races, filler.day_count, filler.week_count,
+                    filler.taken, filler.band_races, filler.hour_count)),
+            )
+
+        before = state()
+        for name, day, hour in (("b", self.W2, 10), ("m", self.W2, 14), ("a", self.W3, 3)):
+            with self.subTest(name=name, hour=hour):
+                put(filler, name, day, hour)
+                self.assertNotEqual(state(), before)
+                filler.unplace(filler.placed[filler.start(day, hour).utc])
+                self.assertEqual(state(), before)
+        # A moved race is the inverse too: placing and unplacing keeps `moved` out of the books.
+        filler.place(filler.start(self.W3, 5), "a", moved=-1)
+        self.assertEqual(filler.placed[filler.start(self.W3, 5).utc].moved, -1)
+        filler.unplace(filler.placed[filler.start(self.W3, 5).utc])
+        self.assertEqual(state(), before)
+
+    def test_stagger_counts_the_races_moved_and_marks_the_direction(self):
+        filler = make_filler()
+        put(filler, "b", self.W1, 12)
+        put(filler, "a", self.W2, 13)
+        put(filler, "c", self.W3, 19)
+        put(filler, "a", self.W4, 18)
+        original = {race.start.utc: race for race in filler.races()}
+        count = filler.stagger(SEPTEMBER)
+        races = filler.races()
+        # 13 takes section 7 a week after 12 held section 6; 18 takes prime 17, in section 8,
+        # a week after 19 held section 9.
+        self.assertEqual(count, 2)
+        self.assertEqual(count, sum(race.moved != 0 for race in races))
+        self.assertEqual([race.moved for race in races], [0, 1, 0, -1])
+        self.assertEqual([race.start.local.hour for race in races], [12, 14, 19, 17])
+        for race in races:
+            self.assertEqual(race.start.utc, filler.placed[race.start.utc].start.utc)
+        self.assertEqual(len(filler.races()), len(original))
+
+    def test_nothing_to_stagger_moves_nothing(self):
+        self.assertEqual(make_filler().stagger(SEPTEMBER), 0)
+        filler = make_filler()
+        put(filler, "a", self.W2, 12)
+        self.assertEqual(filler.stagger([]), 0)
+
+    def test_a_brute_force_agrees_with_the_search_on_small_random_fillers(self):
+        dates = [SEP1 + timedelta(days=n) for n in range(13)]
+        week = timedelta(days=7)
+        sep9, sep10 = self.W2, self.W2 + timedelta(days=1)
+
+        def monday(day):
+            return day - timedelta(days=day.weekday())
+
+        def spaced(rng, count):
+            hours, hour = [], rng.randint(0, 8)
+            while len(hours) < count and hour < 24:
+                hours.append(hour)
+                hour += rng.choice((2, 2, 3, 4))
+            return hours
+
+        def build(rng):
+            table = {hour: (rng.choice(sp.BANDS), float(rng.randint(0, 4))) for hour in range(24)}
+            open_bands = {
+                name: rng.choice([sp.BANDS, sp.BANDS, ("prime", "normal"), ("normal", "quiet"), ("prime",)])
+                for name in "abcm"
+            }
+            events = []
+            for _ in range(rng.randint(0, 2)):
+                first = rng.randint(0, 22)
+                events.append(block(
+                    rng.choice((sep9, sep10)), first, min(24, first + rng.randint(1, 3)),
+                    effect=rng.choice(("block", "avoid", "single")),
+                    categories=(rng.choice("abm"),),
+                ))
+            filler = make_filler(
+                "abcm", between="m", events=events, open_bands=open_bands,
+                bands=fx.bands_by(lambda group, hour: table[hour]),
+                rules=sp.Rules(wide_gaps=rng.random() < 0.6),
+            )
+            for day in (self.W1, self.W1 + timedelta(days=1)):
+                for hour in spaced(rng, rng.randint(0, 3)):
+                    put(filler, rng.choice("abc"), day, hour)
+            for day, count in ((sep9, rng.randint(1, 3)), (sep10, rng.randint(0, 2))):
+                for hour in spaced(rng, count):
+                    put(filler, rng.choice("abc"), day, hour, featured=rng.random() < 0.25)
+            for day in (sep9, sep10):
+                for hour in rng.sample(range(24), 24):
+                    start = filler.start(day, hour)
+                    if (start is not None and start.utc not in filler.placed
+                            and filler.bracketed(start.utc) and rng.random() < 0.5):
+                        put(filler, "m", day, hour)
+                        break
+            if rng.random() < 0.2:
+                start = filler.start(sep10, rng.randint(0, 23))
+                if start.utc not in filler.placed:
+                    filler.place(start, "m")
+            in_week_two = [r for r in filler.races() if (monday(r.start.local.date()) - monday(dates[0])).days // 7 % 2 == 1]
+            return filler if len(in_week_two) <= 6 else None
+
+        def brute(filler):
+            """The best starts by trying every combination, or None when staying is invalid."""
+            races = filler.races()
+            moving = [(monday(r.start.local.date()) - monday(dates[0])).days // 7 % 2 == 1 for r in races]
+            options = [filler.moves(r) if m else [r.start] for r, m in zip(races, moving)]
+            covered = {(r.start.local.date(), r.start.local.hour // 2) for r in races if not r.between}
+            bracketed = [r.between and filler.bracketed(r.start.utc) for r in races]
+            single = {s.utc: filler.touches("single", s.utc) for starts in options for s in starts}
+            hour = timedelta(hours=1)
+
+            def valid(starts):
+                for first, second in zip(starts, starts[1:]):
+                    if second.utc <= first.utc:
+                        return False
+                mains = [s for s, r in zip(starts, races) if not r.between]
+                if any(b.utc - a.utc < sp.RACE_LENGTH for a, b in zip(mains, mains[1:])):
+                    return False
+                for index, flag in enumerate(bracketed):
+                    if flag:
+                        before, now, after = (starts[index - 1].utc, starts[index].utc, starts[index + 1].utc)
+                        if not (hour <= now - before <= sp.RACE_LENGTH and hour <= after - now <= sp.RACE_LENGTH):
+                            return False
+                for i, first in enumerate(starts):
+                    for second in starts[i + 1:]:
+                        if second.utc - first.utc < sp.RACE_LENGTH and (single[first.utc] or single[second.utc]):
+                            return False
+                return True
+
+            def score(choices):
+                starts = [options[i][c] for i, c in enumerate(choices)]
+                mains = [s for s, r in zip(starts, races) if not r.between]
+                gained = sum(
+                    1 for s, r, m in zip(starts, races, moving)
+                    if m and not r.between and (s.local.date() - week, s.local.hour // 2) not in covered
+                )
+                short = sum(
+                    1 for a, b in zip(mains, mains[1:])
+                    if filler.rules.wide_gaps and b.utc - a.utc < sp.WIDE_GAP
+                    and not (a.band == "prime" and b.band == "prime")
+                )
+                return (
+                    gained,
+                    sum(s.band == "prime" for s in starts),
+                    -short,
+                    -sum(c > 0 for c in choices),
+                    sum(s.band == "normal" for s in starts),
+                    sum(s.value for s in starts),
+                )
+
+            best, best_score = None, None
+            for choices in itertools.product(*(range(len(o)) for o in options)):
+                if not valid([options[i][c] for i, c in enumerate(choices)]):
+                    continue
+                current = score(choices)
+                # Combinations come in choice order, so the first of equals is the smallest.
+                if best is None or current > best_score:
+                    best, best_score = choices, current
+            if best is None:
+                return None
+            return [options[i][c].utc for i, c in enumerate(best)]
+
+        checked = changed = 0
+        for seed in range(150):
+            rng = random.Random(seed)
+            filler = build(rng)
+            if filler is None:
+                continue
+            expected = brute(filler)
+            if expected is None:
+                continue
+            with self.subTest(seed=seed):
+                count = filler.stagger(dates)
+                self.assertEqual([race.start.utc for race in filler.races()], expected)
+                self.assertEqual(count, sum(race.moved != 0 for race in filler.races()))
+            checked += 1
+            changed += count > 0
+        self.assertGreater(checked, 60)
+        self.assertGreater(changed, 10)
+        self.assertLess(changed, checked)
 
 
 class ClashTests(unittest.TestCase):
@@ -2700,6 +3562,12 @@ def race_time(race):
     return datetime.fromisoformat(race["utc"].replace("Z", "+00:00"))
 
 
+def featured_hour(result, entry, race):
+    """The hour a featured entry's race takes in the race's week of the period."""
+    first = date.fromisoformat(result["period"]["start"][:10])
+    return entry["hours"][(sp.period_week(race_day(race), first) - 1) % 2]
+
+
 class DaylightSavingProposalTests(unittest.TestCase):
     """Whole proposals over a daylight-saving change keep every placement rule."""
 
@@ -2720,10 +3588,14 @@ class DaylightSavingProposalTests(unittest.TestCase):
                     wanted = p["per_day"][sp.day_group(day)]
                     if day.isoformat() not in short:
                         self.assertEqual(per_date[day.isoformat()], wanted, day)
-                featured = {f["category"]: (f["weekday"], f["hour"]) for f in p["featured"]}
+                featured = {f["category"]: f for f in p["featured"]}
                 for r in rows:
                     if r["featured"]:
-                        self.assertEqual((r["weekday"], r["hour"]), featured[r["category"]])
+                        entry = featured[r["category"]]
+                        self.assertEqual(
+                            (r["weekday"], r["hour"], r["moved"]),
+                            (entry["weekday"], featured_hour(result, entry, r), 0),
+                        )
                     if r["between"] and not r["featured"]:
                         at = race_time(r)
                         before = max((t for t in mains if t < at), default=None)
@@ -2975,7 +3847,7 @@ def r_local(race):
 
 class FeaturedRaceTests(WorldCase):
     def test_every_category_has_a_weekday_of_its_own_and_races_there_all_season(self):
-        for label, _result, p in self.every_proposal():
+        for label, result, p in self.every_proposal():
             with self.subTest(label):
                 names = [c["category"] for c in p["composition"]]
                 self.assertEqual(sorted(e["category"] for e in p["featured"]), sorted(names))
@@ -2985,17 +3857,25 @@ class FeaturedRaceTests(WorldCase):
                     self.assertEqual(len(races), entry["races"])
                     self.assertTrue(races)
                     for r in races:
-                        self.assertEqual((r["weekday"], r["hour"]), (entry["weekday"], entry["hour"]))
+                        # Its weekday, the hour of its week, and never moved.
+                        self.assertEqual(
+                            (r["weekday"], r["hour"], r["moved"]),
+                            (entry["weekday"], featured_hour(result, entry, r), 0),
+                        )
+                    # Both hours run in a season of more than one week.
+                    self.assertEqual({r["hour"] for r in races}, set(entry["hours"]))
                     skipped = {r["date"] for r in races}
                     self.assertFalse(skipped & set(entry["skipped"]))
 
-    def test_featured_hours_are_prime_hours_of_the_weekdays_own_group(self):
+    def test_featured_hours_are_two_adjacent_prime_hours_of_the_weekdays_own_group(self):
         for label, _result, p in self.every_proposal():
             with self.subTest(label):
                 bands = {(b["group"], b["hour"]): b["band"] for b in p["bands"]}
                 for entry in p["featured"]:
                     group = sp.WEEKDAY_GROUPS[entry["weekday"]]
-                    self.assertEqual(bands[group, entry["hour"]], "prime")
+                    odd, even = entry["hours"]
+                    self.assertEqual(abs(odd - even), 1)
+                    self.assertEqual([bands[group, odd], bands[group, even]], ["prime", "prime"])
 
     def test_a_featured_race_on_a_holiday_keeps_its_weekday_hour(self):
         for label, _result, p in self.every_proposal():
@@ -3019,15 +3899,23 @@ class FeaturedRaceTests(WorldCase):
         for c in chosen:
             for weekday in range(7):
                 group = sp.WEEKDAY_GROUPS[weekday]
-                options = []
+                hours = {}
                 for hour in range(24):
                     if bands[group, hour][0] != "prime":
                         continue
                     expected = model.at(c.sources[0], c.favourite_mode.factor, group, hour)
                     n = count[c.sources[0], weekday, hour]
-                    value = (record[c.sources[0], weekday, hour] + 5 * expected) / (n + 5)
-                    options.append((value, -hour))
-                score[c.name, weekday] = max(options)
+                    hours[hour] = (record[c.sources[0], weekday, hour] + 5 * expected) / (n + 5)
+                # Every pair of adjacent candidates, by its mean, then the earlier pair.
+                pairs = [
+                    ((hours[h] + hours[h + 1]) / 2, -h)
+                    for h in range(23)
+                    if h in hours and h + 1 in hours
+                ]
+                value, negative = max(pairs)
+                first, second = -negative, -negative + 1
+                odd = second if hours[second] > hours[first] else first
+                score[c.name, weekday] = (value, (odd, first + second - odd))
         best = max(
             sum(score[c.name, weekday][0] for c, weekday in zip(chosen, weekdays))
             for weekdays in itertools.permutations(range(7), len(chosen))
@@ -3036,27 +3924,27 @@ class FeaturedRaceTests(WorldCase):
         dates = sp.period_dates(*fx.PERIOD)
         result = sp.featured_slots(chosen, model, slots, bands, open_bands, [], dates)
         self.assertAlmostEqual(
-            sum(score[name, weekday][0] for name, (weekday, _hour) in result.items()), best)
-        for name, (weekday, hour) in result.items():
-            self.assertEqual(hour, -score[name, weekday][1])
+            sum(score[name, entry.weekday][0] for name, entry in result.items()), best)
+        for name, entry in result.items():
+            self.assertEqual(entry.hours, score[name, entry.weekday][1])
 
     def test_a_featured_race_in_a_weekly_avoid_event_never_gets_that_candidate(self):
         light = main_result()["proposals"][0]
         entrance = next(e for e in light["featured"] if e["category"] == "entrance")
         # The fixture's weekly Entrance event runs Monday 01:00 UTC, Sunday evening in Eastern time.
-        self.assertNotEqual((entrance["weekday"], entrance["hour"]), (6, 20))
+        self.assertFalse(entrance["weekday"] == 6 and 20 in entrance["hours"])
         self.assertEqual(entrance["skipped"], [])
 
     def test_a_featured_race_in_a_block_event_is_skipped_and_reported(self):
         light = main_result()["proposals"][0]
         entry = light["featured"][0]
         first = next(r for r in light["schedule"] if r["featured"] and r["category"] == entry["category"])
-        block = {"name": "Block", "date": first["date"], "start": f"{entry['hour'] - 1:02d}:30",
+        block = {"name": "Block", "date": first["date"], "start": f"{first['hour'] - 1:02d}:30",
                  "timezone": "America/New_York", "hours": 1, "effect": "block"}
         result = fx.cached("blocked", fx.BASE_COMPOSITION, events=[block])
         blocked = fx.proposal(result, "light")
         again = next(e for e in blocked["featured"] if e["category"] == entry["category"])
-        self.assertEqual((again["weekday"], again["hour"]), (entry["weekday"], entry["hour"]))
+        self.assertEqual((again["weekday"], again["hours"]), (entry["weekday"], entry["hours"]))
         self.assertEqual(again["skipped"], [first["date"]])
         self.assertEqual(again["races"], entry["races"] - 1)
         self.assertEqual(blocked["event_conflicts"], 0)
@@ -3157,6 +4045,18 @@ class ResultTests(WorldCase):
                 self.assertGreaterEqual(lacking, 0)
                 # Every hour that stayed empty left its date a race short.
                 self.assertLessEqual(p["empty_hours"], lacking)
+
+    def test_the_moved_counts_match_the_rows_and_no_featured_race_moves(self):
+        total = 0
+        for label, _result, p in self.every_proposal():
+            with self.subTest(label):
+                moved = [r for r in p["schedule"] if r["moved"] != 0]
+                self.assertEqual({r["moved"] for r in p["schedule"]} - {-1, 0, 1}, set())
+                self.assertEqual(p["moved"], len(moved))
+                self.assertFalse(any(r["featured"] for r in moved))
+                self.assertTrue(all("moved" not in entry for entry in p["featured"]))
+                total += p["moved"]
+        self.assertGreater(total, 0)
 
     def test_a_run_is_deterministic(self):
         again = fx.run(fx.BASE_COMPOSITION, events=fx.EVENTS)
@@ -3269,6 +4169,13 @@ class AnalyseTests(unittest.TestCase):
         with self.assertRaises(sp.ScheduleError):
             sp.analyse(schedule, modes, races, bad, start=fx.START, pairs=PAIRS)
 
+    def test_the_seed_reaches_every_set_and_the_parameters(self):
+        self.assertEqual(main_result()["parameters"]["seed"], sp.DEFAULT_SEED)
+        with mock.patch.object(sp, "plan_proposal", wraps=sp.plan_proposal) as spy:
+            result = fx.run(fx.BASE_COMPOSITION, seed=5)
+        self.assertEqual(result["parameters"]["seed"], 5)
+        self.assertEqual([call.kwargs["seed"] for call in spy.call_args_list], [5] * len(sp.SETS))
+
     def test_the_result_hands_the_plan_files_bands_back(self):
         result = main_result()
         self.assertEqual(result["parameters"]["bands"], fx.WORLD_BANDS)
@@ -3338,6 +4245,82 @@ class AnalyseTests(unittest.TestCase):
                 self.assertLessEqual(max(weekly.values()), 3)
 
 
+class EveryHourProposalTests(unittest.TestCase):
+    """Simple and entrance are marked everyHour in the fixture world."""
+
+    COVERED = ("simple", "entrance")
+
+    @staticmethod
+    def gaps(p, names):
+        """Each category's hours of its open bands, in any group, without a race."""
+        rows = {row["category"]: row["by_hour"] for row in p["categories"]}
+        opened = {c["category"]: c["open_bands"] for c in p["composition"]}
+        return {
+            name: [hour for hour in range(24) if rows[name][hour] == 0
+                   and any(b["hour"] == hour and b["band"] in opened[name] for b in p["bands"])]
+            for name in names
+        }
+
+    def test_every_marked_category_races_at_every_hour_of_its_open_bands(self):
+        for p in every_hour_result()["proposals"]:
+            with self.subTest(p["set"]):
+                self.assertEqual(p["uncovered"], {"simple": [], "entrance": []})
+                self.assertEqual(self.gaps(p, self.COVERED), {"simple": [], "entrance": []})
+                self.assertNotIn("Every-hour", p["notice"] or "")
+                flags = {c["category"]: c["every_hour"] for c in p["composition"]}
+                self.assertEqual(flags, {"simple": True, "entrance": True, "keys": False, "mystery": False})
+
+    def test_without_the_rule_the_marked_categories_leave_hours_empty(self):
+        off = replace(sp.SHIPPED, every_hour=False)
+        left = 0
+        for race_set in sp.SETS:
+            with self.subTest(race_set.name):
+                p = fx.planned_with(off, race_set.name, composition=fx.EVERY_HOUR_COMPOSITION)
+                # Nothing is checked, so nothing is listed.
+                self.assertEqual(p["uncovered"], {})
+                left += sum(map(len, self.gaps(p, self.COVERED).values()))
+        self.assertGreater(left, 0)
+
+    def test_a_category_that_cannot_cover_every_hour_is_listed_and_noticed(self):
+        # One race a week cannot reach 24 hours in five weeks.
+        composition = {**fx.EVERY_HOUR_COMPOSITION,
+                       "simple": {"modes": ["Simple Old"], "everyHour": True, "weeklyMax": 1}}
+        p = fx.planned_with(sp.SHIPPED, composition=composition)
+        self.assertEqual(p["uncovered"]["simple"], self.gaps(p, ["simple"])["simple"])
+        self.assertGreater(len(p["uncovered"]["simple"]), 15)
+        self.assertEqual(p["uncovered"]["entrance"], [])
+        count = len(p["uncovered"]["simple"])
+        hours = ", ".join(f"{hour:02d}:00" for hour in p["uncovered"]["simple"])
+        self.assertIn(f"Every-hour categories lack races at {count} hours: simple {hours}.", p["notice"])
+
+    def test_an_only_prime_time_category_needs_only_the_prime_hours(self):
+        composition = {**fx.BASE_COMPOSITION,
+                       "keys": {"modes": ["Keys A"], "everyHour": True, "onlyPrimeTime": True}}
+        p = fx.planned_with(sp.SHIPPED, composition=composition)
+        prime = {b["hour"] for b in p["bands"] if b["band"] == "prime"}
+        self.assertEqual(p["uncovered"], {"keys": []})
+        keys = next(row for row in p["categories"] if row["category"] == "keys")["by_hour"]
+        self.assertTrue(all(keys[hour] for hour in prime))
+        self.assertFalse(any(keys[hour] for hour in range(24) if hour not in prime))
+
+    def test_the_same_seed_draws_the_same_season_and_another_seed_another(self):
+        inputs = fx.rules_inputs(fx.EVERY_HOUR_COMPOSITION)
+
+        def signature(seed):
+            p = sp.plan_proposal(fx.race_set("light"), rules=sp.SHIPPED, seed=seed, **inputs)
+            return [(r["utc"], r["category"]) for r in p["schedule"]], p["uncovered"]
+
+        first = signature(1)
+        self.assertEqual(signature(1), first)
+        self.assertNotEqual(signature(2)[0], first[0])
+        # Another seed still covers every hour.
+        self.assertEqual(signature(2)[1], {"simple": [], "entrance": []})
+        self.assertEqual(
+            [(r["utc"], r["category"]) for r in fx.planned_with(sp.SHIPPED, composition=fx.EVERY_HOUR_COMPOSITION)["schedule"]],
+            first[0],
+        )
+
+
 class RulesTests(unittest.TestCase):
     def test_the_shipped_rules_are_the_defaults(self):
         self.assertEqual(sp.Rules(), sp.SHIPPED)
@@ -3346,6 +4329,9 @@ class RulesTests(unittest.TestCase):
              sp.SHIPPED.wide_gaps, sp.SHIPPED.favourite, sp.SHIPPED.rotation),
             (True, "entrants", True, True, True, True, True),
         )
+        self.assertIs(sp.SHIPPED.stagger, True)
+        self.assertIs(sp.SHIPPED.every_hour, True)
+        self.assertIs(sp.SHIPPED.draw, True)
         self.assertEqual(sp.SHARES, ("entrants", "fill", "equal"))
 
     def test_rules_are_frozen(self):
@@ -3424,6 +4410,30 @@ class RulesTests(unittest.TestCase):
         shipped = fx.planned_with(sp.SHIPPED, composition=fx.BETWEEN_COMPOSITION)
         self.assertGreater(shipped["between"], 0)
         self.assertGreater(shipped["races"], plan["races"] - 1)
+
+    def test_without_stagger_no_race_moves(self):
+        shipped = fx.planned_with(sp.SHIPPED)
+        plan = fx.planned_with(replace(sp.SHIPPED, stagger=False))
+        self.assertGreater(shipped["moved"], 0)
+        self.assertEqual(plan["moved"], 0)
+        self.assertTrue(all(r["moved"] == 0 for r in plan["schedule"]))
+        self.assertNotEqual(self.signature(plan), self.signature(shipped))
+        # Nothing but the hours differs: the same races on the same dates.
+        self.assertEqual([(r["date"], r["category"]) for r in plan["schedule"]],
+                         [(r["date"], r["category"]) for r in shipped["schedule"]])
+
+    def test_the_alternate_weeks_cover_more_weekday_sections_of_the_season(self):
+        def sections(plan):
+            return {(r["weekday"], r["hour"] // 2) for r in plan["schedule"] if not r["between"]}
+
+        stricter = 0
+        for race_set in sp.SETS:
+            with self.subTest(set=race_set.name):
+                on = sections(fx.planned_with(sp.SHIPPED, race_set.name))
+                off = sections(fx.planned_with(replace(sp.SHIPPED, stagger=False), race_set.name))
+                self.assertGreaterEqual(len(on), len(off))
+                stricter += len(on) > len(off)
+        self.assertGreater(stricter, 0)
 
     def test_without_the_wide_gap_lever_main_races_may_start_closer(self):
         shipped = fx.planned_with(sp.SHIPPED)

@@ -106,7 +106,7 @@ MEASURES = (
     Measure("cancelled", "expected cancelled rooms", False),
 )
 # Counted per fold, and averaged over the out-of-sample folds for the report.
-DIAGNOSTICS = ("closed", "crowded", "between", "short_gaps", "shortfall", "empty_hours", "weekly_races")
+DIAGNOSTICS = ("closed", "crowded", "between", "short_gaps", "shortfall", "empty_hours", "uncovered", "weekly_races")
 
 
 @dataclass(frozen=True)
@@ -139,7 +139,7 @@ VARIANTS = (
     Variant(
         "no-featured",
         "No featured races",
-        "each plan category gets one race in prime time, on a weekday of its own, at the same hour every week",
+        "each plan category gets one race in prime time, on a weekday of its own, alternating week by week between two adjacent hours",
         rules=replace(planner.SHIPPED, featured=False),
     ),
     Variant(
@@ -195,6 +195,30 @@ VARIANTS = (
         "No holidays",
         "a holiday counts as a prime-group day, with that group's factors, bands and races a day",
         holidays=False,
+    ),
+    Variant(
+        "no-stagger",
+        "No alternate weeks",
+        "in alternate weeks, races move an hour to reach the two-hour sections the week before left empty",
+        rules=replace(planner.SHIPPED, stagger=False),
+        model_blind="the model cannot see the racers who can only join at hours a fixed weekly grid "
+        "leaves empty, so it counts only the cost of moving races",
+    ),
+    Variant(
+        "no-every-hour",
+        "No every-hour floor",
+        "a category marked everyHour gets at least one race at every hour of its open bands",
+        rules=replace(planner.SHIPPED, every_hour=False),
+        model_blind="the model cannot see the racers who can only join at the hours a category would "
+        "leave empty, so it counts only the cost of covering them",
+    ),
+    Variant(
+        "no-draw",
+        "Best hours",
+        "each date draws its hours among the equally good sets, with odds by their value",
+        rules=replace(planner.SHIPPED, draw=False),
+        model_blind="the model cannot see the racers who can only join at hours the best-value grid "
+        "never uses, so it counts only the cost of the draw",
     ),
 )
 
@@ -358,8 +382,9 @@ def build_context(
 def variant_config(config: JsonObject, variant: Variant) -> JsonObject:
     """Return the plan file as the variant reads it: without its caps when they are lifted.
 
-    The caps are dailyMax, weeklyMax and onlyPrimeTime. The bands, the events and `between`
-    stay, because `between` is a rule the `between` lever changes, not a cap."""
+    The caps are dailyMax, weeklyMax and onlyPrimeTime. The bands, the events, `between` and
+    `everyHour` stay: `between` and the every-hour floor are rules their own levers change,
+    not caps."""
     if variant.plan_caps:
         return config
     capped = {"dailyMax", "weeklyMax", "onlyPrimeTime"}
@@ -446,6 +471,25 @@ def closed_band_races(
     return sum(race["band"] in closed[race["category"]] for race in proposal["schedule"])
 
 
+def uncovered_cells(proposal: JsonObject) -> int:
+    """Count the (category, hour) cells where a category the plan file marks every-hour has no
+    race at an hour whose band is open to it in some day group.
+
+    Judged from the proposal's composition flags, bands and races by hour, not from the
+    planner's own `uncovered`, so every variant is held to the plan file whatever its rules."""
+    open_hours: dict[str, set[int]] = {}
+    for entry in proposal["composition"]:
+        if entry["every_hour"]:
+            bands = set(entry["open_bands"])
+            open_hours[entry["category"]] = {
+                row["hour"] for row in proposal["bands"] if row["band"] in bands
+            }
+    by_hour = {row["category"]: row["by_hour"] for row in proposal["categories"]}
+    return sum(
+        by_hour[name][hour] == 0 for name, hours in open_hours.items() for hour in hours
+    )
+
+
 @dataclass(frozen=True)
 class Job:
     variant: Variant
@@ -494,6 +538,7 @@ def run_job(context: Context, job: Job) -> JsonObject:
         "short_gaps": proposal["short_gaps"],
         "shortfall": len(proposal["shortfall"]),
         "empty_hours": proposal["empty_hours"],
+        "uncovered": uncovered_cells(proposal),
         "weekly_races": proposal["weekly_races"],
         "notice": proposal["notice"],
     }
@@ -830,7 +875,7 @@ def format_report(result: JsonObject) -> str:
             "",
             f"Diagnostics, {set_name.capitalize()}, per season: races in a closed band, "
             f"category-dates with {SATURATION_BUCKETS}+ races, between races, short gaps, "
-            "shortfall dates, empty hours:",
+            "shortfall dates, empty hours, uncovered hours:",
         ]
         for variant in result["variants"]:
             entry = _entry(result, variant["key"], set_name)
@@ -838,7 +883,7 @@ def format_report(result: JsonObject) -> str:
                 lines.append(
                     f"  {variant['key']:<16}{entry['closed']:>6.0f}{entry['crowded']:>6.0f}"
                     f"{entry['between']:>6.0f}{entry['short_gaps']:>6.0f}"
-                    f"{entry['shortfall']:>6.0f}{entry['empty_hours']:>6.0f}"
+                    f"{entry['shortfall']:>6.0f}{entry['empty_hours']:>6.0f}{entry['uncovered']:>6.0f}"
                 )
     lines += ["", "What each variant breaks:"]
     for variant in result["variants"][1:]:

@@ -153,6 +153,12 @@ BETWEEN_COMPOSITION = {
     **BASE_COMPOSITION,
     "mystery": {"modes": ["Myst A"], "between": True},
 }
+# Simple and entrance should race at every hour of their open bands.
+EVERY_HOUR_COMPOSITION = {
+    **BASE_COMPOSITION,
+    "simple": {"modes": ["Simple Old"], "everyHour": True},
+    "entrance": {"modes": ["Ent A", "Ent B"], "everyHour": True},
+}
 # Plan names that need escaping on a page.
 MARKUP_COMPOSITION = {
     **BASE_COMPOSITION,
@@ -241,6 +247,10 @@ def limit_result():
 
 def between_result():
     return cached("between", BETWEEN_COMPOSITION, events=EVENTS)
+
+
+def every_hour_result():
+    return cached("every-hour", EVERY_HOUR_COMPOSITION, events=EVENTS)
 
 
 def proposal(result, name):
