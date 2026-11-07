@@ -113,7 +113,7 @@ DIAGNOSTICS = ("closed", "crowded", "between", "short_gaps", "shortfall", "empty
 class Variant:
     key: str
     title: str
-    # The shipped rule the variant breaks, in Analyses.md's words.
+    # The shipped rule the variant breaks, in docs/analyses.md's words.
     breaks: str
     rules: planner.Rules = planner.SHIPPED
     # The plan file's dailyMax, weeklyMax and onlyPrimeTime apply.

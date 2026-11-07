@@ -1,10 +1,14 @@
 # Standalone analyses
 
-Four scripts in `scripts/` analyse the archive on their own. The dashboard build never runs them, and they change nothing in `site/`. The dashboard itself is specified in [README.md](README.md).
+- **Purpose:** the four standalone analyses, with their commands, rules and limits: mode overlap, race schedule proposals, the schedule strategy comparison and the rating comparison.
+- **Read before:** changing `mode_overlap.py`, `schedule_planner.py`, `schedule_lab.py`, `rating_lab.py`, `schedule-plan.json` or `tests/analyses/`.
+- **Code:** those four scripts in `scripts/`; their tests are in `tests/analyses/` (see [Tests](operations.md#tests)).
+
+Four scripts analyse the archive on their own. The build never runs them, they change nothing in `site/`, and each writes files only when an option asks it to. Each takes `--archive` to read another archive. Their HTML reports are self-contained pages, with no scripts or external requests, in the claude.ai Artifact page format, which leaves the document skeleton to the publisher.
 
 ## Mode overlap
 
-`scripts/mode_overlap.py` measures how much the modes share racers, to find modes that could run in the same slot without making racers pick one. It is a standalone analysis: the dashboard build does not run it, and it writes nothing unless asked. `--html` writes a self-contained report page, with no scripts or external requests, in the claude.ai Artifact page format, which leaves the document skeleton to the publisher.
+`scripts/mode_overlap.py` measures how much the modes share racers, to find modes that could run in the same slot without making racers pick one.
 
 ```bash
 python3 scripts/mode_overlap.py                  # ranked pair table
@@ -18,7 +22,7 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 ### Definitions
 
-- Races are the dashboard's included races (see [README › Definitions](README.md#definitions)), and entrants are identified by stable user ID; anonymous entries are skipped. Any entry counts, DNFs and DQs included, because entering is what a clash takes away.
+- Races are the dashboard's included races (see [Races](definitions.md#races)), and entrants are identified by stable user ID; anonymous entries are skipped. Any entry counts, DNFs and DQs included, because entering is what a clash takes away.
 - Months are Eastern Time calendar months. A mode is **on the schedule** in a month when it has at least 4 races that month. A pair's **co-active months** are the months when both modes are on the schedule, and every pair figure uses only those months.
 - The **directed share A→B** is A's entries in the co-active months made by racers who entered B at least once that same month (`--min-entries` raises the once), divided by all of A's identified entries in those months.
 - The **chance baseline A→B** is the share expected if A's racers entered B at B's general rate. In each co-active month, B's reach is the racers who met the same entry threshold in B divided by every racer with any entry that month. The baseline is that reach averaged over the co-active months, weighted by A's entries in each. A share well below its baseline means the two modes draw different crowds; a share near it means B is simply popular.
@@ -34,9 +38,9 @@ For a pair of modes A and B, look only at the months when both were on the sched
 
 ## Race schedule proposals
 
-`scripts/schedule_planner.py` proposes one season of ladder races as four sets, *Light*, *Medium*, *Full* and *Bonanza*, from 55 to 76 races a week plus the races that start between them. All four run exactly the categories and modes that the plan file lists. It learns from how many racers came to every slot the alttpr.racing schedule ever held, including the cancelled ones. It is a standalone analysis: the dashboard build does not run it, and it writes nothing unless asked. The rules this section describes are `SHIPPED` in the code, and [Schedule strategy comparison](#schedule-strategy-comparison) tests deviations from them.
+`scripts/schedule_planner.py` proposes one season of ladder races as four sets, *Light*, *Medium*, *Full* and *Bonanza*, from 55 to 76 races a week plus the races that start between them. All four run exactly the categories and modes that the plan file lists. It learns from how many racers came to every slot the alttpr.racing schedule ever held, including the cancelled ones. The rules this section describes are `SHIPPED` in the code, and [Schedule strategy comparison](#schedule-strategy-comparison) tests deviations from them.
 
-It reads the race archive and the schedule mirror (see [README › Ladder schedule mirror](README.md#ladder-schedule-mirror)), so refresh both first. `--out` writes each proposal as CSV and as JSON, and the success rates as CSV. `--html` writes a self-contained report page and `--rates` a self-contained success-rate page. Both are in the claude.ai Artifact page format, with no scripts or external requests. The planner is deterministic: the same archive, plan file and start date always give the same proposals.
+It reads the race archive and the schedule mirror (see [Ladder schedule mirror](archive.md#ladder-schedule-mirror)), so refresh both first. `--out` writes each proposal as CSV and as JSON, and the success rates as CSV. `--html` writes a report page and `--rates` a success-rate page. The planner is deterministic: the same archive, plan file and start date always give the same proposals.
 
 ```bash
 python3 scripts/schedule_archive.py                     # refresh the schedule mirror (network)
@@ -50,6 +54,7 @@ python3 scripts/schedule_planner.py --config other-plan.json
 ### Terms
 
 This section uses alttpr.racing's words, which differ from the dashboard's:
+
 - A **category** is an alttpr.racing *archetype*. The dashboard calls it a mode: entrance, simple, keys and so on.
 - A **mode** is an alttpr.racing *mode*. The dashboard calls it a preset: Crosskeys 2024, AD Keysanity and so on.
 - A **plan category** is a key of the plan file's composition. Most plan categories are a category under its own name, but one may mix modes from several, as `throwback` does. The categories of its modes are its **sources**, and the races count under those categories on racetime.gg and in the dashboard.
@@ -58,12 +63,7 @@ This section uses alttpr.racing's words, which differ from the dashboard's:
 
 A slot that never became an archived race was cancelled, because rooms with fewer than two entrants are never archived, so it counts as zero entrants. A race's expected turnout is its category's average in that four-hour part of the day, adjusted for the exact hour of the date's day group and for the mode.
 
-The days fall into three **day groups**:
-- **Work**: Monday to Wednesday.
-- **Casual**: Thursday and Friday.
-- **Prime**: Saturday, Sunday and the common US days off, such as Thanksgiving and Christmas Eve.
-
-The plan file splits each group's hours into **prime time**, **quiet** hours and **normal** hours (Eastern Time, both ends included):
+The days fall into three [day groups](#day-groups): **Work** (Monday to Wednesday), **Casual** (Thursday and Friday) and **Prime** (weekends and the common US days off). The plan file splits each group's hours into **prime time**, **quiet** hours and **normal** hours (Eastern Time, both ends included). The shipped plan file sets them as:
 
 | Group | Prime | Quiet | Normal |
 |---|---|---|---|
@@ -87,34 +87,16 @@ Today's grid has 12 races a day, 84 a week. The planner fills the season in four
 3. **Categories.** Prime-time races are given out first, then normal, then quiet. Each race goes to the main category furthest below its share of that band. A band is shared by expected turnout. A race avoids the category that ran at the same hour a week earlier, then the one that ran there a day earlier.
 4. **Between races.** A between category races whenever it is behind its own turnout share of a band, in a gap between two main races: 1 or 2 hours after one and 1 or 2 hours before the next. A gap holds at most one between race.
 
-**A category never races where it almost never fired.** If a category's rooms fired less than 10% of the time in a band, it never races in that band. Today that keeps Glitched and Spoiler out of quiet hours. A category with `onlyPrimeTime` races only in prime time. A category's prime-time races run its most popular mode, and its other races take its modes in turn.
+**A category never races where it almost never fired.** If a category's rooms fired less than 10% of the time in a band, it never races in that band. A category with `onlyPrimeTime` races only in prime time. A category's prime-time races run its most popular mode, and its other races take its modes in turn.
 
 The report ranks the four proposals by expected entrants per race. A separate **success-rate page** shows how often each category's rooms fired at each weekday and hour, and in each band. It highlights the rates below 20% and marks the bands closed to a category.
 
 ### The plan file
 
-`schedule-plan.json` holds the season, the bands, the composition and the external events. `--config` reads another file.
-
-```json
-{"season": {"start": "2026-11-09", "weeks": 9, "lastDay": "thursday"},
- "bands": {
-   "work":   {"prime": "12-15", "quiet": "1-7"},
-   "casual": {"prime": "12-17", "quiet": "2-7"},
-   "prime":  {"prime": "11-18", "quiet": "2-4"}},
- "composition": {
-   "entrance": {"modes": ["Crosskeys", "Crosskeys 2024"]},
-   "glitched": {"between": true, "dailyMax": 1, "modes": ["HMG [VT]", "No Logic Double-Rods [DR]"]},
-   "fun": {"modes": []},
-   "throwback": {"weeklyMax": 4, "onlyPrimeTime": true,
-                 "modes": ["Influkeys", "Standard", "XD Hunt", "Crisscross"]}},
- "events": [
-   {"name": "Weekly Entrance race", "weekly": "monday", "start": "01:00",
-    "timezone": "UTC", "hours": 3, "effect": "avoid", "categories": ["entrance"]},
-   {"name": "Tournament", "date": "2026-11-22", "start": "14:00",
-    "timezone": "America/New_York", "hours": 5, "effect": "block"}]}
-```
+[schedule-plan.json](../schedule-plan.json) holds the season, the bands, the composition and the external events. `--config` reads another file.
 
 **Season.** `season` (optional) sets the period to plan. It takes these keys, and no others:
+
 - **`start`**: the first date, `YYYY-MM-DD`. Without it, the season starts on the first date after the mirrored schedule (see *Period*).
 - **`weeks`**: the season's length in weeks, the pause included: the next season starts this many weeks after `start`. A whole number of at least 1, 9 by default.
 - **`lastDay`**: a weekday name, lowercase, `thursday` by default. The season races until midnight ET at the end of the last such weekday in its weeks, so that weekday is a full day of races. The days left are the pause before the next season.
@@ -122,11 +104,13 @@ The report ranks the four proposals by expected entrants per race. A separate **
 So a 9-week season that starts on Monday 2026-11-09 races until Thursday 2027-01-07, pauses Friday to Sunday, and the next season starts on Monday 2027-01-11. `--start` and `--weeks` override the plan file. Anything else is an error.
 
 **Bands.** `bands` (required) holds exactly the three groups `work`, `casual` and `prime`, each with exactly the keys `prime` and `quiet`.
+
 - Each value is a range `"first-last"` of Eastern Time hours, 0 to 23, both ends included. When the first hour is greater than the last, the range wraps past midnight, so `"22-2"` is 22, 23, 0, 1 and 2.
 - A group's prime and quiet hours may not overlap. Its other hours are normal.
 - Anything else is an error.
 
 **Composition.** The planner runs exactly the listed plan categories and modes, and picks none of its own. Each plan category takes these keys, and no others:
+
 - **`modes`** (required) lists alttpr.racing mode names. A plan category with an empty list is left out, and the report lists it.
 - **`dailyMax`**: at most this many races on any date.
 - **`weeklyMax`**: at most this many races in any Monday to Sunday week.
@@ -136,10 +120,11 @@ So a 9-week season that starts on Monday 2026-11-09 races until Thursday 2027-01
 Both limits are whole numbers of at least 1. They are caps, never targets: a category gets its share, which may be less. `onlyPrimeTime` and `between` are `true` or `false`. If every plan category is a between category, that is an error.
 
 **Mode names.**
+
 - A name matches a mode of any category, ignoring case and treating square brackets and parentheses alike, so `HMG (VT)` matches `HMG [VT]`. An exact match wins.
 - A name that matches no mode is an error that suggests close names. A name that matches several, such as `HMG`, is an error that lists their ids.
 - A name listed twice in one plan category is an error.
-- A mode's category comes from its archetype: 1 simple, 2 entrance, 3 inverted, 4 keys, 5 glitched, 6 fun, 7 mystery, 9 spoiler. Another archetype is an error, and so is a category with no slots in the history window.
+- A mode's category comes from its archetype, mapped as under [Schedule](definitions.md#schedule). An archetype without a category is an error, and so is a category with no slots in the history window.
 
 **Events.** Each event has a `name`, an `effect`, a `start` (`HH:MM`), a `timezone` (an IANA name) and `hours`. It also has exactly one of `weekly` (a weekday name, lowercase) and `date` (`YYYY-MM-DD`). Only `avoid` takes `categories`, which may name categories and plan categories. An `avoid` event that lists a category also avoids every plan category with a mode from it. A weekly event is placed in its own timezone, so a UTC event keeps its UTC time across daylight saving.
 
@@ -153,10 +138,10 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
 
 ### Definitions
 
-**History**
+#### History
 
-- **Window.** The 365 days before the newest included race's start minus one day, counted by slot start. The last day is left out, because its rooms may not be archived yet. Included races are as defined in [README › Definitions](README.md#definitions).
-- **Join.** Slots join included races by the rules under **Schedule** in [README › Definitions](README.md#definitions), the same join the dashboard build uses. The planner reads a slot's race from it, and its category is the race's mode.
+- **Window.** The 365 days before the newest included race's start minus one day, counted by slot start. The last day is left out, because its rooms may not be archived yet. Included races are as defined under [Races](definitions.md#races).
+- **Join.** Slots join included races by the rules under [Schedule](definitions.md#schedule), the same join the dashboard build uses. The planner reads a slot's race from it, and its category is the race's mode.
 - **Fired slot.** It counts the race's `entrants_count`, under the race's own mode as its category.
 - **Cancelled slot.** It has a `raceId` but no race. It counts 0, under the category of its mode's archetype.
 - **Left out of the history:**
@@ -164,7 +149,7 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
   - slots pulled from the schedule, which have a null `raceId` and no race.
 - **Errors.** A slot whose mode is not listed is an error. So is a cancelled slot whose archetype has no category.
 
-**Day groups**
+#### Day groups
 
 - **Groups.** Every Eastern Time date has one group, in the history and in the period alike:
   - **work**: Monday, Tuesday and Wednesday;
@@ -182,7 +167,7 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
   A holiday that falls on a weekend moves no day off to a weekday.
 - **What the group decides:** a date's group-hour factors, its bands and its races a day. Featured races alone go by weekday: see *Featured races*.
 
-**Demand model**
+#### Demand model
 
 - **Expected entrants** of a race in category $c$ and mode $m$, starting at Eastern Time hour $h$ on a date of day group $g$:
 
@@ -202,7 +187,7 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
   A group-hour with no slots is 1, and so is a mode with no slots, which therefore draws like its category's average.
 - **Fill.** The fired share of a category's slots in each block. A block with no slots takes the category's overall share. It is used only to count expected cancelled rooms.
 
-**Plan categories**
+#### Plan categories
 
 - **Sources.** The categories of a plan category's modes, in list order. A plan category with more than one source is **mixed**.
 - **Expected entrants** of a plan category at a group-hour is the mean, over its modes, of $E$ with the mode's own category and factor.
@@ -212,32 +197,22 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
   - The pair score of two categories is their score in [Mode overlap](#mode-overlap), measured over the whole archive, together with whether it is weak evidence.
   - The pair score of two plan categories is the highest of their sources' pair scores. It is weak when any of those is. It is missing when they share a source or any of those scores is missing.
 
-**Bands**
+#### Bands
 
-- **Bands.** Each group-hour is **prime**, **quiet** or **normal**, as the plan file's `bands` say. The bands hold 40, 39 and 89 weekday-hours of the week, each weekday counted in its own group.
+- **Bands.** Each group-hour is **prime**, **quiet** or **normal**, as the plan file's `bands` say.
 - **Value.** Each of the 72 group-hours gets a value: the mean, over the plan categories, of their expected entrants there.
 - **Fire rate.** A category's fire rate in a band is its fired window slots in that band divided by all its window slots there. A slot's band is the band of its own date's group at its hour. A band with no slots has a rate of 0.
 - **Open bands.** A plan category may race in a band when every one of its sources has a fire rate of at least 10% there. With `onlyPrimeTime`, it may race only in prime time, and only if prime time is open. A plan category with no open band is an error.
 
-**Period**
+#### Period
 
 - **Period.** From 00:00 ET on the start date to 00:00 ET after the season's last race day: the last `lastDay` weekday before the start date plus `weeks` weeks. Every date is a full day, and a race belongs to the date it starts on.
   - The start is `--start`, else the plan file's `season.start`, else the first date whose 00:00 ET is at least 2 hours after the last mirrored slot. The weeks are `--weeks`, else the plan file's `season.weeks`, else 9.
   - Its days are counted as Eastern Time dates, so a daylight-saving change cannot shift the count.
-  - Today's grid holds 12 races a day over the same days.
 - **Start times.** A race starts on the hour, on the Eastern Time wall clock. A wall-clock hour that daylight saving skips has no start, and a repeated hour takes its first occurrence.
-- **Sets.**
+- **Sets.** A date's **N** is the set's main races a day for the date's group, as in the sets table under *In plain words*. A set's races a week is the sum over a week without holidays. Between races come on top of N.
 
-  | Set | work | casual | prime |
-  |---|---|---|---|
-  | light | 7 | 8 | 9 |
-  | medium | 8 | 9 | 10 |
-  | full | 9 | 10 | 11 |
-  | bonanza | 10 | 11 | 12 |
-
-  A date's **N** is the set's main races a day for the date's group. A set's races a week is the sum over a week without holidays. Between races come on top of N.
-
-**Featured races**
+#### Featured races
 
 - **Candidates.** For each weekday, the hours that are prime in that weekday's own group, ignoring holidays. A category has candidates only if prime time is open to it. A between category's candidates run from 01:00 to 22:00 only, so that its bracket can lie on the same date.
 - **Skipped candidates.** A candidate is skipped if, in any week of the period, its race would be inside either of these:
@@ -255,7 +230,7 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
   - A featured race of a between category is a between race. It is also skipped on a date whose N is below 2, and on a date with no open **bracket**: two start times on the same date, one 1 or 2 hours before the race and one 1 or 2 hours after it, each outside every `block` event.
   - Two featured races less than 2 hours apart are an error.
 
-**Placement**
+#### Placement
 
 The featured races of the whole period come first. Then each date, in order, takes its main races. A date's between races follow right after the next date's main races, and the last date's at the end, so that a gap across midnight has its main races on both sides.
 
@@ -302,7 +277,7 @@ The featured races of the whole period come first. Then each date, in order, tak
   - A featured race, and every prime-time race, of a plan category with one source runs its most popular mode.
   - Every other race takes its plan category's modes in turn, in list order and time order. So does every race of a mixed category, featured ones included, which makes a mixed category's featured mode rotate.
 
-**Results**
+#### Results
 
 - **Expected entrants** is the sum of $E$ with each race's own mode and that mode's category, less the clash.
   - The clash is counted for each two races less than 2 hours apart, as their pair score × the smaller of their two expected entrants. It is charged to the race with the fewer expected entrants, or to the later race on a tie.
@@ -330,7 +305,7 @@ The featured races of the whole period come first. Then each date, in order, tak
 - **JSON.** It writes `schedule-<set>.json` as `[{"time": "<unix seconds>", "mode": <id>}]`, the shape of the schedule API's rows.
 - **Report.** `--html PATH` shows, for each proposal, its full schedule: one date-by-hour grid per Monday to Sunday week of the period, with every race in its hour and the featured and between races marked.
 
-**Success rates**
+#### Success rates
 
 - **Rate.** For each category with slots in the window, and each of the 168 weekday-hours:
   - the window's scheduled slots, the fired ones, and the rate, fired ÷ scheduled;
@@ -359,9 +334,9 @@ Thresholds are constants at the top of the module.
 - **Day groups and holidays.** Monday to Wednesday share one profile, and so do Thursday and Friday. A holiday is treated as a weekend day, but the history holds only a few holidays, so its Prime-day factors come almost entirely from weekends.
 - **Bands.** They are set by hand in the plan file, not learned. The model still values each hour, and the report shows those values next to the bands, so a band that no longer fits the demand can be seen.
 - **Shares by turnout.** The strongest categories take the most races, and Entrance often runs three times a day. The demand model cannot see that a category's races draw fewer racers the more of them run on one date. [Schedule strategy comparison](#schedule-strategy-comparison) corrects for that.
-- **Band rule.** It pools each band over the three groups. A category that fires one time in ten is allowed. A band can be closed by bad luck in a category with few slots. As of the 2026-11-04 archive, Spoiler fires 9% of its quiet slots, just under the line.
-- **Hours before categories.** A date's hours are chosen before its categories, so an hour may stay empty when no category fits it. That has not happened with the current plan file.
-- **Between races.** The ladder has rarely run races an hour apart, so their clash cost comes from the Mode overlap score, which is an upper bound. Spoiler's scores are weak evidence and high, 0.83 with Entrance, so its between races score low even though the plan file treats it as a category that shares few racers. The cap keeps a race between two others from losing more than its own entrants.
+- **Band rule.** It pools each band over the three groups. A category that fires one time in ten is allowed. A band can be closed by bad luck in a category with few slots.
+- **Hours before categories.** A date's hours are chosen before its categories, so an hour may stay empty when no category fits it. The notice counts such hours.
+- **Between races.** The ladder has rarely run races an hour apart, so their clash cost comes from the Mode overlap score, which is an upper bound. Spoiler's scores are weak evidence and high, so its between races score low even though the plan file treats it as a category that shares few racers. The cap keeps a race between two others from losing more than its own entrants.
 - **Featured weekdays.** With more than 7 plan categories, they cannot all have a weekday of their own.
 - **Cancelled rooms.** A cancelled room may have had one entrant. It counts as zero.
 - **Mixed categories and old modes.** A mixed category is assumed to draw the mean of its modes, each like its own category at the same hours. A mode with no slots in the window, such as a long-retired one, is assumed to draw like its category's average.
@@ -369,7 +344,7 @@ Thresholds are constants at the top of the module.
 
 ## Schedule strategy comparison
 
-`scripts/schedule_lab.py` breaks the [race schedule proposals](#race-schedule-proposals)' rules one at a time, in ten variants plus a combined eleventh, and compares each with the shipped rules. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. It runs `scripts/schedule_planner.py` under other `Rules`, so it needs the same archive and schedule mirror.
+`scripts/schedule_lab.py` breaks the [race schedule proposals](#race-schedule-proposals)' rules one at a time, in ten variants plus a combined eleventh, and compares each with the shipped rules. It runs `scripts/schedule_planner.py` under other `Rules`, so it needs the same archive and schedule mirror. The printed report gives each variant's measures, verdicts and the recommendation.
 
 ```bash
 python3 scripts/schedule_lab.py                      # the full comparison
@@ -377,6 +352,10 @@ python3 scripts/schedule_lab.py --variant no-between # one variant against shipp
 python3 scripts/schedule_lab.py --json lab.json      # also write every number
 python3 scripts/schedule_lab.py --jobs 1             # no worker processes
 ```
+
+- `--archive`, `--config`, `--start` and `--weeks` work as in the planner.
+- `--variant` takes the key of one of variants 1 to 10. `combined` is not a choice: it only runs in the full comparison.
+- The runner uses worker processes, one per CPU by default, which need POSIX semaphores. Inside a sandbox that denies them, use `--jobs 1`.
 
 ### In plain words
 
@@ -454,121 +433,7 @@ All of these were fixed before the comparison first ran.
 - **Clash.** The planner's `clash` is recomputed from the corrected entrants, for any two races less than 2 hours apart, with the whole-archive pair scores. A missing score counts as 1, each pair is charged to the race with fewer entrants, and no race loses more than its own entrants. Between races are charged like any other.
 - **In sample.** The whole year plans and scores itself, without saturation, and the table shows it next to the out-of-sample score. It never decides.
 
-### How it was tested
-
-`tests/analyses/test_schedule_lab.py` uses the shared fixtures in `tests/analyses/schedule_fixtures.py`, a synthetic world with four categories, and never touches the network. It covers these:
-- each variant changes exactly the levers it names, every `Rules` field is broken by some variant, and the combined variant merges them;
-- the plan caps are stripped from the plan file only when lifted, `between` and the bands stay, and the input is never changed;
-- the context carries the plan file's bands, and the planner gets them as `layout`;
-- the halves partition the slots by Monday to Sunday weeks in Eastern Time;
-- the saturation table is shrunk per count of slots on a date;
-- scoring: hand-checked numbers for entrants, clash, fill, the weakest category and crowded dates, the clash going through the planner's `clash` with its cap and its missing-score rule, and an identity table reproduces the planner's own `expected_entrants` and `expected_cancelled`;
-- the closed-band diagnostic counts races in bands the shipped rule closes, and the between and short-gap diagnostics match the proposal;
-- fold means keep the folds in order, and a failed fold is an error;
-- verdict tables for the two-fold rule, the guard in either fold, and a win that fails when one measure is worse in any of the four sets;
-- the combined rule;
-- each lever reaches the planner and changes something on the fixture world, and the band rule does so on a history where a band is closed;
-- no-holidays plans with a holiday-free model and scores with holidays;
-- a smoke run of every variant on a 2-week season, which a variant run alone matches.
-
-### Result
-
-On the archive as of 2026-11-04, run once with the rules above:
-- the history runs from 2025-11-03 to 2026-11-03, with 4,192 slots in halves of 2,107 and 2,085;
-- the season runs from 2026-11-07 to 2027-01-07;
-- each variant, set and fold ran once, and the whole comparison took about 20 seconds.
-
-These figures are a frozen snapshot. The races are the mean of the two out-of-sample folds. Each measure shows its mean change from shipped and its verdict: + better, = same, - worse. For cancelled rooms, a fall is better.
-
-```text
-Light            races    a race            weakest             season          cancelled           guard win
-shipped            518      5.95               0.71              3,080                128
-open-bands         522      5.91   -0.7%-      0.67   -5.0%-     3,080   +0.0%=       131   +2.5%-  ok    no
-no-featured        512      6.27   +5.7%=      0.71   -0.1%=     3,216   +4.6%=       123   -4.3%=  short no
-fill-shares        546      5.26  -11.4%-      0.70   -0.6%-     2,870   -6.7%-       157  +22.0%-  ok    no
-equal-shares       636      4.25  -28.5%-      0.71   +0.8%+     2,701  -12.3%-       236  +84.7%-  short no
-no-between         485      6.20   +4.4%=      0.68   -3.7%-     3,005   -2.3%-       125   -3.0%=  ok    no
-two-hour-gaps      522      6.56  +10.4%+      0.71   +1.5%=     3,430  +11.4%+       113  -12.1%+  ok    no
-no-favourite       518      5.77   -3.0%-      0.71   +0.0%=     2,987   -3.0%-       128   -0.0%=  ok    no
-no-rotation        518      5.90   -0.6%-      0.71   +0.0%=     3,058   -0.6%-       133   +3.2%-  ok    no
-no-plan-caps       516      5.91   -0.7%-      0.71   +0.1%=     3,047   -1.1%-       134   +4.5%-  short no
-no-holidays        512      5.94   -0.1%=      0.71   +0.6%=     3,043   -1.2%-       127   -0.9%+  ok    no
-
-Medium           races    a race            weakest             season          cancelled           guard win
-shipped            581      5.54               0.70              3,217                160
-open-bands         586      5.49   -0.9%-      0.66   -6.6%-     3,217   +0.0%=       165   +3.4%-  ok    no
-no-featured        576      5.96   +7.7%+      0.69   -1.7%-     3,432   +6.6%+       146   -8.6%+  ok    no
-fill-shares        611      5.08   -8.2%-      0.70   -0.3%=     3,104   -3.5%-       181  +14.2%-  ok    no
-equal-shares       703      4.11  -25.7%-      0.71   +1.2%+     2,892  -10.1%-       270  +72.0%-  short no
-no-between         546      5.82   +5.1%+      0.67   -3.2%-     3,179   -1.2%-       150   -6.5%+  ok    no
-two-hour-gaps      588      6.00   +8.4%+      0.70   -0.6%-     3,527   +9.7%+       148   -7.6%+  ok    no
-no-favourite       581      5.37   -3.0%-      0.70   +0.0%=     3,118   -3.0%-       160   -0.0%=  ok    no
-no-rotation        581      5.55   +0.2%=      0.70   +0.0%=     3,225   +0.2%=       163   +1.1%-  ok    no
-no-plan-caps       579      5.54   +0.1%=      0.70   -0.3%=     3,208   -0.2%=       161   +1.1%-  short no
-no-holidays        575      5.53   -0.2%=      0.70   +0.8%+     3,178   -1.2%-       157   -1.9%+  ok    no
-
-Full             races    a race            weakest             season          cancelled           guard win
-shipped            646      5.25               0.70              3,394                191
-open-bands         652      5.21   -0.8%-      0.65   -6.8%-     3,394   +0.0%=       196   +2.9%-  ok    no
-no-featured        640      5.65   +7.4%+      0.72   +2.2%+     3,620   +6.5%+       177   -7.4%+  ok    no
-fill-shares        680      4.81   -8.4%-      0.70   -0.2%=     3,274   -3.5%-       216  +15.0%-  ok    no
-equal-shares       776      4.02  -23.3%-      0.71   +1.6%=     3,121   -7.9%-       302  +62.7%-  short no
-no-between         607      5.56   +5.8%+      0.61  -12.7%-     3,376   -0.6%-       175   -8.4%+  ok    no
-two-hour-gaps      650      5.51   +4.9%+      0.70   -0.6%-     3,578   +5.5%+       189   -1.2%=  ok    no
-no-favourite       646      5.11   -2.7%-      0.70   +0.0%=     3,301   -2.7%-       191   -0.0%=  ok    no
-no-rotation        646      5.19   -1.4%-      0.70   -0.6%-     3,350   -1.4%-       199   +3.7%-  ok    no
-no-plan-caps       643      5.25   -0.0%=      0.69   -1.4%-     3,376   -0.5%=       191   +0.5%-  short no
-no-holidays        640      5.30   +0.9%+      0.70   -0.3%=     3,391   -0.1%=       188   -1.5%+  ok    no
-
-Bonanza          races    a race            weakest             season          cancelled           guard win
-shipped            702      5.06               0.69              3,547                222
-open-bands         708      5.01   -0.8%-      0.65   -6.5%-     3,547   +0.0%=       227   +2.7%-  ok    no
-no-featured        705      5.40   +6.6%+      0.70   +1.6%=     3,808   +7.1%+       212   -4.4%+  ok    no
-fill-shares        739      4.67   -7.5%-      0.69   -0.4%=     3,451   -2.6%-       247  +13.4%-  ok    no
-equal-shares       837      3.84  -23.9%-      0.71   +2.3%+     3,211   -9.2%-       341  +59.2%-  short no
-no-between         662      5.35   +5.8%+      0.57  -16.5%-     3,546   -0.1%=       205   -7.2%+  ok    no
-two-hour-gaps      702      5.11   +1.1%+      0.69   +0.0%=     3,585   +1.1%+       220   -0.7%=  ok    no
-no-favourite       702      4.93   -2.4%-      0.69   +0.0%=     3,462   -2.4%-       222   -0.0%=  ok    no
-no-rotation        702      5.15   +1.8%+      0.69   +0.1%=     3,612   +1.8%+       218   -2.4%+  ok    no
-no-plan-caps       697      5.10   +0.9%+      0.67   -2.9%-     3,555   +0.3%=       219   -0.7%=  short no
-no-holidays        696      5.10   +0.9%=      0.69   +0.1%=     3,545   +0.0%=       217   -1.9%+  ok    no
-```
-
-The weakest category is glitched in every row.
-
-- **No variant wins, so the shipped rules stand.** The combined variant was not run, because fewer than two variants qualified.
-- **The 3-hour preference costs the most.**
-  - With 2-hour gaps costing nothing, entrants a race rise by 10.4% in Light, 8.4% in Medium, 4.9% in Full and 1.1% in Bonanza. Season entrants rise by about as much, and in Light and Medium fewer rooms are cancelled.
-  - It fails only on the weakest category, which draws 0.6% less in Medium and Full.
-  - Light and Medium pay the most, because their races can mostly sit 3 hours apart, so the preference moves races out of normal hours into quiet ones. In the whole-year plans, Light runs 70 main races in quiet hours with the preference and none without it, and Medium 98 and none. Short gaps rise from 12 to 258 a season in Light without it.
-  - It is model-blind: the model cannot see what 3-hour gaps give racers. Even a win would only be listed for a real trial.
-- **Between races cost entrants a race but keep the season and the weakest category.**
-  - With glitched and spoiler as main categories, entrants a race rise by 4.4% to 5.8%, because the between races are extra races that draw about one racer each.
-  - But season entrants fall by up to 2.3%, and the weakest category draws 3.2% to 16.5% less a race.
-- **Featured races cost more than before.**
-  - Without them, entrants a race rise by 5.7% to 7.7%. Under the previous rules the gain was 1.7% to 5.0%.
-  - A featured glitched or spoiler race needs a main race on each side, and the two must be of different categories. So Entrance runs fewer races: 155 a season in Light instead of 180 without featured races.
-  - Without featured races, glitched falls below the volume guard in Light, and the weakest category draws 1.7% less in Medium.
-- **Shares by turnout still carry the most weight among the old rules.** Shares by fill lose 7.5% to 11.4% a race. Equal shares lose 23% to 29%, cancel 59% to 85% more rooms and fail the guard in every set.
-- **The favourite mode in prime time pays.** Without it, entrants a race fall 2.4% to 3.0% in every set.
-- **The band rule protects the weakest category.** Opening every band lets glitched and spoiler race in quiet hours, 4 to 6 races a season. Entrants a race fall 0.7% to 0.9%, and the weakest category 5% to 7%.
-- **The plan caps cost at most 1% a race.** Without them, throwback runs 85 to 116 races a season instead of 31, and keys or mystery fall below the volume guard.
-- **No rotation** and **no holidays** stay within 2% a race either way. No rotation is model-blind anyway.
-- **Bonanza is short on some dates out of sample.** Planned with one half of the history, its featured hours can leave a 12-race date one race short: 9 dates a season. The whole-year plan has none.
-- **Crowding.** Under the shipped rules, one category runs 4 or more races on a date 20 times a season in Light and 83 times in Bonanza. These are mostly Entrance and Simple. The saturation correction prices them with its 4-or-more ratio, which rests on few slots (see *Limits*).
-- **Against the rules before this change**, scored the same way except that the clash had no cap:
-
-  | Set | Before: races, a race, season | Now: races, a race, season | Season change |
-  |---|---|---|---|
-  | Light | 485, 6.89, 3,341 | 518, 5.95, 3,080 | −7.8% |
-  | Medium | 546, 6.41, 3,501 | 581, 5.54, 3,217 | −8.1% |
-  | Full | 607, 5.89, 3,576 | 646, 5.25, 3,394 | −5.1% |
-  | Bonanza | 666, 5.37, 3,582 | 702, 5.06, 3,547 | −1.0% |
-
-  - Now each set runs more races, because the between races come on top, but draws fewer entrants over the season.
-  - The 3-hour preference accounts for most of the drop: without it, Light would reach 3,430 and Medium 3,527, above the previous rules.
-  - The hand-set bands, the between races and the featured between races account for the rest.
-  - The model cannot see what the owner's rules give racers, so this is the price the model puts on them, not a verdict.
+`tests/analyses/test_schedule_lab.py` tests all of this on the synthetic four-category world in `tests/analyses/schedule_fixtures.py`, without the network: each variant's levers, the halves, the saturation table, hand-checked scores, the verdict, guard and combined rules, and a smoke run of every variant.
 
 ### Limits
 
@@ -578,50 +443,16 @@ The weakest category is glitched in every row.
 - **Noisier halves.** Each half holds half the history, so its model, its band rates and its featured record are noisier than the whole year's. That is the point of scoring out of sample, but it costs precision.
 - **Determinism.** The planner is deterministic, so each variant, set and fold runs once. There is no spread across seeds to show how far a verdict near the tolerance could move, and only two folds back each verdict.
 - **Judgement calls.** The 75% guard and the 0.5% tolerance were chosen, not derived.
-- **Worker processes.** The runner uses worker processes, which need POSIX semaphores. Inside a sandbox that denies them, use `--jobs 1`.
 
 ## Rating comparison
 
-`scripts/rating_lab.py` compares other rating algorithms with the [ladder rating](README.md#ladder-rating), on the [backtest](#backtest)'s pairs and under the ladder's promises. It is a standalone analysis: the dashboard build does not run it, and it changes nothing. Its recommendation, the retune below, was adopted on 2026-11-01. Throughout this section, **shipped** means the rating it was compared with ($\beta = 12$, $\sigma_0 = 8$, floor 4, no damping), which the lab keeps as its baseline so the comparison stays reproducible.
+`scripts/rating_lab.py` compares other rating algorithms with the [ladder rating](../README.md#ladder-rating), on the pairs of its [backtest](../README.md#backtest) and under the ladder's promises. The ladder's $\beta$, $\sigma_0$ and $\alpha$ come from this lab's retune. Throughout this section, **shipped** means the lab's baseline, the rating before that retune ($\beta = 12$, $\sigma_0 = 8$, floor 4, no damping), which the lab keeps so the comparison stays reproducible.
 
 ```bash
 python3 scripts/rating_lab.py --tune               # each candidate's setting, from races before 2026 (several minutes)
 python3 scripts/rating_lab.py --tune --family elo  # one candidate only
 python3 scripts/rating_lab.py                      # re-derive CHOSEN from --tune, then the comparison
 ```
-
-### Backtest
-
-`python3 scripts/ladder_rating.py --backtest` replays the archive in order. Before each race it predicts every decisive pair of entrants: finishers by place, a finisher over a non-finisher, and two non-finishers are skipped. racetime.gg is scored from the `score` each entrant carried into the race, which the archive stores (833 when missing); its log loss uses the best-fit logistic curve on the score gap, fitted on the same pairs, which flatters it. The mode ratings are scored on the same pairs, each predicted from the two racers' ratings in the race's mode. The report also counts winners whose displayed points fell, overall and in their race's mode, and the median points a veteran (past their 50th race) moves per race.
-
-On the archive as of 2026-11-01. The figures move a little with every data refresh.
-
-```text
-                                     pairs  accuracy  log loss
-From 2026-01-01 (out of sample)
-  ladder rating                     47,654     0.728     0.534
-  ladder rating, own mode only      47,654     0.720     0.546
-  racetime.gg recorded score        47,654     0.695     0.587  best-fit logistic, in-sample
-Before 2026-01-01 (tuning period)
-  ladder rating                     26,796     0.707     0.555
-  ladder rating, own mode only      26,796     0.687     0.580
-  racetime.gg recorded score        26,796     0.706     0.573  best-fit logistic, in-sample
-Winners who lost points: 0 of 3,259
-Mode winners who lost points: 0 of 3,259
-Median veteran move per race (past race 50): 8 points
-```
-
-**How racetime.gg differs.** racetime.gg runs TrueSkill with default parameters on finishing order only, ties every DNF and DQ behind the last finisher, shows $\max(0, \mathrm{round}((\mu - 2\sigma) \cdot 100))$ so newcomers start at 833 and the score climbs with volume as $\sigma$ shrinks, and keeps one leaderboard per goal. Both ratings read placement only. The ladder rating rates all modes together and each mode on its own, starts everyone at 1000, shows points on an Elo-style scale, and its floor keeps scores responsive.
-
-**Trade-offs of the ladder rating:**
-
-- A crushing win counts the same as a narrow one.
-- Experience is rewarded: a prodigy with few races sits below established racers until $\sigma$ shrinks.
-- A mode rating knows only its mode: a racer strong elsewhere starts a new mode at 1000 and climbs like any newcomer.
-- Early on, even a loss can add points, because uncertainty falls faster than skill.
-- Clearly weaker racers still drift down, because the number stays honest.
-- A big race moves a rating less than its number of opponents suggests. Damping trades the swing of a large field for steadier, more accurate ratings.
-- Predictions trail the old margin-based model slightly (73.3% against 72.8% of 2026 pairs), in exchange for no lost winners and scores that climb. They stay well ahead of racetime.gg's.
 
 ### Candidates
 
@@ -636,6 +467,7 @@ Every candidate reads placement only and is scored on exactly the pairs the back
 | Elo, multi-player | Every decided pair is an Elo game, with a K that falls over a racer's first races |
 
 Left out because they cannot keep the ladder's promises:
+
 - Glicko-2: ratings decay while a racer is away.
 - Whole-History Rating, TrueSkill Through Time and batch refits: ratings move when others race.
 - Additive drift: a winner can lose points.
@@ -673,7 +505,7 @@ All of these were fixed before any 2026 race was scored for a candidate.
 
   A new model must also beat the retuned ladder rating the same way; otherwise retuning is the simpler change.
 
-### How the candidates were tested
+### How the candidates are tested
 
 - **Golden values.**
   - The OpenSkill reference package, version 6.2.0, run once outside the repository, supplied exact results for Algorithms 2 to 4 on fixed races.
@@ -686,43 +518,3 @@ All of these were fixed before any 2026 race was scored for a candidate.
   - the shipped setting reproduces the backtest;
   - tuning gives the same answer whatever 2026 holds;
   - the promise checker catches each broken promise.
-- **An independent review** before the run found that Thurstone-Mosteller's points were scaled for a logistic win chance, so that 400 points meant 92:1. That held it to a stricter liveliness bar. It was fixed and re-tuned before 2026 was scored.
-
-### Result
-
-On the archive as of the lab run on 2026-11-01: 47,576 pairs in 1,979 races from 2026-01-01. These figures are a frozen snapshot; the [Backtest](#backtest) runs on the current archive, so its pair counts are higher. Δ is the change in log loss against shipped, below 0 is better, with its 95% interval.
-
-```text
-                       setting                          accuracy  log loss  Δ (95% CI)                  per race
-ladder rating, shipped β12 σ₀8 floor 4                     0.723    0.5414                                0.5380
-BT full pair, retuned  β8 σ₀12 floor 4 α½                  0.728    0.5341  -0.0074 (-0.0091, -0.0056)    0.5314
-TM full pair           β12 σ₀8 floor 3 α½                  0.728    0.5347  -0.0068 (-0.0088, -0.0048)    0.5324
-Elo, multi-player      K 128→24 over 10 races, α½          0.727    0.5368  -0.0046 (-0.0060, -0.0033)    0.5340
-Plackett-Luce          β6 σ₀8 floor 5                      0.716    0.5854  +0.0440 (+0.0361, +0.0517)    0.5761
-BT partial pair        β5 σ₀40 floor 4                     0.693    0.5875  +0.0461 (+0.0396, +0.0530)    0.5758
-racetime.gg score                                          0.695    0.5871  best-fit logistic, in-sample
-```
-
-- **Recommendation: retune the ladder rating to β 8, σ₀ 12, floor 4, with field-size damping α ½.** Adopted on 2026-11-01. The production backtest reproduced the retuned line exactly on that archive.
-  - It is better in both halves of 2026: −0.0059 and −0.0090.
-  - It is better in every experience bucket and every field size.
-  - It is better in every mode with more than 300 pairs, except mystery, where it ties.
-  - The own-mode ratings improve too, from 0.5532 to 0.5465.
-- **Every candidate kept every promise.**
-- **No other family is worth switching to.**
-  - Thurstone-Mosteller ties the retuned rating: +0.0006 against it, interval (−0.0000, +0.0013).
-  - Elo trails the retuned rating by 0.0028.
-  - Plackett-Luce and partial pair do much worse. Partial pair rates only neighbouring places, so it ignores most of a race's pairs. Plackett-Luce's win chances are poorly calibrated: an expected calibration error of 0.070, against 0.020 for shipped.
-- **Retuning changes how points feel**, so weigh this before adopting it:
-  - A veteran's median move per race falls from 9 to 8 points over the whole archive.
-  - Their 90th-percentile move falls from 33 to 20, because damping shrinks the swings of big races.
-  - A veteran's DNF costs a median of 12 points instead of 14, and finishing last costs 9 instead of 6.
-  - The final standings stay close: Kendall's τ is 0.93 against shipped, and 9 of the top 10 are shared.
-
-### Limits
-
-- The shipped rating's 2026 score was public before this work; the candidates' 2026 scores were not.
-- **Grid extensions.**
-  - The first tuning run put every family on a grid edge, so the edge rule extended β down to 4, σ₀ to the range 4 to 14, the floor up to 8, and Elo's K values. All of this happened before 2026 was scored.
-  - Partial pair was extended three times. It stopped when the best ten settings were within 0.0001 of each other, although σ₀ = 40 still sits on the edge.
-- The archive has no tied places, so the tie rules are tested only on synthetic races.

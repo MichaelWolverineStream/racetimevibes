@@ -1,12 +1,14 @@
 # racetime.gg API notes
 
-The parts of the public racetime.gg API this repo reads. The full reference is the racetime.gg wiki page [Public API endpoints](https://github.com/racetimeGG/racetime-app/wiki/Public-API-endpoints).
+- **Purpose:** the parts of the public racetime.gg API this repo reads. The full reference is the racetime.gg wiki page [Public API endpoints](https://github.com/racetimeGG/racetime-app/wiki/Public-API-endpoints).
+- **Read before:** reading a new endpoint or field, or changing how a sync talks to racetime.gg. A newly read field that reaches `site/` must fit [Privacy](../README.md#privacy).
+- **Code:** `scripts/race_archive.py`, `scripts/racer_bios.py`. How they sync is in [archive.md](archive.md).
 
 ## General
 
 - `GET` only, no authentication, JSON responses, every time in UTC (ISO 8601 dates and durations).
 - URLs in responses are relative to `https://racetime.gg`. Avatars are `/media/...` paths or absolute URLs.
-- Responses are cached server-side. Cloudflare may answer too many requests with a challenge page, which is why every sync is paced and retried (see README › How a sync works).
+- Responses are cached server-side. Cloudflare may answer too many requests with a challenge page, which is why every sync is paced and retried (see [How a sync works](archive.md#how-a-sync-works)).
 
 ## Endpoints used
 
@@ -32,4 +34,4 @@ The parts of the public racetime.gg API this repo reads. The full reference is t
 - `status.value`: `done`, `dnf`, `dq`, plus pre-race values such as `ready`.
 - `finish_time` (ISO 8601 duration or `null`), `place` (integer or `null`).
 - `comment`: the post-race remark, or `null`.
-- `score` and `score_change` are racetime.gg's own rating; they are archived but never published.
+- `score` and `score_change` are racetime.gg's own rating; they are archived but never published, and `score` is read only as the benchmark in the [Backtest](../README.md#backtest).
