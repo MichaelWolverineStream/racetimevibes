@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fit Pokémon sprites to the avatar frame: trimmed, square, 7/8 filled, upscaled 1:N."""
+"""Fit Pokémon sprites to the avatar frame: trimmed, square, longest side edge to edge, upscaled 1:N."""
 
 from __future__ import annotations
 
@@ -21,15 +21,17 @@ except ImportError:
 
 DEFAULT_SOURCE_DIR = Path(__file__).resolve().parents[1] / "_tmp_assets" / "pokemon"
 DEFAULT_OUT_DIR = pokemon_avatars.POKEMON_DIR
-FILL_RATIO = 0.875
 # Four times the 64 px racer-page avatar, so every display, up to 3x screens and the
 # 72 px share card, scales the sprite down.
 MIN_SIDE = 256
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 PALETTE_COLOUR_TYPE = 3
-# Fully transparent pixels become one colour; the transparent border makes -trim start
-# from a transparent corner even when a sprite touches the edge of its frame.
+# Alpha is cut at 50%, as PNG8 stores it: PNG8 keeps only pixels at least half opaque,
+# so the box measured here is the one written, and faint edge pixels leave no margin.
+# Fully transparent pixels then become one colour; the transparent border makes -trim
+# start from a transparent corner even when a sprite touches the edge of its frame.
 NORMALISE = [
+    "-channel", "A", "-threshold", "50%", "+channel",
     "-background", "none", "-alpha", "background",
     "-bordercolor", "none", "-border", "1", "-trim", "+repage",
 ]
@@ -42,14 +44,14 @@ class PokemonImageError(RuntimeError):
 def frame(content_width: int, content_height: int) -> tuple[int, int]:
     """Return (square side, whole upscale factor) for trimmed content of this size.
 
-    The content's longest side fills FILL_RATIO of the square side; the factor is the
-    smallest whole number that makes side * factor at least MIN_SIDE.
+    The content's longest side spans the whole square side; the factor is the smallest
+    whole number that makes side * factor at least MIN_SIDE.
     """
     if content_width <= 0 or content_height <= 0:
         raise PokemonImageError(
             f"content size must be positive: {content_width}x{content_height}"
         )
-    side = math.ceil(max(content_width, content_height) / FILL_RATIO)
+    side = max(content_width, content_height)
     factor = max(1, math.ceil(MIN_SIDE / side))
     return side, factor
 
@@ -87,9 +89,11 @@ def convert_sprite(source: Path, target: Path) -> int:
     """Write the fitted sprite to target and return its square side in pixels.
 
     The output goes to a temporary file beside target and replaces it only once its
-    geometry and colour type are verified.
+    geometry, colour type and content are verified: the content must be exactly the
+    trimmed sprite scaled up, so its longest side runs edge to edge.
     """
-    side, factor = frame(*content_size(source))
+    content_width, content_height = content_size(source)
+    side, factor = frame(content_width, content_height)
     temporary = target.with_name(target.name + ".tmp")
     try:
         run_magick(
@@ -109,6 +113,13 @@ def convert_sprite(source: Path, target: Path) -> int:
         if colour_type != PALETTE_COLOUR_TYPE:
             raise PokemonImageError(
                 f"{source.name} came out with colour type {colour_type}, not palette"
+            )
+        expected = (content_width * factor, content_height * factor)
+        written = content_size(temporary)
+        if written != expected:
+            raise PokemonImageError(
+                f"{source.name} came out with {written[0]}x{written[1]} content,"
+                f" expected {expected[0]}x{expected[1]}"
             )
         os.replace(temporary, target)
     except BaseException:
