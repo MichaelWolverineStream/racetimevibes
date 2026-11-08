@@ -342,6 +342,13 @@ def stray_slots(rows: list[JsonObject], starts: list[tuple[int, datetime]]) -> i
     return sum(1 for row in rows if season_of(slot_time(row), starts) != row["season"])
 
 
+def upcoming_slots(rows: list[JsonObject], after: datetime, limit: int) -> list[JsonObject]:
+    """Return the first `limit` slots strictly after `after`, in (time, id) order."""
+    later = [row for row in rows if slot_time(row) > after]
+    later.sort(key=lambda row: (int(row["time"]), row["id"]))
+    return later[:limit]
+
+
 # Sync -------------------------------------------------------------------------
 
 

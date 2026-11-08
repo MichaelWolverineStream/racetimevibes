@@ -2,7 +2,7 @@
 
 - **Purpose:** what `build_stats.py` publishes in `site/data/`, the schedule and participation metrics behind the Ladder data panels, how season ratings are locked into ledgers, and how chest counts are parsed from comments.
 - **Read before:** changing a field of `race-stats.json`, `participants.json` or `comments.json`, the season lock, or the chest-count parser. A new field must fit [Privacy](../README.md#privacy), and a schema change bumps the version in Python and in JS together.
-- **Code:** `scripts/build_stats.py`, `scripts/participant_stats.py`, `scripts/comment_stats.py`, `scripts/season_ratings.py`. The rating itself is in the [README](../README.md#ladder-rating), and tags, badges and records are in [highlights.md](highlights.md).
+- **Code:** `scripts/build_stats.py`, `scripts/participant_stats.py`, `scripts/comment_stats.py`, `scripts/season_ratings.py`, `scripts/season_names.py`. The rating itself is in the [README](../README.md#ladder-rating), and tags, badges and records are in [highlights.md](highlights.md).
 
 ## The three files
 
@@ -18,9 +18,18 @@
 
 ### Season fields
 
+The season names come from `scripts/season_names.py`, which holds the retro names, and from `season-names.json` at the repository root: the one hand-maintained input, `{schema_version: 1, seasons: {"11": {"animal": "Panda"}}}`. `season_names.load` raises `SeasonNamesError`, failing the build, unless:
+
+- The file has exactly the keys `schema_version` (1) and `seasons`.
+- Every key is a plain whole number from 11 on, and every entry has exactly the key `animal`.
+- Every animal is a non-empty string, at most 40 characters, with no leading or trailing whitespace.
+- No two seasons share an animal, ignoring case, and no animal is a retro name, short or full.
+
 The season fields of `participants.json`:
 
 - **`seasons`:** an array, oldest first, of `{n, first, last, ended}` for every season that holds at least one race. `first` and `last` are the Eastern Time dates of the season's first and latest race. `ended` is true once the season is locked or a later season has started. The current season is the last element. The array is empty when there is no schedule, and the page then shows everything all-time.
+- **`season_names`:** an object keyed by season number as a string. A retro season (1-10) is `{kind: "retro", text, full}` and a champion season (11 on) is `{kind: "champion", text}`, `text` being the animal. A season with no entry is unnamed. See [Season names](dashboard.md#season-names).
+- **`upcoming`:** rows `[t, mode name, mode index, season]`: `t` in Unix seconds, the schedule's mode name, the published mode index or `null`, and the season by the [season rule](definitions.md#seasons) or `null`, never the slot's filed number. They are the first `UPCOMING_SLOTS` (48) schedule slots strictly after the newest included race, so the list hangs on the archive and never the clock, and a rebuild is identical. A slot whose mode the schedule does not list fails the build.
 - **`races[].s`:** the race's season number. It is absent for a race with no season.
 - **Entries:** `races[].e[k]` is `[player, place, status, seconds, overall_after, mode_after, season_after, season_mode_after]`. `[6]` and `[7]` are integers when the race has `s`, and both `null` otherwise.
 - **No per-player season fields.** A racer's standing in a season is derived from their entries: their last `[6]` among the season's races for the overall rating, and their last `[7]` among the season's races in a mode for that mode's rating. Their season finishes are their finisher entries in those races, and they are provisional below 5.

@@ -24,6 +24,7 @@ try:
         race_archive,
         racer_bios,
         schedule_archive,
+        season_names,
         season_ratings,
     )
 except ImportError:
@@ -33,6 +34,7 @@ except ImportError:
     import race_archive
     import racer_bios
     import schedule_archive
+    import season_names
     import season_ratings
 
 
@@ -627,6 +629,7 @@ def build(
     comments_output_path: Path = COMMENTS_OUTPUT_PATH,
     pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
     ledger_dir: Path | None = None,
+    season_names_path: Path = season_names.NAMES_PATH,
 ) -> tuple[JsonObject, JsonObject, JsonObject]:
     """Build and write the three datasets. It reads the season ledgers in `ledger_dir`,
     by default the one beside the archive, and never writes one."""
@@ -663,6 +666,8 @@ def build(
         ledgers=season_ratings.load_ledgers(
             season_ratings.ledger_dir_for(archive_dir) if ledger_dir is None else ledger_dir
         ),
+        schedule_modes=modes,
+        season_names=season_names.load(season_names_path),
     )
     comments = comment_stats.build_comments_payload(
         contexts, generated_at=generated_at
@@ -741,6 +746,7 @@ def main() -> int:
         participant_stats.ParticipantDataError,
         comment_stats.CommentDataError,
         season_ratings.SeasonLedgerError,
+        season_names.SeasonNamesError,
     ) as error:
         print(f"Data build failed: {error}", file=sys.stderr)
         return 1

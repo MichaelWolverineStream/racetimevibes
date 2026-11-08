@@ -52,7 +52,7 @@ These terms use the [ladder schedule mirror](archive.md#ladder-schedule-mirror).
 
 These terms drive the [season ratings](../README.md#season-ratings). `schedule_archive.season_starts` and `season_of` implement them.
 
-- **Season start:** season 1 starts at its first slot. Every later season starts at its first slot after the middle of the season before it, which is the later of that season's start and the median time of its slots. A season with no slot after that point has no start yet. alttpr.racing lists no future slots, so a season's end is only known once the next season's first slot appears.
+- **Season start:** season 1 starts at its first slot. Every later season starts at its first slot after the middle of the season before it, which is the later of that season's start and the median time of its slots. A season with no slot after that point has no start yet. The mirror holds a season's slots, future ones included, as soon as alttpr.racing publishes its schedule, but a season's end is only known once the next season's first slot appears.
   - A race's season comes from this rule, not from the season number its slot carries. alttpr.racing files the odd slot under the wrong season, such as an old season-1 slot listed inside a later season, and the rule keeps such a slot from moving a boundary. `diagnostics.seasons.stray_slots` counts the slots outside their own season's run.
 - **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start until 5 minutes before the next season's start. A race belongs to the season its start falls in. Races before season 1's span have none, and `diagnostics.seasons.races_without_season` counts them.
 - **Current season:** the newest season holding at least one included race.

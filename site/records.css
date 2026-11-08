@@ -176,6 +176,109 @@
   text-decoration-color: var(--line);
 }
 
+/* Season timeline: retro seasons are quiet paper cards; champion-named seasons carry the accent. */
+.records-seasons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 16px 24px 4px;
+  list-style: none;
+}
+
+.records-season {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.records-season--champion {
+  border-top: 3px solid var(--accent);
+  background: var(--panel);
+}
+
+.records-season--upcoming {
+  border-style: dashed;
+  border-top-style: solid;
+}
+
+.records-season__head {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.records-season__number,
+.records-season__status,
+.records-season__role {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.records-season__number,
+.records-season__role {
+  color: var(--muted);
+}
+
+.records-season__status {
+  color: var(--accent);
+}
+
+.records-season__title {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: left;
+}
+
+button.records-season__title {
+  cursor: pointer;
+}
+
+button.records-season__title:hover {
+  text-decoration: underline;
+}
+
+button.records-season__title:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.records-season--retro .records-season__title {
+  color: var(--muted);
+}
+
+.records-season--champion .records-season__title {
+  color: var(--accent);
+}
+
+.records-season__dates {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.records-season__people {
+  display: grid;
+  gap: 3px;
+  margin-top: 4px;
+  font-size: var(--text-sm);
+}
+
 /* The presets table under a violin chart, here and on the racer pages. */
 .presets-table {
   max-height: 480px;
@@ -213,5 +316,9 @@
 
   .records-card--wide {
     grid-column: auto;
+  }
+
+  .records-seasons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

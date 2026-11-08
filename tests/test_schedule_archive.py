@@ -415,3 +415,30 @@ class SeasonTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class UpcomingSlotsTests(unittest.TestCase):
+    def rows(self):
+        return [
+            slot(5, 1, time="300"),
+            slot(2, 1, time="200"),
+            slot(9, 1, time="1000"),
+            slot(1, 1, time="200"),
+            slot(3, 1, time="100"),
+        ]
+
+    def after(self, seconds):
+        return datetime.fromtimestamp(seconds, UTC)
+
+    def test_only_slots_strictly_after_in_time_then_id_order(self):
+        result = schedule_archive.upcoming_slots(self.rows(), self.after(100), 10)
+        self.assertEqual([row["id"] for row in result], [1, 2, 5, 9])
+
+    def test_time_is_compared_as_a_number(self):
+        rows = [slot(1, 1, time="1000"), slot(2, 1, time="999")]
+        result = schedule_archive.upcoming_slots(rows, self.after(0), 10)
+        self.assertEqual([row["id"] for row in result], [2, 1])
+
+    def test_capped_at_the_limit(self):
+        result = schedule_archive.upcoming_slots(self.rows(), self.after(0), 2)
+        self.assertEqual([row["id"] for row in result], [3, 1])

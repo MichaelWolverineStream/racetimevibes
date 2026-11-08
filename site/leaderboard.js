@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 13;
+const PARTICIPANT_SCHEMA_VERSION = 14;
 const ALL_MODES = "all";
 // Races with a missing or malformed mode prefix; a bucket, not a category.
 const UNKNOWN_MODE = "unknown";
@@ -81,6 +81,37 @@ function validateParticipants(data) {
     throw new Error("Racer data contains an invalid season.");
   }
   const seasonNumbers = new Set(data.seasons.map((season) => season.n));
+  const isText = (value) => typeof value === "string" && value !== "";
+  const names = data.season_names;
+  if (
+    names === null ||
+    typeof names !== "object" ||
+    Array.isArray(names) ||
+    !Object.entries(names).every(([key, name]) => (
+      Number.isInteger(Number(key)) &&
+      Number(key) > 0 &&
+      String(Number(key)) === key &&
+      name !== null &&
+      typeof name === "object" &&
+      ((name.kind === "retro" && isText(name.text) && isText(name.full)) ||
+        (name.kind === "champion" && isText(name.text)))
+    ))
+  ) {
+    throw new Error("Racer data contains an invalid season name.");
+  }
+  if (
+    !Array.isArray(data.upcoming) ||
+    !data.upcoming.every((row) => (
+      Array.isArray(row) &&
+      row.length === 4 &&
+      Number.isInteger(row[0]) &&
+      isText(row[1]) &&
+      (row[2] === null || (Number.isInteger(row[2]) && row[2] >= 0 && row[2] < data.modes.length)) &&
+      (row[3] === null || Number.isInteger(row[3]))
+    ))
+  ) {
+    throw new Error("Racer data contains an invalid upcoming race.");
+  }
   data.players.forEach((player) => {
     if (player.rating !== null && typeof player.rating !== "number") {
       throw new Error("Racer data contains an invalid rating.");
@@ -312,8 +343,48 @@ function currentSeason() {
   return participants.seasons.length ? participants.seasons.at(-1).n : null;
 }
 
+// The season's name from the data ({kind, text, full?}), or null when it has none.
+function seasonName(season) {
+  return participants.season_names[String(season)] ?? null;
+}
+
+// Visible text: "Season 10 · TR", "Season 11 · Panda", or "Season 12" when unnamed.
 function seasonLabel(season) {
-  return `Season ${season}`;
+  const name = seasonName(season);
+  return name ? `Season ${season} \u00B7 ${name.text}` : `Season ${season}`;
+}
+
+// Tooltip text: retro names spelled out ("Season 10 · Turtle Rock"), otherwise the same as seasonLabel.
+function seasonFullLabel(season) {
+  const name = seasonName(season);
+  return name?.kind === "retro" ? `Season ${season} \u00B7 ${name.full}` : seasonLabel(season);
+}
+
+// A season's title: "The Season of the Panda", the retro short name, or "Season 12" when unnamed.
+function seasonTitle(season) {
+  const name = seasonName(season);
+  if (!name) {
+    return `Season ${season}`;
+  }
+  return name.kind === "champion" ? `The Season of the ${name.text}` : name.text;
+}
+
+// Players with competition rank 1 in a rating track, by player index; `season` null is all time.
+function ratingLeaders(modeId = ALL_MODES, season = null) {
+  return [...ratingRanks(modeId, season)]
+    .filter(([, rank]) => rank === 1)
+    .map(([playerIndex]) => playerIndex)
+    .sort((a, b) => a - b);
+}
+
+// The overall leaders of an ended season; none while it is running or unknown.
+function seasonChampions(season) {
+  return participants.seasons.some((item) => item.n === season && item.ended) ? ratingLeaders(ALL_MODES, season) : [];
+}
+
+// The previous season's champions, who named this season; none unless it has a champion name.
+function seasonNamers(season) {
+  return seasonName(season)?.kind === "champion" ? seasonChampions(season - 1) : [];
 }
 
 // Every racer's standing in one season: the rating after their last race there, overall and per mode index,
@@ -561,7 +632,7 @@ function ratingText(rating) {
 
 function ratingTooltip(modeId = ALL_MODES, season = null) {
   const scope = modeId === ALL_MODES ? "all modes" : `${modeLabel(modeId)} races only`;
-  const period = season === null ? "" : ` \u00B7 ${seasonLabel(season)}`;
+  const period = season === null ? "" : ` \u00B7 ${seasonFullLabel(season)}`;
   return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 ${scope}${period}`;
 }
 
@@ -604,7 +675,7 @@ function appendRankDelta(cell, rank, delta, season = null) {
   } else {
     arrow.className = `trend rank-delta trend--${delta > 0 ? "up" : "down"}`;
     arrow.textContent = `${delta > 0 ? "\u25B2" : "\u25BC"}${Math.abs(delta)}`;
-    arrow.title = `${season === null ? "Rating" : `${seasonLabel(season)} rating`} rank 7 days ago: #${rank + delta}`;
+    arrow.title = `${season === null ? "Rating" : `${seasonFullLabel(season)} rating`} rank 7 days ago: #${rank + delta}`;
   }
   cell.appendChild(arrow);
 }
@@ -790,7 +861,7 @@ function leaderboardColumns() {
         ? (leaderboardState.mode === ALL_MODES
           ? "All-time rating · all modes"
           : `All-time rating · ${modeLabel(leaderboardState.mode)}`)
-        : `${seasonLabel(season)} rating · ${leaderboardState.mode === ALL_MODES ? "all modes" : modeLabel(leaderboardState.mode)}`,
+        : `${seasonFullLabel(season)} rating · ${leaderboardState.mode === ALL_MODES ? "all modes" : modeLabel(leaderboardState.mode)}`,
       sortValue: (row) => row.rating?.rating,
       render: (cell, row) => {
         const text = document.createElement("span");
@@ -996,6 +1067,7 @@ function bindSeasonControl() {
     const option = document.createElement("option");
     option.value = String(season.n);
     option.textContent = seasonLabel(season.n);
+    option.title = seasonFullLabel(season.n);
     return option;
   });
   const all = document.createElement("option");
@@ -1004,10 +1076,16 @@ function bindSeasonControl() {
   select.replaceChildren(...options, all);
   control.hidden = participants.seasons.length === 0;
   select.addEventListener("change", () => {
-    leaderboardState.season = select.value === SEASON_ALL_VALUE ? null : Number(select.value);
-    leaderboardState.sort = DEFAULT_LEADERBOARD_SORT;
-    renderLeaderboard();
+    selectLeaderboardSeason(select.value === SEASON_ALL_VALUE ? null : Number(select.value));
   });
+}
+
+// Shows one season (null: all seasons) on the leaderboard with the default sort; the caller handles scrolling and focus.
+function selectLeaderboardSeason(season) {
+  leaderboardState.season = season;
+  document.querySelector("#leaderboard-season").value = season === null ? SEASON_ALL_VALUE : String(season);
+  leaderboardState.sort = DEFAULT_LEADERBOARD_SORT;
+  renderLeaderboard();
 }
 
 function playerModes(playerIndex) {
@@ -1298,6 +1376,9 @@ async function loadParticipants() {
     window.addEventListener("hashchange", () => route(false));
     if (typeof TopRated !== "undefined") {
       runFeature("TopRated.init", () => TopRated.init());
+    }
+    if (typeof Upcoming !== "undefined") {
+      runFeature("Upcoming.init", () => Upcoming.init());
     }
     if (typeof Feed !== "undefined") {
       runFeature("Feed.init", () => Feed.init());

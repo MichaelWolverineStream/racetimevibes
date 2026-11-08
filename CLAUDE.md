@@ -47,7 +47,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 | `docs/definitions.md` | Included race, Eastern Time, finisher, winner, slot, season | `schedule_archive.py` (join, seasons) |
 | `docs/archive.md` | Archive files, sync, names, avatar observations, bios, schedule mirror | `race_archive.py`, `racer_bios.py`, `schedule_archive.py` |
 | `docs/racetime-api.md` | racetime.gg endpoints and fields read | `race_archive.py`, `racer_bios.py` |
-| `docs/datasets.md` | `site/data` files, schedule metrics, season locking and ledgers, chest counts | `build_stats.py`, `participant_stats.py`, `season_ratings.py`, `comment_stats.py` |
+| `docs/datasets.md` | `site/data` files, schedule metrics, season locking and ledgers, chest counts | `build_stats.py`, `participant_stats.py`, `season_ratings.py`, `season_names.py`, `comment_stats.py` |
 | `docs/highlights.md` | Tags, badges, streaks, presets, records, claims, facts | `highlights.py`, `badge_images.py` |
 | `docs/avatars.md` | Avatar mirror, Pokémon avatars, sprites, avatar changes | `avatar_mirror.py`, `pokemon_avatars.py`, `pokemon_images.py` |
 | `docs/dashboard.md` | Everything the page shows and does | `site/` |

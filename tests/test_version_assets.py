@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -17,6 +18,7 @@ INDEX_TEMPLATE = """<!doctype html>
     <link rel="stylesheet" href="ui.css">
     <link rel="stylesheet" href="feed.css">
     <link rel="stylesheet" href="top-rated.css">
+    <link rel="stylesheet" href="upcoming.css">
     <link rel="stylesheet" href="records.css">
     <link rel="stylesheet" href="racer-extras.css">
     <link rel="stylesheet" href="share-card.css">
@@ -28,6 +30,7 @@ INDEX_TEMPLATE = """<!doctype html>
     <script src="store.js" defer></script>
     <script src="ui.js" defer></script>
     <script src="top-rated.js" defer></script>
+    <script src="upcoming.js" defer></script>
     <script src="feed.js" defer></script>
     <script src="records.js" defer></script>
     <script src="racer-extras.js" defer></script>
@@ -146,6 +149,13 @@ class CommittedSiteTests(unittest.TestCase):
             "site/index.html or site/version.json is stale; "
             "run python3 scripts/version_assets.py and commit the result",
         )
+
+    def test_every_stamped_reference_is_a_versioned_asset(self):
+        # A stamped file missing from VERSIONED_ASSETS keeps an old token, so browsers keep its stale copy.
+        html = (SITE_DIR / version_assets.INDEX_NAME).read_text(encoding="utf-8")
+        # Local paths only: an external link such as a YouTube watch?v= URL is not an asset.
+        stamped = set(re.findall(r'(?:href|src)="([^":?]+)\?v=', html))
+        self.assertEqual(stamped, set(version_assets.VERSIONED_ASSETS))
 
     def test_every_versioned_asset_is_referenced_with_the_published_version(self):
         version = json.loads(

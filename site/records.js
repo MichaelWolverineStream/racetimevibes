@@ -260,6 +260,96 @@ const Records = (() => {
     return heading;
   }
 
+  // Season dates are Eastern dates already, so they format in UTC; an upcoming slot is a moment, so it formats in Eastern Time.
+  const seasonDateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+  const slotDateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "America/New_York" });
+
+  function seasonDay(isoDate) {
+    return new Date(`${isoDate}T00:00:00Z`);
+  }
+
+  // Every season with a race, oldest first, then the next season once it has a name but no race yet.
+  function timelineSeasons() {
+    const seasons = participants.seasons.map((season) => ({ ...season, upcoming: false }));
+    const next = seasons.at(-1).n + 1;
+    return seasonName(next) ? [...seasons, { n: next, upcoming: true }] : seasons;
+  }
+
+  function seasonDates(season) {
+    if (season.upcoming) {
+      const slot = participants.upcoming.find((row) => row[3] === season.n);
+      return slot ? `Starts ${slotDateFormatter.format(new Date(slot[0] * 1000))}` : "Not started";
+    }
+    if (!season.ended) {
+      return `Since ${seasonDateFormatter.format(seasonDay(season.first))}`;
+    }
+    return seasonDateFormatter.formatRange(seasonDay(season.first), seasonDay(season.last));
+  }
+
+  function showSeasonOnLeaderboard(season) {
+    selectLeaderboardSeason(season);
+    const title = document.getElementById("leaderboard-title");
+    title.scrollIntoView({ block: "start" });
+    title.focus({ preventScroll: true });
+  }
+
+  // A season with a race opens its leaderboard; an upcoming one has none yet, so its title is plain text.
+  function seasonTitleNode(season) {
+    const name = seasonName(season.n);
+    const text = seasonTitle(season.n);
+    if (season.upcoming) {
+      return [element("span", "records-season__title", text)];
+    }
+    const button = element("button", "records-season__title", text);
+    button.type = "button";
+    button.addEventListener("click", () => showSeasonOnLeaderboard(season.n));
+    if (name?.kind !== "retro") {
+      return [button];
+    }
+    // The short name is the visible label; the full name describes it, for the tooltip and for screen readers.
+    const full = element("span", "visually-hidden", `${name.full}, named in retrospect`);
+    full.id = `records-season-${season.n}-full`;
+    button.setAttribute("aria-describedby", full.id);
+    bindTooltip(button, full.textContent);
+    return [button, full];
+  }
+
+  function seasonPeople(role, playerIndexes) {
+    const line = element("div", "records-season__people");
+    line.appendChild(element("span", "records-season__role", role));
+    line.append(...playerIndexes.map((playerIndex) => racerCell(playerIndex, 18)));
+    return line;
+  }
+
+  function seasonCard(season) {
+    const kind = seasonName(season.n)?.kind ?? "unnamed";
+    const card = element("li", `records-season records-season--${kind}`);
+    if (season.upcoming) {
+      card.classList.add("records-season--upcoming");
+    }
+    const head = element("div", "records-season__head");
+    head.appendChild(element("span", "records-season__number", `Season ${season.n}`));
+    if (season.upcoming || !season.ended) {
+      head.appendChild(element("span", "records-season__status", season.upcoming ? "Upcoming" : "Current"));
+    }
+    card.append(head, ...seasonTitleNode(season), element("span", "records-season__dates", seasonDates(season)));
+    const champions = season.upcoming ? [] : seasonChampions(season.n);
+    if (champions.length) {
+      card.appendChild(seasonPeople("Champion", champions));
+    }
+    const namers = seasonNamers(season.n);
+    if (namers.length) {
+      card.appendChild(seasonPeople("Named by", namers));
+    }
+    return card;
+  }
+
+  function seasonTimeline() {
+    const list = element("ol", "records-seasons");
+    list.append(...timelineSeasons().map(seasonCard));
+    return list;
+  }
+
   function summaryTile(label, content) {
     const item = element("div", "summary-item");
     item.appendChild(element("span", "summary-label", label));
@@ -485,7 +575,12 @@ const Records = (() => {
     const cards = element("div", "records-grid");
     cards.append(photoCard(), blowoutCard(), bigFieldCard(), mostRacesCard(), streaksCard(), rivalsCard());
 
+    // With no schedule there are no seasons, and nothing to put on a timeline.
+    const timeline = participants.seasons.length
+      ? [sectionHeading("Seasons", "From Season 11, each season's champion names the next after an animal"), seasonTimeline()]
+      : [];
     body.replaceChildren(
+      ...timeline,
       sectionHeading("Across all modes"),
       cards,
       sectionHeading("Record progression", "Record time by race date"),

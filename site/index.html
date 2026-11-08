@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="88a9dfbbda61">
+    <meta name="app-version" content="e802e965434e">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="ui.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="feed.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="top-rated.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="records.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="racer-extras.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="share-card.css?v=88a9dfbbda61">
-    <link rel="stylesheet" href="easter-eggs.css?v=88a9dfbbda61">
+    <link rel="stylesheet" href="styles.css?v=e802e965434e">
+    <link rel="stylesheet" href="ui.css?v=e802e965434e">
+    <link rel="stylesheet" href="feed.css?v=e802e965434e">
+    <link rel="stylesheet" href="top-rated.css?v=e802e965434e">
+    <link rel="stylesheet" href="upcoming.css?v=e802e965434e">
+    <link rel="stylesheet" href="records.css?v=e802e965434e">
+    <link rel="stylesheet" href="racer-extras.css?v=e802e965434e">
+    <link rel="stylesheet" href="share-card.css?v=e802e965434e">
+    <link rel="stylesheet" href="easter-eggs.css?v=e802e965434e">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -77,6 +78,12 @@
         <h2 id="top-rated-title" class="top-rated__title">Top rated</h2>
         <div id="top-rated-period" class="mode-toggle top-rated__period" role="group" aria-label="Rating period" hidden></div>
         <ul id="top-rated-list" class="top-rated__list"></ul>
+      </section>
+
+      <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title" hidden>
+        <h2 id="upcoming-title" class="upcoming__title">Upcoming races</h2>
+        <a class="upcoming__schedule" href="https://alttpr.racing/calendar" target="_blank" rel="noopener noreferrer">Full Schedule</a>
+        <ol id="upcoming-list" class="upcoming__list"></ol>
       </section>
 
       <section id="updates" class="updates-section" aria-labelledby="updates-title" hidden>
@@ -342,18 +349,19 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=88a9dfbbda61" defer></script>
-    <script src="racer-charts.js?v=88a9dfbbda61" defer></script>
-    <script src="store.js?v=88a9dfbbda61" defer></script>
-    <script src="ui.js?v=88a9dfbbda61" defer></script>
-    <script src="top-rated.js?v=88a9dfbbda61" defer></script>
-    <script src="feed.js?v=88a9dfbbda61" defer></script>
-    <script src="records.js?v=88a9dfbbda61" defer></script>
-    <script src="racer-extras.js?v=88a9dfbbda61" defer></script>
-    <script src="share-card.js?v=88a9dfbbda61" defer></script>
-    <script src="easter-eggs.js?v=88a9dfbbda61" defer></script>
-    <script src="leaderboard.js?v=88a9dfbbda61" defer></script>
-    <script src="version-check.js?v=88a9dfbbda61" defer></script>
-    <script src="visitor-counter.js?v=88a9dfbbda61" defer></script>
+    <script src="app.js?v=e802e965434e" defer></script>
+    <script src="racer-charts.js?v=e802e965434e" defer></script>
+    <script src="store.js?v=e802e965434e" defer></script>
+    <script src="ui.js?v=e802e965434e" defer></script>
+    <script src="top-rated.js?v=e802e965434e" defer></script>
+    <script src="upcoming.js?v=e802e965434e" defer></script>
+    <script src="feed.js?v=e802e965434e" defer></script>
+    <script src="records.js?v=e802e965434e" defer></script>
+    <script src="racer-extras.js?v=e802e965434e" defer></script>
+    <script src="share-card.js?v=e802e965434e" defer></script>
+    <script src="easter-eggs.js?v=e802e965434e" defer></script>
+    <script src="leaderboard.js?v=e802e965434e" defer></script>
+    <script src="version-check.js?v=e802e965434e" defer></script>
+    <script src="visitor-counter.js?v=e802e965434e" defer></script>
   </body>
 </html>

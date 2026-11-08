@@ -68,9 +68,13 @@ def payload(
     pokemon=None,
     schedule=None,
     ledgers=None,
+    schedule_modes=None,
+    season_names=None,
 ):
     # Each race file was fetched when its race ended.
     envelopes = [{"fetched_at": item["ended_at"], "race": item} for item in races]
+    if schedule and schedule_modes is None:
+        schedule_modes = [{"id": 1, "archetype": 1, "name": "Open"}]
     return participant_stats.build_participant_payload(
         build_stats.included_race_contexts(races),
         source_url=SOURCE_URL,
@@ -84,6 +88,8 @@ def payload(
         pokemon=pokemon,
         schedule=schedule,
         ledgers=ledgers,
+        schedule_modes=schedule_modes,
+        season_names=season_names,
     )
 
 
@@ -568,7 +574,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 13)
+        self.assertEqual(result["schema_version"], 14)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -1124,7 +1130,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 13)
+        self.assertEqual(self.participants["schema_version"], 14)
         for key in (
             "presets",
             "hardest_preset",
@@ -1134,6 +1140,8 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             "facts",
             "rating",
             "seasons",
+            "season_names",
+            "upcoming",
         ):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
@@ -1337,3 +1345,75 @@ class GeneratedParticipantDataTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class UpcomingPayloadTests(unittest.TestCase):
+    # archetype 1 is "simple", 2 is "entrance", 8 has no category.
+    MODES = [
+        {"id": 1, "archetype": 1, "name": "Open"},
+        {"id": 2, "archetype": 2, "name": "Entrance Open"},
+        {"id": 3, "archetype": 8, "name": "Odd"},
+    ]
+    NEWEST = "2026-09-17T20:00:00Z"
+
+    def races(self):
+        return [placed_race("one", ["ana", "ben"], started_at="2026-09-17T20:00:00.000Z")]
+
+    def result(self, rows, modes=None, **kwargs):
+        return payload(
+            self.races(),
+            schedule=rows,
+            schedule_modes=self.MODES if modes is None else modes,
+            **kwargs,
+        )
+
+    def test_rows_are_anchored_on_the_newest_race_and_capped(self):
+        base = int(datetime(2026, 9, 17, 20, tzinfo=UTC).timestamp())
+        rows = [
+            {"id": number, "raceId": None, "season": 1, "time": str(base + 3600 * (number - 2)), "mode": 1}
+            for number in range(1, participant_stats.UPCOMING_SLOTS + 10)
+        ]
+        upcoming = self.result(rows)["upcoming"]
+        self.assertEqual(len(upcoming), participant_stats.UPCOMING_SLOTS)
+        # Slot 2 starts exactly with the race and slot 1 before it: both are left out.
+        self.assertEqual(upcoming[0][0], base + 3600)
+        self.assertEqual(upcoming, sorted(upcoming))
+
+    def test_season_comes_from_the_rule_and_modes_map_to_indexes(self):
+        rows = [
+            schedule_slot(1, 1, "2026-09-01T20:00:00Z"),
+            schedule_slot(5, 1, "2026-09-02T20:00:00Z"),
+            schedule_slot(6, 2, "2026-09-10T20:00:00Z"),
+            schedule_slot(7, 2, "2026-09-11T20:00:00Z"),
+            schedule_slot(2, 2, "2026-09-18T20:00:00Z") | {"mode": 2},
+            schedule_slot(3, 2, "2026-09-19T20:00:00Z") | {"mode": 3},
+            schedule_slot(4, 1, "2026-09-20T20:00:00Z"),
+        ]
+        result = self.result(rows)
+        self.assertEqual(result["modes"], ["simple"])
+        simple = result["modes"].index("simple")
+        stamp = lambda text: int(datetime.fromisoformat(text.replace("Z", "+00:00")).timestamp())
+        self.assertEqual(
+            result["upcoming"],
+            [
+                # The entrance category is not published, as no race was run in it.
+                [stamp("2026-09-18T20:00:00Z"), "Entrance Open", None, 2],
+                [stamp("2026-09-19T20:00:00Z"), "Odd", None, 2],
+                # Filed under season 1, but the rule puts it in season 2.
+                [stamp("2026-09-20T20:00:00Z"), "Open", simple, 2],
+            ],
+        )
+
+    def test_an_unlisted_slot_mode_raises(self):
+        rows = [schedule_slot(1, 1, "2026-09-01T20:00:00Z"), schedule_slot(7, 1, "2026-09-18T20:00:00Z") | {"mode": 99}]
+        with self.assertRaisesRegex(participant_stats.ParticipantDataError, "slot 7.*mode 99"):
+            self.result(rows)
+
+    def test_without_a_schedule_there_is_nothing_upcoming(self):
+        self.assertEqual(payload(self.races())["upcoming"], [])
+
+    def test_season_names_are_published(self):
+        names = self.result([], season_names={11: "Panda"})["season_names"]
+        self.assertEqual(list(names), [str(season) for season in range(1, 12)])
+        self.assertEqual(names["11"], {"kind": "champion", "text": "Panda"})
+        self.assertEqual(payload(self.races())["season_names"]["10"]["kind"], "retro")

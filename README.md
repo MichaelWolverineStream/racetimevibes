@@ -47,6 +47,7 @@ python3 -m unittest discover -s tests/analyses    # analysis suite, about half a
 scripts/          Python pipeline: syncs, build, avatar mirror, asset versioning, and the standalone analyses
 tests/            Production suite; tests/analyses/ holds the analysis suite
 archive/          Verbatim racetime.gg races, racer names, avatars and bios, plus the ladder schedule; never deployed
+season-names.json  The animals that name Season 11 on; hand-maintained, read by the build
 season-ratings/   One ledger per locked season, written once by the bot; never deployed
 assets/pokemon/   Pokémon sprites and pokedex.json; never deployed
 site/             The page: HTML, CSS, JS, generated data in site/data/ and mirrored avatars in site/avatars/
@@ -156,6 +157,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
   - The copies are byte for byte, so any metadata an upload carries, such as a JPEG's EXIF block, is served as racetime.gg serves it.
   - A replaced or removed avatar leaves `site/avatars/` but stays in the repository's git history.
 - **Season fields** in `participants.json` are integers, dates and flags tied to the racers' published IDs. They add no field the contract above excludes.
+- **Season names and upcoming slots** in `participants.json` hold no racer data: a season name is a fixed retro name or the animal the previous season's champion chose, and an upcoming slot is a time, a schedule mode name and a season number.
 - **Never published:** full names, discriminators, pronouns, flair, Twitch fields and racetime.gg points and score fields.
 
 `archive/` is different. It mirrors racetime.gg's unauthenticated public API verbatim, including entrants' full user profiles and post-race comments. It also holds racers' public profile bios, verbatim from their racetime.gg profile pages, with the earlier versions it has seen since 2026-11-05. It is committed to this public repository, so anyone can read it there, but it sits outside `site/` and is never deployed with the dashboard.

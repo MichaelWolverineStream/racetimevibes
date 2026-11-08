@@ -326,7 +326,7 @@ const Feed = (() => {
             `${rounded > 0 ? "+" : "\u2212"}${Math.abs(rounded)}`,
           );
     const race = participants.races[raceIndex];
-    bindTooltip(node, `${seasonLabel(race.s)} ${modeLabel(participants.modes[race.m])} rating after this race: ${race.e[entryIndex][7]}`);
+    bindTooltip(node, `${seasonFullLabel(race.s)} \u00B7 ${modeLabel(participants.modes[race.m])} rating after this race: ${race.e[entryIndex][7]}`);
     return node;
   }
 
@@ -694,7 +694,7 @@ const Feed = (() => {
       delta === "new"
         ? element("span", "trend trend--flat", "NEW")
         : element("span", delta > 0 ? "trend trend--up" : "trend trend--down", `${delta > 0 ? "▲" : "▼"}${Math.abs(delta)}`);
-    bindTooltip(node, `${season === null ? "All-time" : seasonLabel(season)} rank, last 7 days`);
+    bindTooltip(node, `${season === null ? "All-time" : seasonFullLabel(season)} rank, last 7 days`);
     return node;
   }
 

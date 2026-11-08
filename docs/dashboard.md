@@ -11,10 +11,11 @@ Everything here happens in the browser: the scripts in `site/` read the datasets
 The page runs top to bottom:
 
 1. The [Top-rated banner](#top-rated-banner).
-2. **01 Latest**: the newest results with their tags.
-3. **02 Racers**: the leaderboard, with its season select and the rating column.
-4. **03 Records**: the hall of records.
-5. **04-07**: the Ladder Data panels, on the schedule, participation, traffic and turnout.
+2. The [Upcoming races](#upcoming-races) strip.
+3. **01 Latest**: the newest results with their tags.
+4. **02 Racers**: the leaderboard, with its season select and the rating column.
+5. **03 Records**: the hall of records.
+6. **04-07**: the Ladder Data panels, on the schedule, participation, traffic and turnout.
 
 Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)).
 
@@ -24,24 +25,41 @@ The masthead holds the category artwork, the title block, a racer comment and th
 - **The racer comment** is a random comment of at least 12 characters from the last 30 days, or from any time when those 30 days hold fewer than 20. It is cut at 180 characters, and the bubble is at most 450px wide. **↻** (Another comment) picks another.
 - The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
 
-A nav bar under the masthead links to the seven sections, grouped as Racing (01-03) and Ladder Data (04-07), whose links are Schedule, Participation, Traffic and Turnout. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner sits between the nav bar and Latest, and is hidden on racer pages too.
+A nav bar under the masthead links to the seven sections, grouped as Racing (01-03) and Ladder Data (04-07), whose links are Schedule, Participation, Traffic and Turnout. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner and the Upcoming races strip sit between the nav bar and Latest, and are hidden on racer pages too.
 
 ## Top-rated banner
 
 The banner crowns the top-rated racer in each category: **Overall**, then every mode in mode order except `unknown`, which only groups races whose mode could not be read. The featured daily racer uses the same categories.
 
-- **Scope:** a two-button toggle in the banner header, **Season N** (the current season, pressed by default) and **All time**, in a group labelled "Rating period". Toggling redraws the tiles in place, and the choice is not persisted. With no seasons there is no toggle and the banner is all-time.
+- **Scope:** a two-button toggle in the banner header, in a group labelled "Rating period": the current season, pressed by default and labelled like "Season 10 · TR" with the full name in its tooltip, then **All time**. Toggling redraws the tiles in place, and the choice is not persisted. With no seasons there is no toggle and the banner is all-time.
 - **Who:** a tile shows exactly the top of the leaderboard sorted by rating in its category and scope: the season's rating under a season, the all-time rating under **All time**. There are no filters and no decay, so a leader keeps the crown until someone rates higher. A season tile shows the season rating, and runners-up use the season's ranks.
 - **Ties:** ranks are competition ranks, so racers tied at the top share one tile. It shows up to three avatars, names the first two in name order, and adds **+N** for the rest.
 - **Tile:** the category, the avatar, the name and the rating. Each name links to that racer's page, opened on the tile's mode (**All modes** for Overall). Racer pages are all-time whatever the scope. A category where nobody is rated in the scope has no tile.
 - **Runners-up:** under the leader, the next five racers in the category, as small avatars side by side, in rank order and then name order. Tied leaders are not repeated there. Hovering or focusing one shows its rank, name and rating, such as "#2 Alice · 1834", and clicking it opens that racer's page on the tile's mode. A category with fewer rated racers shows fewer.
 - **Layout:** one row that keeps names whole and scrolls sideways when it is wider than the screen.
 
+## Season names
+
+Every season label on the page carries the season's name from `season_names` (see [Season fields](datasets.md#season-fields)): the season select, the top-rated toggle, the rating and rank tooltips and the Seasons cards. Visible text uses the short form, "Season 10 · TR" or "Season 11 · Panda", and just "Season 12" while the season has no name. Tooltips and titles use the full form, "Season 10 · Turtle Rock". The wording "the Season of the …" is used only for a champion name.
+
+- **Retro names:** Seasons 1-10 carry fixed names, the short and full name of an ALTTP dungeon, from Eastern Palace (EP) to Turtle Rock (TR).
+- **Champion names:** from Season 11, a season is named after an animal chosen by the previous season's overall champion.
+- **Named by:** a champion season's namers are the previous season's overall #1 by season rating, with ties all credited. It is derived on the page and shows only once that previous season has ended, and it can change until that season is [locked](datasets.md#season-locking).
+
+## Upcoming races
+
+A strip between the top-rated banner and Latest results, hidden on racer pages. It lists up to 5 slots still to start from `upcoming`, all from the season of the next slot.
+
+- **Title:** "Upcoming races in the Season of the Panda" for a champion season, else "Upcoming races in " and the season label.
+- **Full Schedule:** a link on the strip's top border, opposite the title, opens `https://alttpr.racing/calendar` in a new tab.
+- **Slot:** the Eastern Time weekday and start time, a countdown rounded up such as "in 1 d 6 h", the mode's dot and the schedule's mode name.
+- **Refresh:** it redraws every minute, so countdowns tick and a started slot drops off. It is hidden when no slot is left.
+
 ## Latest results
 
 - **Feed:** the newest races first, 20 at a time, with **Show 20 more** for the next 20.
 - **New since your last visit:** the header counts the races added since this browser last loaded the page, as "N new since your last visit", followed by how many of them carry each tag: PB, Mode record, Preset record, First win, Upset, Photo finish, Milestone and Badge, with ×N for repeats. Each of those races has a "New" dot. The marker stays put when the same tab reloads, and the header shows nothing when no race is new. The browser stores the newest race it has shown in local storage, and the tab's starting point in session storage.
-- Each race shows its [race tags](highlights.md#race-tags). Expanding a race lists each entrant with their change in the season's rating in that race's mode: `+12`, `−9`, or `±0`, with a true minus sign and no arrow. ▲ and ▼ are for rank movement only, so a points change never looks like a rank change. The change is the entrant's season-mode points after the race minus their points before it, or minus the starting 1000 in their first race of that mode in that season. Its tooltip reads, for example, "Season 10 Keys rating after this race: 1234". A race with no season shows no change.
+- Each race shows its [race tags](highlights.md#race-tags). Expanding a race lists each entrant with their change in the season's rating in that race's mode: `+12`, `−9`, or `±0`, with a true minus sign and no arrow. ▲ and ▼ are for rank movement only, so a points change never looks like a rank change. The change is the entrant's season-mode points after the race minus their points before it, or minus the starting 1000 in their first race of that mode in that season. Its tooltip reads, for example, "Season 10 · Turtle Rock · Keys rating after this race: 1234". A race with no season shows no change.
 - **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the tags drop to a line under the name.
 - **CR and CPH** (see [Chest counts](datasets.md#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race, and each of the racer's own rows in a racer page's [Latest results](#racer-pages).
 - **Sidebar:** **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order. At 1199px and below it collapses behind a **Racers & highlights** toggle, closed when the page loads; at 980px and below it sits above the feed.
@@ -90,14 +108,14 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 
 ## Racer leaderboard
 
-- **Season:** a **Season** select above the table picks the scope: every season, newest first and the current one by default, then **All seasons**. With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
+- **Season:** a **Season** select above the table picks the scope: every season, newest first and the current one by default, then **All seasons**. Options read like "Season 10 · TR" (see [Season names](#season-names)), with the full name as tooltip. With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
   - Under a season, every column except Badges is calculated from the races of that season, and of the selected mode when one is picked, with the rules under [Racer statistics](#racer-statistics). That includes H2H win %.
   - Under **All seasons**, every column covers the whole archive.
   - A racer with no race in the scope has no row. The table's status text names the season.
-- **Rating:** by default the board is sorted by the rating, highest first, with ties broken by name. The Rating column follows the selected scope and mode. Under a season it shows the [season rating](../README.md#season-ratings), overall under **All modes** and else in the selected mode. Under **All seasons** it shows the all-time [Ladder rating](../README.md#ladder-rating), overall or in the selected mode (see [Mode ratings](../README.md#mode-ratings)). Its tooltip names the scope, such as "Season 10 rating · Keys" or "All-time rating". A racer is provisional, or unrated, in a scope by the rules of that scope. There is no minimum-races cutoff.
+- **Rating:** by default the board is sorted by the rating, highest first, with ties broken by name. The Rating column follows the selected scope and mode. Under a season it shows the [season rating](../README.md#season-ratings), overall under **All modes** and else in the selected mode. Under **All seasons** it shows the all-time [Ladder rating](../README.md#ladder-rating), overall or in the selected mode (see [Mode ratings](../README.md#mode-ratings)). Its tooltip names the scope, such as "Season 10 · Turtle Rock rating · Keys" or "All-time rating". A racer is provisional, or unrated, in a scope by the rules of that scope. There is no minimum-races cutoff.
 - **Position:** the number beside each racer is the row's position as shown, so it renumbers whenever a sort, filter or search changes the table. The top three positions shown get podium colours.
 - **Rank movement:** while the board is sorted by rating, highest first, a ▲ or ▼ beside the number shows how far the racer has moved over the last 7 days in the ranks the Rating column shows: the selected scope's overall ranks under **All modes**, else the selected mode's. **NEW** marks a racer who had no rating there 7 days ago. Under a season that is their first race in the season, or in the season's mode, in that window, so in a season's first week everyone in it is **NEW**. A season that ended more than 7 days ago shows no movement.
-- **Ranks:** rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's rating strip uses the all-time overall ranks. The **Your racers** and **Featured daily racer** sidebar cards show 7-day rank movement in the current season's overall ranks, as ▲N, ▼N or NEW, with a tooltip naming the scope, such as "Season 10 rank, last 7 days". With no seasons they use the all-time ranks.
+- **Ranks:** rating ranks are competition ranks: one more than the number of racers rated strictly higher, so tied racers share a rank. The racer page's rating strip uses the all-time overall ranks. The **Your racers** and **Featured daily racer** sidebar cards show 7-day rank movement in the current season's overall ranks, as ▲N, ▼N or NEW, with a tooltip naming the scope, such as "Season 10 · Turtle Rock rank, last 7 days". With no seasons they use the all-time ranks.
 - **Columns:** 1st, 2nd, 3rd, Median time, Win % and H2H win % are defined under [Racer statistics](#racer-statistics). **Badges** counts the badges a racer has earned, across all modes and the whole archive, whatever season is selected.
 - **5+ races only** is an optional button that hides racers with fewer than five races. It counts races in the selected season and mode, so a veteran with only a few races in one mode, or in one season, drops out of that board.
 - **Raced in last 30 days** is an optional button that hides racers with no race in the currently selected mode during the 30 Eastern Time calendar days ending today. Any entry counts, including a DNF or DQ. It only hides rows: the stats shown stay those of the selected season.
@@ -111,8 +129,11 @@ A star, ☆, follows a racer in this browser, and ★ unfollows them. Stars sit 
 
 ## Hall of records
 
-Records runs in three parts. Only By mode follows the mode picker.
+Records runs in four parts. Only By mode follows the mode picker.
 
+- **Seasons** has a card per season with a race, oldest first, plus the next season once it is named but has no race yet, marked **Upcoming** and dated by its first slot. A season that has not ended is marked **Current**. Hidden with no seasons.
+  - A card shows the season number, a title, its dates, the Champion(s) of an ended season and, for a champion season, who it was **Named by** (see [Season names](#season-names)). Dates are a range, or "Since …" for the current season.
+  - The title is the retro short name, quiet, with the full name as tooltip and accessible description, or "The Season of the Panda" in the accent colour. Clicking it selects that season on the leaderboard and moves focus to the leaderboard heading.
 - **Across all modes** holds the record cards and the streak boards (see [Records](highlights.md#records)): Days, Wins, Podiums and Finishes in a row, up to 5 racers each.
   - A toggle switches the boards between **Active now**, the default, and **All-time**.
   - **Active now** ranks every racer's current streak of two or more: a daily streak whose last day is today or yesterday in Eastern Time, or any other kind whose latest race is within the last 30 days. A board with none reads "None active".

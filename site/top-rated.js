@@ -29,14 +29,6 @@ const TopRated = (() => {
     return icon;
   }
 
-  // `season` is a season number, or null for the all-time ratings.
-  function leadersFor(modeId, season) {
-    return [...ratingRanks(modeId, season)]
-      .filter(([, rank]) => rank === 1)
-      .map(([playerIndex]) => playerIndex)
-      .sort((a, b) => a - b);
-  }
-
   // Tied leaders are already in the main stack, so rank 1 is excluded. Ties break by player index, which is name order.
   function runnersUpFor(modeId, season) {
     return [...ratingRanks(modeId, season)]
@@ -115,7 +107,7 @@ const TopRated = (() => {
   function render(season) {
     const tiles = [];
     for (const modeId of ratingCategories()) {
-      const leaders = leadersFor(modeId, season);
+      const leaders = ratingLeaders(modeId, season);
       if (leaders.length > 0) {
         tiles.push(tile(modeId, leaders, season));
       }
@@ -138,6 +130,10 @@ const TopRated = (() => {
       ...choices.map(([label, value]) => {
         const button = element("button", "mode-toggle__button", label);
         button.type = "button";
+        const fullLabel = value === null ? label : seasonFullLabel(value);
+        if (fullLabel !== label) {
+          bindTooltip(button, fullLabel);
+        }
         button.dataset.season = String(value);
         button.addEventListener("click", () => render(value));
         return button;

@@ -28,6 +28,7 @@ Run `python3 scripts/version_assets.py` after editing `site/index.html` or any f
 
 - `--check` reports staleness without writing, and a test runs the same check.
 - `--site` points it at another site directory.
+- A new stamped site file goes into `VERSIONED_ASSETS`; a test fails when `index.html` references a local stamped file that is not listed.
 - The Barlow fonts in `site/assets/fonts/` are not stamped: replace one by adding a file under a new name.
 
 ## Tests
@@ -58,6 +59,10 @@ No test uses the network. The production suite rebuilds all three datasets from 
 
 - It sets no `concurrency` group on purpose: the callee's `update-data` group already queues it behind a running data run, and the same group on the caller would deadlock.
 - GitHub keeps one waiting run per group, so a data run can cancel a waiting bio run. Nothing is lost: a racer stays due until checked.
+
+### Naming a season
+
+From Season 11 the previous season's champion picks an animal. Add `"N": {"animal": "…"}` to `season-names.json`, run `python3 scripts/build_stats.py` (the rules are under [Season fields](datasets.md#season-fields)), run the tests, and commit the file with `site/data`. Pass no `--lock-seasons`: the ledgers stay untouched.
 
 ### Refreshing by hand
 

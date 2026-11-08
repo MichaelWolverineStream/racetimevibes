@@ -19,6 +19,7 @@ try:
         ladder_rating,
         pokemon_avatars,
         schedule_archive,
+        season_names as season_names_module,
         season_ratings,
     )
 except ImportError:
@@ -27,10 +28,14 @@ except ImportError:
     import ladder_rating
     import pokemon_avatars
     import schedule_archive
+    import season_names as season_names_module
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 13
+PARTICIPANT_SCHEMA_VERSION = 14
+# At least two days of runway even at one slot an hour, so a page built up to two hours
+# earlier still has races to show.
+UPCOMING_SLOTS = 48
 STATUS_CODES = {"done": 0, "dnf": 1, "dq": 2}
 OTHER_STATUS_CODE = 3
 DONE_STATUS_CODE = STATUS_CODES["done"]
@@ -227,6 +232,38 @@ def _rating_fields(rating: ladder_rating.PlayerRating | None) -> JsonObject:
     }
 
 
+def _upcoming(
+    schedule: list[JsonObject],
+    schedule_modes: list[JsonObject],
+    staged: list[JsonObject],
+    starts: list[tuple[int, datetime]],
+    modes: list[str],
+) -> list[list]:
+    """The next scheduled slots as [time, mode name, published mode index, season].
+
+    Anchored on the newest included race, never the clock, so a rebuild is identical.
+    """
+    newest_started_at = max(row["started_at"] for row in staged)
+    listed = {mode["id"]: mode for mode in schedule_modes}
+    upcoming = []
+    for row in schedule_archive.upcoming_slots(schedule, newest_started_at, UPCOMING_SLOTS):
+        mode = listed.get(row["mode"])
+        if mode is None:
+            raise ParticipantDataError(
+                f"Schedule slot {row['id']} names mode {row['mode']}, which is not listed"
+            )
+        category = schedule_archive.mode_category(mode)
+        upcoming.append(
+            [
+                int(row["time"]),
+                mode["name"],
+                modes.index(category) if category in modes else None,
+                schedule_archive.season_of(schedule_archive.slot_time(row), starts),
+            ]
+        )
+    return upcoming
+
+
 def build_participant_payload(
     contexts: list[JsonObject],
     *,
@@ -241,6 +278,8 @@ def build_participant_payload(
     pokemon: pokemon_avatars.Catalogue | None = None,
     schedule: list[JsonObject] | None = None,
     ledgers: Mapping[int, season_ratings.Ledger] | None = None,
+    schedule_modes: list[JsonObject] | None = None,
+    season_names: Mapping[int, str] | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
 
@@ -256,6 +295,10 @@ def build_participant_payload(
     Given the ladder `schedule`, every race also gets its season and its entrants'
     season ratings (see `season_ratings`); `ledgers` hold the seasons already locked.
     Without a schedule no race has a season.
+
+    `season_names` holds the animals that name seasons from 11 on. The next
+    UPCOMING_SLOTS slots of the schedule after the newest included race are published
+    as `upcoming`, each mode named by the `schedule_modes` row it points to.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -399,6 +442,7 @@ def build_participant_payload(
         ladder_rating.rate_by_season(records, len(players), assignment.seasons).points(),
         ledgers,
     )
+    upcoming = _upcoming(schedule, schedule_modes or [], staged, starts, modes)
     derived = highlights.compute(
         records, players=players, modes=modes, presets=presets, ratings=ratings
     )
@@ -486,6 +530,8 @@ def build_participant_payload(
         "seasons": season_ratings.published_seasons(
             assignment.seasons, [record["d"] for record in records], starts, ledgers
         ),
+        "season_names": season_names_module.published_names(season_names or {}),
+        "upcoming": upcoming,
         "diagnostics": {
             "race_count": len(races),
             "player_count": len(players),
