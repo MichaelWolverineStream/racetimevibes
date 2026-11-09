@@ -8,11 +8,13 @@
 
 ## Race tags
 
-Within a race, tags appear in the order mode record, preset record, first win, upset, photo, PB, milestone, badge.
+Within a race, tags appear in the order mode record, preset record, first win, upset, photo, PB, preset PB, milestone, badge.
 
 Each kind has its own colour, and so does the Hardest preset tag. The colour fills the tag's dot and outlines its pill. The colours stay distinct from each other under colour-blind simulation, and every tag names its kind, so colour is never the only cue.
 
 The two record tags are the exception: they share the PB tag's green, because a record is a PB for the whole ladder, and they shine instead. Their pill has a green-tinted fill and a soft glow, their dot is a four-point sparkle, and a sheen sweeps across them every four seconds. With reduced motion the sheen stays still and the rest remains.
+
+The Preset PB tag shares the PB tag's green too, without the shine, because it is a PB on a narrower scope. Its label tells the two apart.
 
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
 - **Preset record:** the race's fastest time beats the preset's record in whole seconds, and the race does not set a mode record. A mode record always beats the preset's record too, so a race carries one record tag at most, the wider one. The first race in a preset sets the baseline and is not tagged. A race without a preset has no preset record.
@@ -20,6 +22,7 @@ The two record tags are the exception: they share the PB tag's green, because a 
 - **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite.
 - **Photo finish:** places 1 and 2 are both timed finishers separated by less than 5 seconds. The margin uses the exact times.
 - **PB:** a strict improvement, in whole seconds, on the racer's previous best timed finish in the same mode. The first timed finish in a mode is the baseline and is not tagged.
+- **Preset PB:** a strict improvement, in whole seconds, on the racer's previous best timed finish on the same preset, when the finish is not a PB. A PB always beats the racer's best on that preset too, so a finish carries one PB tag at most, the wider one, and a PB still becomes the racer's best on its preset. The first timed finish on a preset is the baseline and is not tagged. A race without a preset has no preset PB and leaves the racer's preset bests as they were.
 - **Milestone:** the racer's entry count, in any status, reaches 25, 50, 100, 250, 500 or 1000.
 - **Badge:** a badge newly unlocked in this race. First Blood is never tagged, because First win covers it.
 
@@ -151,7 +154,7 @@ Presets are named as defined under [Races](definitions.md#races). Statistics are
 A racer's claim to fame is the one thing about them that the fewest racers match. The [Featured daily racer](dashboard.md#featured-daily-racer) card shows it.
 
 - **Stats:** wins, longest win streak, longest podium streak, longest finish streak, races entered, longest daily streak, PBs, different opponents, night finishes and longest comeback, in that order.
-  - PBs count improvements, as the PB tag does, so a mode's first timed finish is not one.
+  - PBs count improvements, as the PB tag does, so a mode's first timed finish is not one. Preset PBs don't count.
   - Different opponents counts every racer met in a race, DNFs and DQs included, as Most-met rivals does.
   - Night finishes are finishes in races starting between midnight and 5 AM ET.
   - The longest comeback is the most days between two of the racer's consecutive race days.

@@ -106,7 +106,17 @@ CLAIM_KINDS = (
     "night",
     "comeback",
 )
-TAG_KINDS = ("record", "preset_record", "first_win", "upset", "photo", "pb", "milestone", "badge")
+TAG_KINDS = (
+    "record",
+    "preset_record",
+    "first_win",
+    "upset",
+    "photo",
+    "pb",
+    "preset_pb",
+    "milestone",
+    "badge",
+)
 
 BADGE_IMAGE_DIR = "assets/badges"
 
@@ -213,6 +223,7 @@ class _Player:
         "modes_done",
         "modes_won",
         "best_by_mode",
+        "best_by_preset",
         "pbs",
         "badges",
         "runs",
@@ -244,6 +255,7 @@ class _Player:
         self.modes_done: set[int] = set()
         self.modes_won: set[int] = set()
         self.best_by_mode: dict[int, int] = {}
+        self.best_by_preset: dict[int, int] = {}
         self.pbs: dict[int, list[list[int]]] = {}
         self.badges: dict[str, int] = {}
         self.runs = {kind: _Run() for kind in STREAK_KINDS}
@@ -1053,13 +1065,24 @@ def compute(
                 deja_vu = whole_seconds in state.finish_times
                 state.finish_times.add(whole_seconds)
                 previous_best = state.best_by_mode.get(mode)
+                mode_pb = previous_best is not None and whole_seconds < previous_best
                 if previous_best is None:
                     state.best_by_mode[mode] = whole_seconds
                     state.pbs.setdefault(mode, []).append([ri, whole_seconds])
-                elif whole_seconds < previous_best:
+                elif mode_pb:
                     tags["pb"].append(["pb", player, whole_seconds, previous_best])
                     state.best_by_mode[mode] = whole_seconds
                     state.pbs[mode].append([ri, whole_seconds])
+                # Preset PB: the racer's best on this preset, unless the wider mode PB
+                # already tagged this finish. The preset best moves on a mode PB too.
+                if rec["p"] is not None:
+                    previous_preset_best = state.best_by_preset.get(rec["p"])
+                    if previous_preset_best is None or whole_seconds < previous_preset_best:
+                        if previous_preset_best is not None and not mode_pb:
+                            tags["preset_pb"].append(
+                                ["preset_pb", player, whole_seconds, previous_preset_best]
+                            )
+                        state.best_by_preset[rec["p"]] = whole_seconds
                 if mode_name == MYSTERY_MODE:
                     state.mystery_fast |= seconds < BOTH_ENDS_FAST_SECONDS
                     state.mystery_slow |= seconds > BOTH_ENDS_SLOW_SECONDS

@@ -202,6 +202,110 @@ class PresetRecordTests(unittest.TestCase):
         self.assertIn("preset_record", run([duel(0, 1)])["diagnostics"]["tag_counts"])
 
 
+class PresetPersonalBestTests(unittest.TestCase):
+    presets = ({"m": 0, "n": "Easy"}, {"m": 0, "n": "Hard"})
+
+    def test_first_finish_on_a_preset_is_the_baseline_and_untagged(self):
+        # The Hard race sets both racers' mode bests, so the Easy race is not a mode PB.
+        records = [duel(0, 1, first_seconds=3000.0, preset=1), duel(0, 1, first_seconds=3600.0, preset=0, day=1)]
+        result = run(records, presets=self.presets)
+        for index in range(2):
+            self.assertEqual(tags_of(result, index, "preset_pb"), [])
+            self.assertEqual(tags_of(result, index, "pb"), [])
+
+    def test_improvement_is_tagged_with_the_previous_preset_best(self):
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=1),
+            duel(0, 1, first_seconds=3600.0, preset=0, day=1),
+            duel(0, 1, first_seconds=3500.4, preset=0, day=2),
+        ]
+        result = run(records, presets=self.presets)
+        self.assertEqual(
+            tags_of(result, 2, "preset_pb"),
+            [["preset_pb", 0, 3500, 3600], ["preset_pb", 1, 3560, 3660]],
+        )
+        self.assertEqual(tags_of(result, 2, "pb"), [])
+        # The personal-best claim counts mode PBs only.
+        self.assertEqual(pb_counts(records, presets=self.presets)[0], 0)
+
+    def test_a_mode_pb_is_not_also_a_preset_pb(self):
+        records = [duel(0, 1, first_seconds=3600.0, preset=0), duel(0, 1, first_seconds=3500.0, preset=0, day=1)]
+        result = run(records, presets=self.presets)
+        self.assertEqual(tags_of(result, 1, "pb"), [["pb", 0, 3500, 3600], ["pb", 1, 3560, 3660]])
+        self.assertEqual(tags_of(result, 1, "preset_pb"), [])
+
+    def test_a_mode_pb_also_moves_the_preset_best(self):
+        records = [
+            duel(0, 1, first_seconds=3600.0, preset=0),
+            duel(0, 1, first_seconds=3000.0, preset=0, day=1),
+            duel(0, 1, first_seconds=3200.0, preset=0, day=2),
+        ]
+        result = run(records, presets=self.presets)
+        self.assertEqual(len(tags_of(result, 1, "pb")), 2)
+        # 3200 beats the 3600 baseline but not the 3000 mode PB set on the same preset.
+        self.assertEqual(tags_of(result, 2, "preset_pb"), [])
+        self.assertEqual(tags_of(result, 2, "pb"), [])
+
+    def test_one_race_can_hold_a_mode_pb_and_a_preset_pb_for_different_racers(self):
+        records = [
+            record([done(1, 1, 3000.0)], preset=1),
+            duel(0, 1, first_seconds=3600.0, preset=0, day=1),
+            duel(0, 1, first_seconds=3500.0, preset=0, day=2),
+        ]
+        result = run(records, presets=self.presets)
+        self.assertEqual(tags_of(result, 2, "pb"), [["pb", 0, 3500, 3600]])
+        self.assertEqual(tags_of(result, 2, "preset_pb"), [["preset_pb", 1, 3560, 3660]])
+        kinds = [tag[0] for tag in result["race_tags"][2] if tag[0] in ("pb", "preset_pb")]
+        self.assertEqual(kinds, ["pb", "preset_pb"])
+
+    def test_equal_or_sub_second_improvements_are_not_tagged(self):
+        for second in (3600.0, 3599.6, 3600.4):
+            with self.subTest(second=second):
+                records = [
+                    duel(0, 1, first_seconds=3000.0, preset=1),
+                    duel(0, 1, first_seconds=3600.0, preset=0, day=1),
+                    duel(0, 1, first_seconds=second, preset=0, day=2),
+                ]
+                result = run(records, presets=self.presets)
+                self.assertEqual(tags_of(result, 2, "preset_pb"), [])
+
+    def test_each_preset_keeps_its_own_best(self):
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=0),
+            duel(0, 1, first_seconds=3500.0, preset=1, day=1),
+            duel(0, 1, first_seconds=3400.0, preset=1, day=2),
+        ]
+        result = run(records, presets=self.presets)
+        # Hard's first race is its own baseline, not a PB against Easy's faster time.
+        self.assertEqual(tags_of(result, 1, "preset_pb"), [])
+        self.assertEqual(
+            tags_of(result, 2, "preset_pb"),
+            [["preset_pb", 0, 3400, 3500], ["preset_pb", 1, 3460, 3560]],
+        )
+
+    def test_races_without_a_preset_or_a_time_neither_tag_nor_count(self):
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=1),
+            duel(0, 1, first_seconds=3600.0, preset=0, day=1),
+            duel(0, 1, first_seconds=3300.0, day=2),
+            record([dnf(0), dq(1)], preset=0, day=3),
+            duel(0, 1, first_seconds=3400.0, preset=0, day=4),
+        ]
+        result = run(records, presets=self.presets)
+        for index in range(4):
+            self.assertEqual(tags_of(result, index, "preset_pb"), [])
+        # The 3300 race had no preset, so Easy's best is still 3600.
+        self.assertEqual(
+            tags_of(result, 4, "preset_pb"),
+            [["preset_pb", 0, 3400, 3600], ["preset_pb", 1, 3460, 3660]],
+        )
+
+    def test_preset_pb_sits_right_after_pb_in_the_tag_order(self):
+        kinds = highlights.TAG_KINDS
+        self.assertEqual(kinds.index("preset_pb"), kinds.index("pb") + 1)
+        self.assertIn("preset_pb", run([duel(0, 1)])["diagnostics"]["tag_counts"])
+
+
 class ModeRecordTests(unittest.TestCase):
     def test_first_race_sets_baseline_without_tag(self):
         result = run([duel(0, 1)])

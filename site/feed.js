@@ -18,8 +18,10 @@ const Feed = (() => {
   const FACT_SEED = "fact of the day 2";
   const STATUS_DNF = 1;
   const STATUS_DQ = 2;
+  const PB_LABELS = { pb: "PB", preset_pb: "Preset PB" };
   const SUMMARY_TAGS = [
     ["pb", "PB"],
+    ["preset_pb", "Preset PB"],
     ["record", "Mode record"],
     ["preset_record", "Preset record"],
     ["first_win", "First win"],
@@ -149,15 +151,19 @@ const Feed = (() => {
     return participants.badges.find((badge) => badge.id === badgeId) ?? { id: badgeId, label: badgeId };
   }
 
-  function pbTag(pbTags) {
-    const details = pbTags.slice(0, MAX_TAG_DETAILS).map(([, playerIndex, seconds, previous]) => {
+  function pbTag(kind, sameKind) {
+    const details = sameKind.slice(0, MAX_TAG_DETAILS).map(([, playerIndex, seconds, previous]) => {
       const previousText = previous === null || previous === undefined ? "" : `, previous best ${formatDuration(previous)}`;
       return `${playerName(playerIndex)}: ${formatDuration(seconds)}${previousText}`;
     });
-    if (pbTags.length > MAX_TAG_DETAILS) {
-      details.push(`and ${pbTags.length - MAX_TAG_DETAILS} more`);
+    if (sameKind.length > MAX_TAG_DETAILS) {
+      details.push(`and ${sameKind.length - MAX_TAG_DETAILS} more`);
     }
-    return { kind: "pb", label: pbTags.length > 1 ? `PB ×${pbTags.length}` : "PB", detail: details.join("; ") };
+    return {
+      kind,
+      label: sameKind.length > 1 ? `${PB_LABELS[kind]} ×${sameKind.length}` : PB_LABELS[kind],
+      detail: details.join("; "),
+    };
   }
 
   function describeTag(tag) {
@@ -208,16 +214,20 @@ const Feed = (() => {
 
   function raceTagDescriptions(race) {
     const tags = race.t || [];
-    const pbTags = tags.filter((tag) => tag[0] === "pb");
+    const pbTagsByKind = new Map();
+    tags.filter((tag) => Object.hasOwn(PB_LABELS, tag[0])).forEach((tag) => {
+      pbTagsByKind.set(tag[0], [...(pbTagsByKind.get(tag[0]) ?? []), tag]);
+    });
     const badgeTagsById = new Map();
     tags.filter((tag) => tag[0] === "badge").forEach((tag) => {
       badgeTagsById.set(tag[2], [...(badgeTagsById.get(tag[2]) ?? []), tag]);
     });
     const descriptions = [];
     tags.forEach((tag) => {
-      if (tag[0] === "pb") {
-        if (tag === pbTags[0]) {
-          descriptions.push(pbTag(pbTags));
+      if (Object.hasOwn(PB_LABELS, tag[0])) {
+        const sameKind = pbTagsByKind.get(tag[0]);
+        if (tag === sameKind[0]) {
+          descriptions.push(pbTag(tag[0], sameKind));
         }
         return;
       }
@@ -253,8 +263,8 @@ const Feed = (() => {
 
   // One tag on its own, for the entrant it names: PBs and badges are grouped only on the race row.
   function tagDescription(tag) {
-    if (tag[0] === "pb") {
-      return pbTag([tag]);
+    if (Object.hasOwn(PB_LABELS, tag[0])) {
+      return pbTag(tag[0], [tag]);
     }
     if (tag[0] === "badge") {
       return badgeTag([tag]);
@@ -862,6 +872,8 @@ const Feed = (() => {
         return "First win";
       case "pb":
         return `${modeLabel(modeName(race))} PB`;
+      case "preset_pb":
+        return `${participants.presets[race.p].n} PB`;
       case "record":
         return `${modeLabel(modeName(race))} record`;
       case "preset_record":
