@@ -420,14 +420,15 @@ const RacerExtras = (() => {
     return bar;
   }
 
-  // Firsts, seconds and thirds in the leaderboard's medal colours.
+  // Diamond, gold, silver and bronze medal counts in the leaderboard's medal colours; the tooltip spells them out.
   function podiums(row) {
     const value = element("strong", "player-stat__value");
     if (!row) {
       value.textContent = "--";
       return value;
     }
-    const counts = [["first", row.first], ["second", row.second], ["third", row.third]];
+    const counts = MEDALS.map((medal) => [medal, row[medal]]);
+    bindTooltip(value, counts.map(([medal, count]) => `${count} ${medal}`).join(" \u00B7 "));
     counts.forEach(([medal, count], index) => {
       if (index) {
         value.append(element("span", "player-stat__sep", "·"));

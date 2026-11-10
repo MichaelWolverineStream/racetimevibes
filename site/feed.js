@@ -285,8 +285,10 @@ const Feed = (() => {
     return cell;
   }
 
-  function placePill(place) {
-    const podium = place >= 1 && place <= 3 ? ` rank-badge--podium rank-badge--${place}` : "";
+  // The medal colour depends on the race's field size (race.n); medalFor lives in leaderboard.js.
+  function placePill(place, field) {
+    const medal = medalFor(place, field);
+    const podium = medal ? ` rank-badge--podium rank-badge--${medal}` : "";
     return element("span", `rank-badge feed-place${podium}`, String(place));
   }
 
@@ -308,7 +310,7 @@ const Feed = (() => {
       cell.textContent = "—";
       return { cell, winner: null };
     }
-    cell.append(placePill(1), UI.avatar(winner[0], 24), playerLink(winner[0], "racer-link"));
+    cell.append(placePill(1, race.n), UI.avatar(winner[0], 24), playerLink(winner[0], "racer-link"));
     return { cell, winner };
   }
 
@@ -345,7 +347,7 @@ const Feed = (() => {
     const row = element("li", "feed-entrant");
     const placeCell = element("span", "feed-entrant__place");
     if (status === 0 && place !== null) {
-      placeCell.appendChild(placePill(place));
+      placeCell.appendChild(placePill(place, race.n));
     }
     const nameCell = element("span", "feed-entrant__name");
     nameCell.append(UI.avatar(playerIndex, 20), playerLink(playerIndex, "racer-link"));
@@ -491,7 +493,7 @@ const Feed = (() => {
     const when = element("span", "feed-row__when", `${rowDateFormatter.format(new Date(`${race.d}T00:00:00Z`))} · ${fullHour(race.h)}`);
     const placeCell = element("span", "feed-row__place");
     if (status === 0 && place !== null) {
-      placeCell.appendChild(placePill(place));
+      placeCell.appendChild(placePill(place, race.n));
     }
     const comment = element("span", "feed-row__comment");
     const time = element("span", "feed-row__time");

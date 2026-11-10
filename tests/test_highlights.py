@@ -410,6 +410,25 @@ class MilestoneTests(unittest.TestCase):
         self.assertEqual(sum(len(tags_of(result, i, "milestone")) for i in range(24)), 0)
 
 
+class MedalTests(unittest.TestCase):
+    def test_medal_by_field_size_and_place(self):
+        none = None
+        expected = {
+            1: [none] * 5,
+            2: ["gold", none, none, none, none],
+            3: ["gold", none, none, none, none],
+            4: ["gold", "silver", none, none, none],
+            5: ["gold", "silver", none, none, none],
+            6: ["gold", "silver", "bronze", none, none],
+            9: ["gold", "silver", "bronze", none, none],
+            10: ["diamond", "gold", "silver", "bronze", none],
+        }
+        for field, medals in expected.items():
+            for place, medal in enumerate(medals, start=1):
+                with self.subTest(field=field, place=place):
+                    self.assertEqual(highlights.medal(place, field), medal)
+
+
 class StreakTests(unittest.TestCase):
     def test_win_streak_best_and_current(self):
         records = [duel(0, 1), duel(0, 1), duel(1, 0), duel(0, 1), duel(0, 1), duel(0, 1)]
@@ -433,15 +452,14 @@ class StreakTests(unittest.TestCase):
         streaks = run([duel(0, 1)])["players"][1]["streaks"]["win"]
         self.assertEqual(streaks, {"best": None, "current": None})
 
-    def test_podium_streak_includes_places_one_to_three(self):
-        records = [
-            record([done(0, 1, 3000.0), done(1, 2, 3001.0), done(2, 3, 3002.0), done(3, 4, 3003.0)]),
-            record([done(1, 1, 3000.0), done(2, 2, 3001.0), done(3, 3, 3002.0), done(0, 4, 3003.0)]),
-        ]
-        result = run(records)
-        self.assertEqual(result["players"][1]["streaks"]["podium"]["best"], [2, 0, 1])
-        self.assertEqual(result["players"][0]["streaks"]["podium"]["current"], None)
-        self.assertEqual(result["players"][3]["streaks"]["podium"]["best"], [1, 1, 1])
+    def test_podium_streak_depends_on_the_field_size(self):
+        win = duel(0, 1)
+        # 2nd of 3 and 3rd of 5 earn no medal; 4th of 10 does.
+        for field, place, held in ((3, 2, False), (5, 3, False), (10, 4, True), (6, 3, True)):
+            with self.subTest(field=field, place=place):
+                race = record([done(1, 1, 3000.0), done(0, place, 3100.0)], n=field)
+                best = run([win, race, win])["players"][0]["streaks"]["podium"]["best"]
+                self.assertEqual(best[0], 3 if held else 1)
 
     def test_dnf_breaks_finish_streak_but_not_daily_streak(self):
         records = [
@@ -1223,18 +1241,20 @@ class BadgeTests(unittest.TestCase):
         self.assertNotIn("doubled", self.badges([duel(0, 1)] * 9))
         self.assertEqual(self.badges([duel(0, 1)] * 10)["doubled"], 9)
 
+    def bronze_race(self, place=3):
+        """A field of six where player 0 finishes at `place`: 3rd is bronze, 4th is not."""
+        return record([done(1, 1, 3000.0), done(0, place, 3200.0)], n=6)
+
     def test_podium_streak_badges(self):
-        third = record([done(1, 1, 3000.0), done(2, 2, 3100.0), done(0, 3, 3200.0)])
+        third = self.bronze_race()
         self.assertNotIn("on_the_ped", self.badges([third] * 4))
         self.assertEqual(self.badges([third] * 5)["on_the_ped"], 4)
         self.assertNotIn("ped_regular", self.badges([third] * 9))
         self.assertEqual(self.badges([third] * 10)["ped_regular"], 9)
 
     def test_podium_streak_badges_end_on_a_fourth_place(self):
-        third = record([done(1, 1, 3000.0), done(2, 2, 3100.0), done(0, 3, 3200.0)])
-        fourth = record(
-            [done(1, 1, 3000.0), done(2, 2, 3100.0), done(3, 3, 3200.0), done(0, 4, 3300.0)]
-        )
+        third = self.bronze_race()
+        fourth = self.bronze_race(place=4)
         result = run([third] * 4 + [fourth] + [third])["players"][0]
         self.assertNotIn("on_the_ped", result["badges"])
         self.assertEqual(result["progress"]["on_the_ped"], 4)

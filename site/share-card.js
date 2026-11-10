@@ -112,7 +112,7 @@ const ShareCard = (() => {
       ratingBase: participants.rating.base,
       stats: [
         ["Races", integerFormatter.format(row ? row.races : 0)],
-        ["Wins", integerFormatter.format(row ? row.first : 0)],
+        ["Wins", integerFormatter.format(row ? row.wins : 0)],
         ["Podiums", integerFormatter.format(row ? row.podiums : 0)],
         ["H2H win", formatRate(winRate(record.wins, record.losses))],
       ],

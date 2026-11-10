@@ -250,47 +250,82 @@ class EntrantNormalizationTests(unittest.TestCase):
         self.assertEqual(highlights.DNF_STATUS_CODE, participant_stats.STATUS_CODES["dnf"])
 
 
+def sized_race(name, size, *top, **kwargs):
+    """A race of `size` entrants: `top` finish 1st, 2nd, ...; fillers take the rest."""
+    fillers = [f"fill-{index}" for index in range(size - len(top))]
+    return placed_race(name, [*top, *fillers], **kwargs)
+
+
 class LeaderboardTests(unittest.TestCase):
     def test_counts_medals_per_mode_and_overall(self):
         result = payload(
             [
-                placed_race("r1", ["ana", "ben", "cid"], mode="keys"),
-                placed_race("r2", ["ben", "ana", "cid"], mode="fun"),
+                sized_race("r1", 6, "ana", "ben", "cid", mode="keys"),
+                sized_race("r2", 6, "ben", "ana", "cid", mode="fun"),
+                sized_race("r3", 4, "cid", "ana", mode="fun"),
             ]
         )
         self.assertEqual(result["modes"], ["fun", "keys"])
 
         keys_row = row_for(result, "keys", "ana")
-        self.assertEqual((keys_row["first"], keys_row["second"]), (1, 0))
+        self.assertEqual((keys_row["wins"], keys_row["gold"], keys_row["silver"]), (1, 1, 0))
 
         overall_row = row_for(result, "all", "ana")
         self.assertEqual(
-            (overall_row["first"], overall_row["second"], overall_row["races"]),
-            (1, 1, 2),
+            (overall_row["wins"], overall_row["gold"], overall_row["silver"], overall_row["races"]),
+            (1, 1, 2, 3),
         )
-        self.assertEqual(overall_row["podiums"], 2)
+        self.assertEqual(overall_row["podiums"], 3)
+        cid = row_for(result, "all", "cid")
+        self.assertEqual((cid["wins"], cid["gold"], cid["bronze"], cid["podiums"]), (1, 1, 2, 3))
+
+    def test_first_in_a_big_field_is_a_win_and_a_diamond(self):
+        result = payload([sized_race("big", 10, "ana", "ben", "cid", "dee", "eve")])
+        expected = {
+            "ana": (1, 1, 0, 0, 0),
+            "ben": (0, 0, 1, 0, 0),
+            "cid": (0, 0, 0, 1, 0),
+            "dee": (0, 0, 0, 0, 1),
+            "eve": (0, 0, 0, 0, 0),
+        }
+        for name, counts in expected.items():
+            row = row_for(result, "all", name)
+            keys = ("wins", "diamond", "gold", "silver", "bronze")
+            self.assertEqual(tuple(row[key] for key in keys), counts, name)
+            self.assertEqual(row["podiums"], sum(counts[1:]), name)
+
+    def test_second_of_two_earns_no_medal(self):
+        result = payload([sized_race("duel", 2, "ana", "ben")])
+        ben = row_for(result, "all", "ben")
+        self.assertEqual((ben["wins"], ben["podiums"], ben["finishes"]), (0, 0, 1))
+        self.assertEqual(row_for(result, "all", "ana")["gold"], 1)
 
     def test_sorts_by_medal_then_races_then_name(self):
         races = [
-            placed_race("g1", ["aaa", "fill-1", "fill-2"]),
-            placed_race("g2", ["aaa", "fill-1", "fill-2"]),
-            placed_race("g3", ["bbb", "fill-1", "fill-2"]),
-            placed_race("g4", ["fill-1", "bbb", "fill-2"]),
-            placed_race("g5", ["ccc", "fill-1", "fill-2"]),
-            placed_race("g6", ["fill-1", "fill-2", "ccc"]),
-            placed_race("g7", ["ddd", "fill-1", "fill-2"]),
-            placed_race("g8", ["fill-1", "fill-2", "fill-3", "ddd"]),
-            placed_race("g9", ["fill-1", "fill-2", "fill-3", "ddd"]),
-            placed_race("g10", ["eee", "fill-1", "fill-2"]),
-            placed_race("g11", ["fill-1", "fill-2", "fill-3", "eee"]),
-            placed_race("g12", ["mmm", "fill-1", "fill-2"]),
-            placed_race("g13", ["fill-1", "fill-2", "fill-3", "mmm"]),
-            placed_race("g14", ["zzz", "fill-1", "fill-2"]),
-            placed_race("g15", ["fill-1", "fill-2", "fill-3", "zzz"]),
+            sized_race("g1", 10, "zed"),
+            sized_race("g2", 6, "aaa"),
+            sized_race("g3", 6, "aaa"),
+            sized_race("g4", 6, "bbb"),
+            sized_race("g5", 6, "fill-x", "bbb"),
+            sized_race("g6", 6, "ccc"),
+            sized_race("g7", 6, "fill-x", "fill-y", "ccc"),
+            sized_race("g8", 6, "ddd"),
+            sized_race("g9", 6, "fill-x", "fill-y", "ddd"),
+            sized_race("g10", 6, "fill-x", "fill-y", "fill-z", "ddd"),
+            sized_race("g11", 6, "eee"),
+            sized_race("g12", 6, "fill-x", "fill-y", "eee"),
+            sized_race("g13", 6, "mmm"),
+            sized_race("g14", 6, "fill-x", "fill-y", "mmm"),
         ]
-        tracked = {"aaa", "bbb", "ccc", "ddd", "eee", "mmm", "zzz"}
+        tracked = {"zed", "aaa", "bbb", "ccc", "ddd", "eee", "mmm"}
         order = [name for name in ranked_names(payload(races), "all") if name in tracked]
-        self.assertEqual(order, ["aaa", "bbb", "ccc", "ddd", "eee", "mmm", "zzz"])
+        self.assertEqual(order, ["zed", "aaa", "bbb", "ddd", "ccc", "eee", "mmm"])
+
+    def test_payload_publishes_the_medal_tiers(self):
+        result = payload([sized_race("one", 2, "ana", "ben")])
+        self.assertEqual(
+            result["medal_tiers"], [[f, list(m)] for f, m in highlights.MEDAL_TIERS]
+        )
 
     def test_time_stats_cover_finishers_only(self):
         result = payload(
@@ -355,7 +390,7 @@ class LeaderboardTests(unittest.TestCase):
             ]
         )
         ghost = row_for(result, "all", "ghost")
-        self.assertEqual((ghost["finishes"], ghost["first"], ghost["dnf"]), (0, 0, 1))
+        self.assertEqual((ghost["finishes"], ghost["wins"], ghost["dnf"]), (0, 0, 1))
         self.assertEqual(result["diagnostics"]["finishes_without_place"], 1)
 
 
@@ -574,7 +609,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 14)
+        self.assertEqual(result["schema_version"], 15)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -1130,7 +1165,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 14)
+        self.assertEqual(self.participants["schema_version"], 15)
         for key in (
             "presets",
             "hardest_preset",
@@ -1142,6 +1177,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             "seasons",
             "season_names",
             "upcoming",
+            "medal_tiers",
         ):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])

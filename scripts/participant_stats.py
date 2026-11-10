@@ -32,7 +32,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 14
+PARTICIPANT_SCHEMA_VERSION = 15
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -158,9 +158,11 @@ def _blank_row(player_index: int) -> JsonObject:
         "finishes": 0,
         "dnf": 0,
         "dq": 0,
-        "first": 0,
-        "second": 0,
-        "third": 0,
+        "wins": 0,
+        "diamond": 0,
+        "gold": 0,
+        "silver": 0,
+        "bronze": 0,
         "places": [],
         "times": [],
     }
@@ -170,7 +172,7 @@ def _finalize_row(row: JsonObject) -> JsonObject:
     places = row.pop("places")
     times = row.pop("times")
     return row | {
-        "podiums": row["first"] + row["second"] + row["third"],
+        "podiums": sum(row[name] for name in highlights.MEDALS),
         "best_place": min(places) if places else None,
         "median_place": statistics.median(places) if places else None,
         "median_seconds": statistics.median(times) if times else None,
@@ -197,11 +199,10 @@ def _leaderboard(
                 if seconds is not None:
                     row["times"].append(seconds)
                 if place == 1:
-                    row["first"] += 1
-                elif place == 2:
-                    row["second"] += 1
-                elif place == 3:
-                    row["third"] += 1
+                    row["wins"] += 1
+                earned = highlights.medal(place, race["n"])
+                if earned is not None:
+                    row[earned] += 1
             elif status_code == DQ_STATUS_CODE:
                 row["dq"] += 1
             else:
@@ -210,9 +211,10 @@ def _leaderboard(
     rows = [_finalize_row(row) for row in totals.values()]
     rows.sort(
         key=lambda row: (
-            -row["first"],
-            -row["second"],
-            -row["third"],
+            -row["diamond"],
+            -row["gold"],
+            -row["silver"],
+            -row["bronze"],
             -row["races"],
             players[row["p"]]["name"].casefold(),
         )
@@ -519,6 +521,7 @@ def build_participant_payload(
         "hardest_preset": derived["hardest_preset"],
         "preset_min_races": highlights.PRESET_MIN_RACES,
         "blowout_min_field": highlights.BLOWOUT_MIN_FIELD,
+        "medal_tiers": [[field, list(medals)] for field, medals in highlights.MEDAL_TIERS],
         "players": players,
         "avatar_changes": avatar_changes,
         "races": races,

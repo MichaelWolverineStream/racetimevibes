@@ -96,7 +96,7 @@ Each badge records the index of the race that unlocked it.
 
 A badge is either a counter, which unlocks when a count reaches its target, or a one-race badge, which unlocks on a single result. In the notes below, a **finish** is a finisher's result, and **day**, **week** and **field** are as defined in [definitions.md](definitions.md). Each badge ships an animated image and a still under `site/assets/badges/`; how the page shows them is under [Racer pages](dashboard.md#racer-pages).
 
-- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. Double D, Quarter Pounder and Full Pounder count wins, in a row or not. On the Ped and Ped Regular use the podium run (places 1-3), which, unlike the finish run, has no DNF exception. >174 counts every race entered and not won, DNFs included. A mode's count badges count finishes in that mode.
+- **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. Double D, Quarter Pounder and Full Pounder count wins, in a row or not. On the Ped and Ped Regular use the podium run (finishes that earn a [medal](definitions.md#entrants)), which, unlike the finish run, has no DNF exception. >174 counts every race entered and not won, DNFs included. A mode's count badges count finishes in that mode.
 - **Bridesmaid:** 2nd places in a row in the racer's own race sequence. Any other result ends the run, a DNF included, even in a field of two.
 - **Connoisseur:** distinct seed presets finished. A preset is one row of the published preset list, so a name that two modes share, such as MMMM (Not Slow), counts twice.
 - **Rival:** finishes ahead of one opponent, across all modes. Like an H2H win, it counts each opponent who placed lower or didn't finish. An equal place counts for neither racer.
@@ -126,7 +126,7 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 ## Streaks
 
 - **Daily:** consecutive Eastern Time dates with at least one entry. The current streak is the run ending on the racer's last race day.
-- **Win, podium and finish:** runs over the racer's own race sequence across all modes. Podium means places 1-3; finish means finisher. A finish run follows the DNF exception under [Streak and count badges](#badges). The current streak is the run still open after the racer's latest race, and is absent if that race broke it.
+- **Win, podium and finish:** runs over the racer's own race sequence across all modes. Podium means a finish that earns a [medal](definitions.md#entrants), so it depends on the field; finish means finisher. A finish run follows the DNF exception under [Streak and count badges](#badges). The current streak is the run still open after the racer's latest race, and is absent if that race broke it.
 
 ## Presets
 

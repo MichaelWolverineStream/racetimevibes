@@ -27,6 +27,15 @@ HUMMERS_WINS = 6
 LUCKSACK_WINS = 9
 WIN_TOTALS = (10, 25, 50)
 PODIUM_RUNS = (5, 10)
+# Medals from the best place down.
+MEDALS = ("diamond", "gold", "silver", "bronze")
+# Medals by field size (every entrant), largest minimum field first.
+MEDAL_TIERS = (
+    (10, ("diamond", "gold", "silver", "bronze")),
+    (6, ("gold", "silver", "bronze")),
+    (4, ("gold", "silver")),
+    (2, ("gold",)),
+)
 BRIDESMAID_RUN = 3
 NO_DODGE_FINISHES = 10
 MORE_NO_DODGE_FINISHES = 40
@@ -308,6 +317,17 @@ class Badge(NamedTuple):
     target: int = 1
     progress: Callable[[_Player], int] | None = None
     earned: Callable[[_Moment], bool] | None = None
+
+
+def medal(place: int, field: int) -> str | None:
+    """Return the medal a finisher's place earns in a field of `field` entrants, or None.
+
+    Callers check finisher status first; a DNF or DQ never has a place.
+    """
+    for min_field, medals in MEDAL_TIERS:
+        if field >= min_field:
+            return medals[place - 1] if place <= len(medals) else None
+    return None
 
 
 def _best_run(kind: str) -> Callable[[_Player], int]:
@@ -1048,7 +1068,7 @@ def compute(
             state.second_streak = state.second_streak + 1 if finisher and place == 2 else 0
             state.best_second_streak = max(state.best_second_streak, state.second_streak)
             state.runs["win"].step(ri, won)
-            state.runs["podium"].step(ri, finisher and place <= 3)
+            state.runs["podium"].step(ri, finisher and medal(place, n) is not None)
             if not (excused_dnf and status == DNF_STATUS_CODE):
                 state.runs["finish"].step(ri, finisher)
 

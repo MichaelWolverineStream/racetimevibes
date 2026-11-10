@@ -52,6 +52,8 @@
   --accent: #12634a;
   --accent-strong: #0b4434;
   --focus: #39778a;
+  --diamond: #a8e0ef;
+  --diamond-ink: #0f6f8f;
   --gold: #dca629;
   --gold-ink: #8a6200;
   --silver: #c3ccc8;
@@ -1314,15 +1316,19 @@ th[aria-sort="descending"] .sort-button::after {
   text-align: center;
 }
 
-.rank-badge--1 {
+.rank-badge--diamond {
+  background: var(--diamond);
+}
+
+.rank-badge--gold {
   background: var(--gold);
 }
 
-.rank-badge--2 {
+.rank-badge--silver {
   background: var(--silver);
 }
 
-.rank-badge--3 {
+.rank-badge--bronze {
   background: var(--bronze);
 }
 
@@ -1331,17 +1337,22 @@ th[aria-sort="descending"] .sort-button::after {
   text-decoration-color: var(--line);
 }
 
-.medal-count--first {
+.medal-count--diamond {
+  color: var(--diamond-ink);
+  font-weight: 800;
+}
+
+.medal-count--gold {
   color: var(--gold-ink);
   font-weight: 800;
 }
 
-.medal-count--second {
+.medal-count--silver {
   color: var(--silver-ink);
   font-weight: 800;
 }
 
-.medal-count--third {
+.medal-count--bronze {
   color: var(--bronze-ink);
   font-weight: 800;
 }

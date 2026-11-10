@@ -1,4 +1,8 @@
-const PARTICIPANT_SCHEMA_VERSION = 14;
+const PARTICIPANT_SCHEMA_VERSION = 15;
+// Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
+const MEDALS = ["diamond", "gold", "silver", "bronze"];
+const MEDAL_RULE_TOOLTIP =
+  "Medals by field size: 2\u20133 racers gold \u00B7 4\u20135 gold, silver \u00B7 6\u20139 gold, silver, bronze \u00B7 10+ diamond, gold, silver, bronze";
 const ALL_MODES = "all";
 // Races with a missing or malformed mode prefix; a bucket, not a category.
 const UNKNOWN_MODE = "unknown";
@@ -44,6 +48,31 @@ const leaderboardState = {
 };
 const playerState = { mode: ALL_MODES, sort: null, query: "", presetSort: null };
 
+// medal_tiers is [[min field size, [medal, ...]], ...], largest field first.
+function validMedalTiers(tiers) {
+  return (
+    Array.isArray(tiers) &&
+    tiers.length > 0 &&
+    tiers.every(
+      (tier, index) =>
+        Array.isArray(tier) &&
+        tier.length === 2 &&
+        Number.isInteger(tier[0]) &&
+        tier[0] > 0 &&
+        Array.isArray(tier[1]) &&
+        tier[1].length > 0 &&
+        tier[1].every((medal) => MEDALS.includes(medal)) &&
+        (index === 0 || tiers[index - 1][0] > tier[0]),
+    )
+  );
+}
+
+// The medal a finisher's place earns in a field of `field` entrants, or null. Callers check the finisher status first.
+function medalFor(place, field) {
+  const tier = participants.medal_tiers.find(([minField]) => field >= minField);
+  return tier ? (tier[1][place - 1] ?? null) : null;
+}
+
 function validateParticipants(data) {
   if (!data || data.schema_version !== PARTICIPANT_SCHEMA_VERSION) {
     throw new Error("Unexpected racer data schema version.");
@@ -59,6 +88,9 @@ function validateParticipants(data) {
   }
   if (!data.players.length || !data.races.length) {
     throw new Error("Racer data is empty.");
+  }
+  if (!validMedalTiers(data.medal_tiers)) {
+    throw new Error("Racer data contains an invalid medal rule.");
   }
   if (
     !Array.isArray(data.badges) ||
@@ -272,7 +304,8 @@ function recordsForMode(modeId, season) {
   return records;
 }
 
-// Mirrors _leaderboard() in scripts/participant_stats.py for one season's races.
+// Mirrors _leaderboard() in scripts/participant_stats.py for one season's races:
+// wins count 1st place in any field; medals follow the field-size rule in medalFor.
 // Players are stored sorted by casefolded name, so the index is the name tie-break.
 function computeBoardRows(modeIndex, season) {
   const totals = new Map();
@@ -284,7 +317,7 @@ function computeBoardRows(modeIndex, season) {
       const [playerIndex, place, status, seconds] = entry;
       let row = totals.get(playerIndex);
       if (!row) {
-        row = { p: playerIndex, races: 0, first: 0, second: 0, third: 0, dnf: 0, dq: 0, times: [] };
+        row = { p: playerIndex, races: 0, wins: 0, diamond: 0, gold: 0, silver: 0, bronze: 0, dnf: 0, dq: 0, times: [] };
         totals.set(playerIndex, row);
       }
       row.races += 1;
@@ -293,11 +326,11 @@ function computeBoardRows(modeIndex, season) {
           row.times.push(seconds);
         }
         if (place === 1) {
-          row.first += 1;
-        } else if (place === 2) {
-          row.second += 1;
-        } else if (place === 3) {
-          row.third += 1;
+          row.wins += 1;
+        }
+        const medal = medalFor(place, race.n);
+        if (medal) {
+          row[medal] += 1;
         }
       } else if (status === DQ_STATUS) {
         row.dq += 1;
@@ -313,9 +346,10 @@ function computeBoardRows(modeIndex, season) {
     }))
     .sort(
       (left, right) =>
-        right.first - left.first ||
-        right.second - left.second ||
-        right.third - left.third ||
+        right.diamond - left.diamond ||
+        right.gold - left.gold ||
+        right.silver - left.silver ||
+        right.bronze - left.bronze ||
         right.races - left.races ||
         left.p - right.p,
     );
@@ -684,7 +718,7 @@ function appendRankDelta(cell, rank, delta, season = null) {
 function appendRacerLink(cell, player, modeId, rowNumber, rankDelta, season = null) {
   if (rowNumber !== null) {
     const badge = document.createElement("span");
-    badge.className = rowNumber <= 3 ? `rank-badge rank-badge--podium rank-badge--${rowNumber}` : "rank-badge";
+    badge.className = rowNumber <= 3 ? `rank-badge rank-badge--podium rank-badge--${["gold", "silver", "bronze"][rowNumber - 1]}` : "rank-badge";
     badge.textContent = integerFormatter.format(rowNumber);
     cell.appendChild(badge);
     if (rankDelta !== undefined) {
@@ -880,25 +914,36 @@ function leaderboardColumns() {
       render: (cell, row) => appendText(cell, integerFormatter.format(row.races)),
     },
     {
-      key: "first",
-      label: "1st",
-      sortLabel: "first places",
-      sortValue: (row) => row.first,
-      render: (cell, row) => appendMedal(cell, row.first, "first"),
+      key: "diamond",
+      label: "Diamond",
+      sortLabel: "diamond medals",
+      tooltip: MEDAL_RULE_TOOLTIP,
+      sortValue: (row) => row.diamond,
+      render: (cell, row) => appendMedal(cell, row.diamond, "diamond"),
     },
     {
-      key: "second",
-      label: "2nd",
-      sortLabel: "second places",
-      sortValue: (row) => row.second,
-      render: (cell, row) => appendMedal(cell, row.second, "second"),
+      key: "gold",
+      label: "Gold",
+      sortLabel: "gold medals",
+      tooltip: MEDAL_RULE_TOOLTIP,
+      sortValue: (row) => row.gold,
+      render: (cell, row) => appendMedal(cell, row.gold, "gold"),
     },
     {
-      key: "third",
-      label: "3rd",
-      sortLabel: "third places",
-      sortValue: (row) => row.third,
-      render: (cell, row) => appendMedal(cell, row.third, "third"),
+      key: "silver",
+      label: "Silver",
+      sortLabel: "silver medals",
+      tooltip: MEDAL_RULE_TOOLTIP,
+      sortValue: (row) => row.silver,
+      render: (cell, row) => appendMedal(cell, row.silver, "silver"),
+    },
+    {
+      key: "bronze",
+      label: "Bronze",
+      sortLabel: "bronze medals",
+      tooltip: MEDAL_RULE_TOOLTIP,
+      sortValue: (row) => row.bronze,
+      render: (cell, row) => appendMedal(cell, row.bronze, "bronze"),
     },
     {
       key: "unfinished",
@@ -964,13 +1009,15 @@ function leaderboardRows(modeId, season) {
       rating: ratingFor(player, modeId, season),
       lastRaceDate: lastRaceDate(row.p, modeIndex),
       races: row.races,
-      first: row.first,
-      second: row.second,
-      third: row.third,
+      wins: row.wins,
+      diamond: row.diamond,
+      gold: row.gold,
+      silver: row.silver,
+      bronze: row.bronze,
       unfinished: row.dnf + row.dq,
       badges: Object.keys(player.badges).length,
       medianSeconds: row.median_seconds,
-      raceWinRate: row.first / row.races,
+      raceWinRate: row.wins / row.races,
       headToHeadRate: winRate(record.wins, record.losses),
     };
   });

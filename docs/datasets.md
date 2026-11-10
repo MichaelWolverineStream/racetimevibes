@@ -11,7 +11,7 @@
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the Ladder data panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, its derived tags and its season (see [Season fields](#season-fields)). Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)). |
+| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date and start hour, its seed preset, its derived tags and its season (see [Season fields](#season-fields)). Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)). `medal_tiers` publishes the [medal](definitions.md#entrants) rule, and each leaderboard row carries `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total). |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
 `race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](avatars.md#avatar-mirror)). What each of these may contain is fixed by [Privacy](../README.md#privacy).

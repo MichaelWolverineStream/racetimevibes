@@ -2,7 +2,7 @@
 
 - **Purpose:** the shared terms. The README and every doc use them with exactly these meanings.
 - **Read before:** changing which races count, how a race's mode, preset, date or season is derived, or how schedule slots join races.
-- **Code:** `scripts/build_stats.py` (races, modes, presets), `scripts/schedule_archive.py` (`join_races`, `season_starts`, `season_of`).
+- **Code:** `scripts/build_stats.py` (races, modes, presets), `scripts/highlights.py` (`MEDAL_TIERS`), `scripts/schedule_archive.py` (`join_races`, `season_starts`, `season_of`).
 
 ## Races
 
@@ -22,6 +22,17 @@
 - **Identified:** an entry carrying a stable public user ID. Anonymized entries are not identified.
 - **Finisher:** an entrant whose status is `done` and who has a `place`. A **timed** finisher also has a `finish_time`. Everyone else, DNF or DQ, is a non-finisher.
 - **Winner:** the identified entrant with place 1.
+- **Medal:** the reward a finisher's place earns in its race, set by the race's field (see [Races](#races)). The rule is `MEDAL_TIERS` in `scripts/highlights.py`:
+
+  | Field | Medals |
+  |---|---|
+  | 2–3 | 1st gold |
+  | 4–5 | 1st gold, 2nd silver |
+  | 6–9 | 1st gold, 2nd silver, 3rd bronze |
+  | 10+ | 1st diamond, 2nd gold, 3rd silver, 4th bronze |
+
+  A field of 1 earns no medal.
+- **Podium:** a finish that earns a medal.
 - **Provisional:** a racer with fewer than 5 finishes, in any mode, before a given race. A mode rating has its own provisional rule (see [Mode ratings](../README.md#mode-ratings)).
 
 ## Schedule
