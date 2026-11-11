@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import bisect
 import statistics
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
 from collections.abc import Callable
 from datetime import date
 from typing import Any, NamedTuple
@@ -72,6 +72,7 @@ BOTH_ENDS_SLOW_SECONDS = 7800
 MIDDLE_MIN_FIELD = 5
 LANTERNE_ROUGE_MIN_FIELD = 10
 RANDO_SICKO_FINISHES = 5
+RANDO_SICKO_HOURS = 24
 STEP_LETTER_MIN_FIELD = 5
 TOUCHED_GRASS_DAYS = 30
 TOUCHED_GRASS_FROM = date(2026, 8, 1)
@@ -216,9 +217,8 @@ class _Player:
         "wins",
         "mode_finishes",
         "presets_done",
-        "day",
-        "day_finishes",
-        "best_day_finishes",
+        "window_starts",
+        "best_window_finishes",
         "comment_streak",
         "best_comment_streak",
         "second_streak",
@@ -248,9 +248,9 @@ class _Player:
         self.wins = 0
         self.mode_finishes: Counter[str] = Counter()
         self.presets_done: set[int] = set()
-        self.day = ""
-        self.day_finishes = 0
-        self.best_day_finishes = 0
+        # Start timestamps of the finishes in the last RANDO_SICKO_HOURS, oldest first.
+        self.window_starts: deque[float] = deque()
+        self.best_window_finishes = 0
         self.comment_streak = 0
         self.best_comment_streak = 0
         self.second_streak = 0
@@ -734,9 +734,9 @@ BADGES = (
     Badge(
         "rando_sicko",
         "Rando Sicko",
-        f"Finish {RANDO_SICKO_FINISHES} races in one day.",
+        f"Finish {RANDO_SICKO_FINISHES} races in a {RANDO_SICKO_HOURS}-hour period.",
         RANDO_SICKO_FINISHES,
-        progress=lambda s: s.best_day_finishes,
+        progress=lambda s: s.best_window_finishes,
     ),
     Badge(
         "touched_grass",
@@ -916,6 +916,8 @@ def compute(
         mode_name = modes[mode]
         preset_name = presets[rec["p"]]["n"] if rec["p"] is not None else None
         race_ordinal = date.fromisoformat(rec["d"]).toordinal()
+        # Elapsed seconds, so a daylight saving change never stretches a window.
+        started = rec["started_at"].timestamp()
         day_races[rec["d"]] += 1
 
         # Winner and runner-up (identified, finishing).
@@ -1047,11 +1049,13 @@ def compute(
                         _is_finisher(other[1], other[2]) and other[1] <= place
                     ):
                         state.beaten[other[0]] += 1
-                if state.day != rec["d"]:
-                    state.day = rec["d"]
-                    state.day_finishes = 0
-                state.day_finishes += 1
-                state.best_day_finishes = max(state.best_day_finishes, state.day_finishes)
+                # Records come in start order, so the window stays sorted.
+                state.window_starts.append(started)
+                while started - state.window_starts[0] >= RANDO_SICKO_HOURS * 3600:
+                    state.window_starts.popleft()
+                state.best_window_finishes = max(
+                    state.best_window_finishes, len(state.window_starts)
+                )
                 if rec["h"] in NIGHT_HOURS:
                     night_finishes += 1
                     state.night_finishes += 1

@@ -404,6 +404,8 @@ def build_participant_payload(
             "mode": row["mode"],
             "d": row["d"],
             "h": row["h"],
+            # The exact start, for the Rando Sicko window; never published.
+            "started_at": row["started_at"],
             "n": row["n"],
             "p": preset_index.get((mode_index[row["mode"]], row["preset"])),
             "e": [

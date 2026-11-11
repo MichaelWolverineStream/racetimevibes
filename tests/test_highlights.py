@@ -1,12 +1,14 @@
 import math
 import unittest
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 from scripts import highlights
 
 
 DAY_ONE = date(2026, 3, 1)
+EASTERN = ZoneInfo("America/New_York")
 
 
 def done(player, place, seconds=None):
@@ -21,13 +23,17 @@ def dq(player):
     return (player, None, 2, None)
 
 
-def record(entries, *, mode=0, day=0, hour=12, n=None, preset=None, commenters=(), names=None):
+def record(
+    entries, *, mode=0, day=0, hour=12, minute=0, n=None, preset=None, commenters=(), names=None
+):
+    local_day = DAY_ONE + timedelta(days=day)
     return {
         "r": "alttpr-ladder/test-race",
         "m": mode,
         "mode": f"mode{mode}",
-        "d": (DAY_ONE + timedelta(days=day)).isoformat(),
+        "d": local_day.isoformat(),
         "h": hour,
+        "started_at": datetime.combine(local_day, time(hour, minute), tzinfo=EASTERN),
         "n": len(entries) if n is None else n,
         "p": preset,
         "e": list(entries),
@@ -999,18 +1005,40 @@ class BadgeTests(unittest.TestCase):
         race = record([done(0, 1, 3000.0), done(1, 4, 3100.0)], n=7)
         self.assertEqual(run([race])["players"][1]["badges"]["grocery_stick"], 0)
 
-    def test_rando_sicko_counts_five_finishes_on_one_day(self):
-        def day(finishes):
-            return [record([done(0, 1, 3000.0)], hour=h) for h in range(finishes)]
+    def test_rando_sicko_counts_five_finishes_across_midnight(self):
+        starts = [(0, 20), (0, 22), (1, 0), (1, 2), (1, 4)]
 
-        self.assertNotIn("rando_sicko", self.badges(day(4)))
-        self.assertEqual(self.badges(day(5))["rando_sicko"], 4)
-        self.assertEqual(run(day(4))["players"][0]["progress"]["rando_sicko"], 4)
+        def races(finishes):
+            return [
+                record([done(0, 1, 3000.0)], day=day, hour=hour)
+                for day, hour in starts[:finishes]
+            ]
 
-    def test_rando_sicko_does_not_count_a_dnf_or_another_day(self):
+        self.assertNotIn("rando_sicko", self.badges(races(4)))
+        self.assertEqual(run(races(4))["players"][0]["progress"]["rando_sicko"], 4)
+        self.assertEqual(self.badges(races(5))["rando_sicko"], 4)
+
+    def test_rando_sicko_window_is_under_24_hours(self):
+        def races(last_hour, last_minute):
+            first = [record([done(0, 1, 3000.0)], hour=h) for h in range(12, 16)]
+            last = record([done(0, 1, 3000.0)], day=1, hour=last_hour, minute=last_minute)
+            return first + [last]
+
+        result = run(races(12, 0))
+        self.assertNotIn("rando_sicko", result["players"][0]["badges"])
+        self.assertEqual(result["players"][0]["progress"]["rando_sicko"], 4)
+        self.assertEqual(self.badges(races(11, 59))["rando_sicko"], 4)
+
+    def test_rando_sicko_window_counts_elapsed_hours_across_daylight_saving(self):
+        # Clocks spring forward at 02:00 on 2026-03-08 (day 7): Sunday 03:00 is 23 hours
+        # after Saturday 03:00.
+        records = [record([done(0, 1, 3000.0)], day=6, hour=h) for h in (3, 4, 5, 6)]
+        records.append(record([done(0, 1, 3000.0)], day=7, hour=3))
+        self.assertEqual(self.badges(records)["rando_sicko"], 4)
+
+    def test_rando_sicko_does_not_count_a_dnf(self):
         records = [record([done(0, 1, 3000.0)], hour=h) for h in range(4)]
         records.append(record([dnf(0), done(1, 1, 3000.0)], hour=4))
-        records.append(record([done(0, 1, 3000.0)], day=1))
         result = run(records)
         self.assertNotIn("rando_sicko", result["players"][0]["badges"])
         self.assertEqual(result["players"][0]["progress"]["rando_sicko"], 4)

@@ -95,7 +95,7 @@ Each badge records the index of the race that unlocked it.
 | Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. |
 | Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. |
 | Lanterne Rouge | Finish last in a field of 10 or more where everyone finished. |
-| Rando Sicko | Finish 5 races in one day. |
+| Rando Sicko | Finish 5 races in a 24-hour period. |
 | Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. |
 | Yap | Comment on 11 races in a row. |
 | Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. |
@@ -114,7 +114,7 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 - **Yap:** the racer's own races in order, DNFs included, each with a comment that isn't blank, the same comments that `comments.json` publishes. A race without one ends the run. Only whether a comment exists reaches `highlights.py`; its text never enters `participants.json`.
 - **Touched Grass:** the racer needs an earlier race, and the gap since it is counted only from 2026-08-01, so a break that started before then counts from that date and the earliest unlock is 2026-08-31. Any entry counts as the return, DNFs included.
 - **Entranced and Entranced!:** any entry in the entrance mode counts, DNFs included, and several races on one day or in one week count once.
-- **Rando Sicko:** finishes only, counted per day.
+- **Rando Sicko:** finishes only, timed by when each race started: the 5th finished race starts less than 24 hours after the 1st. The window rolls, so it can cross midnight, and it counts elapsed hours, so a daylight saving change neither stretches nor shrinks it. The same slot on two days in a row is 24 hours apart, so it doesn't fit.
 - **Sniper and Sniped!:** the photo tag's condition. Places 1 and 2 are both timed and the margin is under 5 seconds. Sniper goes to the winner and Sniped! to the runner-up.
 - **RETIME:** two finishers' raw times, before rounding to whole seconds, are less than 1 second apart, at any places. Both earn it, and so does everyone in a chain of such gaps. Only identified, timed finishers count.
 - **Jet Seed and Jet Lag:** the seed preset is named exactly Casual Boots.
