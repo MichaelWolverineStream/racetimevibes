@@ -16,6 +16,14 @@ The two record tags are the exception: they share the PB tag's green, because a 
 
 The Preset PB tag shares the PB tag's green too, without the shine, because it is a PB on a narrower scope. Its label tells the two apart.
 
+Badge tags are gold, so a badge never looks like a PB, and a rarer badge shines more. Rarity is the share of all racers who hold the badge today, the same share its tooltip shows, so a badge's rarity can drop as more racers earn it:
+
+- **Common:** held by more than 10% of racers. A plain pill, like most tags.
+- **Rare:** held by more than 2% and at most 10%. A gold-tinted fill, with no glow.
+- **Legendary:** held by 2% or less. The fill, a glow, and the records' sweeping sheen and four-point sparkle dot. Its gold tells it from a record's green. With reduced motion the sheen stays still and the rest remains.
+
+The Badge count in the *New since your last visit* header stands for several badges, so it has no rarity and is a plain pill.
+
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
 - **Preset record:** the race's fastest time beats the preset's record in whole seconds, and the race does not set a mode record. A mode record always beats the preset's record too, so a race carries one record tag at most, the wider one. The first race in a preset sets the baseline and is not tagged. A race without a preset has no preset record.
 - **First win:** the racer's first place-1 result in any mode.

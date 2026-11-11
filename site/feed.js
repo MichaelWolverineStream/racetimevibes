@@ -209,6 +209,7 @@ const Feed = (() => {
       kind: "badge",
       label: sameBadge.length > 1 ? `${definition.label} ×${sameBadge.length}` : definition.label,
       detail: `${names} unlocked ${definition.label}: ${definition.description ?? ""} · ${UI.badgeShare(definition.id)}`,
+      rarity: UI.badgeRarity(definition.id),
     };
   }
 
@@ -248,8 +249,8 @@ const Feed = (() => {
 
   function tagCell(descriptions) {
     const cell = element("span", "feed-row__tags");
-    descriptions.slice(0, MAX_VISIBLE_TAGS).forEach(({ kind, label, detail }) => {
-      cell.appendChild(UI.tag(kind, label, detail));
+    descriptions.slice(0, MAX_VISIBLE_TAGS).forEach(({ kind, label, detail, rarity }) => {
+      cell.appendChild(UI.tag(kind, label, detail, rarity));
     });
     const hidden = descriptions.slice(MAX_VISIBLE_TAGS);
     if (hidden.length) {
@@ -281,7 +282,9 @@ const Feed = (() => {
 
   function entrantTagCell(race, playerIndex) {
     const cell = element("span", "feed-entrant__tags");
-    entrantTagDescriptions(race, playerIndex).forEach(({ kind, label, detail }) => cell.appendChild(UI.tag(kind, label, detail)));
+    entrantTagDescriptions(race, playerIndex).forEach(({ kind, label, detail, rarity }) =>
+      cell.appendChild(UI.tag(kind, label, detail, rarity)),
+    );
     return cell;
   }
 

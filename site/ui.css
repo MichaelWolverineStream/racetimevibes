@@ -218,19 +218,40 @@
   --kind-color: var(--tag-hardest);
 }
 
-/* Record tags share PB's green but shine: a tinted fill, a glow, a sparkle for a dot
-   and a sheen that sweeps across now and then. Reduced motion keeps all but the sweep. */
+/* Shine comes in three layers: a tinted fill, a glow, and a sheen that sweeps across now and
+   then, plus a sparkle for a dot. Record tags share PB's green but wear it all. A common badge
+   has none of it; UI.tag adds --rare (the fill alone) or --legendary (the fill, a glow, the
+   sheen and the sparkle) by how few racers hold it. Reduced motion keeps all but the sweep. */
+.ui-tag--record,
+.ui-tag--preset_record,
+.ui-tag--rare,
+.ui-tag--legendary {
+  background: color-mix(in srgb, var(--kind-color) 14%, var(--panel));
+}
+
 .ui-tag--record,
 .ui-tag--preset_record {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--kind-color) 45%, transparent);
+}
+
+/* A touch stronger than the records' glow, so a legendary badge stands out between sweeps. */
+.ui-tag--legendary {
+  box-shadow: 0 0 7px 1px color-mix(in srgb, var(--kind-color) 55%, transparent);
+}
+
+/* After the fill rule, which this one extends with the sheen layer. */
+.ui-tag--record,
+.ui-tag--preset_record,
+.ui-tag--legendary {
   background:
     linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.7) 50%, transparent 60%) no-repeat 200% 0 / 250% 100%,
     color-mix(in srgb, var(--kind-color) 14%, var(--panel));
-  box-shadow: 0 0 6px color-mix(in srgb, var(--kind-color) 45%, transparent);
   animation: ui-tag-shine 4s ease-in-out infinite;
 }
 
 .ui-tag--record .ui-tag__dot,
-.ui-tag--preset_record .ui-tag__dot {
+.ui-tag--preset_record .ui-tag__dot,
+.ui-tag--legendary .ui-tag__dot {
   width: 9px;
   height: 9px;
   border-radius: 0;
@@ -597,7 +618,8 @@ tr:focus-within .follow-star--row,
   .ui-dialog,
   .palindrome-spark--twinkle,
   .ui-tag--record,
-  .ui-tag--preset_record {
+  .ui-tag--preset_record,
+  .ui-tag--legendary {
     animation: none;
   }
 

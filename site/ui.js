@@ -4,6 +4,13 @@ const COMMENTS_URL = "data/comments.json";
 const DIALOG_DEFAULT_MS = 3000;
 const SPEECH_AVATAR_SIZES = { hero: 56, compact: 28 };
 const TAG_KINDS = new Set(["pb", "preset_pb", "record", "preset_record", "first_win", "photo", "upset", "hardest", "milestone", "badge", "new"]);
+// A badge's rarity by the share of racers holding it, rarest first: the first limit the share is
+// at or under names it, and a share above every limit is common. Names must match the
+// .ui-tag--rare and .ui-tag--legendary rules in ui.css.
+const BADGE_RARITIES = [
+  ["legendary", 0.02],
+  ["rare", 0.1],
+];
 // Size, radius and border must match .ui-badge__tile in ui.css.
 const BADGE_TILE_SIZE = 60;
 const BADGE_TILE_RADIUS = 12;
@@ -118,9 +125,11 @@ const UI = (() => {
     return wrapper;
   }
 
-  function tag(kind, label, detail = null) {
+  // Rarity shows only on a badge tag: rare and legendary badges get a fill, and legendary ones shine (see ui.css).
+  function tag(kind, label, detail = null, rarity = "common") {
     const safeKind = TAG_KINDS.has(kind) ? kind : "badge";
-    const pill = element("span", `ui-tag ui-tag--${safeKind}`);
+    const shines = safeKind === "badge" && BADGE_RARITIES.some(([name]) => name === rarity);
+    const pill = element("span", `ui-tag ui-tag--${safeKind}${shines ? ` ui-tag--${rarity}` : ""}`);
     pill.appendChild(element("span", "ui-tag__dot"));
     pill.appendChild(element("span", "ui-tag__label", label));
     if (detail) {
@@ -248,10 +257,21 @@ const UI = (() => {
     return picture;
   }
 
-  // Share of all racers holding the badge, to two significant digits.
+  // Share of all racers holding the badge, from 0 to 1.
+  function holderShare(badgeId) {
+    return (badgeHolderCounts.get(badgeId) ?? 0) / participants.players.length;
+  }
+
+  // The holder share as tooltip text, to two significant digits.
   function badgeShare(badgeId) {
-    const share = (badgeHolderCounts.get(badgeId) ?? 0) / participants.players.length;
-    return `Held by ${shareFormatter.format(share)} of racers`;
+    return `Held by ${shareFormatter.format(holderShare(badgeId))} of racers`;
+  }
+
+  // "legendary", "rare" or "common", from the exact holder share (see BADGE_RARITIES).
+  function badgeRarity(badgeId) {
+    const share = holderShare(badgeId);
+    const rarity = BADGE_RARITIES.find(([, limit]) => share <= limit);
+    return rarity ? rarity[0] : "common";
   }
 
   function badgeTooltip(definition, earnedRaceIndex, progress) {
@@ -498,5 +518,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, modalPanel, dialogBox, comments, chestPace, relativeDay };
+  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, badgeRarity, modalPanel, dialogBox, comments, chestPace, relativeDay };
 })();

@@ -86,7 +86,8 @@
   --mode-8: #e34948;
   /* One hue per race-tag kind, in race-tag order with Hardest last; every pair stays apart under colour-blind simulation.
      The record kinds share PB's green on purpose: a record is a PB for the whole ladder. Their shine (ui.css) and labels tell them apart.
-     Preset PB shares PB's green on purpose too: its label tells them apart. */
+     Preset PB shares PB's green on purpose too: its label tells them apart.
+     Badges are gold, and a rarer badge shines more (ui.css). The gold is its own value, so medals can change apart. */
   --tag-record: var(--tag-pb);
   --tag-preset-record: var(--tag-pb);
   --tag-first-win: #842375;
@@ -95,7 +96,7 @@
   --tag-pb: #04896a;
   --tag-preset-pb: var(--tag-pb);
   --tag-milestone: #9a66be;
-  --tag-badge: #2cb2bf;
+  --tag-badge: #c9920e;
   --tag-hardest: #823b15;
   --display: "Barlow Condensed", "Avenir Next Condensed", "DIN Condensed", sans-serif;
   --body: "Barlow", "Avenir Next", Avenir, "Trebuchet MS", sans-serif;
