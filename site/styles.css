@@ -514,7 +514,7 @@ summary:focus-visible {
 }
 
 /* Panels */
-.hourly-grid {
+.season-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
@@ -543,7 +543,7 @@ summary:focus-visible {
 
 .participation-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -624,11 +624,7 @@ summary:focus-visible {
   background: transparent;
 }
 
-.heatmap-key--started {
-  background: var(--series);
-}
-
-.heatmap-key--never {
+.heatmap-key--in-progress {
   background: var(--series-muted);
 }
 
@@ -1555,7 +1551,7 @@ footer p {
     border-left: 0;
   }
 
-  .hourly-grid,
+  .season-grid,
   .participation-grid {
     grid-template-columns: 1fr;
   }

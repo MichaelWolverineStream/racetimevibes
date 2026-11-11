@@ -57,7 +57,7 @@ These terms use the [ladder schedule mirror](archive.md#ladder-schedule-mirror).
 - **Scheduled day:** an Eastern Time date inside the archive's dates that holds at least one slot. Pulled slots count. Slots of `ladder_test` races do not. The days that are not scheduled are the gaps between seasons and the time before the first slot, so April 2025 has none.
   - Scheduled days deliberately ignore **counted through**. The schedule is published ahead, so whether a day has races is known before its outcomes are, and the latest days stay in the per-day averages.
   - A season the mirror does not list yet only delays its days. Their entries leave the numerator too, so the average is never inflated.
-- **Slot times, not seasons:** the panels bucket a slot by its own Eastern Time start and never by its season number. API seasons overlap, so the season of a slot says little about when it ran.
+- **Seasons by start time:** the per-season panels place a slot in the season its own start falls in, by the [season rule](#seasons), never by the season number it carries. API seasons overlap, so the filed number says little about when a slot ran. Every other panel buckets a slot by its own Eastern Time start.
 
 ## Seasons
 

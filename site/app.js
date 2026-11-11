@@ -5,8 +5,8 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-// Narrowest width that still fits 24 hourly bars with their labels; narrower hosts scroll.
-const MIN_CHART_WIDTH = 480;
+// Narrowest width at which the monthly line charts and season bars keep legible labels; narrower hosts scroll.
+const MIN_CHART_WIDTH = 260;
 // Each nice axis maximum as a multiple of its power of ten, with a tick count that keeps every tick round.
 const NICE_SCALES = [
   [1, 5], [1.2, 4], [1.5, 5], [2, 4], [2.5, 5], [3, 3], [4, 4], [5, 5], [6, 6], [8, 4], [10, 5],
@@ -82,9 +82,11 @@ function niceScale(value) {
   return { maximum: Number((step * magnitude).toPrecision(6)), tickCount };
 }
 
+// The bounding width keeps its fraction. clientWidth rounds, and rounding up drew a chart up to half a
+// pixel wider than its host, which then showed a scrollbar. Hidden hosts measure 0.
 function hostWidth(host) {
   const style = getComputedStyle(host);
-  return host.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+  return host.getBoundingClientRect().width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
 }
 
 // Charts draw at their host's pixel width so SVG text keeps its stated size in every panel.
@@ -109,7 +111,7 @@ function formatAverage(value) {
   return value === null ? "--" : decimalFormatter.format(value);
 }
 
-// Medians and quartiles are whole or half numbers; show a half only when there is one.
+// Whole numbers print as integers, anything else with one decimal.
 function formatCount(value) {
   return Number.isInteger(value) ? integerFormatter.format(value) : decimalFormatter.format(value);
 }
@@ -220,12 +222,14 @@ function renderPrimetimeHeatmap(container, items) {
   container.replaceChildren(grid);
 }
 
-function verticalChart(items, options, width) {
+function seasonBarChart(seasons, options, width) {
   const height = 350;
   const margin = { top: 30, right: 14, bottom: 48, left: 50 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const { maximum, tickCount } = niceScale(Math.max(...items.map((item) => item[options.valueKey] ?? 0)));
+  const values = seasons.map((item) => options.value(item));
+  const { maximum, tickCount } = options.scale
+    ?? niceScale(Math.max(...values.map((value) => value ?? 0)));
   const svg = svgElement("svg", {
     class: "chart-svg",
     width,
@@ -258,72 +262,53 @@ function verticalChart(items, options, width) {
     );
   }
 
-  const bandWidth = plotWidth / items.length;
+  const bandWidth = plotWidth / seasons.length;
   const barWidth = bandWidth * 0.62;
-  items.forEach((item, index) => {
-    const value = item[options.valueKey] ?? 0;
-    const barHeight = (value / maximum) * plotHeight;
+  seasons.forEach((item, index) => {
+    const value = values[index];
     const x = margin.left + index * bandWidth + (bandWidth - barWidth) / 2;
-    const y = margin.top + plotHeight - barHeight;
-    const label = options.tooltip(item);
-    const group = svgElement("g", {
-      class: "chart-mark",
-      tabindex: "0",
-      role: "img",
-      "aria-label": label,
-    });
-    // With a startedKey the full bar is the scheduled count and a lower segment is how many started.
-    const bar = svgElement("rect", {
-      class: options.startedKey ? "bar bar--muted" : "bar bar--series",
-      x,
-      y,
-      width: barWidth,
-      height: Math.max(0, barHeight),
-      rx: 1,
-    });
-    const startedHeight = options.startedKey
-      ? ((item[options.startedKey] ?? 0) / maximum) * plotHeight
-      : 0;
-    const startedBar = options.startedKey
-      ? svgElement("rect", {
-        class: "bar bar--series",
+    if (value !== null) {
+      const barHeight = (value / maximum) * plotHeight;
+      const y = margin.top + plotHeight - barHeight;
+      const label = options.tooltip(item);
+      const group = svgElement("g", {
+        class: "chart-mark",
+        tabindex: "0",
+        role: "img",
+        "aria-label": label,
+      });
+      const bar = svgElement("rect", {
+        class: item.is_complete ? "bar bar--series" : "bar bar--muted",
         x,
-        y: margin.top + plotHeight - startedHeight,
+        y,
         width: barWidth,
-        height: Math.max(0, startedHeight),
+        height: Math.max(0, barHeight),
         rx: 1,
-      })
-      : null;
-    const focusRing = svgElement("rect", {
-      class: "focus-ring",
-      x: x - 2,
-      y: Math.max(margin.top, y - 2),
-      width: barWidth + 4,
-      height: Math.max(4, barHeight + 4),
-      rx: 2,
-    });
-    group.append(bar, ...(startedBar ? [startedBar] : []), focusRing, svgElement("title", {}, label));
-    bindTooltip(group, label);
-    svg.append(
-      group,
-      svgElement(
-        "text",
-        {
-          class: "axis-label",
-          x: x + barWidth / 2,
-          y: height - 25,
-          "text-anchor": "middle",
-        },
-        compactHour(item.hour),
-      ),
-    );
+      });
+      const focusRing = svgElement("rect", {
+        class: "focus-ring",
+        x: x - 2,
+        y: Math.max(margin.top, y - 2),
+        width: barWidth + 4,
+        height: Math.max(4, barHeight + 4),
+        rx: 2,
+      });
+      group.append(bar, focusRing, svgElement("title", {}, label));
+      bindTooltip(group, label);
+      svg.append(group);
+    }
+    svg.append(svgElement(
+      "text",
+      { class: "axis-label", x: x + barWidth / 2, y: height - 25, "text-anchor": "middle" },
+      String(item.season),
+    ));
   });
 
   svg.append(
     svgElement(
       "text",
       { class: "axis-label", x: margin.left + plotWidth / 2, y: height - 5, "text-anchor": "middle" },
-      "START HOUR / EASTERN TIME",
+      "SEASON",
     ),
   );
   return svg;
@@ -485,26 +470,26 @@ function renderTable(container, headers, rows) {
 
 const BANDS = new Set(["prime", "normal", "quiet"]);
 
-function hasValidHourly(hourly) {
+function hasValidSeasons(seasons) {
   return (
-    Array.isArray(hourly)
-    && hourly.length === 24
-    && hourly.every((item, hour) => (
-      item.hour === hour
-      && Number.isFinite(item.scheduled_count)
-      && Number.isFinite(item.started_count)
+    Array.isArray(seasons)
+    && seasons.length > 0
+    && seasons.every((item, index) => (
+      Number.isInteger(item.season)
+      && (index === 0 || item.season > seasons[index - 1].season)
+      && typeof item.is_complete === "boolean"
+      && Number.isFinite(item.scheduled_count) && item.scheduled_count >= 0
+      && Number.isFinite(item.started_count) && item.started_count >= 0
+      && Number.isFinite(item.race_count) && item.race_count >= 0
+      && Number.isFinite(item.entrant_total) && item.entrant_total >= 0
       && item.started_count <= item.scheduled_count
-      && (item.median_racers === null || Number.isFinite(item.median_racers))
-      && (item.q1_racers === null || Number.isFinite(item.q1_racers))
-      && (item.q3_racers === null || Number.isFinite(item.q3_racers))
     ))
   );
 }
 
 function hasValidAggregate(aggregate) {
   return (
-    hasValidHourly(aggregate?.hourly)
-    && Array.isArray(aggregate.weekday_hourly)
+    Array.isArray(aggregate?.weekday_hourly)
     && aggregate.weekday_hourly.length === 168
     && aggregate.weekday_hourly.every((item) => (
       Number.isFinite(item.weekday)
@@ -526,8 +511,9 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 9
+    || data.schema_version !== 10
     || !hasValidAggregate(data)
+    || !hasValidSeasons(data.seasons)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
     || data.periods.some((period) => (
@@ -551,6 +537,8 @@ function validateData(data) {
       || !(Number.isFinite(month.scheduled_day_count) && month.scheduled_day_count >= 0)
       || !Number.isFinite(month.scheduled_day_entrant_total)
       || (month.entries_per_day !== null && !Number.isFinite(month.entries_per_day))
+      || !Number.isFinite(month.fired_race_count)
+      || (month.fired_per_day !== null && !Number.isFinite(month.fired_per_day))
       || (month.average_racers !== null && !Number.isFinite(month.average_racers))
     ))
     || !data.source
@@ -568,7 +556,6 @@ function allDataSelection(data) {
   return {
     id: "all",
     label: "All data",
-    hourly: data.hourly,
     weekday_hourly: data.weekday_hourly,
   };
 }
@@ -612,29 +599,21 @@ function renderSelection(data, selection) {
       ? `${monthTitle(month)}: no scheduled races`
       : `${monthTitle(month)}: ${decimalFormatter.format(month.entries_per_day)} entries per day (${integerFormatter.format(month.scheduled_day_entrant_total)} entries over ${integerFormatter.format(month.scheduled_day_count)} scheduled days)`),
   }, width));
-  mountChart(document.querySelector("#race-count-chart"), (width) => verticalChart(selection.hourly, {
-    id: "race-count",
-    valueKey: "scheduled_count",
-    startedKey: "started_count",
-    title: "Scheduled races by hour",
-    description: "Vertical bars show scheduled races in each Eastern Time hour, with the part of each bar that started drawn from the baseline.",
-    axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (item) => `${hourRange(item.hour)}: ${integerFormatter.format(item.scheduled_count)} scheduled races, ${integerFormatter.format(item.started_count)} started${item.scheduled_count ? ` (${formatPercent(item.started_count / item.scheduled_count)})` : ""}, ${integerFormatter.format(item.scheduled_count - item.started_count)} never started`,
-  }, width));
-  mountChart(document.querySelector("#hourly-average-chart"), (width) => verticalChart(selection.hourly, {
-    id: "hourly-average",
-    valueKey: "median_racers",
-    title: "Median racers per scheduled race by hour",
-    description: "Vertical bars show the median racers per scheduled race for each Eastern Time hour, counting races that never started as zero.",
-    axisFormatter: (value) => decimalFormatter.format(value),
-    tooltip: (item) => (item.scheduled_count === 0
-      ? `${hourRange(item.hour)}: no scheduled races`
-      : `${hourRange(item.hour)}: median ${formatCount(item.median_racers)} racers per scheduled race (middle half ${formatCount(item.q1_racers)}-${formatCount(item.q3_racers)}); ${startRateText(item.started_count, item.scheduled_count)}`),
+  mountChart(document.querySelector("#participation-races-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
+    id: "participation-races",
+    valueKey: "fired_per_day",
+    title: "Races fired per day by month",
+    description: "A line with one dot per calendar month shows scheduled races that started per day with scheduled races.",
+    axisTitle: "RACES FIRED PER DAY",
+    axisFormatter: formatCount,
+    tooltip: (month) => (month.fired_per_day === null
+      ? `${monthTitle(month)}: no scheduled races`
+      : `${monthTitle(month)}: ${decimalFormatter.format(month.fired_per_day)} races fired per day (${integerFormatter.format(month.fired_race_count)} fired over ${integerFormatter.format(month.scheduled_day_count)} scheduled days)`),
   }, width));
 
   renderTable(
     document.querySelector("#participation-table"),
-    ["Month", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries", "Scheduled days", "Entries/day"],
+    ["Month", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries", "Scheduled days", "Entries/day", "Fired/day"],
     data.monthly.map((month) => [
       month.label,
       month.is_complete ? "Complete" : "Partial",
@@ -645,28 +624,51 @@ function renderSelection(data, selection) {
       integerFormatter.format(month.entrant_total),
       integerFormatter.format(month.scheduled_day_count),
       formatAverage(month.entries_per_day),
+      formatAverage(month.fired_per_day),
     ]),
   );
+}
+
+function renderSeasons(seasons) {
+  const inProgress = (item) => (item.is_complete ? "" : " (in progress)");
   const startRate = (item) => (item.scheduled_count ? formatPercent(item.started_count / item.scheduled_count) : "--");
+  mountChart(document.querySelector("#season-start-chart"), (width) => seasonBarChart(seasons, {
+    id: "season-start",
+    title: "Share of scheduled races that started by season",
+    description: "Vertical bars show the share of each season's scheduled races that started. The season in progress is drawn muted.",
+    value: (item) => (item.scheduled_count ? item.started_count / item.scheduled_count : null),
+    scale: { maximum: 1, tickCount: 5 },
+    axisFormatter: formatPercent,
+    tooltip: (item) => (item.scheduled_count === 0
+      ? `Season ${item.season}${inProgress(item)}: no scheduled races counted`
+      : `Season ${item.season}${inProgress(item)}: ${startRateText(item.started_count, item.scheduled_count)}`),
+  }, width));
+  mountChart(document.querySelector("#season-entries-chart"), (width) => seasonBarChart(seasons, {
+    id: "season-entries",
+    title: "Race entries by season",
+    description: "Vertical bars show the race entries of each season's finished races. The season in progress is drawn muted.",
+    value: (item) => item.entrant_total,
+    axisFormatter: (value) => integerFormatter.format(value),
+    tooltip: (item) => `Season ${item.season}${inProgress(item)}: ${integerFormatter.format(item.entrant_total)} race entries over ${integerFormatter.format(item.race_count)} races (${formatAverage(item.race_count ? item.entrant_total / item.race_count : null)} per race)`,
+  }, width));
   renderTable(
-    document.querySelector("#race-count-table"),
-    ["Hour (ET)", "Scheduled", "Started", "Start rate"],
-    selection.hourly.map((item) => [
-      hourRange(item.hour),
+    document.querySelector("#season-start-table"),
+    ["Season", "Scheduled", "Started", "Start rate"],
+    seasons.map((item) => [
+      `${item.season}${inProgress(item)}`,
       integerFormatter.format(item.scheduled_count),
       integerFormatter.format(item.started_count),
       startRate(item),
     ]),
   );
   renderTable(
-    document.querySelector("#hourly-average-table"),
-    ["Hour (ET)", "Scheduled", "Started", "Median racers", "Middle half"],
-    selection.hourly.map((item) => [
-      hourRange(item.hour),
-      integerFormatter.format(item.scheduled_count),
-      integerFormatter.format(item.started_count),
-      item.median_racers === null ? "--" : formatCount(item.median_racers),
-      item.q1_racers === null ? "--" : `${formatCount(item.q1_racers)}-${formatCount(item.q3_racers)}`,
+    document.querySelector("#season-entries-table"),
+    ["Season", "Races", "Race entries", "Avg racers per race"],
+    seasons.map((item) => [
+      `${item.season}${inProgress(item)}`,
+      integerFormatter.format(item.race_count),
+      integerFormatter.format(item.entrant_total),
+      formatAverage(item.race_count ? item.entrant_total / item.race_count : null),
     ]),
   );
 }
@@ -707,6 +709,7 @@ function renderDashboard(data) {
   renderPeriodControls(data);
   renderCountedThrough(data.source.schedule_counted_through);
   renderSelection(data, allDataSelection(data));
+  renderSeasons(data.seasons);
 }
 
 async function load() {

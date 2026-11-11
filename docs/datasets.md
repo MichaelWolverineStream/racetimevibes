@@ -40,27 +40,29 @@ The season fields of `participants.json`:
 
 `build_stats.py` computes these for `race-stats.json`. They drive the [Ladder data panels](dashboard.md#ladder-data-panels), and the slots they count are defined under [Schedule](definitions.md#schedule).
 
-- **Periods** are calendar quarters (`Q1` to `Q4`). A race belongs to the quarter of its Eastern Time start, and a counted slot to the quarter of its own Eastern Time start. Edge periods are marked partial when the archive does not cover the full quarter. Each period keeps the finished-race summary and the schedule metrics below, so its slot counts add up to the overall ones. A counted slot in a quarter with no finished race is a build error.
+- **Periods** are calendar quarters (`Q1` to `Q4`). A race belongs to the quarter of its Eastern Time start, and a counted slot to the quarter of its own Eastern Time start. Edge periods are marked partial when the archive does not cover the full quarter. Each period keeps the finished-race summary and its weekday-hour cells, so its slot counts add up to the overall ones. Seasons are not split by period. A counted slot in a quarter with no finished race is a build error.
 - **Race turnout** uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries, not people.
 - **Monthly participation** is the average entries per finished race: total race entries divided by the finished races in that calendar month. A month's finished-race summary also gives the median, the middle half (quartiles) and the 95% range.
 - **Entries per scheduled day** is the entries of that month's finished races that started on scheduled days (`scheduled_day_entrant_total`), divided by the month's scheduled days (`scheduled_day_count`, see **Scheduled day** under [Schedule](definitions.md#schedule)). It is null, not zero, in a month with no scheduled day. Months without a finished race still appear.
-- **Scheduled races per hour** counts the counted slots that are scheduled races, by their Eastern Time start hour, and how many started. The hourly rows have `scheduled_count` and `started_count`. The start rate is `started_count / scheduled_count`.
-- **Median racers per scheduled race** is, for each hour, the median of racers per scheduled race over that hour's scheduled races, never-started ones counting 0. `q1_racers` and `q3_racers` are the quartiles of the same values. All three are null when nothing was scheduled in the hour. A median of 0 is real: fewer than half of that hour's scheduled races started.
-- **Weekday-hour cells** are the same counts for each of the 168 weekday and Eastern hour combinations: `scheduled_count`, `started_count`, `entrant_total` and `average_racers`, which is `entrant_total / scheduled_count`, or null when nothing was scheduled.
+- **Races fired per scheduled day** is the month's fired races on scheduled days (`fired_race_count`), divided by its scheduled days (`scheduled_day_count`): `fired_per_day`. A **fired** race is a scheduled race that started: an included race that a slot joined (see **Join** under [Schedule](definitions.md#schedule)). A finished race that no slot joined adds to entries per scheduled day but never to this. It is null, not zero, in a month with no scheduled day. Like entries per scheduled day, it ignores **counted through**.
+- **Seasons** is one row per season, oldest first, for every season holding at least one included race or counted scheduled race, as `{season, is_complete, scheduled_count, started_count, race_count, entrant_total}`. A race or slot belongs to the season its own start falls in, by the [season rule](definitions.md#seasons), never the season number it is filed under.
+  - `scheduled_count` and `started_count` count the counted slots that are scheduled races in that season, and how many started. The start rate is `started_count / scheduled_count`.
+  - `race_count` and `entrant_total` cover every included race in the season, and are not cut at **counted through**.
+  - `is_complete` is true once the next season started on or before **counted through**, so all of the season's slots and races are in. The newest season is normally in progress.
+- **Weekday-hour cells** hold, for each of the 168 weekday and Eastern Time hour combinations, in the overall data and in each period: the counted slots that are scheduled races (`scheduled_count`), how many started (`started_count`), `entrant_total` and `average_racers`, which is `entrant_total / scheduled_count`, or null when nothing was scheduled.
 - **Bands** colour the weekday-hour cells, computed separately for all data and for each quarter:
   - Only cells with at least 5 scheduled races (`BAND_MIN_SCHEDULED`) are banded and count toward the quartiles.
   - `q1` and `q3` are the quartiles of those cells' `average_racers`.
   - A cell is `prime` if its `average_racers` is at least `q3`, else `quiet` if it is at most `q1`, else `normal`. A tie at a quartile goes to `prime` or `quiet`.
   - A cell with fewer than 5 scheduled races has no band, and when no cell qualifies none has one.
 - **Medians and quartiles** describe the observed distribution. Quartiles are the median of each half of the sorted values, leaving out the middle value when the count is odd. The 95% ranges are normal confidence intervals for the mean using the sample standard deviation, and the ranges for entry counts never go below zero. A group with fewer than two values has no range.
-- **Diagnostics** report `diagnostics.schedule`: `scheduled_count`, `started_count`, `pulled_count`, and `unscheduled_race_count`, the included races up to **counted through** that no slot became.
+- **Diagnostics** report `diagnostics.schedule`: `scheduled_count`, `started_count`, `pulled_count`, and `unscheduled_race_count`, the included races up to **counted through** that no slot became. `diagnostics.seasons` reports `races_without_season` and `slots_without_season`: the included races and counted scheduled races before season 1's span, which the `seasons` rows leave out.
 
 Some of this is deliberate behaviour of the data, not a defect:
 
 - **Thin quarters.** A partial quarter, the current one included, has few scheduled races per cell, so most of its cells are unbanded until about mid-quarter. All data and full quarters are fully banded.
-- **A sawtooth in the hourly counts.** Some hours hold markedly fewer scheduled races than their neighbours, because seasons alternate their hour grids.
-- **Overnight medians.** The median racers per scheduled race can be 0 in the overnight hours, because fewer than half of those scheduled races start.
-- **Before the schedule.** A race that started before the first slot joins no slot, so the schedule panels leave it out. The first such races, in April 2025, are in the monthly turnout but not in a per-day value.
+- **Before the schedule.** A race that started before the first slot joins no slot, so the schedule panels leave it out. The first such races, in April 2025, are in the monthly turnout but not in a per-day value. Those April 2025 races have no season either, so the season rows leave them out (`races_without_season`).
+- **A misfiled slot.** A slot filed under a later season but dated before season 1 has no season by the [season rule](definitions.md#seasons). It counts in the heatmap and in `slots_without_season`, but in no season row.
 
 ## Season locking
 

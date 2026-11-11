@@ -131,7 +131,7 @@ class AggregationTests(unittest.TestCase):
 
         stats = aggregate(races)
 
-        self.assertEqual(stats["schema_version"], 9)
+        self.assertEqual(stats["schema_version"], 10)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 21)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
@@ -161,10 +161,8 @@ class AggregationTests(unittest.TestCase):
             ],
         )
 
-        by_hour = {item["hour"]: item for item in stats["hourly"]}
-        self.assertEqual(by_hour[0]["scheduled_count"], 1)
-        self.assertEqual(by_hour[1]["scheduled_count"], 1)
-        self.assertEqual(sum(item["scheduled_count"] for item in stats["hourly"]), 2)
+        self.assertNotIn("hourly", stats)
+        self.assertEqual(sum(item["scheduled_count"] for item in stats["weekday_hourly"]), 2)
         cells = {
             (item["weekday_label"], item["hour"]): item["scheduled_count"]
             for item in stats["weekday_hourly"]
@@ -210,7 +208,7 @@ class AggregationTests(unittest.TestCase):
             ]
         )
 
-        self.assertEqual(stats["schema_version"], 9)
+        self.assertEqual(stats["schema_version"], 10)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -393,16 +391,24 @@ class ScheduleAggregationTests(unittest.TestCase):
             },
         )
         self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-08T17:00:00Z")
-        by_hour = {item["hour"]: item for item in stats["hourly"]}
+        by_hour = {
+            hour: {
+                key: sum(
+                    item[key] for item in stats["weekday_hourly"] if item["hour"] == hour
+                )
+                for key in ("scheduled_count", "started_count", "entrant_total")
+            }
+            for hour in (13, 15, 17)
+        }
         self.assertEqual(
-            {key: by_hour[13][key] for key in ("scheduled_count", "started_count", "median_racers")},
-            {"scheduled_count": 2, "started_count": 2, "median_racers": 5},
+            by_hour[13], {"scheduled_count": 2, "started_count": 2, "entrant_total": 10}
         )
         self.assertEqual(
-            {key: by_hour[15][key] for key in ("scheduled_count", "started_count", "median_racers")},
-            {"scheduled_count": 1, "started_count": 0, "median_racers": 0},
+            by_hour[15], {"scheduled_count": 1, "started_count": 0, "entrant_total": 0}
         )
-        self.assertIsNone(by_hour[17]["median_racers"])
+        self.assertEqual(
+            by_hour[17], {"scheduled_count": 0, "started_count": 0, "entrant_total": 0}
+        )
         monday_13 = next(
             item
             for item in stats["weekday_hourly"]
@@ -411,21 +417,6 @@ class ScheduleAggregationTests(unittest.TestCase):
         self.assertEqual(
             (monday_13["entrant_total"], monday_13["average_racers"], monday_13["band"]),
             (10, 5, None),
-        )
-
-    def test_median_counts_never_started_races_as_zero(self):
-        stats = aggregate(
-            [race("a", started_at="2026-06-01T17:00:00Z", entrants_count=4, info=seeded(1)), NEWEST],
-            [
-                slot(1, 1, "2026-06-01T17:00:00Z"),
-                slot(2, 2, "2026-06-08T17:00:00Z"),
-                slot(3, 3, "2026-06-15T17:00:00Z"),
-            ],
-        )
-
-        hour = stats["hourly"][13]
-        self.assertEqual(
-            (hour["median_racers"], hour["q1_racers"], hour["q3_racers"]), (0, 0, 4)
         )
 
     def test_stops_a_day_before_the_newest_race(self):
@@ -492,12 +483,13 @@ class ScheduleAggregationTests(unittest.TestCase):
         stats = aggregate([race("a", started_at="2026-06-01T17:00:00Z")], [])
 
         self.assertIsNone(stats["source"]["schedule_counted_through"])
-        self.assertTrue(all(item["scheduled_count"] == 0 for item in stats["hourly"]))
-        self.assertTrue(all(item["median_racers"] is None for item in stats["hourly"]))
+        self.assertTrue(all(item["scheduled_count"] == 0 for item in stats["weekday_hourly"]))
         self.assertTrue(all(item["band"] is None for item in stats["weekday_hourly"]))
         (month,) = stats["monthly"]
         self.assertEqual(month["scheduled_day_count"], 0)
         self.assertIsNone(month["entries_per_day"])
+        self.assertIsNone(month["fired_per_day"])
+        self.assertEqual(stats["seasons"], [])
 
     def test_leaves_out_slots_before_the_archive_starts(self):
         stats = aggregate(
@@ -592,6 +584,8 @@ class ScheduleAggregationTests(unittest.TestCase):
                 race("may", started_at="2026-05-20T17:00:00Z", entrants_count=3),
                 race("a", started_at="2026-06-01T17:00:00Z", entrants_count=4, info=seeded(1)),
                 race("gap", started_at="2026-06-03T17:00:00Z", entrants_count=5),
+                # On a scheduled day, but too late to join slot 3: its entries count, but it never fired.
+                race("extra", started_at="2026-06-04T20:00:00Z", entrants_count=2),
                 race("test", started_at="2026-06-10T17:00:00Z", info=seeded(4, "ladder_test")),
                 race("c", started_at="2026-07-02T17:00:00Z", entrants_count=6, info=seeded(5)),
             ],
@@ -613,18 +607,20 @@ class ScheduleAggregationTests(unittest.TestCase):
                     item["scheduled_day_entrant_total"],
                     item["entrant_total"],
                     item["entries_per_day"],
+                    item["fired_race_count"],
+                    item["fired_per_day"],
                 )
                 for month_id, item in monthly.items()
             },
             {
-                "2026-05": (0, 0, 3, None),
-                "2026-06": (3, 4, 9, 4 / 3),
-                "2026-07": (1, 6, 6, 6),
+                "2026-05": (0, 0, 3, None, 0, None),
+                "2026-06": (3, 6, 11, 2, 1, 1 / 3),
+                "2026-07": (1, 6, 6, 6, 1, 1),
             },
         )
         schedule = stats["diagnostics"]["schedule"]
         self.assertEqual(stats["source"]["schedule_counted_through"], "2026-07-01T17:00:00Z")
-        self.assertEqual(schedule["unscheduled_race_count"], 2)
+        self.assertEqual(schedule["unscheduled_race_count"], 3)
         self.assertEqual(schedule["pulled_count"], 1)
 
     def test_periods_take_slots_by_their_own_quarter(self):
@@ -644,12 +640,58 @@ class ScheduleAggregationTests(unittest.TestCase):
         periods = {item["id"]: item for item in stats["periods"]}
         self.assertEqual(
             {
-                period_id: sum(item["scheduled_count"] for item in period["hourly"])
+                period_id: sum(item["scheduled_count"] for item in period["weekday_hourly"])
                 for period_id, period in periods.items()
             },
             {"2026-Q2": 1, "2026-Q3": 2},
         )
-        self.assertEqual(sum(item["scheduled_count"] for item in stats["hourly"]), 3)
+        self.assertEqual(sum(item["scheduled_count"] for item in stats["weekday_hourly"]), 3)
+
+    def test_seasons_bucket_slots_and_races_by_their_start(self):
+        stats = aggregate(
+            [
+                race("early", started_at="2026-05-10T17:00:00Z", entrants_count=2),
+                race("a", started_at="2026-06-01T17:00:00Z", entrants_count=6, info=seeded(1)),
+                race("b", started_at="2026-06-08T17:00:00Z", entrants_count=4, info=seeded(2)),
+                race("e", started_at="2026-06-29T17:00:00Z", entrants_count=5, info=seeded(5)),
+                race("newest", started_at="2026-07-03T12:00:00Z", entrants_count=3),
+            ],
+            [
+                slot(1, 1, "2026-06-01T17:00:00Z"),
+                slot(2, 2, "2026-06-08T17:00:00Z"),
+                slot(3, 103, "2026-06-15T17:00:00Z"),
+                slot(4, 104, "2026-06-22T17:00:00Z", season=2),
+                slot(5, 5, "2026-06-29T17:00:00Z", season=2),
+                slot(6, 106, "2026-05-16T17:00:00Z", season=2),
+            ],
+        )
+
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-29T17:00:00Z")
+        self.assertEqual(
+            stats["seasons"],
+            [
+                {
+                    "season": 1,
+                    "is_complete": True,
+                    "scheduled_count": 3,
+                    "started_count": 2,
+                    "race_count": 2,
+                    "entrant_total": 10,
+                },
+                {
+                    "season": 2,
+                    "is_complete": False,
+                    "scheduled_count": 2,
+                    "started_count": 1,
+                    "race_count": 2,
+                    "entrant_total": 8,
+                },
+            ],
+        )
+        self.assertEqual(
+            stats["diagnostics"]["seasons"],
+            {"races_without_season": 1, "slots_without_season": 1},
+        )
 
 
 class ExtractPresetTests(unittest.TestCase):
@@ -809,7 +851,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 9)
+        self.assertEqual(data["schema_version"], 10)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
@@ -843,15 +885,11 @@ class GeneratedDataTests(unittest.TestCase):
         )
 
         schedule = data["diagnostics"]["schedule"]
+        self.assertNotIn("hourly", data)
         for selection in [data, *data["periods"]]:
-            hourly = selection["hourly"]
             cells = selection["weekday_hourly"]
-            self.assertEqual(len(hourly), 24)
+            self.assertNotIn("hourly", selection)
             self.assertEqual(len(cells), 168)
-            for key in ("scheduled_count", "started_count"):
-                self.assertEqual(
-                    sum(item[key] for item in hourly), sum(item[key] for item in cells)
-                )
             self.assertTrue(
                 all(item["started_count"] <= item["scheduled_count"] for item in cells)
             )
@@ -859,14 +897,41 @@ class GeneratedDataTests(unittest.TestCase):
                 {item["band"] for item in cells} <= {"prime", "normal", "quiet", None}
             )
         for key in ("scheduled_count", "started_count"):
-            self.assertEqual(sum(item[key] for item in data["hourly"]), schedule[key])
             self.assertEqual(
-                sum(item[key] for period in data["periods"] for item in period["hourly"]),
+                sum(item[key] for item in data["weekday_hourly"]), schedule[key]
+            )
+            self.assertEqual(
+                sum(
+                    item[key]
+                    for period in data["periods"]
+                    for item in period["weekday_hourly"]
+                ),
                 schedule[key],
             )
+        seasons = data["seasons"]
+        missing = data["diagnostics"]["seasons"]
+        self.assertEqual(
+            sum(row["race_count"] for row in seasons) + missing["races_without_season"],
+            source["included_race_count"],
+        )
+        self.assertLessEqual(
+            sum(row["entrant_total"] for row in seasons), source["included_entrant_count"]
+        )
+        self.assertEqual(
+            sum(row["scheduled_count"] for row in seasons) + missing["slots_without_season"],
+            schedule["scheduled_count"],
+        )
+        self.assertTrue(all(row["started_count"] <= row["scheduled_count"] for row in seasons))
+        numbers = [row["season"] for row in seasons]
+        self.assertEqual(numbers, sorted(set(numbers)))
+        self.assertTrue(all(row["is_complete"] for row in seasons[:-1]))
         for month in data["monthly"]:
             self.assertLessEqual(
                 month["scheduled_day_entrant_total"], month["entrant_total"]
+            )
+            self.assertLessEqual(month["fired_race_count"], month["race_count"])
+            self.assertEqual(
+                month["fired_per_day"] is None, month["scheduled_day_count"] == 0
             )
             if month["scheduled_day_count"] == 0:
                 self.assertIsNone(month["entries_per_day"])

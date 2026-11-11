@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="8f245372ea13">
+    <meta name="app-version" content="eba3c809a5ff">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=8f245372ea13">
-    <link rel="stylesheet" href="ui.css?v=8f245372ea13">
-    <link rel="stylesheet" href="feed.css?v=8f245372ea13">
-    <link rel="stylesheet" href="top-rated.css?v=8f245372ea13">
-    <link rel="stylesheet" href="upcoming.css?v=8f245372ea13">
-    <link rel="stylesheet" href="records.css?v=8f245372ea13">
-    <link rel="stylesheet" href="racer-extras.css?v=8f245372ea13">
-    <link rel="stylesheet" href="share-card.css?v=8f245372ea13">
-    <link rel="stylesheet" href="easter-eggs.css?v=8f245372ea13">
+    <link rel="stylesheet" href="styles.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="ui.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="feed.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="top-rated.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="upcoming.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="records.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="racer-extras.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="share-card.css?v=eba3c809a5ff">
+    <link rel="stylesheet" href="easter-eggs.css?v=eba3c809a5ff">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -225,6 +225,13 @@
               </div>
               <div id="participation-entries-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
             </div>
+            <div>
+              <div class="heatmap-heading">
+                <h3>Races fired per day</h3>
+                <p>Days with scheduled races</p>
+              </div>
+              <div id="participation-races-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+            </div>
           </div>
           <details class="data-details">
             <summary>View monthly values</summary>
@@ -232,19 +239,19 @@
           </details>
         </article>
 
-        <div class="hourly-grid">
+        <div class="season-grid">
           <article id="traffic" class="chart-panel" style="--i: 2">
             <header class="panel-heading">
               <div>
                 <p class="panel-index">06 / Traffic</p>
-                <h2>When races start</h2>
+                <h2>How often races start</h2>
               </div>
-              <p>Scheduled races per hour <span class="bar-key"><span class="heatmap-key heatmap-key--started"></span>Started <span class="heatmap-key heatmap-key--never"></span>Never started</span></p>
+              <p>Share of scheduled races that started, by season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
             </header>
-            <div id="race-count-chart" class="chart-host" aria-live="polite"></div>
+            <div id="season-start-chart" class="chart-host" aria-live="polite"></div>
             <details class="data-details">
-              <summary>View hourly values</summary>
-              <div id="race-count-table" class="table-wrap"></div>
+              <summary>View season values</summary>
+              <div id="season-start-table" class="table-wrap"></div>
             </details>
           </article>
 
@@ -252,14 +259,14 @@
             <header class="panel-heading">
               <div>
                 <p class="panel-index">07 / Turnout</p>
-                <h2>When races draw a crowd</h2>
+                <h2>Entries by season</h2>
               </div>
-              <p>Median racers per scheduled race</p>
+              <p>Race entries per season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
             </header>
-            <div id="hourly-average-chart" class="chart-host" aria-live="polite"></div>
+            <div id="season-entries-chart" class="chart-host" aria-live="polite"></div>
             <details class="data-details">
-              <summary>View hourly values</summary>
-              <div id="hourly-average-table" class="table-wrap"></div>
+              <summary>View season values</summary>
+              <div id="season-entries-table" class="table-wrap"></div>
             </details>
           </article>
         </div>
@@ -349,19 +356,19 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=8f245372ea13" defer></script>
-    <script src="racer-charts.js?v=8f245372ea13" defer></script>
-    <script src="store.js?v=8f245372ea13" defer></script>
-    <script src="ui.js?v=8f245372ea13" defer></script>
-    <script src="top-rated.js?v=8f245372ea13" defer></script>
-    <script src="upcoming.js?v=8f245372ea13" defer></script>
-    <script src="feed.js?v=8f245372ea13" defer></script>
-    <script src="records.js?v=8f245372ea13" defer></script>
-    <script src="racer-extras.js?v=8f245372ea13" defer></script>
-    <script src="share-card.js?v=8f245372ea13" defer></script>
-    <script src="easter-eggs.js?v=8f245372ea13" defer></script>
-    <script src="leaderboard.js?v=8f245372ea13" defer></script>
-    <script src="version-check.js?v=8f245372ea13" defer></script>
-    <script src="visitor-counter.js?v=8f245372ea13" defer></script>
+    <script src="app.js?v=eba3c809a5ff" defer></script>
+    <script src="racer-charts.js?v=eba3c809a5ff" defer></script>
+    <script src="store.js?v=eba3c809a5ff" defer></script>
+    <script src="ui.js?v=eba3c809a5ff" defer></script>
+    <script src="top-rated.js?v=eba3c809a5ff" defer></script>
+    <script src="upcoming.js?v=eba3c809a5ff" defer></script>
+    <script src="feed.js?v=eba3c809a5ff" defer></script>
+    <script src="records.js?v=eba3c809a5ff" defer></script>
+    <script src="racer-extras.js?v=eba3c809a5ff" defer></script>
+    <script src="share-card.js?v=eba3c809a5ff" defer></script>
+    <script src="easter-eggs.js?v=eba3c809a5ff" defer></script>
+    <script src="leaderboard.js?v=eba3c809a5ff" defer></script>
+    <script src="version-check.js?v=eba3c809a5ff" defer></script>
+    <script src="visitor-counter.js?v=eba3c809a5ff" defer></script>
   </body>
 </html>
