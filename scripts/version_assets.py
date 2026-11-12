@@ -24,6 +24,7 @@ VERSIONED_ASSETS = (
     "racer-extras.css",
     "share-card.css",
     "easter-eggs.css",
+    "theme.js",
     "app.js",
     "racer-charts.js",
     "store.js",

@@ -1,3 +1,4 @@
+// theme.js loads before this file and reads its key with this prefix itself; change both together.
 const STORAGE_PREFIX = "racetimevibes:";
 const FOLLOWING_KEY = "following";
 const FOLLOWING_LIMIT = 50;

@@ -24,7 +24,7 @@
   padding: 3px 10px 2px;
   border-radius: var(--radius);
   background: var(--gold);
-  color: var(--ink);
+  color: var(--on-medal);
   font-family: var(--display);
   font-size: var(--text-sm);
   line-height: 1.2;
@@ -79,7 +79,7 @@
 .top-rated__tile--overall {
   --tile-bg: color-mix(in srgb, var(--gold) 14%, var(--panel));
   background:
-    linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.75) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
+    linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--shine-color) 75%, transparent) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
     var(--tile-bg);
   animation: top-rated-shine 1200ms 700ms ease-out both;
 }

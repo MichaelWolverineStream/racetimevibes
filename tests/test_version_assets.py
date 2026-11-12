@@ -14,6 +14,7 @@ INDEX_TEMPLATE = """<!doctype html>
 <html lang="en">
   <head>
     <meta name="app-version" content="">
+    <script src="theme.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="ui.css">
     <link rel="stylesheet" href="feed.css">

@@ -9,7 +9,7 @@ What the page shows and does is specified in `docs/dashboard.md`. Update it in t
 
 ## Frontend scripts (`site/*.js`)
 
-Classic `<script defer>` files sharing one global scope, loaded in `index.html` order.
+Classic `<script defer>` files sharing one global scope, loaded in `index.html` order. The one exception is `theme.js`: it loads blocking in `<head>`, before the stylesheets, so the theme is set before the first paint. `Store` doesn't exist yet at that point, so `theme.js` reads its own storage key, whose prefix must match `STORAGE_PREFIX`. It declares no globals.
 
 **Load order and module shape**
 - Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras` checks in `leaderboard.js` would take down `loadParticipants`.
@@ -39,6 +39,17 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 ## CSS (`site/*.css`)
 
 - Tokens live on `:root` in `styles.css`: colours, data roles (`--series`, `--mode-*`, `--band-*`, `--tag-*`), the type scale `--text-*`, `--shadow`, `--scrim`, and the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`. Prefer tokens over literals, and name the token, not a number, when a comment mentions a layer.
+- **Dark theme.** `theme.js` sets `data-theme` on `<html>`, and the `/* Dark theme */` section after `:root` redeclares every `:root` token whose value holds a literal colour, repeating any value that stays the same. Aliases follow on their own. `tests/test_site_theme.py` fails on a token missing from the dark block and checks the contrast pairs in both themes.
+  - Pick dark values by role, not by inverting:
+    - Large surfaces stay deep (`--brand-fill` with `--on-brand` for the nav band).
+    - Small fills go light with dark `--on-fill` text.
+    - Strong borders use `--rule`, never `--ink`.
+    - Text on medal fills uses `--on-medal`.
+    - The tooltip uses `--tooltip-*`.
+    - Shadows and sheens mix `--shadow-color` and `--shine-color` with their own alpha.
+  - A dark mode or tag hue keeps its light hue and lightness order. It needs 3:1 against `--panel`, and its colour-blind separation from the others must stay at least that of the light set. Check both before changing one.
+  - The LCD hit counter, the Zelda dialog (`--zelda-*`), the easter-egg glow and the nav band's white sheen are the same in both themes on purpose.
+  - `theme.js` mirrors `--brand-fill` for the browser toolbar and spells out `STORAGE_PREFIX`. `tests/test_site_theme.py` checks both.
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
 - `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. Reduced motion is handled at the end of `styles.css`.

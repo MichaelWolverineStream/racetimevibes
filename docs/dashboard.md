@@ -19,11 +19,16 @@ The page runs top to bottom:
 
 Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)).
 
-The masthead holds the category artwork, the title block, a racer comment and the visitor counter, with their tops aligned.
+The masthead holds the category artwork, the title block, a racer comment, the visitor counter and the theme toggle, with their tops aligned.
 
 - **Data snapshot** ends the title block: the age of the published data, "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering it shows the exact UTC time.
 - **The racer comment** is a random comment of at least 12 characters from the last 30 days, or from any time when those 30 days hold fewer than 20. It is cut at 180 characters, and the bubble is at most 450px wide. **↻** (Another comment) picks another.
 - The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
+- **The theme toggle** ends the masthead on every page and at every width. It is a button labelled "Dark mode", pressed in the dark theme, and shows a moon in the light theme and a sun in the dark one. Once a Piece of Heart is found, the heart sits above it (see [Easter eggs](#easter-eggs)).
+  - A first visit follows the system's light or dark setting, and keeps following it until the toggle is used.
+  - The choice is kept in this browser's local storage, or for the visit when storage is unavailable, and other open tabs follow it.
+  - The page cross-fades into the other theme, or switches instantly with reduced motion or in a browser without view transitions.
+  - The theme is set before the page first paints, so it never flashes the other one, and the browser's toolbar colour follows the nav bar.
 
 A nav bar under the masthead links to the seven sections, grouped as Racing (01-03) and Ladder Data (04-07), whose links are Schedule, Participation, Traffic and Turnout. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner and the Upcoming races strip sit between the nav bar and Latest, and are hidden on racer pages too.
 
@@ -188,7 +193,7 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](dat
 
 ### Player card
 
-The **Create player card** button beside **Follow** on a racer page opens the **Player card** panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. The panel offers up to four actions:
+The **Create player card** button beside **Follow** on a racer page opens the **Player card** panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. It takes the page's colours when the panel opens, so a card made in the dark theme is dark. The panel offers up to four actions:
 
 - **Copy image**, only where the page is a secure context and the browser can write images to the clipboard (`ClipboardItem` and `navigator.clipboard.write`).
 - **Download**, always. The file is named `<name>-step-ladder-<data date>.png`. `<name>` is the racer's name lowercased, with accents dropped and every other run of characters that are not letters or digits turned into one `-`, or `racer` if nothing is left.
@@ -226,7 +231,7 @@ Like the racer page's heading stats, everything on the card covers all modes and
 
 - **The code:** Up, Up, Down, Down, Left, Right, Left, Right, B, A, typed outside a text field, opens a dialog reading "It's dangerous to go alone! Take this." over an assembling Triforce.
 - **Search words:** typing exactly `ganon`, `triforce` or `pedestal` into either search field, ignoring case and surrounding spaces, tints the top rail red with "Dun dun dun…", opens the Triforce dialog, or shows "You drew the Master Sword!".
-- **Pieces of Heart:** four are hidden: the code, `pedestal`, a triple click on the footer credit, and the ✦ spark beside a palindrome finish time. Each new piece fills a quarter of a heart in the masthead, shown once the first is found, and says "You found a Piece of Heart! (N/4)". The fourth makes it a Heart Container: "You got a Heart Container!". Pieces are kept in this browser's local storage.
+- **Pieces of Heart:** four are hidden: the code, `pedestal`, a triple click on the footer credit, and the ✦ spark beside a palindrome finish time. Each new piece fills a quarter of a heart in the masthead, shown above the theme toggle once the first is found, and says "You found a Piece of Heart! (N/4)". The fourth makes it a Heart Container: "You got a Heart Container!". Pieces are kept in this browser's local storage.
 - **The visitor counter** calls no service. It shows the ten-minute intervals since 2026-09-11 plus this browser's own page loads, as seven zero-padded digits. **View site stats** and a hidden footer link go to YouTube.
 - With reduced motion the Triforce does not animate and the rail tint is static.
 

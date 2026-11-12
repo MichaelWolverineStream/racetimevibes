@@ -48,15 +48,7 @@
   }
 }
 
-/* Heart HUD, spaced like the LED counter beside it. */
-.heart-hud {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  padding-left: 22px;
-  border-left: 1px solid var(--line);
-}
-
+/* Heart HUD: .masthead-corner (styles.css) stacks it above the theme toggle and draws the separator. */
 .ee-heart {
   display: block;
   overflow: visible;

@@ -68,7 +68,8 @@
   --negative: var(--red);
   --teal: #39778a;
   --teal-deep: #1d4f5f;
-  /* Schedule bands, ordered by lightness so they read without hue. Each ink is the cell text on its fill. */
+  /* Schedule bands, ordered by lightness so they read without hue: the busier the band, the further it stands
+     from the panel, so the order flips in the dark theme. Each ink is the cell text on its fill. */
   --band-prime: #1d4f5f;
   --band-prime-ink: var(--on-fill);
   --band-normal: #7fb0c0;
@@ -110,11 +111,113 @@
   --shadow: 0 12px 28px rgba(23, 33, 29, 0.08);
   --radius: 4px;
   --scrim: rgba(23, 33, 29, 0.55);
+  /* Roles that share a value in light but part in dark (see Dark theme): the nav band's fill and text,
+     text on medal fills, strong structural rules, the chart tooltip, and the colours shadows and sheens mix. */
+  --brand-fill: var(--accent);
+  --brand-fill-strong: var(--accent-strong);
+  --on-brand: var(--on-fill);
+  --on-medal: var(--ink);
+  --rule: var(--ink);
+  --tooltip-bg: var(--ink);
+  --tooltip-ink: var(--on-fill);
+  --tooltip-edge: transparent;
+  --paper-grid: rgba(23, 33, 29, 0.035);
+  --shadow-color: #17211d;
+  --shine-color: #ffffff;
+  /* The visitor counter's link keeps the old browser-default blue and purple on purpose. */
+  --retro-link: #0000ee;
+  --retro-link-visited: #551a8b;
   /* Overlay stacking, lowest first. */
   --layer-backdrop: 40;
   --layer-dialog: 41;
   --layer-effects: 42;
   --layer-tooltip: 50;
+}
+
+/* Dark theme */
+/* theme.js sets data-theme on <html> before the first paint. This block redeclares every :root token whose
+   value holds a literal colour, repeating any that stays the same; aliases follow on their own.
+   tests/test_site_theme.py checks that nothing is missing and that text keeps its contrast. The aim is calm:
+   - Surfaces are a green-tinted charcoal in the brand hue, never black, on an even lightness ladder
+     (paper, panel, row hover, grid, tooltip, line, rule). Panels lift off the page by lightness, not shadow.
+   - Ink is soft (13:1 on the panel, not pure white) so text doesn't bloom.
+   - Large surfaces stay deep: the nav band is --brand-fill with --on-brand text. Small fills (pills, active
+     toggles, monograms) go light with dark --on-fill text.
+   - The tooltip is a raised dark surface with a hairline edge, not an inverted box. Strong rules use --rule.
+   - Mode and tag hues keep their light hue and lightness order, lifted to at least 3:1 on the panel, with
+     colour-blind separation no worse than the light set's. The schedule bands flip: Primetime is the lightest. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e2e8e3;
+  --muted: #a9b4ae;
+  --paper: #101713;
+  --panel: #1a201d;
+  --on-fill: #121915;
+  --line: #383f3b;
+  --grid: #272e2a;
+  --row-hover: #222824;
+  --accent: #71cda7;
+  --accent-strong: #9be3c3;
+  --focus: #6fbed6;
+  --diamond: #a4dcea;
+  --diamond-ink: #86d2e5;
+  --gold: #e8b54a;
+  --gold-ink: #f0c464;
+  --silver: #bac3bf;
+  --silver-ink: #b0c1c9;
+  --bronze: #d79d6c;
+  --bronze-ink: #e3a97d;
+  --red: #fe7365;
+  --series: #66aabf;
+  --series-muted: #5c6660;
+  --positive: #80b7eb;
+  --teal: #77b6ca;
+  --teal-deep: #9dcddd;
+  --band-prime: #86cadf;
+  --band-normal: #5290a3;
+  --band-normal-ink: var(--on-fill);
+  --band-quiet: #213b43;
+  --mode-1: #4e96f1;
+  --mode-2: #ff9168;
+  --mode-3: #52cc98;
+  --mode-4: #ffc674;
+  --mode-5: #ffa1c2;
+  --mode-6: #3b9f36;
+  --mode-7: #7b70f1;
+  --mode-8: #fe706a;
+  --tag-first-win: #b14f9f;
+  --tag-photo: #5c82da;
+  --tag-pb: #66ceac;
+  --tag-milestone: #d19ff5;
+  --tag-badge: #f1ba52;
+  --tag-hardest: #ac5c2e;
+  --shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  --scrim: rgba(5, 8, 6, 0.7);
+  --brand-fill: #1c533e;
+  --brand-fill-strong: #133e2e;
+  --on-brand: var(--ink);
+  --on-medal: var(--on-fill);
+  --rule: #6f7772;
+  --tooltip-bg: #2b322e;
+  --tooltip-ink: var(--ink);
+  --tooltip-edge: var(--line);
+  --paper-grid: rgba(226, 232, 227, 0.025);
+  --shadow-color: #000000;
+  --shine-color: rgb(255 255 255 / 0.2);
+  --retro-link: #8b9bfe;
+  --retro-link-visited: #d695e4;
+}
+
+/* Light text on dark renders heavier on macOS; greyscale antialiasing keeps it crisp. */
+:root[data-theme="dark"] body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* The theme toggle cross-fades the page (theme.js skips it under reduced motion). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
 }
 
 /* Base */
@@ -139,8 +242,8 @@ body {
   font-family: var(--body);
   background-color: var(--paper);
   background-image:
-    linear-gradient(rgba(23, 33, 29, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(23, 33, 29, 0.035) 1px, transparent 1px);
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
@@ -241,13 +344,11 @@ h1 {
   outline-offset: 4px;
 }
 
-/* Each child carries its own separator, so either can hide without leaving a stray border.
-   The min-height is the hero avatar's, so a heart on its own centres on it. */
+/* Each child carries its own separator, so the visitor counter can hide without leaving a stray border. */
 .masthead-extras {
   grid-area: extras;
   display: flex;
   gap: 22px;
-  min-height: 56px;
 }
 
 .hit-counter {
@@ -266,7 +367,7 @@ h1 {
   gap: 5px;
   margin: 6px 0 9px;
   padding: 5px;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--rule);
   border-radius: 2px;
   background: #050806;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9);
@@ -291,7 +392,7 @@ h1 {
 
 .hit-counter__link {
   display: block;
-  color: #0000ee;
+  color: var(--retro-link);
   font-family: var(--display);
   font-size: var(--text-xs);
   font-weight: 800;
@@ -300,11 +401,68 @@ h1 {
 }
 
 .hit-counter__link:visited {
-  color: #551a8b;
+  color: var(--retro-link-visited);
 }
 
 .hit-counter__link:hover {
   color: var(--red);
+}
+
+/* Ends the masthead at every width, top-aligned like the rest of it: the theme toggle, with the heart HUD
+   (easter-eggs.js) stacked above it once the first Piece of Heart is found. */
+.masthead-corner {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  padding-left: 22px;
+  border-left: 1px solid var(--line);
+}
+
+/* theme.js keeps aria-pressed in step with the theme. */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.theme-toggle__icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-toggle__icon--sun {
+  stroke: var(--gold-ink);
+}
+
+/* The moon offers the dark theme and the sun the light one. */
+:root[data-theme="dark"] .theme-toggle__icon--moon,
+:root:not([data-theme="dark"]) .theme-toggle__icon--sun {
+  display: none;
 }
 
 /* Links */
@@ -326,14 +484,15 @@ summary:focus-visible {
 
 /* Section nav */
 .section-nav {
-  --nav-divider: rgba(255, 255, 255, 0.28);
+  --nav-divider: color-mix(in srgb, var(--on-brand) 28%, transparent);
   display: flex;
   justify-content: center;
   padding: 16px 24px;
   border-radius: var(--radius);
+  /* The white sheen is the same in both themes on purpose: the band stays deep green in both. */
   background:
     radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.14), transparent 60%),
-    linear-gradient(135deg, var(--accent), var(--accent-strong));
+    linear-gradient(135deg, var(--brand-fill), var(--brand-fill-strong));
   box-shadow: var(--shadow);
   animation: arrive 500ms 80ms ease-out both;
 }
@@ -359,7 +518,7 @@ summary:focus-visible {
 }
 
 .section-nav__link {
-  color: var(--on-fill);
+  color: var(--on-brand);
   font-family: var(--display);
   font-size: var(--text-xl);
   text-decoration: none;
@@ -368,7 +527,7 @@ summary:focus-visible {
 
 /* Restates the colour so the global a:hover cannot turn the text green on the green band. */
 .section-nav__link:hover {
-  color: var(--on-fill);
+  color: var(--on-brand);
   text-decoration-line: underline;
   text-decoration-color: var(--gold);
   text-decoration-thickness: 2px;
@@ -383,8 +542,8 @@ summary:focus-visible {
 .summary-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(115px, 0.72fr)) minmax(220px, 1.4fr);
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
   animation: arrive 500ms 80ms ease-out both;
 }
 
@@ -811,7 +970,7 @@ summary:focus-visible {
 }
 
 .baseline {
-  stroke: var(--ink);
+  stroke: var(--rule);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -1051,9 +1210,12 @@ summary:focus-visible {
   max-width: 260px;
   padding: 8px 10px;
   border-radius: 3px;
-  background: var(--ink);
-  color: var(--on-fill);
-  box-shadow: 0 8px 22px rgba(23, 33, 29, 0.2);
+  background: var(--tooltip-bg);
+  color: var(--tooltip-ink);
+  /* The ring is the dark theme's hairline edge; it takes no space, so the tooltip's size doesn't change. */
+  box-shadow:
+    0 0 0 1px var(--tooltip-edge),
+    0 8px 22px color-mix(in srgb, var(--shadow-color) 20%, transparent);
   font-size: var(--text-sm);
   line-height: 1.35;
   pointer-events: none;
@@ -1309,7 +1471,7 @@ th[aria-sort="descending"] .sort-button::after {
   margin-block: -3px;
   padding: 3px 0;
   border-radius: 999px;
-  color: var(--ink);
+  color: var(--on-medal);
   text-align: center;
 }
 
@@ -1406,7 +1568,7 @@ th[aria-sort="descending"] .sort-button::after {
   padding: 2px 5px;
   border-radius: 999px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-fill);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -1511,7 +1673,8 @@ footer p {
   }
 }
 
-/* Below this the visitor counter would squeeze the comment bubble under its full 450px. */
+/* Below this the visitor counter would squeeze the comment bubble well under its full 450px. Up to about
+   1245px the bubble still gives the theme toggle up to 43px, which only wraps a long comment sooner. */
 @media (max-width: 1199px) {
   .hit-counter {
     display: none;
@@ -1519,7 +1682,7 @@ footer p {
 }
 
 @media (max-width: 980px) {
-  /* The comment and the heart move under the artwork and title instead of squeezing beside them. */
+  /* The comment and the masthead corner move under the artwork and title instead of squeezing beside them. */
   .masthead {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
