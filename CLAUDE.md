@@ -14,7 +14,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - `assets/pokemon/*.png`: `python3 scripts/pokemon_images.py`, from the originals in `_tmp_assets/pokemon/`. Run `avatar_mirror.py` after.
    - The `?v=` stamps in `site/index.html` and `site/version.json`: `python3 scripts/version_assets.py`, after any change to `site/` HTML, CSS or JS. A test fails if a stamp is stale.
    - `season-ratings/season-N.json`: written once by `build_stats.py --lock-seasons`. Never edit or regenerate one. Deleting a ledger relocks that season with today's rating, so do it only on purpose.
-2. **A bot commits to `main` every two hours.** `update-data.yml` syncs, builds with `--lock-seasons`, mirrors avatars, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `update-bios.yml` calls it daily with `sync-bios` and `sync-schedule`, which also run `racer_bios.py` and `schedule_archive.py`.
+2. **A bot commits to `main` every two hours.** `update-data.yml` syncs the races and the schedule, builds with `--lock-seasons`, mirrors avatars, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `update-bios.yml` calls it daily with `sync-bios`, which also runs `racer_bios.py`.
    - Pull before you start.
    - Conflict in `archive/`: discard your archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
    - Conflict in `season-ratings/`: take upstream; the ledgers are deterministic. Build locally without `--lock-seasons`; only the bot locks.
@@ -63,7 +63,7 @@ Shared code:
 ```bash
 python3 scripts/race_archive.py     # network: incremental sync into archive/
 python3 scripts/racer_bios.py       # network, daily in CI: bios into archive/racer-bios.json
-python3 scripts/schedule_archive.py # network, daily in CI: archive/ladder-schedule/; the build needs it
+python3 scripts/schedule_archive.py # network, every CI run: archive/ladder-schedule/; the build needs it
 python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json
 python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars participants.json names
 ```

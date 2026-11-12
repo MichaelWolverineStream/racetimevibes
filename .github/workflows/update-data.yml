@@ -10,15 +10,11 @@ name: Update race data
         description: "Reason for manually triggering the workflow"
         required: false
         default: "Webhook Trigger"
-  # update-bios.yml calls this workflow once a day with sync-bios and sync-schedule set.
+  # update-bios.yml calls this workflow once a day with sync-bios set.
   workflow_call:
     inputs:
       sync-bios:
         description: "Also mirror the bios of racers who raced since their bio was last checked"
-        type: boolean
-        default: false
-      sync-schedule:
-        description: "Also mirror the alttpr.racing ladder schedule"
         type: boolean
         default: false
 
@@ -46,7 +42,9 @@ jobs:
         if: inputs.sync-bios
         run: python3 scripts/racer_bios.py
       - name: Sync ladder schedule
-        if: inputs.sync-schedule
+        # A failed sync writes nothing, and the build copes with an older mirror, so an
+        # alttpr.racing outage must not hold back the race data.
+        continue-on-error: true
         run: python3 scripts/schedule_archive.py
       - name: Build data
         # --lock-seasons writes a ledger for every season that has ended and settled.

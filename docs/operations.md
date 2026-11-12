@@ -49,13 +49,14 @@ No test uses the network. The production suite rebuilds all three datasets from 
 
 ### Scheduled data refresh
 
-`.github/workflows/update-data.yml` runs `race_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py` every two hours, at 17 minutes past each even hour UTC, or from **Actions › Update race data**. Two inputs, both off by default and not offered on a manual run, add steps before the build: `sync-bios` runs `racer_bios.py`, and `sync-schedule` runs `schedule_archive.py`.
+`.github/workflows/update-data.yml` runs `race_archive.py`, `schedule_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py`. An outside trigger starts it through `workflow_dispatch` about every two hours, a scheduled run at 10:17 UTC is the daily backup, and **Actions › Update race data** starts it by hand. One input, `sync-bios`, off by default and not offered on a manual run, also runs `racer_bios.py` between the race and schedule syncs.
 
-- When the sync added or refreshed a race, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`.
+- When a sync added or refreshed a race or schedule file, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`.
 - When the datasets changed beyond `generated_at`, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow starts **Deploy GitHub Pages** explicitly, because pushes made with `GITHUB_TOKEN` trigger no workflows.
-- A run that finds nothing new, or whose sync, build or mirror fails, commits nothing.
+- A failed schedule sync does not stop the run: the step is `continue-on-error`, so it shows as failed while the rest goes on. The sync writes nothing when it fails, so the build uses the mirror of the last good sync, which can only hold back the newest slots (see **Counted through** under [Schedule](definitions.md#schedule)) and delay a season lock.
+- A run that finds nothing new, or whose race sync, bio sync, build or mirror fails, commits nothing.
 
-`.github/workflows/update-bios.yml` runs daily at 05:47 UTC, between data runs, and only calls `update-data.yml` with both inputs on. A manual **Update racer bios** run is how to sync bios and the schedule on demand.
+`.github/workflows/update-bios.yml` runs daily at 05:47 UTC and only calls `update-data.yml` with `sync-bios` on. A manual **Update racer bios** run is how to sync bios on demand.
 
 - It sets no `concurrency` group on purpose: the callee's `update-data` group already queues it behind a running data run, and the same group on the caller would deadlock.
 - GitHub keeps one waiting run per group, so a data run can cancel a waiting bio run. Nothing is lost: a racer stays due until checked.

@@ -64,7 +64,7 @@ The sync:
 
 ## Ladder schedule mirror
 
-`scripts/schedule_archive.py` mirrors the alttpr.racing ladder schedule, so the build and the [schedule planner](analyses.md#race-schedule-proposals) can see every slot, including the rooms that were cancelled and so never reached racetime.gg. The daily bot run syncs it (see [Scheduled data refresh](operations.md#scheduled-data-refresh)), and `build_stats.py` reads it and fails without it.
+`scripts/schedule_archive.py` mirrors the alttpr.racing ladder schedule, so the build and the [schedule planner](analyses.md#race-schedule-proposals) can see every slot, including the rooms that were cancelled and so never reached racetime.gg. Every bot data run syncs it before the build (see [Scheduled data refresh](operations.md#scheduled-data-refresh)), and `build_stats.py` reads it and fails without it.
 
 - **What it fetches:**
   - `https://alttpr.racing/api/v1/modes`, the modes with their archetype, name and `active` flag;

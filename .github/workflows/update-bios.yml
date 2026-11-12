@@ -2,7 +2,7 @@ name: Update racer bios
 
 "on":
   schedule:
-    # Once a day, between the even-hour data runs.
+    # Once a day, clear of the 10:17 backup data run.
     - cron: "47 5 * * *"
   workflow_dispatch:
 
@@ -17,6 +17,3 @@ jobs:
     uses: ./.github/workflows/update-data.yml
     with:
       sync-bios: true
-      # The schedule only gains race ids as races are created, so a daily sync keeps the
-      # schedule panels current.
-      sync-schedule: true

@@ -121,7 +121,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 - **Full reset:** every racer debuts at exactly 1000 in every season, and again in every mode of it, however they rated before. A racer is provisional in a season, or in a season's mode, until they have 5 finishes there.
 - **Standings only:** season ratings carry no $\mu$ or $\sigma$. Predictions stay on the all-time overall rating, as they do for mode ratings: win chance, the Upset tag, and the top-rated racer of God Route, Big Routing and Upsetti.
 - **Which season a race is in:** the season whose span holds its start. Every included race counts, scheduled or not, and a race in the break between two seasons counts toward the earlier one. The 5 `JOIN_EARLY` minutes let a race that started just before its first slot count.
-- **Schedule lag:** the schedule mirror syncs once a day and races every two hours, so a new season's first day can count toward the old season until the next daily schedule sync. This is display only: it cannot lock a wrong boundary.
+- **Schedule lag:** the bot syncs the schedule mirror with the races on every data run, so a new season's first races count toward the old season only while the schedule sync is failing or alttpr.racing has not yet published the new season. This is display only: it cannot lock a wrong boundary.
 - **Locked for good:** once a season has ended and its races are settled, the bot locks its ratings into a ledger in `season-ratings/`, and they never change again, even if the model does (see [Season locking](docs/datasets.md#season-locking) and [Season ledgers](docs/datasets.md#season-ledgers)).
 
 ### Backtest
