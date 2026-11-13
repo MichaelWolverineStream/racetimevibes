@@ -27,7 +27,8 @@
   margin-bottom: 0;
 }
 
-/* Follow and the button wrap together, so on a phone they stay right-aligned on a line of their own. */
+/* Follow, the Face off link and the button wrap together, so on a phone they stay right-aligned on lines of
+   their own. */
 .player-heading__actions {
   display: flex;
   flex-wrap: wrap;

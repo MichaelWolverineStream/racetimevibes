@@ -702,6 +702,16 @@ function playerHash(playerId, modeId) {
   return `#/player/${encodeURIComponent(playerId)}${suffix}`;
 }
 
+// Face Off with the red corner's racer and the blue corner's, either of which may be empty (null).
+// An empty red corner with a blue one picked keeps its place as an empty segment.
+function faceoffHash(playerIdA = null, playerIdB = null) {
+  const parts = [playerIdA ?? "", playerIdB ?? ""].map((id) => encodeURIComponent(id));
+  while (parts.length && parts.at(-1) === "") {
+    parts.pop();
+  }
+  return parts.length ? `#/faceoff/${parts.join("/")}` : "#/faceoff";
+}
+
 function appendRankDelta(cell, rank, delta, season = null) {
   const arrow = document.createElement("span");
   if (delta === "new") {
@@ -810,6 +820,12 @@ function renderSortableTable(container, columns, rows, state, onSort) {
     const cell = document.createElement("th");
     cell.scope = "col";
     cell.classList.add(`align-${column.align || "right"}`);
+    // A column without a sortValue holds actions, not values, so its header is a plain label.
+    if (!column.sortValue) {
+      cell.textContent = column.label;
+      headRow.appendChild(cell);
+      return;
+    }
     const active = state.sort && state.sort.key === column.key;
     cell.setAttribute(
       "aria-sort",
@@ -1216,6 +1232,19 @@ function headToHeadColumns(playerIndex) {
         cell.appendChild(link);
       },
     },
+    {
+      key: "faceoff",
+      label: "Face off",
+      align: "center",
+      render: (cell, row) => {
+        const link = document.createElement("a");
+        link.className = "faceoff-vs-link";
+        link.href = faceoffHash(participants.players[playerIndex].id, row.player.id);
+        link.textContent = "VS";
+        link.setAttribute("aria-label", `Face off with ${row.player.name}`);
+        cell.appendChild(link);
+      },
+    },
   ];
 }
 
@@ -1273,15 +1302,25 @@ function renderPlayerView(playerIndex) {
   );
 }
 
-function parseHash() {
-  const match = /^#\/player\/([^/]+)(?:\/([^/]+))?$/.exec(window.location.hash);
-  if (!match) {
-    return null;
+// The page the hash names: a racer page, Face Off, or null for the board and its section anchors.
+function parseRoute() {
+  const hash = window.location.hash;
+  const player = /^#\/player\/([^/]+)(?:\/([^/]+))?$/.exec(hash);
+  if (player) {
+    return {
+      kind: "player",
+      id: decodeURIComponent(player[1]),
+      mode: player[2] ? decodeURIComponent(player[2]) : ALL_MODES,
+    };
   }
-  return {
-    id: decodeURIComponent(match[1]),
-    mode: match[2] ? decodeURIComponent(match[2]) : ALL_MODES,
-  };
+  const faceoff = /^#\/faceoff(?:\/([^/]*)(?:\/([^/]*))?)?$/.exec(hash);
+  if (faceoff) {
+    return {
+      kind: "faceoff",
+      ids: [faceoff[1], faceoff[2]].map((part) => (part ? decodeURIComponent(part) : null)),
+    };
+  }
+  return null;
 }
 
 function focusHeading(selector) {
@@ -1328,11 +1367,13 @@ function showPlayer(playerIndex, modeId, isInitial) {
     playerState.query = "";
     document.querySelector("#player-search").value = "";
   }
-  if (!isInitial && !wasPlayer) {
+  if (!isInitial && currentView?.kind === "leaderboard") {
     boardScrollY = window.scrollY;
   }
+  leaveFaceOff();
   document.body.classList.add("viewing-player");
   document.querySelector("#player-view").hidden = false;
+  document.querySelector("#player-faceoff").href = faceoffHash(participants.players[playerIndex].id);
   renderPlayerView(playerIndex);
   renderPlayerCharts(playerIndex);
   document.title = `${participants.players[playerIndex].name} · ${BASE_TITLE}`;
@@ -1345,15 +1386,65 @@ function showPlayer(playerIndex, modeId, isInitial) {
   renderRacerRating(playerIndex);
 }
 
-function showLeaderboard(isInitial) {
-  const wasPlayer = currentView && currentView.kind === "player";
+// The pair's corners are player indexes, or null for an empty corner.
+function showFaceOff(playerIndexA, playerIndexB, isInitial) {
+  const wasFaceOff = currentView && currentView.kind === "faceoff";
+  if (!isInitial && currentView?.kind === "leaderboard") {
+    boardScrollY = window.scrollY;
+  }
   document.body.classList.remove("viewing-player");
   document.querySelector("#player-view").hidden = true;
+  document.body.classList.add("viewing-faceoff");
+  document.querySelector("#faceoff-view").hidden = false;
+  document.querySelector(".section-nav__faceoff").setAttribute("aria-current", "page");
+  const names = [playerIndexA, playerIndexB].filter((index) => index !== null).map((index) => participants.players[index].name);
+  document.title = names.length === 2 ? `${names[0]} vs ${names[1]} · Face Off · ${BASE_TITLE}` : `Face Off · ${BASE_TITLE}`;
+  if (typeof FaceOff !== "undefined") {
+    runFeature("FaceOff.show", () => FaceOff.show(playerIndexA, playerIndexB));
+  }
+  // A new pair picked on the page keeps focus in its picker and the page where it is.
+  if (!isInitial && !wasFaceOff) {
+    focusHeading("#faceoff-title");
+  }
+  currentView = { kind: "faceoff" };
+}
+
+// Every other view clears Face Off, including a comment draw still waiting for its data.
+function leaveFaceOff() {
+  document.body.classList.remove("viewing-faceoff");
+  document.querySelector("#faceoff-view").hidden = true;
+  document.querySelector(".section-nav__faceoff").removeAttribute("aria-current");
+  if (typeof FaceOff !== "undefined") {
+    runFeature("FaceOff.hide", () => FaceOff.hide());
+  }
+}
+
+function showLeaderboard(isInitial) {
+  const wasPlayer = currentView && currentView.kind === "player";
+  const wasFaceOff = currentView && currentView.kind === "faceoff";
+  document.body.classList.remove("viewing-player");
+  document.querySelector("#player-view").hidden = true;
+  leaveFaceOff();
   document.title = BASE_TITLE;
   if (!isInitial && wasPlayer) {
     returnToBoard();
+  } else if (!isInitial && wasFaceOff) {
+    scrollToSection();
   }
   currentView = { kind: "leaderboard" };
+}
+
+// From Face Off, the nav's section links land on their section. The browser jumped to the anchor while the
+// board was hidden, so the jump is redone once the board is laid out. A section still waiting for its data
+// is hidden, and the board's last place stands in for it.
+function scrollToSection() {
+  const id = window.location.hash.slice(1);
+  const target = id ? document.getElementById(id) : null;
+  if (target && !target.closest("[hidden]")) {
+    target.scrollIntoView();
+  } else {
+    returnToBoard();
+  }
 }
 
 // Back from a racer goes to where the board was left, or to the top of the board's panel when the
@@ -1371,7 +1462,13 @@ function route(isInitial) {
   if (!participants) {
     return;
   }
-  const target = parseHash();
+  const target = parseRoute();
+  if (target && target.kind === "faceoff") {
+    // An unknown racer leaves their corner empty, and the same racer twice keeps only the red corner.
+    const [indexA, indexB] = target.ids.map((id) => (id === null ? null : playerIndexById.get(id) ?? null));
+    showFaceOff(indexA, indexB === indexA ? null : indexB, isInitial);
+    return;
+  }
   const playerIndex = target ? playerIndexById.get(target.id) : undefined;
   if (target && playerIndex !== undefined) {
     const mode = participants.modes.includes(target.mode) ? target.mode : ALL_MODES;

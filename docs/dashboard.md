@@ -17,7 +17,7 @@ The page runs top to bottom:
 5. **03 Records**: the hall of records.
 6. **04-07**: the Ladder Data panels, on the schedule, participation, traffic and turnout.
 
-Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)).
+Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)). [Face Off](#face-off) is a page of its own that sets two racers side by side.
 
 The masthead holds the category artwork, the title block, a racer comment, the visitor counter and the theme toggle, with their tops aligned.
 
@@ -30,7 +30,11 @@ The masthead holds the category artwork, the title block, a racer comment, the v
   - The page cross-fades into the other theme, or switches instantly with reduced motion or in a browser without view transitions.
   - The theme is set before the page first paints, so it never flashes the other one, and the browser's toolbar colour follows the nav bar.
 
-A nav bar under the masthead links to the seven sections, grouped as Racing (01-03) and Ladder Data (04-07), whose links are Schedule, Participation, Traffic and Turnout. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner and the Upcoming races strip sit between the nav bar and Latest, and are hidden on racer pages too.
+A nav bar under the masthead links to the seven sections, grouped as Racing (01-03) and Ladder Data (04-07), whose links are Schedule, Participation, Traffic and Turnout, with the Battle group between them. Thin dividers separate the groups, side by side on wide screens and one above the other at 980px and below. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner and the Upcoming races strip sit between the nav bar and Latest, and are hidden on racer pages and on Face Off.
+
+- **Battle:** a caption over one link, **Face Off**, drawn as a pill split diagonally into the [Face Off](#face-off) card's red and blue, deepened so its text keeps 4.5:1, with a gold edge. It is a page, not a section. Its text shares the other links' line, and a sheen crosses it once when the page loads, except with reduced motion. On hover it lifts slightly. While Face Off is open it carries `aria-current="page"` and a second gold edge inside the first. It shows at every width, including phone width where Ladder Data hides.
+  - **Width:** each caption takes no width of its own, so it never widens its group. At 1199px and below the groups' side padding narrows, so the three groups keep one row down to 981px.
+- **On Face Off the nav stays visible**, so the pill marks where you are. A section link there returns to the board and scrolls to that section.
 
 ## Top-rated banner
 
@@ -53,7 +57,7 @@ Every season label on the page carries the season's name from `season_names` (se
 
 ## Upcoming races
 
-A strip between the top-rated banner and Latest results, hidden on racer pages. It lists up to 5 slots still to start from `upcoming`, all from the season of the next slot.
+A strip between the top-rated banner and Latest results, hidden on racer pages and Face Off. It lists up to 5 slots still to start from `upcoming`, all from the season of the next slot.
 
 - **Title:** "Upcoming races in the Season of the Panda" for a champion season, else "Upcoming races in " and the season label.
 - **Full Schedule:** a link on the strip's top border, opposite the title, opens `https://alttpr.racing/calendar` in a new tab. At phone width it sits under the title instead.
@@ -173,7 +177,7 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](dat
 
 ## Racer pages
 
-- **Heading:** the top line has **← All racers** at the left, and **Follow**, with its star (see [Following](#following)), and the **Create player card** button (see [Player card](#player-card)) at the right.
+- **Heading:** the top line has **← All racers** at the left, and **Follow**, with its star (see [Following](#following)), **Face off** and the **Create player card** button (see [Player card](#player-card)) at the right. **Face off** opens [Face Off](#face-off) with this racer in the red corner.
   - **← All racers**, like the browser's Back, returns to the board scrolled to where it was left, or to the top of the board when the visit began on a racer page.
   - **Profile:** under it, a column 450px wide, narrowing to 320px before the stats move, holds the name and, under the name, the avatar beside a speech bubble with the racer's newest comment. The avatar and the bubble share a vertical centre, and the bubble's mode, place and race day sit under it. A comment over 80 characters is cut with "…", and hovering or tapping the bubble shows the whole comment. **↻**, right after the bubble, steps back through their older comments. A racer without comments has no bubble.
   - **Stats:** a card right of the profile, from the name's top to the panel's right edge, under the actions. A sheen crosses it once when the page opens. Its top row has Podiums, H2H Win Rate and Badges, each a label over a value. Its bottom row has Nemesis and Favourite Victim, each with their avatar and the racer's W-L against them, the Nemesis's in red and the Favourite Victim's in blue.
@@ -193,6 +197,7 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](dat
   - Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive. It draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line.
   - Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. On a touch screen a tap reads one race day and a sideways drag moves through them, while a vertical drag still scrolls the page. There is no race-day calendar.
 - **Below the rating chart**, the picker also drives the finish-time violins of the racer's presets, the racer presets table (see [Finish-time violins and preset tables](#finish-time-violins-and-preset-tables)), and the head-to-head table, whose Win chance column always uses the overall rating. **Find an opponent** filters the head-to-head table by name, matching as **Find a racer** does.
+  - **Face off:** the table's last column, a plain header that does not sort, holds a **VS** link per opponent that opens [Face Off](#face-off) with this racer in the red corner and that opponent in the blue.
 
 ### Player card
 
@@ -225,15 +230,59 @@ Like the racer page's heading stats, everything on the card covers all modes and
 - **Nemesis:** the racer page's Nemesis, with the racer's W–L against them. Favourite Victim is left off, so a shared card never singles out a racer the sharer beats.
 - **Footer:** the site name and address, and the date of the data snapshot in Eastern Time.
 
+## Face Off
+
+A page that sets two racers on one mirrored card. It computes everything in the browser from `participants.json` and `comments.json`; nothing new is published. `site/faceoff.js` and `site/faceoff.css` draw it, and `leaderboard.js` owns its routes.
+
+- **Route:** `#/faceoff` is two empty corners, `#/faceoff/<id>` has the red corner picked and `#/faceoff/<idA>/<idB>` both, with racer IDs as in racer page addresses. An empty red corner with a blue racer reads `#/faceoff//<idB>`. An unknown ID leaves its corner empty, and the same racer in both corners keeps only the red one.
+- **Picks replace the history entry**, so Back leaves Face Off instead of stepping back through picks. Opening Face Off from another view moves focus to its heading, and picking on the page keeps focus in the picker or on **⇄ Swap corners** and the page where it is. A **Most met** chip or **Random rivalry** moves focus to the new racer's avatar, since the render removes the button. The page title and the panel heading read "A vs B" once both corners are filled, and a status line announces the pair.
+- **Corners:** the red corner is on the left and the blue on the right. Each holds an avatar that links to the racer's page, a name picker and the racer's rating. The VS between them carries the **⇄ Swap corners** button.
+- **Pickers:** each name is a combobox. Focusing it selects its text and opens the options.
+  - **Matching** is the rule of **Find a racer** (see [Racer leaderboard](#racer-leaderboard)), with names that start with the text first and the rest in name order. It lists up to 8 options, each with its avatar, and never offers the racer in the other corner. An empty input lists the followed racers (see [Following](#following)).
+  - **Keys:** ↓ and ↑ move through the options and wrap, Enter picks the highlighted one or the only one, and Escape closes the list. A second Escape puts the picked name back. Leaving the field also restores it.
+  - On a phone the input text is at least 16px, so iOS does not zoom the page. Options are 44px tall on a touch screen.
+- **Empty card:** both corners show a "?" silhouette, the prompt "Pick two racers to face off" and **Random rivalry**, which picks one of the 25 pairs who have raced each other most, in a random order of sides. With one corner picked, the empty corner's input reads "Pick a challenger".
+- **Most met:** with one corner picked, the empty corner lists chips for the picked racer's 5 most-met opponents, all modes and all time, most races first and then by name. A chip shows the opponent's avatar and name, and picks them.
+- **Rating:** under each name, the all-time overall rating, the rank as "#N of M" and "provisional" below 5 finishes (see [Rating strip](#racer-pages)), or Unrated. The tooltip is the rating's explanation.
+- **Comments:** each corner has a speech bubble, drawn after the page loads `comments.json`. A racer's first comment in a race is the one used. The draw follows these tiers, in order:
+  1. **Both commented in a race they shared:** both bubbles come from one such race, so their attributions name the same mode and day.
+  2. **Otherwise each corner is drawn on its own:** from a shared race where only that racer commented, else from any other race of theirs.
+  - A comment over 140 characters is cut with "…", and hovering or tapping the bubble shows the whole comment. The bubble's attribution is the racer's place there, the mode and the relative day, linked to the race. A racer with no comment has no bubble.
+  - **↻** (Other comments) draws again, avoiding the last pick while there is another. It shows only when there is more than one draw to choose from, and never replays the entrance.
+- **Win chance:** one tall bar, the red corner's share in red and the blue's in blue, from the two racers' overall ratings with the formula of the head-to-head Win chance column (see [Ladder rating](../README.md#ladder-rating)). It is the chance of winning their next race together. Percentages are whole numbers that add to 100, the red one rounded and the blue one the rest, and a block prints its share only when it is at least 12%. If either racer is unrated it reads "Win chance needs both racers rated". It never uses mode or season ratings.
+- **Head to head:** below the bar, the red corner's wins and the blue corner's wins against each other over all modes and all time, with the outcome rule of [Racer statistics](#racer-statistics). Between them are the draws when there are any, the races together and "last met" with that race's date, linked to it. The leading side's count is emphasised. A pair that has not met reads "Never raced each other".
+- **Tale of the tape:** the two racers row by row, all modes, for the current season or all time. Under its title, a toggle in a group labelled "Comparison period" picks the period: the current season, pressed by default and labelled like "Season 11 · Panda" with the full name in its tooltip, then **All time**, as on the [Top-rated banner](#top-rated-banner). The choice holds across new pairs and swaps while Face Off is open, and a reload starts on the season again. With no seasons there is no toggle and the tape is all time. Under the toggle, the lead line is "X leads N–M" in rows won, or "All square at N–M". Each row shows the red value, the label and the blue value.
+  - **Values:** a season's come from that season's leaderboard rows and its ratings; all time's from the all-time leaderboard rows (the board under **All seasons**, see [Racer leaderboard](#racer-leaderboard)) and the all-time overall rating.
+
+  | Row | Value | Scored |
+  |---|---|---|
+  | Rating | the period's overall rating with its "#rank", and "provisional" below 5 finishes in the period | higher wins |
+  | Races | races entered | not scored: it is activity, not form |
+  | Wins | first places | more wins |
+  | Podiums | diamond, gold, silver and bronze medals together, split in the tooltip | more wins |
+  | Win % | races won outright, of races entered | higher wins |
+  | H2H win % | head-to-head matchups won against the field | higher wins |
+  | Finish % | races finished, of races entered | higher wins |
+  | Head to head | their races together in the period, as each racer's wins in them, with draws in the tooltip | more wins |
+
+  - **Bars:** the counts (Races, Wins, Podiums, Head to head) scale to the larger of the two values, and the rates (Win %, H2H win % and Finish %) to a 0-100% axis. Rating has no bar.
+  - **Styling:** in a scored row the winner's side leads, the other trails, and a tie shows both as tied. An unscored row and a row with a missing value are plain. Hovering a value gives it with its meaning.
+  - **Switching:** the toggle redraws only the rows and the lead line, so the pressed button keeps focus, and the new bars grow from the spine.
+  - **Missing racers:** in a season, a racer with no race in it shows "No races" in the Rating row and dashes under it, and no row is scored. The lead line reads "Only X has raced this season", or "Neither has raced this season yet" with no rows at all.
+- **Badges:** under the bands, each corner lists "Only X (n)", the badges that racer holds and the other lacks, rarest first by holders and then by when they were earned. Between the lists, a count of the badges both hold, "of N badges". A corner with none reads "Nothing Y lacks". When neither racer holds a badge the other lacks, the lists give way to "Same badges, every one". A tile is a badge as on a racer page, and opens its holders panel (see [Racer pages](#racer-pages)).
+- **Motion:** a pair's entrance plays once each time a new pair is shown: the corners slide in, the VS stamps, the bands rise, the bar pulls from 50/50, the tape grows from the spine, the badges pop in turn and a sheen crosses the card. With reduced motion the card shows its final state at once, without the sheen.
+- **Phones:** at 620px and below the corners stay face to face with smaller avatars, and each bubble moves under them, chat-style, with a coloured edge at the side of its corner. The empty card's prompt takes a full row, the "Most met" chips sit under the corners, the badge lists stack and nothing scrolls sideways. The nameplate's ▾ caret is hidden there.
+- **Colours:** the corners use `--corner-a` (red) and `--corner-b` (blue), their own tokens that never read as a mode. They colour fills, rings and bars only, never text, and both themes keep 3:1 against the panel.
+
 ## Dialogs, keyboard and touch
 
-- Escape closes an open tooltip or dialog. A modal dialog makes the rest of the page inert while it is open and gives focus back when it closes.
+- Escape closes an open tooltip or dialog. In a Face Off picker, the first Escape closes its option list and the next puts the picked name back. A modal dialog makes the rest of the page inert while it is open and gives focus back when it closes.
 - Status toasts close by themselves after 3 seconds, or when clicked.
 - **Tap:** on a touch screen, a tap shows the tooltip a mouse would show on hover, above what was tapped. A second tap on it, a touch anywhere else or a scroll closes it.
   - Links and buttons keep their own action on tap and show no tooltip. That covers a sort header's medal rule, a top-rated runner-up's rank and a badge's share, which show only on hover or focus.
   - A tag or comment inside a race row both opens the race and shows its tooltip.
 - **Touch screens** (no hover, coarse pointer):
-  - Tap targets are at least 24px: sort headers are 32px tall and a dialog's close button is 44px.
+  - Tap targets are at least 24px: sort headers are 32px tall, a head-to-head table's VS link is 24px and a dialog's close button is 44px. A Face Off picker's options are 44px.
   - Scrolling inside a dialog doesn't carry on into the page behind it.
 - **Narrow screens:** at 980px and below, strips and tables that scroll sideways show a soft shadow on the side where more is hidden. The badge-holders list in a dialog shows one at its bottom.
 - At phone width the search boxes and the season select use 16px text, so iOS does not zoom the page when one is focused.

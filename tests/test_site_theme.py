@@ -59,6 +59,8 @@ NON_TEXT_PAIRS = [
     ("--rule", "--panel"),
     ("--gold", "--brand-fill"),
     ("--gold", "--brand-fill-strong"),
+    ("--corner-a", "--panel"),
+    ("--corner-b", "--panel"),
 ]
 TEXT_RATIO = 4.5
 NON_TEXT_RATIO = 3.0

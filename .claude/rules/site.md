@@ -12,18 +12,20 @@ What the page shows and does is specified in `docs/dashboard.md`. Update it in t
 Classic `<script defer>` files sharing one global scope, loaded in `index.html` order. The one exception is `theme.js`: it loads blocking in `<head>`, before the stylesheets, so the theme is set before the first paint. `Store` doesn't exist yet at that point, so `theme.js` reads its own storage key, whose prefix must match `STORAGE_PREFIX`. It declares no globals.
 
 **Load order and module shape**
-- Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras` checks in `leaderboard.js` would take down `loadParticipants`.
-- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `EasterEggs`, `Store`, `Following`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
+- Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras`/`FaceOff` checks in `leaderboard.js` would take down `loadParticipants`.
+- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `FaceOff`, `EasterEggs`, `Store`, `Following`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
 - Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
 **Shared helpers: reuse, don't rebuild**
 - `app.js` is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, the touch helpers `isTouchPointer`, `tapEchoing` and `showTouchTooltip`, and formatters such as `formatModeName`.
 - `leaderboard.js` owns data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
+  - **Routes and views:** it owns the route formats (`playerHash`, `faceoffHash`, `parseRoute`) and the views (`showPlayer`, `showFaceOff`, `showLeaderboard`). Every other view calls `leaveFaceOff`. A feature module such as `FaceOff` is called by the view, and changes its pair by replacing the hash, so the router stays the one path that renders.
+  - `renderSortableTable` treats a column without `sortValue` as an unsortable action column: its header is a plain label.
   - `ratingCategories()` is the one definition of a rating category (overall plus every mode but `unknown`), used by the top-rated banner and the featured racer.
   - `currentSeason()` returns the newest season or null. A season is a number; `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rank helpers take an optional `season`, so callers passing nothing stay all-time. Predictions (`hasRating`, `winChance`), the racer page's rating strip and chart, and the player card never pass one.
   - ▲/▼ is for rank movement only. A points change shows as +N, −N or ±0.
 - `ui.js` exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
-- The private `element(tag, className, text)` copies in `ui.js`, `feed.js`, `records.js`, `racer-extras.js` and `share-card.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
+- The private `element(tag, className, text)` copies in `ui.js`, `feed.js`, `records.js`, `racer-extras.js`, `share-card.js` and `faceoff.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
 
 **Modals and events**
 - Modals use `holdModal(close)` in `ui.js`: it makes `main` and `footer` inert, closes on Escape and restores focus. A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`, which returns `{ panel, close }`.
@@ -48,7 +50,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 
 ## CSS (`site/*.css`)
 
-- Tokens live on `:root` in `styles.css`: colours, data roles (`--series`, `--mode-*`, `--band-*`, `--tag-*`), the type scale `--text-*`, `--shadow`, `--scrim`, and the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`. Prefer tokens over literals, and name the token, not a number, when a comment mentions a layer.
+- Tokens live on `:root` in `styles.css`: colours, data roles (`--series`, `--mode-*`, `--band-*`, `--tag-*`, `--corner-a`/`--corner-b`), the type scale `--text-*`, `--shadow`, `--scrim`, and the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`. Prefer tokens over literals, and name the token, not a number, when a comment mentions a layer.
 - **Dark theme.** `theme.js` sets `data-theme` on `<html>`, and the `/* Dark theme */` section after `:root` redeclares every `:root` token whose value holds a literal colour, repeating any value that stays the same. Aliases follow on their own. `tests/test_site_theme.py` fails on a token missing from the dark block and checks the contrast pairs in both themes.
   - Pick dark values by role, not by inverting:
     - Large surfaces stay deep (`--brand-fill` with `--on-brand` for the nav band).
@@ -60,6 +62,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
   - A dark mode or tag hue keeps its light hue and lightness order. It needs 3:1 against `--panel`, and its colour-blind separation from the others must stay at least that of the light set. Check both before changing one.
   - The LCD hit counter, the Zelda dialog (`--zelda-*`), the easter-egg glow and the nav band's white sheen are the same in both themes on purpose.
   - `theme.js` mirrors `--brand-fill` for the browser toolbar and spells out `STORAGE_PREFIX`. `tests/test_site_theme.py` checks both.
+- `--corner-a` and `--corner-b` are Face Off's red and blue corner data role, with their own values, so a corner never reads as a mode. They colour fills, rings and bars, never text, and `tests/test_site_theme.py` checks both at 3:1 against the panel. `faceoff.css` sets `--corner` and `--lean` per side, and its rules use only those two.
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
 - `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. Reduced motion is handled at the end of `styles.css`.

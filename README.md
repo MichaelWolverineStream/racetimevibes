@@ -81,7 +81,7 @@ $$d = (n - 1)^{-\alpha} \qquad \mu_i \leftarrow \mu_i + d\,\Omega \qquad \sigma_
 
 $d$ damps a race of $n$ entrants by its size. Every pair counts as a match, but a race's pairs share their racers, so they are not independent results: without $d$ a 32-racer race would count as 31 of them, and with $\alpha = \tfrac12$ it counts about as much as 6.
 
-The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags and the head-to-head "Win chance" column, and never uses points. Both always use the overall rating, even with a mode picked (see [Mode ratings](#mode-ratings)).
+The win chance that $a$ beats $b$ is $1 / (1 + e^{-(\mu_a - \mu_b)/\sqrt{\sigma_a^2 + \sigma_b^2 + 2\beta^2}})$. It drives upset tags, the head-to-head "Win chance" column and the Face Off page's win chance, and never uses points. Both always use the overall rating, even with a mode picked (see [Mode ratings](#mode-ratings)).
 
 ### Recency
 
@@ -112,14 +112,14 @@ A winner's points never fall. Every pair a winner is in is decided in their favo
 
 Each mode also has its own rating: the same model with the same parameters, run on that mode's races alone. Nothing was retuned for it. A mode rating never reads another mode's races, so a racer's first race in a mode starts at exactly 1000 however experienced they are elsewhere, and a racer is provisional in a mode until they have 5 finishes in it. The guarantee holds in every mode. Seasons have mode ratings too (see [Season ratings](#season-ratings)).
 
-Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does, as the [Backtest](#backtest) shows. Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Upset tag and the top-rated racer of God Route, Big Routing and Upsetti always use the overall rating.
+Mode ratings are for standings: the leaderboard with a mode selected and the rating chart on a racer page with a mode picked. Predictions stay on the overall rating, because it predicts results inside a mode better than the mode's own rating does, as the [Backtest](#backtest) shows. Most modes have too few races for a rating that starts from nothing, and the gap is widest in the smallest modes. So the head-to-head Win chance column, the Face Off win chance, the Upset tag and the top-rated racer of God Route, Big Routing and Upsetti always use the overall rating.
 
 ### Season ratings
 
 A **season** is one run of the ladder, as the alttpr.racing schedule numbers them (see [Seasons](docs/definitions.md#seasons)). Each season also has its own ratings, overall and in every mode, beside the all-time ones: the same model with the same parameters, run on that season's races alone. Nothing was retuned for it. `ladder_rating.rate_by_season` computes them.
 
 - **Full reset:** every racer debuts at exactly 1000 in every season, and again in every mode of it, however they rated before. A racer is provisional in a season, or in a season's mode, until they have 5 finishes there.
-- **Standings only:** season ratings carry no $\mu$ or $\sigma$. Predictions stay on the all-time overall rating, as they do for mode ratings: win chance, the Upset tag, and the top-rated racer of God Route, Big Routing and Upsetti.
+- **Standings only:** season ratings carry no $\mu$ or $\sigma$. Predictions stay on the all-time overall rating, as they do for mode ratings: win chance (the head-to-head column and Face Off), the Upset tag, and the top-rated racer of God Route, Big Routing and Upsetti.
 - **Which season a race is in:** the season whose span holds its start. Every included race counts, scheduled or not, and a race in the break between two seasons counts toward the earlier one. The 5 `JOIN_EARLY` minutes let a race that started just before its first slot count.
 - **Schedule lag:** the bot syncs the schedule mirror with the races on every data run, so a new season's first races count toward the old season only while the schedule sync is failing or alttpr.racing has not yet published the new season. This is display only: it cannot lock a wrong boundary.
 - **Locked for good:** once a season has ended and its races are settled, the bot locks its ratings into a ledger in `season-ratings/`, and they never change again, even if the model does (see [Season locking](docs/datasets.md#season-locking) and [Season ledgers](docs/datasets.md#season-ledgers)).

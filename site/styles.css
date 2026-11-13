@@ -85,6 +85,10 @@
   --mode-6: #008300;
   --mode-7: #6250d6;
   --mode-8: #e34948;
+  /* Face Off's red and blue corners. They are their own values so they never read as a mode, and the pair
+     passes colour-blind separation (CVD ΔE 21.6 light, 19.2 dark) and 3:1 on the panel in both themes. */
+  --corner-a: #e34948;
+  --corner-b: #2a78d6;
   /* One hue per race-tag kind, in race-tag order with Hardest last; every pair stays apart under colour-blind simulation.
      The record kinds share PB's green on purpose: a record is a PB for the whole ladder. Their shine (ui.css) and labels tell them apart.
      Preset PB shares PB's green on purpose too: its label tells them apart.
@@ -187,6 +191,8 @@
   --mode-6: #3b9f36;
   --mode-7: #7b70f1;
   --mode-8: #fe706a;
+  --corner-a: #e66767;
+  --corner-b: #3987e5;
   --tag-first-win: #b14f9f;
   --tag-photo: #5c82da;
   --tag-pb: #66ceac;
@@ -512,9 +518,80 @@ summary:focus-visible {
   border-left: 1px solid var(--nav-divider);
 }
 
-/* A full-width flex item, so the caption sits on its own line above the group's links. */
+/* Face Off, the Battle group's one link: a pill split into the card's red and blue corners. The halves are the
+   corner colours deepened 70% toward --shadow-color, so --on-brand text keeps 4.5:1 on both in both themes.
+   Its padding and border are cancelled by equal negative margins, so its box is a link's line box and its
+   text sits on the links' baseline under a level caption. */
+.section-nav__faceoff {
+  position: relative;
+  margin-block: -4px;
+  padding: 2px 20px;
+  overflow: hidden;
+  border: 2px solid var(--gold);
+  border-radius: 999px;
+  background: linear-gradient(
+    105deg,
+    color-mix(in srgb, var(--corner-a) 70%, var(--shadow-color)) 50%,
+    color-mix(in srgb, var(--corner-b) 70%, var(--shadow-color)) 50%
+  );
+  color: var(--on-brand);
+  font-family: var(--display);
+  font-size: var(--text-xl);
+  text-decoration: none;
+  text-shadow: 1px 1px 0 color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+/* One sheen once the band has arrived. White in both themes on purpose, like the band's own sheen. */
+.section-nav__faceoff::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%) no-repeat 200% 0 / 250% 100%;
+  pointer-events: none;
+  content: "";
+  animation: nav-faceoff-shine 1100ms 900ms ease-out both;
+}
+
+/* Restates the colour so the global a:hover cannot turn the text green. */
+.section-nav__faceoff:hover {
+  color: var(--on-brand);
+}
+
+.section-nav__faceoff:not([aria-current="page"]):hover {
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+  transform: translateY(-1px);
+}
+
+.section-nav__faceoff:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* You are here: a double gold edge, drawn inward so it never reaches the caption above. */
+.section-nav__faceoff[aria-current="page"] {
+  box-shadow:
+    inset 0 0 0 2px var(--brand-fill),
+    inset 0 0 0 4px var(--gold);
+}
+
+/* The highlight is 2.5 times the pill's width: 200% parks it off the left edge and -100% off the right. */
+@keyframes nav-faceoff-shine {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* A full-width flex item, so the caption sits on its own line above the group's links. Its own width is
+   contained, so it never widens its group: otherwise the group sizes itself as if the caption shared the
+   links' line, and three groups no longer fit at 1024px. */
 .section-nav__heading {
   flex-basis: 100%;
+  contain: inline-size;
   color: var(--gold);
   font-size: var(--text-sm);
   text-align: center;
@@ -1286,6 +1363,11 @@ th.align-right {
   text-align: right;
 }
 
+td.align-center,
+th.align-center {
+  text-align: center;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -1315,7 +1397,19 @@ body.viewing-player #leaderboard {
   display: none;
 }
 
-.player-view {
+/* Face Off keeps the nav, where its pill marks the page as current. */
+body.viewing-faceoff #load-status,
+body.viewing-faceoff #dashboard,
+body.viewing-faceoff #top-rated,
+body.viewing-faceoff #upcoming,
+body.viewing-faceoff #updates,
+body.viewing-faceoff #records,
+body.viewing-faceoff #leaderboard {
+  display: none;
+}
+
+.player-view,
+.faceoff-view {
   margin-top: 32px;
 }
 
@@ -1675,7 +1769,8 @@ footer p {
 /* Responsive */
 
 @media (max-width: 1365px) {
-  .section-nav__link {
+  .section-nav__link,
+  .section-nav__faceoff {
     font-size: var(--text-lg);
   }
 }
@@ -1685,6 +1780,11 @@ footer p {
 @media (max-width: 1199px) {
   .hit-counter {
     display: none;
+  }
+
+  /* Three nav groups keep one row down to the 980px column layout. */
+  .section-nav__group {
+    padding-inline: 24px;
   }
 }
 
@@ -1994,5 +2094,14 @@ footer p {
   .step-chart__dot,
   .step-chart__halo {
     transition: none;
+  }
+
+  /* The Face Off pill keeps still: no sheen and no lift. */
+  .section-nav__faceoff::after {
+    animation: none;
+  }
+
+  .section-nav__faceoff:not([aria-current="page"]):hover {
+    transform: none;
   }
 }
