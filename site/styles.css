@@ -521,11 +521,14 @@ summary:focus-visible {
 /* Face Off, the Battle group's one link: a pill split into the card's red and blue corners. The halves are the
    corner colours deepened 70% toward --shadow-color, so --on-brand text keeps 4.5:1 on both in both themes.
    Its padding and border are cancelled by equal negative margins, so its box is a link's line box and its
-   text sits on the links' baseline under a level caption. */
+   text sits on the links' baseline under a level caption. Two equal columns, each sized to the wider word,
+   put the split between the words: FACE is wholly red and OFF wholly blue. */
 .section-nav__faceoff {
   position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   margin-block: -4px;
-  padding: 2px 20px;
+  padding: 2px 12px;
   overflow: hidden;
   border: 2px solid var(--gold);
   border-radius: 999px;
@@ -542,6 +545,12 @@ summary:focus-visible {
   text-transform: uppercase;
   white-space: nowrap;
   transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+/* Each word centred in its half, clear of the 15° split across its cap height. */
+.section-nav__faceoff-word {
+  justify-self: center;
+  padding-inline: 0.3em;
 }
 
 /* One sheen once the band has arrived. White in both themes on purpose, like the band's own sheen. */
@@ -1785,6 +1794,10 @@ footer p {
   /* Three nav groups keep one row down to the 980px column layout. */
   .section-nav__group {
     padding-inline: 24px;
+  }
+
+  .section-nav__faceoff {
+    padding-inline: 6px;
   }
 }
 

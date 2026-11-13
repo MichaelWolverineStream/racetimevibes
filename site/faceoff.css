@@ -38,7 +38,10 @@
 }
 
 /* Hero: the corners face each other across a diagonal split in their two colours, with a gold slash
-   behind the VS. ::before is the one sheen that crosses the card when a pair arrives. */
+   behind the VS. ::before is the one sheen that crosses the card when a pair arrives. faceoff.js sets
+   --split-shift, how far below the hero's middle the VS's middle sits (above when negative), and the split
+   and the slash pivot there. The split is a 300%-tall image centred on that point, so it always covers the
+   hero, and its 3px seam hides under the 4px slash. */
 .faceoff-hero {
   position: relative;
   display: grid;
@@ -54,10 +57,11 @@
   padding: 28px 32px 26px;
   border-bottom: 1px solid var(--grid);
   background: linear-gradient(
-    105deg,
-    color-mix(in srgb, var(--corner-a) 14%, var(--panel)) 49.6%,
-    color-mix(in srgb, var(--corner-b) 14%, var(--panel)) 50.4%
-  );
+      105deg,
+      color-mix(in srgb, var(--corner-a) 14%, var(--panel)) calc(50% - 1.5px),
+      color-mix(in srgb, var(--corner-b) 14%, var(--panel)) calc(50% + 1.5px)
+    )
+    0 calc(50% + var(--split-shift, 0px)) / 100% 300% no-repeat;
 }
 
 .faceoff-hero::before,
@@ -72,7 +76,7 @@
   background: linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--shine-color) 55%, transparent) 50%, transparent 60%) no-repeat 200% 0 / 250% 100%;
 }
 
-/* The slash leans like the split: skewing a full-height bar keeps it centred on the card. */
+/* The slash leans like the split: a full-height bar skewed about the same point lies on the seam. */
 .faceoff-hero::after {
   top: 0;
   bottom: 0;
@@ -80,6 +84,7 @@
   width: 4px;
   background: var(--gold);
   transform: skewX(-15deg);
+  transform-origin: 50% calc(50% + var(--split-shift, 0px));
 }
 
 .faceoff-hero > * {
@@ -313,7 +318,7 @@
   outline-offset: 2px;
 }
 
-/* Spine: the VS, the corner actions and the shared-race chip. */
+/* Spine: the VS and the corner actions. */
 .faceoff-spine {
   display: flex;
   flex-direction: column;
@@ -325,9 +330,13 @@
 }
 
 /* Larger than --text-2xl on purpose: the one mark the card turns on. It is decoration (aria-hidden), so it
-   takes the corner colours as offset shadows, like the bubbles' hard shadow. */
+   takes the corner colours as offset shadows, like the bubbles' hard shadow. Two equal columns put the gap
+   between the V and the S at its middle, where the slash crosses. The gap clears the 4px slash, its lean
+   across the cap height and the letters' shadows at every VS size. */
 .faceoff-vs {
-  display: block;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: calc(0.08em + 18px);
   color: var(--ink);
   font-family: var(--display);
   font-size: 5.5rem;
@@ -336,6 +345,14 @@
     -4px 3px 0 var(--corner-a),
     4px 3px 0 var(--corner-b);
   transform: skewX(-8deg);
+}
+
+.faceoff-vs > :first-child {
+  justify-self: end;
+}
+
+.faceoff-vs > :last-child {
+  justify-self: start;
 }
 
 .faceoff-spine__actions {
@@ -388,20 +405,6 @@
 
 .faceoff-note:empty {
   display: none;
-}
-
-/* Backed by the panel, so the gold slash behind the spine never runs through the words. */
-.faceoff-note__prompt {
-  max-width: 170px;
-  margin: 0;
-  padding: 4px 10px;
-  border-radius: var(--radius);
-  background: var(--panel);
-  color: var(--muted);
-  font-size: var(--text-xs);
-  font-weight: 800;
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
 }
 
 .faceoff-rivalry {

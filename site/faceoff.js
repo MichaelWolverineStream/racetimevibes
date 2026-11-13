@@ -322,12 +322,16 @@ const FaceOff = (() => {
       corner[side] = [parts[`say-${side}`], parts[`frame-${side}`], pickers[side].root, parts[`rate-${side}`], parts[`chips-${side}`]];
     });
     // The spine holds the VS and the corner actions level with the avatars. The note under it (the empty
-    // card's prompt and Random rivalry) is its own grid item, so on a phone it can take a full row instead
-    // of widening the middle column.
+    // card's Random rivalry) is its own grid item, so on a phone it can take a full row instead of widening
+    // the middle column.
     const spine = element("div", "faceoff-spine");
     spine.style.gridArea = "spine";
-    const vs = element("span", "faceoff-vs", "VS");
+    // Two letters, so the gap between them can sit at the VS's middle, where the slash crosses.
+    const vs = element("span", "faceoff-vs");
+    vs.append(element("span", null, "V"), element("span", null, "S"));
     vs.setAttribute("aria-hidden", "true");
+    parts.spine = spine;
+    parts.vs = vs;
     // Built once and only shown or hidden, so a focused button keeps focus while the pair it changed renders.
     parts.swap = button("faceoff-action", "⇄", "Swap corners", () => navigate({ a: shown.b, b: shown.a }));
     parts.again = button("faceoff-action faceoff-action--again", "↻", "Other comments", paintComments);
@@ -341,6 +345,19 @@ const FaceOff = (() => {
     hero.append(...corner.a, spine, parts.note, ...corner.b);
     parts.body = element("div", "faceoff-body");
     card.append(hero, parts.body);
+    // A bubble, a chip row, a button or a font load can move the VS only by resizing the hero or one of
+    // its pieces, so watching those keeps the slash on the VS.
+    const observer = new ResizeObserver(pivotOnVs);
+    [hero, ...hero.children].forEach((node) => observer.observe(node));
+  }
+
+  // The gold slash and the colour split pivot on the VS's middle, wherever the rows above have put it, so the
+  // slash always runs between the V and the S. Offsets ignore transforms, so the entrance cannot skew this.
+  // The property moves only paint (faceoff.css), never layout, so it cannot set the observer off again.
+  function pivotOnVs() {
+    const { hero, spine, vs } = parts;
+    const middle = spine.offsetTop + vs.offsetTop + vs.offsetHeight / 2;
+    hero.style.setProperty("--split-shift", `${middle - hero.clientHeight / 2}px`);
   }
 
   // ---- Hero ----
@@ -421,10 +438,7 @@ const FaceOff = (() => {
     parts.again.hidden = true;
     parts.note.replaceChildren();
     if (shown.a === null && shown.b === null) {
-      parts.note.append(
-        element("p", "faceoff-note__prompt", "Pick two racers to face off"),
-        button("faceoff-rivalry", "Random rivalry", "Random rivalry: two racers who have met often", randomRivalry),
-      );
+      parts.note.append(button("faceoff-rivalry", "Random rivalry", "Random rivalry: two racers who have met often", randomRivalry));
     }
   }
 
