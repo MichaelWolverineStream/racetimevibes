@@ -322,3 +322,10 @@ button.records-season__title:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@media (pointer: coarse) {
+  .records-season__title {
+    min-width: 24px;
+    min-height: 24px;
+  }
+}

@@ -17,7 +17,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
 **Shared helpers: reuse, don't rebuild**
-- `app.js` is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, and formatters such as `formatModeName`.
+- `app.js` is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, the touch helpers `isTouchPointer`, `tapEchoing` and `showTouchTooltip`, and formatters such as `formatModeName`.
 - `leaderboard.js` owns data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
   - `ratingCategories()` is the one definition of a rating category (overall plus every mode but `unknown`), used by the top-rated banner and the featured racer.
   - `currentSeason()` returns the newest season or null. A season is a number; `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rank helpers take an optional `season`, so callers passing nothing stay all-time. Predictions (`hasRating`, `winChance`), the racer page's rating strip and chart, and the player card never pass one.
@@ -29,6 +29,16 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - Modals use `holdModal(close)` in `ui.js`: it makes `main` and `footer` inert, closes on Escape and restores focus. A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`, which returns `{ panel, close }`.
 - Close a modal in exactly this order: remove its nodes, clear `openDialog`, call `release()` (lifts `inert`, then restores focus), call `onClose`. Focus can't move into an inert page, and an `onClose` that opens a dialog must find `openDialog` cleared.
 - Non-modal toasts never touch `inert`. Custom event names are constants, such as `FOLLOWING_EVENT` in `store.js`.
+
+**Tooltips and touch**
+- Information goes in a tooltip through `bindTooltip`, never in `title=`, which never shows on a touch screen.
+- `bindTooltip` handles touch itself:
+  - A tap toggles the tooltip. A link, button or summary keeps its action instead.
+  - For `TAP_ECHO_MS` after a touch, the mouse and focus handlers ignore the events the browser replays for the tap (`tapEchoing()`).
+- A chart with its own pointer handling:
+  - shows touch readouts with `showTouchTooltip(target, text, chart)`, so a touch outside the chart, or a scroll, closes them;
+  - gates its mouse and focus handlers with `tapEchoing()`.
+- Touch code paths act only when `isTouchPointer(event)`, so mouse behaviour stays exactly as it was.
 
 **Data and markup**
 - Mode labels (`modeLabel`, `formatModeName`) are display only. Lookups take the raw mode id: `modeColor`, `participants.modes`, hash routes.
@@ -53,7 +63,13 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
 - `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. Reduced motion is handled at the end of `styles.css`.
-- Desktop-first, but usable at phone width. Reuse the `620px` and `980px` breakpoints. A component's stylesheet loads after `styles.css`, so put its mobile overrides in that file.
+- Desktop-first, and good on phones. Desktop (1024px and up, with a mouse) must not change when you work on phones.
+  - Narrow-screen layout goes in the `980px` and `620px` blocks (the feed also has `@container feed` tiers).
+  - Input-method changes go in `@media (hover: none)` or `(pointer: coarse)`: showing what hover reveals, bigger hit areas, scroll containment.
+  - A component's stylesheet loads after `styles.css`, so put its mobile overrides in that file.
+- A viewport-height cap writes `svh` on the line after its `vh` fallback, so it doesn't jump as a phone's address bar slides away.
+- A sideways scroller at 980px and below uses the scroll-shadow backgrounds in `styles.css` (`.table-wrap--leaderboard`, `.mode-toggle`), with `--scroll-cue` as the shadow. The cover gradient must match the ground behind the container.
+- A table with a sticky column uses `border-collapse: separate`. A collapsed border is painted by the table, so a sticky cell's background can cover it.
 - `styles.css` is organised by `/* Section */` comments. Add rules to the matching section and never reorder existing ones: the cascade depends on order.
 
 ## Checking the page

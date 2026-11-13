@@ -338,7 +338,8 @@ const RacerExtras = (() => {
     });
 
     // Over a marker the pointer takes that marker's day; anywhere else in the plot, the nearest one.
-    svg.addEventListener("mousemove", (event) => {
+    // A mouse reads the day at the pointer; a touch anchors it above the day's dot, clear of the finger.
+    const readDay = (event, touch) => {
       const bounds = svg.getBoundingClientRect();
       const pointerX = event.clientX - bounds.left;
       const pointerY = event.clientY - bounds.top;
@@ -355,7 +356,36 @@ const RacerExtras = (() => {
       dot.setAttribute("cx", xs[index]);
       dot.setAttribute("cy", y(days[index].rating));
       cursor.removeAttribute("hidden");
-      showTooltip(dot, ratingDayLabel(days[index]), event);
+      if (touch) {
+        showTouchTooltip(dot, ratingDayLabel(days[index]), svg);
+      } else {
+        showTooltip(dot, ratingDayLabel(days[index]), event);
+      }
+    };
+    svg.addEventListener("mousemove", (event) => {
+      if (!tapEchoing()) {
+        readDay(event, false);
+      }
+    });
+    // Touch: a tap reads one day and a sideways drag scrubs; touch-action: pan-y in racer-extras.css
+    // keeps a vertical drag scrolling the page. There is no pointerdown handler, so a scroll that
+    // starts on the chart shows nothing.
+    svg.addEventListener("pointermove", (event) => {
+      if (isTouchPointer(event)) {
+        readDay(event, true);
+      }
+    });
+    svg.addEventListener("pointerup", (event) => {
+      if (isTouchPointer(event)) {
+        readDay(event, true);
+      }
+    });
+    // The browser took the touch for a scroll: drop any readout its first moves showed.
+    svg.addEventListener("pointercancel", (event) => {
+      if (isTouchPointer(event)) {
+        cursor.setAttribute("hidden", "");
+        hideTooltip();
+      }
     });
     svg.addEventListener("mouseleave", () => {
       cursor.setAttribute("hidden", "");

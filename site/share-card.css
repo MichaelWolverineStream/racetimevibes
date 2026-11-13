@@ -34,6 +34,7 @@
 .share-card-panel {
   width: min(680px, 100vw - 32px);
   max-height: min(90vh, 640px);
+  max-height: min(90svh, 640px);
   overflow: auto;
 }
 
@@ -119,5 +120,11 @@
 
   .share-card__action {
     flex: 1 1 auto;
+  }
+}
+
+@media (pointer: coarse) {
+  .share-card-panel {
+    overscroll-behavior: contain;
   }
 }

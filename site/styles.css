@@ -123,6 +123,8 @@
   --tooltip-edge: transparent;
   --paper-grid: rgba(23, 33, 29, 0.035);
   --shadow-color: #17211d;
+  /* The scroll cue on a scroller's hidden edge: strong enough to read on each theme's panel. */
+  --scroll-cue: color-mix(in srgb, var(--shadow-color) 22%, transparent);
   --shine-color: #ffffff;
   /* The visitor counter's link keeps the old browser-default blue and purple on purpose. */
   --retro-link: #0000ee;
@@ -203,6 +205,7 @@
   --tooltip-edge: var(--line);
   --paper-grid: rgba(226, 232, 227, 0.025);
   --shadow-color: #000000;
+  --scroll-cue: color-mix(in srgb, var(--shadow-color) 70%, transparent);
   --shine-color: rgb(255 255 255 / 0.2);
   --retro-link: #8b9bfe;
   --retro-link-visited: #d695e4;
@@ -1266,8 +1269,11 @@ th {
   text-transform: uppercase;
 }
 
-tbody tr:hover td {
-  background: var(--row-hover);
+/* Touch screens keep :hover on the last tapped row, so only a mouse highlights. */
+@media (hover: hover) {
+  tbody tr:hover td {
+    background: var(--row-hover);
+  }
 }
 
 td.align-left,
@@ -1390,6 +1396,7 @@ body.viewing-player #leaderboard {
 
 .table-wrap--leaderboard {
   max-height: 70vh;
+  max-height: 70svh;
 }
 
 .table-wrap--leaderboard th,
@@ -1732,6 +1739,75 @@ footer p {
     display: inline;
     margin-left: 5px;
   }
+
+  /* The racer column stays put while the stats scroll, so tablets keep the names in view too. It
+     sticks at the box's padding edge, not its content edge, so nothing scrolls past in the gutter
+     to its left: -24px must match .table-wrap's side padding. */
+  .table-wrap--leaderboard th:first-child,
+  .table-wrap--leaderboard td:first-child {
+    position: sticky;
+    left: -24px;
+    background: var(--panel);
+    box-shadow: inset -1px 0 0 var(--grid);
+  }
+
+  .table-wrap--leaderboard thead th:first-child {
+    z-index: 2;
+    box-shadow: inset -1px 0 0 var(--grid), inset 0 -1px 0 var(--line);
+  }
+
+  /* A collapsed border is painted by the table, so a sticky cell's background can cover it.
+     Separate borders belong to each cell and move with it. */
+  .table-wrap--leaderboard table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* The hours run down the left and the weekdays across, so seven columns fit without scrolling. */
+  .primetime-heatmap {
+    grid-auto-flow: column;
+    grid-template-columns: auto repeat(7, minmax(0, 1fr));
+    grid-template-rows: auto repeat(24, 28px);
+    width: auto;
+    min-width: 0;
+  }
+
+  .heatmap-hour {
+    justify-content: end;
+    padding-right: 4px;
+  }
+
+  .heatmap-weekday {
+    justify-content: center;
+  }
+
+  /* Scroll cues: a soft shadow on the side where content is hidden. The cover gradients are the
+     ground behind each container, so they must match it. */
+  .table-wrap--leaderboard {
+    background:
+      linear-gradient(to right, var(--panel) 30%, transparent) left center / 40px 100% no-repeat local,
+      linear-gradient(to left, var(--panel) 30%, transparent) right center / 40px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, var(--scroll-cue), transparent) left center / 14px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, var(--scroll-cue), transparent) right center / 14px 100% no-repeat scroll;
+  }
+
+  .mode-toggle,
+  .period-toggle {
+    background:
+      linear-gradient(to right, var(--panel) 30%, transparent) left center / 40px 100% no-repeat local,
+      linear-gradient(to left, var(--panel) 30%, transparent) right center / 40px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, var(--scroll-cue), transparent) left center / 14px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, var(--scroll-cue), transparent) right center / 14px 100% no-repeat scroll,
+      var(--panel);
+  }
+
+  .chart-host--violin {
+    background:
+      linear-gradient(to right, var(--panel) 30%, transparent) left center / 40px 100% no-repeat local,
+      linear-gradient(to left, var(--panel) 30%, transparent) right center / 40px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, var(--scroll-cue), transparent) left center / 14px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, var(--scroll-cue), transparent) right center / 14px 100% no-repeat scroll;
+  }
 }
 
 @media (max-width: 620px) {
@@ -1813,17 +1889,38 @@ footer p {
     width: 100%;
   }
 
-  .table-wrap--leaderboard th:first-child,
-  .table-wrap--leaderboard td:first-child {
-    position: sticky;
-    left: 0;
-    background: var(--panel);
-    box-shadow: inset -1px 0 0 var(--grid);
+  /* Under 16px, iOS zooms the page when the field is focused. */
+  .leaderboard-filter input,
+  .leaderboard-control select {
+    font-size: 1rem;
   }
 
-  .table-wrap--leaderboard thead th:first-child {
-    z-index: 2;
-    box-shadow: inset -1px 0 0 var(--grid), inset 0 -1px 0 var(--line);
+  /* Table cells ignore max-width, so the cap sits on what is inside the sticky first cell: the
+     first column stays under about half of a phone screen. */
+  /* clip, not hidden: the name keeps the row's text baseline. The bottom padding keeps the
+     underline (3px below the text) inside the clipped box. */
+  .table-wrap--leaderboard td:first-child .racer-link {
+    display: inline-block;
+    max-width: 7.5rem;
+    padding-bottom: 4px;
+    overflow: clip;
+    text-overflow: ellipsis;
+  }
+
+  .table-wrap--leaderboard td:first-child .preset-name {
+    display: inline-block;
+    max-width: 10rem;
+    white-space: normal;
+  }
+
+  .table-wrap--leaderboard .rank-badge {
+    min-width: 22px;
+    margin-right: 6px;
+  }
+
+  .table-wrap--leaderboard .rank-delta,
+  .table-wrap--leaderboard .rank-new {
+    margin-right: 5px;
   }
 
   .period-current {
@@ -1869,6 +1966,14 @@ footer p {
 
   .footer-meta {
     margin-top: 12px;
+  }
+}
+
+/* Touch: header sort buttons were about 13px tall. */
+@media (pointer: coarse) {
+  .sort-button {
+    min-height: 32px;
+    align-items: center;
   }
 }
 

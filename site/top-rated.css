@@ -239,7 +239,31 @@
     padding: 14px 10px 6px;
   }
 
+  /* The period toggle leaves the border and sits in flow above the tiles, with room for a thumb. */
   .top-rated__period {
-    right: 10px;
+    position: static;
+    width: fit-content;
+    margin: 0 0 8px auto;
+  }
+
+  .top-rated__period .mode-toggle__button {
+    min-height: 32px;
+  }
+}
+
+/* A touch screen wider than a phone keeps the toggle on the border, at least 24px tall: it still
+   clears the tiles, which start 18px into the banner. */
+@media (pointer: coarse) and (min-width: 621px) {
+  .top-rated__period .mode-toggle__button {
+    min-height: 24px;
+  }
+}
+
+@media (pointer: coarse) {
+  .top-rated__runner-up {
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    min-height: 24px;
   }
 }

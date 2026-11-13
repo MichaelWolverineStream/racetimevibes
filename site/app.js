@@ -147,6 +147,7 @@ function showTooltip(target, text, event = null) {
 
 function hideTooltip() {
   tooltip.hidden = true;
+  touchTooltipOwner = null;
 }
 
 // Escape dismisses the tooltip wherever it came from, so it never has to be moused away.
@@ -156,12 +157,87 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// Touch: a tap shows what a mouse would see on hover. Only touch and pen pointers take this path,
+// so with a mouse every tooltip behaves exactly as before.
+// The element whose tooltip a tap opened (for a chart, the chart), or null. A touch outside it, or
+// any scroll, closes that tooltip: it is fixed to the screen and would otherwise point at nothing.
+let touchTooltipOwner = null;
+// After a tap the browser replays it as mouse and focus events. Within this window those events
+// belong to the tap, so the hover and focus handlers leave the tooltip to the touch path.
+const TAP_ECHO_MS = 1000;
+let lastTouchAt = -Infinity;
+
+function isTouchPointer(event) {
+  return event.pointerType === "touch" || event.pointerType === "pen";
+}
+
+function tapEchoing() {
+  return performance.now() - lastTouchAt < TAP_ECHO_MS;
+}
+
+// Shows the tooltip above target for a tap; owner is the element a later touch must stay inside.
+function showTouchTooltip(target, text, owner = target) {
+  showTooltip(target, text);
+  touchTooltipOwner = owner;
+}
+
+// Capture phase: this runs before any handler that opens a new tooltip for the same touch, so it
+// never closes the tooltip that touch is about to open.
+function noteTouch(event) {
+  if (!isTouchPointer(event)) {
+    return;
+  }
+  lastTouchAt = performance.now();
+  if (event.type === "pointerdown" && touchTooltipOwner && !touchTooltipOwner.contains(event.target)) {
+    hideTooltip();
+  }
+}
+document.addEventListener("pointerdown", noteTouch, true);
+document.addEventListener("pointerup", noteTouch, true);
+document.addEventListener("scroll", () => {
+  if (touchTooltipOwner) {
+    hideTooltip();
+  }
+}, { capture: true, passive: true });
+
 function bindTooltip(target, text) {
-  target.addEventListener("mouseenter", (event) => showTooltip(target, text, event));
-  target.addEventListener("mousemove", (event) => positionTooltip(event.clientX, event.clientY));
-  target.addEventListener("mouseleave", hideTooltip);
-  target.addEventListener("focus", () => showTooltip(target, text));
-  target.addEventListener("blur", hideTooltip);
+  target.addEventListener("mouseenter", (event) => {
+    if (!tapEchoing()) {
+      showTooltip(target, text, event);
+    }
+  });
+  target.addEventListener("mousemove", (event) => {
+    if (!tapEchoing()) {
+      positionTooltip(event.clientX, event.clientY);
+    }
+  });
+  target.addEventListener("mouseleave", () => {
+    if (!tapEchoing()) {
+      hideTooltip();
+    }
+  });
+  target.addEventListener("focus", () => {
+    if (!tapEchoing()) {
+      showTooltip(target, text);
+    }
+  });
+  target.addEventListener("blur", () => {
+    if (!tapEchoing()) {
+      hideTooltip();
+    }
+  });
+  // A link or button keeps its own action on tap, without a tooltip in the way. A second tap on
+  // the same element closes its tooltip.
+  target.addEventListener("pointerup", (event) => {
+    if (!isTouchPointer(event) || target.closest("a[href], button, summary")) {
+      return;
+    }
+    if (touchTooltipOwner === target && !tooltip.hidden) {
+      hideTooltip();
+    } else {
+      showTouchTooltip(target, text);
+    }
+  });
 }
 
 const BAND_LABELS = { prime: "primetime", normal: "normal", quiet: "quiet" };
@@ -695,7 +771,7 @@ function renderPeriodControls(data) {
 function renderSnapshotAge(isoString) {
   const node = document.querySelector("#generated-at");
   node.dateTime = isoString;
-  node.title = utcTimestamp(isoString);
+  bindTooltip(node, utcTimestamp(isoString));
   const update = () => {
     node.textContent = timeAgo(isoString);
   };

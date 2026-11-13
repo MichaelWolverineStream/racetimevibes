@@ -21,6 +21,8 @@ const VIOLIN_MIN_PRESET_RACES = 10;
 const VIOLIN_SLOTS = 8;
 // About 100px per slot plus margins; a narrower host scrolls sideways rather than squeezing the labels.
 const VIOLIN_MIN_WIDTH = 880;
+// How far from a dot, in CSS pixels, a tap still reads it: about half a fingertip.
+const VIOLIN_TAP_REACH = 16;
 // Preset labels are measured on a canvas to wrap them. Must match .axis-label--mode in styles.css.
 const VIOLIN_LABEL_FONT_SIZE = "700 13px";
 const VIOLIN_LABEL_LINE_HEIGHT = 14;
@@ -402,8 +404,17 @@ function violinMark({ center, halfLength, level, className, label }) {
       y2: level,
     }),
   );
-  group.addEventListener("focus", () => showTooltip(group, label));
-  group.addEventListener("blur", hideTooltip);
+  // A tap's replayed focus must not cover the dot the tap read (see TAP_ECHO_MS in app.js).
+  group.addEventListener("focus", () => {
+    if (!tapEchoing()) {
+      showTooltip(group, label);
+    }
+  });
+  group.addEventListener("blur", () => {
+    if (!tapEchoing()) {
+      hideTooltip();
+    }
+  });
   return group;
 }
 
@@ -516,6 +527,9 @@ function violinChart(finishes, groups, { id, highlightPlayer, title, description
 
   // One delegated handler: a chart can draw thousands of dots.
   svg.addEventListener("mousemove", (event) => {
+    if (tapEchoing()) {
+      return;
+    }
     const dot = event.target.closest("circle[data-i]");
     if (dot) {
       showTooltip(dot, violinPointLabel(finishes[dot.dataset.i], groups[dot.dataset.g].label), event);
@@ -528,7 +542,41 @@ function violinChart(finishes, groups, { id, highlightPlayer, title, description
       hideTooltip();
     }
   });
-  svg.addEventListener("mouseleave", hideTooltip);
+  svg.addEventListener("mouseleave", () => {
+    if (!tapEchoing()) {
+      hideTooltip();
+    }
+  });
+  // Touch: a tap on a median or gold line reads that line. A dot is too small to hit, so any other
+  // tap reads the nearest dot within reach. No scrubbing: the chart scrolls sideways on narrow screens.
+  svg.addEventListener("pointerup", (event) => {
+    if (!isTouchPointer(event)) {
+      return;
+    }
+    const summary = event.target.closest(".violin-summary");
+    if (summary) {
+      showTouchTooltip(summary, summary.getAttribute("aria-label"), svg);
+      return;
+    }
+    const bounds = svg.getBoundingClientRect();
+    const scale = svg.viewBox.baseVal.width / bounds.width;
+    const x = (event.clientX - bounds.left) * scale;
+    const y = (event.clientY - bounds.top) * scale;
+    let nearest = null;
+    let nearestDistance = VIOLIN_TAP_REACH * scale;
+    for (const dot of svg.querySelectorAll("circle[data-i]")) {
+      const distance = Math.hypot(Number(dot.getAttribute("cx")) - x, Number(dot.getAttribute("cy")) - y);
+      if (distance < nearestDistance) {
+        nearest = dot;
+        nearestDistance = distance;
+      }
+    }
+    if (nearest) {
+      showTouchTooltip(nearest, violinPointLabel(finishes[nearest.dataset.i], groups[nearest.dataset.g].label), svg);
+    } else {
+      hideTooltip();
+    }
+  });
   return svg;
 }
 

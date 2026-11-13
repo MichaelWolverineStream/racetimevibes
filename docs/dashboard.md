@@ -21,7 +21,7 @@ Each racer also has a page with their ratings, badges, latest results, and chart
 
 The masthead holds the category artwork, the title block, a racer comment, the visitor counter and the theme toggle, with their tops aligned.
 
-- **Data snapshot** ends the title block: the age of the published data, "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering it shows the exact UTC time.
+- **Data snapshot** ends the title block: the age of the published data, "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering or tapping it shows the exact UTC time.
 - **The racer comment** is a random comment of at least 12 characters from the last 30 days, or from any time when those 30 days hold fewer than 20. It is cut at 180 characters, and the bubble is at most 450px wide. **↻** (Another comment) picks another.
 - The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
 - **The theme toggle** ends the masthead on every page and at every width. It is a button labelled "Dark mode", pressed in the dark theme, and shows a moon in the light theme and a sun in the dark one. Once a Piece of Heart is found, the heart sits above it (see [Easter eggs](#easter-eggs)).
@@ -36,9 +36,9 @@ A nav bar under the masthead links to the seven sections, grouped as Racing (01-
 
 The banner crowns the top-rated racer in each category: **Overall**, then every mode in mode order except `unknown`, which only groups races whose mode could not be read. The featured daily racer uses the same categories.
 
-- **Scope:** a two-button toggle in the banner header, in a group labelled "Rating period": the current season, pressed by default and labelled like "Season 10 · TR" with the full name in its tooltip, then **All time**. Toggling redraws the tiles in place, and the choice is not persisted. With no seasons there is no toggle and the banner is all-time.
+- **Scope:** a two-button toggle in the banner header, in a group labelled "Rating period": the current season, pressed by default and labelled like "Season 10 · TR" with the full name in its tooltip, then **All time**. Toggling redraws the tiles in place, and the choice is not persisted. With no seasons there is no toggle and the banner is all-time. At phone width the toggle leaves the border for a row of its own above the tiles.
 - **Who:** a tile shows exactly the top of the leaderboard sorted by rating in its category and scope: the season's rating under a season, the all-time rating under **All time**. There are no filters and no decay, so a leader keeps the crown until someone rates higher. A season tile shows the season rating, and runners-up use the season's ranks.
-- **Ties:** ranks are competition ranks, so racers tied at the top share one tile. It shows up to three avatars, names the first two in name order, and adds **+N** for the rest.
+- **Ties:** ranks are competition ranks, so racers tied at the top share one tile. It shows up to three avatars, names the first two in name order, and adds **+N** for the rest, whose tooltip names them.
 - **Tile:** the category, the avatar, the name and the rating. Each name links to that racer's page, opened on the tile's mode (**All modes** for Overall). Racer pages are all-time whatever the scope. A category where nobody is rated in the scope has no tile.
 - **Runners-up:** under the leader, the next five racers in the category, as small avatars side by side, in rank order and then name order. Tied leaders are not repeated there. Hovering or focusing one shows its rank, name and rating, such as "#2 Alice · 1834", and clicking it opens that racer's page on the tile's mode. A category with fewer rated racers shows fewer.
 - **Layout:** one row that keeps names whole and scrolls sideways when it is wider than the screen.
@@ -56,7 +56,7 @@ Every season label on the page carries the season's name from `season_names` (se
 A strip between the top-rated banner and Latest results, hidden on racer pages. It lists up to 5 slots still to start from `upcoming`, all from the season of the next slot.
 
 - **Title:** "Upcoming races in the Season of the Panda" for a champion season, else "Upcoming races in " and the season label.
-- **Full Schedule:** a link on the strip's top border, opposite the title, opens `https://alttpr.racing/calendar` in a new tab.
+- **Full Schedule:** a link on the strip's top border, opposite the title, opens `https://alttpr.racing/calendar` in a new tab. At phone width it sits under the title instead.
 - **Slot:** the Eastern Time weekday and start time, a countdown rounded up such as "in 1 d 6 h", the mode's dot and the schedule's mode name.
 - **Refresh:** it redraws every minute, so countdowns tick and a started slot drops off. It is hidden when no slot is left.
 
@@ -66,7 +66,7 @@ A strip between the top-rated banner and Latest results, hidden on racer pages. 
 - **New since your last visit:** the header counts the races added since this browser last loaded the page, as "N new since your last visit", followed by how many of them carry each tag: PB, Preset PB, Mode record, Preset record, First win, Upset, Photo finish, Milestone and Badge, with ×N for repeats. Each of those races has a "New" dot. The marker stays put when the same tab reloads, and the header shows nothing when no race is new. The browser stores the newest race it has shown in local storage, and the tab's starting point in session storage.
 - Each race shows its [race tags](highlights.md#race-tags). Expanding a race lists each entrant with their change in the season's rating in that race's mode: `+12`, `−9`, or `±0`, with a true minus sign and no arrow. ▲ and ▼ are for rank movement only, so a points change never looks like a rank change. The change is the entrant's season-mode points after the race minus their points before it, or minus the starting 1000 in their first race of that mode in that season. Its tooltip reads, for example, "Season 10 · Turtle Rock · Keys rating after this race: 1234". A race with no season shows no change.
 - **Medal colours:** a finisher's place pill takes the colour of the [medal](definitions.md#entrants) that place earns in that race's field, and a place without a medal stays plain. The same applies to the winner shown on each race row and to the racer page's own rows.
-- **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the tags drop to a line under the name.
+- **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the CR and CPH drop to a line under the name, and the tags to a line under that, so the name keeps its width.
 - **CR and CPH** (see [Chest counts](datasets.md#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race, and each of the racer's own rows in a racer page's [Latest results](#racer-pages).
 - **Sidebar:** **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order. At 1199px and below it collapses behind a **Racers & highlights** toggle, closed when the page loads; at 980px and below it sits above the feed.
 - **Your racers** lists the racers followed in this browser (see [Following](#following)), each with their 7-day rank movement (see **Ranks** under [Racer leaderboard](#racer-leaderboard)). With none it reads "☆ Star a racer to follow them here."
@@ -128,10 +128,11 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 - **Followed** is an optional button that shows only the racers starred in this browser. Unstarring a racer while it is on drops their row at once.
 - **Find a racer** keeps the rows whose display name contains the typed text, ignoring case but not accents. It combines with the season, the mode and the buttons above.
 - **Follow star:** each row has a star (see [Following](#following)).
+- **Narrow screens:** at 980px and below, the first column stays put while the others scroll sideways, and a soft shadow marks the side where more columns are hidden. At phone width long names in that column end in "…". The racer page's presets and head-to-head tables do the same, except that preset names wrap instead.
 
 ## Following
 
-A star, ☆, follows a racer in this browser, and ★ unfollows them. Stars sit in the leaderboard rows, on the Latest sidebar's racer cards and in a racer page's heading; each is a toggle button labelled "Follow <name>" or "Unfollow <name>". Following is kept in this browser's local storage, up to 50 racers, and in memory for the visit when storage is unavailable. It drives **Your racers** and the leaderboard's **Followed** button.
+A star, ☆, follows a racer in this browser, and ★ unfollows them. Stars sit in the leaderboard rows, on the Latest sidebar's racer cards and in a racer page's heading; each is a toggle button labelled "Follow <name>" or "Unfollow <name>". In a leaderboard row an empty star shows only while the row is hovered or focused, and always on a touch screen. Following is kept in this browser's local storage, up to 50 racers, and in memory for the visit when storage is unavailable. It drives **Your racers** and the leaderboard's **Followed** button.
 
 ## Hall of records
 
@@ -156,6 +157,7 @@ Records runs in four parts. Only By mode follows the mode picker.
   - **Racer pages** chart the presets the racer entered most, DNFs included, in the mode picked on the page, or across every mode under **All modes**. Ties go to total races, then name. The racer's finishes are highlighted.
 - Each violin takes its mode's color, and each mode keeps one color everywhere. The eight hues come from a palette checked for color-vision deficiency in this fixed left-to-right order, which is why the violins follow mode order rather than speed. When a chart mixes modes, each violin's label also names its mode, so color is never the only cue.
 - Preset names wrap onto two lines and end in an ellipsis if they still don't fit; every tooltip gives the mode and the full name. A chart narrower than 880px keeps that width and scrolls sideways.
+- On a touch screen, a tap on a median or gold line reads that line, and any other tap reads the nearest finish within about 16px.
 - **Racer presets table:** below the violins, a racer page lists every preset the racer entered in the picked mode, in the same sortable table as Hall of records › By mode. Under **All modes** it lists every mode's presets and adds a Mode column. Every column is the racer's own, defined like the preset statistics (see [Presets](highlights.md#presets)) but over the racer's entries only: **Races** entered, DNFs included; **Median time** of their timed finishes and **Gold median** of their timed wins, each rounded to the second; **DNF %**, their entries that are not finishers; **Avg racers**, the mean field size of those races; and **Fastest**, their best time, linked to its race, the earliest on a tie. The Hardest tag still marks the category-wide hardest preset. The table opens sorted by races, in the violins' ranking, and goes back to that whenever the mode or the racer changes.
 
 ## Ladder data panels
@@ -163,7 +165,7 @@ Records runs in four parts. Only By mode follows the mode picker.
 Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](datasets.md#schedule-and-participation-metrics) defines every number they show, and [Schedule](definitions.md#schedule) defines the slots they count.
 
 - **Time range:** a toolbar above the panels picks **All data**, the default, or one calendar quarter, labelled "· partial" when the archive does not cover all of it. It sets the 04 heatmap and shades the selected quarter's months in the 05 charts. The 06 and 07 season charts always show every season, and the leaderboard has its own season select. The toolbar also shows **Scheduled races counted through** the Eastern Time date and hour in `source.schedule_counted_through`, the last slot the schedule panels count. Races later than that are not in them.
-- **04 Primetime heatmap:** a 7 by 24 grid of weekday against Eastern Time hour. A cell's colour is its band, primetime, normal or quiet, and its text is the racers per scheduled race to one decimal, or "·" when nothing was scheduled. The legend adds "Fewer than 5 scheduled races" for the cells without a band. A cell's tooltip gives its band, the racers per scheduled race, and how many of its scheduled races started.
+- **04 Primetime heatmap:** a 7 by 24 grid of weekday against Eastern Time hour. At 980px and below it turns, with the hours down the side and a column per weekday, so it never scrolls sideways. A cell's colour is its band, primetime, normal or quiet, and its text is the racers per scheduled race to one decimal, or "·" when nothing was scheduled. The legend adds "Fewer than 5 scheduled races" for the cells without a band. A cell's tooltip gives its band, the racers per scheduled race, and how many of its scheduled races started.
 - **05 Turnout over time:** three monthly charts, the average racers per finished race, the race entries per scheduled day and the races fired per scheduled day, counting only scheduled races that started. Months without a scheduled day break the second and third lines. The tooltips give the entries or fired races and the scheduled days behind each value, and the table lists the scheduled days, entries per day and fired races per day. The three charts share a row down to the 980px breakpoint without scrolling sideways.
 - **06 How often races start:** a bar chart with one bar per season, showing the share of its scheduled races that started, on a 0-100% axis. The season in progress is muted and marked "(in progress)". The tooltip and table give the scheduled and started counts and the start rate.
 - **07 Entries by season:** a bar chart with one bar per season, showing the season's total race entries. The in-progress season is muted. The tooltip and table add the races and the average racers per race.
@@ -172,23 +174,24 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](dat
 ## Racer pages
 
 - **Heading:** the top line has **← All racers** at the left, and **Follow**, with its star (see [Following](#following)), and the **Create player card** button (see [Player card](#player-card)) at the right.
-  - **Profile:** under it, a column 450px wide, narrowing to 320px before the stats move, holds the name and, under the name, the avatar beside a speech bubble with the racer's newest comment. The avatar and the bubble share a vertical centre, and the bubble's mode, place and race day sit under it. A comment over 80 characters is cut with "…", and hovering the bubble shows the whole comment. **↻**, right after the bubble, steps back through their older comments. A racer without comments has no bubble.
+  - **← All racers**, like the browser's Back, returns to the board scrolled to where it was left, or to the top of the board when the visit began on a racer page.
+  - **Profile:** under it, a column 450px wide, narrowing to 320px before the stats move, holds the name and, under the name, the avatar beside a speech bubble with the racer's newest comment. The avatar and the bubble share a vertical centre, and the bubble's mode, place and race day sit under it. A comment over 80 characters is cut with "…", and hovering or tapping the bubble shows the whole comment. **↻**, right after the bubble, steps back through their older comments. A racer without comments has no bubble.
   - **Stats:** a card right of the profile, from the name's top to the panel's right edge, under the actions. A sheen crosses it once when the page opens. Its top row has Podiums, H2H Win Rate and Badges, each a label over a value. Its bottom row has Nemesis and Favourite Victim, each with their avatar and the racer's W-L against them, the Nemesis's in red and the Favourite Victim's in blue.
     - Podiums gives the racer's diamond, gold, silver and bronze medals in medal colours, with a tooltip naming each count.
     - H2H Win Rate and Badges each have a thin bar under the value, filled to the win rate and to the share of badges earned. A win rate of "--" has no bar.
-    - Below 980px wide the card moves under the profile, and below 620px each rival takes a line of its own.
+    - Below 980px wide the card moves under the profile. Below 620px Podiums takes the top row, with H2H Win Rate and Badges side by side under it, and each rival takes a line of its own.
   - Every stat covers all modes and the whole archive, whatever mode is selected. Among opponents with at least five decisive meetings, **Nemesis** is the one with the lowest head-to-head win rate below 50%, and **Favourite Victim** the one with the highest above 50%; ties go to the opponent met more often.
 - **Rating strip:** the racer's current all-time rating overall, then in every mode they are rated in, in mode order. Each tile gives their rank out of every racer rated there, marked provisional below 5 finishes there, and its tooltip explains the rating.
 - **Badges:** earned badges come first in the order they were won, oldest first, and locked badges follow in table order (see [Badges](highlights.md#badges)). Earned badges animate, and locked badges show the grey still. A counter badge fills its border as it progresses. Hovering a badge shows the share of racers who hold it, to two significant digits, counted on the page from the current data. Clicking a badge, here or in the Latest results sidebar, opens a panel with every racer who holds it, earliest unlock first.
 - **Latest results:** every race the racer entered, newest first, under a heading per month: the 5 latest at first, then 20 more at a time with **Show 20 more**. It covers every mode, whatever mode is selected.
   - Each row is the racer's own result: the date and Eastern Time start hour, the mode, the preset, their place (blank for a DNF or DQ), their comment, their finish time or DNF or DQ, the field size, their CR and CPH, the race tags that name them, and their change in the season's rating in that race's mode, shown as in [Latest results](#latest-results).
-  - The comment fits on one line, and hovering it shows the whole comment. Up to four tags show, then +N. Tags follow the entrant-tag rule under [Latest results](#latest-results), so Upset and Photo finish appear only on races the racer won.
+  - The comment fits on one line, and hovering or tapping it shows the whole comment. Up to four tags show, then +N. Tags follow the entrant-tag rule under [Latest results](#latest-results), so Upset and Photo finish appear only on races the racer won.
   - Clicking a row expands the whole race exactly as Latest results does, with the racer's own row highlighted.
 - **Mode picker:** it sits below the rating strip, the badges and Latest results. Everything above it covers all modes, and everything below it follows it.
 - **Rating chart:** it is all-time. Its heading gives the racer's rank and rating in the picked mode, overall under **All modes**, out of every racer rated there, marked provisional below 5 finishes there.
   - The chart has one point per race day: the racer's rating in the picked mode after their last race that day. With a mode picked it covers only that mode's race days and takes the mode's colour.
   - Like the record charts it is a step line that holds each rating until the next race day and runs on to the latest race in the archive. It draws the first race day hollow, the current rating with a halo, and the starting rating of 1000 as a dashed line.
-  - Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. There is no race-day calendar.
+  - Pointing anywhere in the plot snaps to the nearest race day, whose tooltip gives that day's change and races. On a touch screen a tap reads one race day and a sideways drag moves through them, while a vertical drag still scrolls the page. There is no race-day calendar.
 - **Below the rating chart**, the picker also drives the finish-time violins of the racer's presets, the racer presets table (see [Finish-time violins and preset tables](#finish-time-violins-and-preset-tables)), and the head-to-head table, whose Win chance column always uses the overall rating. **Find an opponent** filters the head-to-head table by name, matching as **Find a racer** does.
 
 ### Player card
@@ -222,10 +225,18 @@ Like the racer page's heading stats, everything on the card covers all modes and
 - **Nemesis:** the racer page's Nemesis, with the racer's W–L against them. Favourite Victim is left off, so a shared card never singles out a racer the sharer beats.
 - **Footer:** the site name and address, and the date of the data snapshot in Eastern Time.
 
-## Dialogs and keyboard
+## Dialogs, keyboard and touch
 
 - Escape closes an open tooltip or dialog. A modal dialog makes the rest of the page inert while it is open and gives focus back when it closes.
 - Status toasts close by themselves after 3 seconds, or when clicked.
+- **Tap:** on a touch screen, a tap shows the tooltip a mouse would show on hover, above what was tapped. A second tap on it, a touch anywhere else or a scroll closes it.
+  - Links and buttons keep their own action on tap and show no tooltip. That covers a sort header's medal rule, a top-rated runner-up's rank and a badge's share, which show only on hover or focus.
+  - A tag or comment inside a race row both opens the race and shows its tooltip.
+- **Touch screens** (no hover, coarse pointer):
+  - Tap targets are at least 24px: sort headers are 32px tall and a dialog's close button is 44px.
+  - Scrolling inside a dialog doesn't carry on into the page behind it.
+- **Narrow screens:** at 980px and below, strips and tables that scroll sideways show a soft shadow on the side where more is hidden. The badge-holders list in a dialog shows one at its bottom.
+- At phone width the search boxes and the season select use 16px text, so iOS does not zoom the page when one is focused.
 
 ## Easter eggs
 

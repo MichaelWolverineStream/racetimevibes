@@ -34,6 +34,8 @@ let ratingRankDeltaCache = new Map();
 let seasonStandingsCache = new Map();
 let seasonModeRatingDeltaCache = null;
 let currentView = null;
+// window.scrollY when the board was last left for a racer page; null until then.
+let boardScrollY = null;
 
 const DEFAULT_LEADERBOARD_SORT = { key: "rating", direction: "desc" };
 const leaderboardState = {
@@ -705,11 +707,11 @@ function appendRankDelta(cell, rank, delta, season = null) {
   if (delta === "new") {
     arrow.className = "rank-new";
     arrow.textContent = "NEW";
-    arrow.title = "New in the last 7 days";
+    bindTooltip(arrow, "New in the last 7 days");
   } else {
     arrow.className = `trend rank-delta trend--${delta > 0 ? "up" : "down"}`;
     arrow.textContent = `${delta > 0 ? "\u25B2" : "\u25BC"}${Math.abs(delta)}`;
-    arrow.title = `${season === null ? "Rating" : `${seasonFullLabel(season)} rating`} rank 7 days ago: #${rank + delta}`;
+    bindTooltip(arrow, `${season === null ? "Rating" : `${seasonFullLabel(season)} rating`} rank 7 days ago: #${rank + delta}`);
   }
   cell.appendChild(arrow);
 }
@@ -1326,6 +1328,9 @@ function showPlayer(playerIndex, modeId, isInitial) {
     playerState.query = "";
     document.querySelector("#player-search").value = "";
   }
+  if (!isInitial && !wasPlayer) {
+    boardScrollY = window.scrollY;
+  }
   document.body.classList.add("viewing-player");
   document.querySelector("#player-view").hidden = false;
   renderPlayerView(playerIndex);
@@ -1346,9 +1351,20 @@ function showLeaderboard(isInitial) {
   document.querySelector("#player-view").hidden = true;
   document.title = BASE_TITLE;
   if (!isInitial && wasPlayer) {
-    focusHeading("#leaderboard-title");
+    returnToBoard();
   }
   currentView = { kind: "leaderboard" };
+}
+
+// Back from a racer goes to where the board was left, or to the top of the board's panel when the
+// visit began on a racer page. Focus moves to the board's heading either way, without scrolling.
+function returnToBoard() {
+  if (boardScrollY === null) {
+    document.querySelector("#leaderboard").scrollIntoView();
+  } else {
+    window.scrollTo(0, boardScrollY);
+  }
+  document.querySelector("#leaderboard-title").focus({ preventScroll: true });
 }
 
 function route(isInitial) {

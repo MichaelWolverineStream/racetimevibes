@@ -291,6 +291,11 @@
   color: var(--positive);
 }
 
+/* A sideways drag scrubs the chart (racer-extras.js); vertical drags still scroll the page. */
+#player-rating-chart .chart-svg {
+  touch-action: pan-y;
+}
+
 /* Slower than the record charts' draw-in: this line spans the whole panel. */
 #player-rating-chart {
   --draw: 1200ms;
@@ -369,6 +374,22 @@
 
   .player-stat {
     padding-inline: 10px;
+  }
+
+  /* Podiums takes the whole first row, so its four-part value cannot run into H2H. H2H and Badges
+     share the next row under a rule, and H2H drops the divider that .player-stat + .player-stat gives. */
+  .player-stat:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .player-stat:nth-child(2),
+  .player-stat:nth-child(3) {
+    grid-column: span 3;
+    border-top: 1px solid var(--line);
+  }
+
+  .player-stat:nth-child(2) {
+    border-left: 0;
   }
 
   /* One rival per line, each under a full-width rule. */

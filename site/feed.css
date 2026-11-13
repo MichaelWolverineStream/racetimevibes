@@ -680,10 +680,11 @@
 
   /* The tags drop to their own line under the name, so names keep their width. */
   .feed-entrant {
-    grid-template-columns: 26px minmax(0, 1fr) 60px 52px 60px 40px;
+    grid-template-columns: 26px auto minmax(0, 1fr) auto 40px;
     grid-template-areas:
-      "place name time chests cph delta"
-      ". tags tags tags tags tags";
+      "place name name time delta"
+      ". chests cph . ."
+      ". tags tags tags tags";
     gap: 0 6px;
   }
 
@@ -702,8 +703,16 @@
     margin-top: 2px;
   }
 
-  .feed-entrant__tags:empty {
+  .feed-entrant__tags:empty,
+  .feed-entrant__chests:empty,
+  .feed-entrant__cph:empty {
     display: none;
+  }
+
+  /* Chests and CPH sit under the name; the margin, like the tags', only applies when they are filled. */
+  .feed-entrant__chests,
+  .feed-entrant__cph {
+    margin-top: 2px;
   }
 
   .feed-entrant__time {

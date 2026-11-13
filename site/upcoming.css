@@ -121,11 +121,26 @@
     white-space: normal;
   }
 
+  /* The tab leaves the border and sits in flow under the title, tall enough to tap. */
   .upcoming__schedule {
-    right: 10px;
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    margin: 0 0 8px 8px;
   }
 
   .upcoming__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* A touch screen wider than a phone keeps the tab on the border, at least 24px tall: it still ends
+   above the list, 16px into the strip. */
+@media (pointer: coarse) and (min-width: 621px) {
+  .upcoming__schedule {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
   }
 }

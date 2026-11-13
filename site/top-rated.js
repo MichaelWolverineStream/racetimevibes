@@ -71,7 +71,7 @@ const TopRated = (() => {
     const rest = leaders.slice(MAX_NAMED);
     if (rest.length > 0) {
       const more = element("span", "top-rated__more", ` +${rest.length}`);
-      more.title = rest.map((playerIndex) => participants.players[playerIndex].name).join(", ");
+      bindTooltip(more, rest.map((playerIndex) => participants.players[playerIndex].name).join(", "));
       names.append(more);
     }
     return names;

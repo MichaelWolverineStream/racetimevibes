@@ -315,6 +315,20 @@ tr:focus-within .follow-star--row,
   opacity: 1;
 }
 
+/* Touch has no hover to reveal the star, so rows show it always. */
+@media (hover: none) {
+  .follow-star--row {
+    opacity: 1;
+  }
+}
+
+@media (pointer: coarse) {
+  .follow-star {
+    min-width: 24px;
+    min-height: 24px;
+  }
+}
+
 .ui-time {
   font-variant-numeric: tabular-nums;
 }
@@ -511,6 +525,7 @@ tr:focus-within .follow-star--row,
   width: min(560px, 100vw - 32px);
   height: fit-content;
   max-height: min(80vh, 640px);
+  max-height: min(80svh, 640px);
   margin: auto;
   padding: 20px 22px;
   border: 3px solid var(--gold);
@@ -607,6 +622,33 @@ tr:focus-within .follow-star--row,
 .ui-badge-panel__holder:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
+}
+
+/* A fade at the bottom of the holder list while more is hidden: the cover gradient matches the
+   panel's --panel ground and scrolls with the content, the shadow stays put. */
+@media (max-width: 980px) {
+  .ui-badge-panel__holders {
+    background:
+      linear-gradient(to top, var(--panel) 30%, transparent) center bottom / 100% 40px no-repeat local,
+      radial-gradient(farthest-side at 50% 100%, var(--scroll-cue), transparent) center bottom / 100% 14px no-repeat scroll;
+  }
+}
+
+@media (pointer: coarse) {
+  .ui-badge-panel__close {
+    top: 4px;
+    right: 4px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .ui-badge-panel__header {
+    padding-right: 40px;
+  }
+
+  .ui-badge-panel__holders {
+    overscroll-behavior: contain;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
