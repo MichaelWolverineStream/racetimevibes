@@ -10,7 +10,7 @@ import re
 import statistics
 import sys
 from collections import Counter, defaultdict
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -85,6 +85,16 @@ EXCLUDED_MODES = {"ladder test", "ladder_test"}
 # A weekday-hour gets a band only with at least this many scheduled races.
 # Must match BAND_MIN_SCHEDULED in site/app.js and the heatmap legend in site/index.html.
 BAND_MIN_SCHEDULED = 5
+# A scheduled race has a real field with at least this many racers, the smallest field
+# that awards gold and silver (highlights.MEDAL_TIERS).
+# Must match REAL_FIELD_MIN in site/app.js and the 05 panel's text in site/index.html.
+REAL_FIELD_MIN = 4
+# A season week is this many days, counted from the season's Eastern start date.
+SEASON_WEEK_DAYS = 7
+# A newcomer is retained by racing on a later date within this many days of their first.
+# Must match NEWCOMER_WINDOW_DAYS in site/app.js.
+NEWCOMER_WINDOW_DAYS = 28
+NEWCOMER_KEYS = ("newcomer_count", "newcomer_matured_count", "newcomer_retained_count")
 
 JsonObject = dict[str, Any]
 
@@ -281,7 +291,8 @@ def _season_summary(
     """Return one row per season and the counts of races and slots that fall in none.
 
     Races are every included race; slots are the counted, unpulled ones. A season is
-    complete once the next season has started within the counted schedule.
+    complete once the next season has started within the counted schedule. Racers are
+    the identified entrants, counted as distinct people.
     """
     rows: dict[int, JsonObject] = {}
 
@@ -293,12 +304,15 @@ def _season_summary(
                 "is_complete": False,
                 "scheduled_count": 0,
                 "started_count": 0,
+                "real_field_count": 0,
                 "race_count": 0,
                 "entrant_total": 0,
             },
         )
 
     races_without_season = 0
+    season_records: dict[int, list[JsonObject]] = defaultdict(list)
+    season_racers: dict[int, set[str]] = defaultdict(set)
     for record in records:
         season = schedule_archive.season_of(record["started_at"], starts)
         if season is None:
@@ -306,6 +320,8 @@ def _season_summary(
             continue
         row(season)["race_count"] += 1
         row(season)["entrant_total"] += record["entrants_count"]
+        season_records[season].append(record)
+        season_racers[season] |= record["racer_ids"]
     slots_without_season = 0
     for slot in slots:
         season = schedule_archive.season_of(slot["started_at"], starts)
@@ -314,11 +330,15 @@ def _season_summary(
             continue
         row(season)["scheduled_count"] += 1
         row(season)["started_count"] += slot["started"]
+        row(season)["real_field_count"] += slot["racers"] >= REAL_FIELD_MIN
 
+    start_of = dict(starts)
     next_start = {
         number: starts[index + 1][1]
         for index, (number, _start) in enumerate(starts[:-1])
     }
+    last_whole_day = _last_whole_day(counted_through)
+    newcomers = _newcomers(records, starts, last_whole_day)
     for season, item in rows.items():
         following = next_start.get(season)
         item["is_complete"] = (
@@ -326,10 +346,100 @@ def _season_summary(
             and following is not None
             and following <= counted_through
         )
+        racers = season_racers[season]
+        previous = season_racers.get(season - 1)
+        item["racer_count"] = len(racers)
+        item |= _season_weeks(
+            season_records[season], start_of[season], following, last_whole_day
+        )
+        item["previous_racer_count"] = len(previous) if previous else None
+        item["returning_count"] = len(previous & racers) if previous else None
+        item |= {key: newcomers[season][key] for key in NEWCOMER_KEYS}
     return [rows[season] for season in sorted(rows)], {
         "races_without_season": races_without_season,
         "slots_without_season": slots_without_season,
     }
+
+
+def _last_whole_day(counted_through: datetime | None) -> date | None:
+    """Return the last Eastern date the counted schedule covers in full, or None."""
+    if counted_through is None:
+        return None
+    return counted_through.astimezone(SCHEDULE_TIMEZONE).date() - timedelta(days=1)
+
+
+def _season_weeks(
+    records: list[JsonObject],
+    start: datetime,
+    next_start: datetime | None,
+    last_whole_day: date | None,
+) -> JsonObject:
+    """Summarize the distinct racers of each full season week of one season.
+
+    A season week is SEASON_WEEK_DAYS days counted from the season's Eastern start date.
+    The season's last day is the day before the next season's start date, or the last
+    whole day when that is earlier. A week that reaches past the last day is not full,
+    and its races count toward no week.
+    """
+    start_day = start.astimezone(SCHEDULE_TIMEZONE).date()
+    full_week_count = 0
+    if last_whole_day is not None:
+        last_day = last_whole_day
+        if next_start is not None:
+            next_start_day = next_start.astimezone(SCHEDULE_TIMEZONE).date()
+            last_day = min(last_day, next_start_day - timedelta(days=1))
+        full_week_count = max(0, ((last_day - start_day).days + 1) // SEASON_WEEK_DAYS)
+
+    weeks: list[set[str]] = [set() for _ in range(full_week_count)]
+    for record in records:
+        # A race in the few minutes before the start on the day before it has week -1.
+        index = (record["local_started_at"].date() - start_day).days // SEASON_WEEK_DAYS
+        if 0 <= index < full_week_count:
+            weeks[index] |= record["racer_ids"]
+    counts = [len(week) for week in weeks]
+    return {
+        "full_week_count": full_week_count,
+        "weekly_racers_median": statistics.median(counts) if counts else None,
+        "weekly_racers_min": min(counts) if counts else None,
+        "weekly_racers_max": max(counts) if counts else None,
+    }
+
+
+def _newcomers(
+    records: list[JsonObject],
+    starts: list[tuple[int, datetime]],
+    last_whole_day: date | None,
+) -> dict[int, Counter[str]]:
+    """Count each season's newcomers, and the matured and retained ones among them.
+
+    A newcomer's first included race falls in the season; a racer who first raced
+    before season 1 is no season's newcomer. A newcomer is matured once the
+    NEWCOMER_WINDOW_DAYS days after their first race date end on or before the last
+    whole day, and retained if they also raced on a later date within those days.
+    """
+    first_started_at: dict[str, datetime] = {}
+    race_days: dict[str, set[date]] = defaultdict(set)
+    for record in records:
+        for racer in record["racer_ids"]:
+            race_days[racer].add(record["local_started_at"].date())
+            if racer not in first_started_at or record["started_at"] < first_started_at[racer]:
+                first_started_at[racer] = record["started_at"]
+
+    counts: dict[int, Counter[str]] = defaultdict(Counter)
+    for racer, started_at in first_started_at.items():
+        season = schedule_archive.season_of(started_at, starts)
+        if season is None:
+            continue
+        counts[season]["newcomer_count"] += 1
+        first_day = started_at.astimezone(SCHEDULE_TIMEZONE).date()
+        window_end = first_day + timedelta(days=NEWCOMER_WINDOW_DAYS)
+        if last_whole_day is None or window_end > last_whole_day:
+            continue
+        counts[season]["newcomer_matured_count"] += 1
+        counts[season]["newcomer_retained_count"] += any(
+            first_day < day <= window_end for day in race_days[racer]
+        )
+    return counts
 
 
 def _scheduled_days(
@@ -558,6 +668,11 @@ def aggregate_races(
             "started_at": context["started_at"],
             "local_started_at": local_started_at,
             "entrants_count": context["entrants_count"],
+            # The identified entrants. Only counts of them leave the build.
+            "racer_ids": frozenset(
+                user_id
+                for user_id, *_rest in participant_stats._race_entries(race, Counter())
+            ),
         }
         contexts.append(context)
         included_records.append(record)
@@ -639,7 +754,7 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 10,
+        "schema_version": 11,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {

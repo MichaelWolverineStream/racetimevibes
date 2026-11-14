@@ -145,7 +145,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 
 ## Privacy
 
-- **`race-stats.json`** is anonymous. It holds slot and race counts, distributions and bands, never entrant arrays, IDs, names, profile links, or Twitch fields. The schedule's slot and race ids are used only inside the build.
+- **`race-stats.json`** is anonymous. It holds slot and race counts, distributions and bands, and counts of distinct racers per season, never entrant arrays, IDs, names, profile links, or Twitch fields. The schedule's slot and race ids, and the racers' user IDs, are used only inside the build, and only counts are published. The racer counts could be derived from `participants.json`, which already publishes every race's entries.
 - **`participants.json`** publishes each racer's public display name and stable user ID, because a leaderboard requires them, plus the file name of their mirrored avatar.
   - That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus the URL's lowercase extension, for example `3f9ac01d2e7b8a64.jpg`. It carries nothing from the upload's own file name.
   - A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and `%`, as in percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`.

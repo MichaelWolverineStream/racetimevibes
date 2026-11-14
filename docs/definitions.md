@@ -11,15 +11,17 @@
 - **Mode:** the text in the brackets of the `Step Ladder Series - [mode]` prefix of `info`, trimmed and lowercased. Later tags such as `[VT]` are ignored. A missing or malformed prefix is grouped as `unknown`.
 - **Preset:** the name after the mode in the race's `info` first line, trimmed, cut at any seed URL (along with a room slug such as `owner/slug` just before it), with `[x]` turned into `(x)` and any `Grab Bag (...)` collapsed to `Grab Bag`. Each preset belongs to its mode.
 - **Field:** the race's entrant count, which includes DNFs and anonymous entrants.
+- **Real field:** a scheduled race that started with a field of at least 4 (`REAL_FIELD_MIN`), the smallest field that awards gold and silver (see **Medal** under [Entrants](#entrants)).
 
 ## Time
 
 - All dates, hours and schedule buckets use `America/New_York` (Eastern Time), including the seasonal switch between EST and EDT. A race's **date**, or **day**, is its Eastern Time local start date.
-- A **week** runs Monday to Sunday.
+- A **week** runs Monday to Sunday. A **season week** is the exception: seven days counted from the Eastern Time date of the season's start (see [Seasons](#seasons)).
 
 ## Entrants
 
 - **Identified:** an entry carrying a stable public user ID. Anonymized entries are not identified.
+- **Racer of a season:** an identified entrant, of any status, with an entry in an included race of the season, counted as one distinct person. Anonymous entries count in a race's field, never as a racer.
 - **Finisher:** an entrant whose status is `done` and who has a `place`. A **timed** finisher also has a `finish_time`. Everyone else, DNF or DQ, is a non-finisher.
 - **Winner:** the identified entrant with place 1.
 - **Medal:** the reward a finisher's place earns in its race, set by the race's field (see [Races](#races)). The rule is `MEDAL_TIERS` in `scripts/highlights.py`:
@@ -57,6 +59,7 @@ These terms use the [ladder schedule mirror](archive.md#ladder-schedule-mirror).
 - **Scheduled day:** an Eastern Time date inside the archive's dates that holds at least one slot. Pulled slots count. Slots of `ladder_test` races do not. The days that are not scheduled are the gaps between seasons and the time before the first slot, so April 2025 has none.
   - Scheduled days deliberately ignore **counted through**. The schedule is published ahead, so whether a day has races is known before its outcomes are, and the latest days stay in the per-day averages.
   - A season the mirror does not list yet only delays its days. Their entries leave the numerator too, so the average is never inflated.
+- **Last whole day:** the Eastern Time date of **counted through**, minus one day.
 - **Seasons by start time:** the per-season panels place a slot in the season its own start falls in, by the [season rule](#seasons), never by the season number it carries. API seasons overlap, so the filed number says little about when a slot ran. Every other panel buckets a slot by its own Eastern Time start.
 
 ## Seasons
@@ -67,3 +70,6 @@ These terms drive the [season ratings](../README.md#season-ratings). `schedule_a
   - A race's season comes from this rule, not from the season number its slot carries. alttpr.racing files the odd slot under the wrong season, such as an old season-1 slot listed inside a later season, and the rule keeps such a slot from moving a boundary. `diagnostics.seasons.stray_slots` counts the slots outside their own season's run.
 - **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start until 5 minutes before the next season's start. A race belongs to the season its start falls in. Races before season 1's span have none, and `diagnostics.seasons.races_without_season` counts them.
 - **Current season:** the newest season holding at least one included race.
+- **Season week:** seven days counted from the Eastern Time date of the season's start. The season's last day is the earlier of the day before the next season's start date and the **last whole day**. A season week is **full** when it ends on or before that day. A partial last week is left out: its races count toward the season's racers but toward no week.
+- **Returning racer:** one of the previous season's racers who is also one of this season's. The first season has none, because no season comes before it.
+- **Newcomer:** a racer whose first included race falls in the season. A racer who first raced before season 1 is no season's newcomer. A newcomer has **matured** when the 28 days (`NEWCOMER_WINDOW_DAYS`) after the date of their first race end on or before the **last whole day**, and is **retained** when they raced on a later date within those 28 days. That race may be in the next season.

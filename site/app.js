@@ -5,13 +5,13 @@ const decimalFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-// Narrowest width at which the monthly line charts and season bars keep legible labels; narrower hosts scroll.
+// Narrowest width at which the season bar charts keep legible labels; narrower hosts scroll.
 const MIN_CHART_WIDTH = 260;
 // Each nice axis maximum as a multiple of its power of ten, with a tick count that keeps every tick round.
 const NICE_SCALES = [
   [1, 5], [1.2, 4], [1.5, 5], [2, 4], [2.5, 5], [3, 3], [4, 4], [5, 5], [6, 6], [8, 4], [10, 5],
 ];
-// Month labels thin out by divisors of 12, so January always keeps its label.
+// Month labels thin out by divisors of 12, so January always keeps its label. Used by racer-charts.js.
 const MONTH_LABEL_STEPS = [1, 2, 3, 6, 12];
 const MONTH_LABEL_MIN_SPACING = 40;
 const chartBuilders = new Map();
@@ -243,6 +243,10 @@ function bindTooltip(target, text) {
 const BAND_LABELS = { prime: "primetime", normal: "normal", quiet: "quiet" };
 // Must match BAND_MIN_SCHEDULED in scripts/build_stats.py and the heatmap legend in index.html.
 const BAND_MIN_SCHEDULED = 5;
+// Must match REAL_FIELD_MIN in scripts/build_stats.py.
+const REAL_FIELD_MIN = 4;
+// Must match NEWCOMER_WINDOW_DAYS in scripts/build_stats.py.
+const NEWCOMER_WINDOW_DAYS = 28;
 
 function startRateText(startedCount, scheduledCount) {
   return `${integerFormatter.format(startedCount)} of ${integerFormatter.format(scheduledCount)} scheduled races started (${formatPercent(startedCount / scheduledCount)})`;
@@ -342,37 +346,58 @@ function seasonBarChart(seasons, options, width) {
   const barWidth = bandWidth * 0.62;
   seasons.forEach((item, index) => {
     const value = values[index];
-    const x = margin.left + index * bandWidth + (bandWidth - barWidth) / 2;
-    if (value !== null) {
+    const bandX = margin.left + index * bandWidth;
+    const x = bandX + (bandWidth - barWidth) / 2;
+    const label = options.tooltip(item);
+    const group = svgElement("g", {
+      class: "chart-mark",
+      tabindex: "0",
+      role: "img",
+      "aria-label": label,
+    });
+    if (value === null) {
+      // No value: the whole band still answers hover, focus and touch, and a dash marks the gap.
+      group.append(
+        svgElement("rect", { class: "bar-hit", x: bandX, y: margin.top, width: bandWidth, height: plotHeight }),
+        svgElement(
+          "text",
+          { class: "axis-label", x: x + barWidth / 2, y: margin.top + plotHeight - 6, "text-anchor": "middle" },
+          "–",
+        ),
+        svgElement("rect", {
+          class: "focus-ring",
+          x: x - 2,
+          y: margin.top,
+          width: barWidth + 4,
+          height: plotHeight,
+          rx: 2,
+        }),
+      );
+    } else {
       const barHeight = (value / maximum) * plotHeight;
       const y = margin.top + plotHeight - barHeight;
-      const label = options.tooltip(item);
-      const group = svgElement("g", {
-        class: "chart-mark",
-        tabindex: "0",
-        role: "img",
-        "aria-label": label,
-      });
-      const bar = svgElement("rect", {
-        class: item.is_complete ? "bar bar--series" : "bar bar--muted",
-        x,
-        y,
-        width: barWidth,
-        height: Math.max(0, barHeight),
-        rx: 1,
-      });
-      const focusRing = svgElement("rect", {
-        class: "focus-ring",
-        x: x - 2,
-        y: Math.max(margin.top, y - 2),
-        width: barWidth + 4,
-        height: Math.max(4, barHeight + 4),
-        rx: 2,
-      });
-      group.append(bar, focusRing, svgElement("title", {}, label));
-      bindTooltip(group, label);
-      svg.append(group);
+      group.append(
+        svgElement("rect", {
+          class: item.is_complete ? "bar bar--series" : "bar bar--muted",
+          x,
+          y,
+          width: barWidth,
+          height: Math.max(0, barHeight),
+          rx: 1,
+        }),
+        svgElement("rect", {
+          class: "focus-ring",
+          x: x - 2,
+          y: Math.max(margin.top, y - 2),
+          width: barWidth + 4,
+          height: Math.max(4, barHeight + 4),
+          rx: 2,
+        }),
+      );
     }
+    group.append(svgElement("title", {}, label));
+    bindTooltip(group, label);
+    svg.append(group);
     svg.append(svgElement(
       "text",
       { class: "axis-label", x: x + barWidth / 2, y: height - 25, "text-anchor": "middle" },
@@ -385,134 +410,6 @@ function seasonBarChart(seasons, options, width) {
       "text",
       { class: "axis-label", x: margin.left + plotWidth / 2, y: height - 5, "text-anchor": "middle" },
       "SEASON",
-    ),
-  );
-  return svg;
-}
-
-function monthTitle(month) {
-  return `${month.label}${month.is_complete ? "" : " (partial)"}`;
-}
-
-function monthlyLineChart(months, selectedPeriodId, options, width) {
-  const height = 360;
-  const margin = { top: 24, right: 20, bottom: 60, left: 68 };
-  const plotWidth = width - margin.left - margin.right;
-  const plotHeight = height - margin.top - margin.bottom;
-  const values = months.map((month) => month[options.valueKey]);
-  const { maximum, tickCount } = niceScale(Math.max(...values.filter((value) => value !== null)));
-  const step = plotWidth / months.length;
-  const x = (index) => margin.left + (index + 0.5) * step;
-  const y = (value) => margin.top + plotHeight - (value / maximum) * plotHeight;
-  const svg = svgElement("svg", {
-    class: "chart-svg",
-    width,
-    height,
-    viewBox: `0 0 ${width} ${height}`,
-    role: "img",
-    "aria-labelledby": `${options.id}-title ${options.id}-description`,
-  });
-  svg.append(
-    svgElement("title", { id: `${options.id}-title` }, options.title),
-    svgElement("desc", { id: `${options.id}-description` }, options.description),
-  );
-
-  // A selected quarter shades its months instead of hiding the rest of the trend.
-  const selectedIndexes = months.flatMap((month, index) => (month.quarter_id === selectedPeriodId ? [index] : []));
-  if (selectedIndexes.length) {
-    svg.append(svgElement("rect", {
-      class: "period-highlight",
-      x: margin.left + selectedIndexes[0] * step,
-      y: margin.top,
-      width: selectedIndexes.length * step,
-      height: plotHeight,
-    }));
-  }
-
-  for (let tick = 0; tick <= tickCount; tick += 1) {
-    const value = (maximum * tick) / tickCount;
-    svg.append(
-      svgElement("line", {
-        class: tick === 0 ? "baseline" : "grid-line",
-        x1: margin.left,
-        x2: width - margin.right,
-        y1: y(value),
-        y2: y(value),
-      }),
-      svgElement(
-        "text",
-        { class: "axis-label", x: margin.left - 10, y: y(value) + 4, "text-anchor": "end" },
-        options.axisFormatter(value),
-      ),
-    );
-  }
-
-  // A month without races has no average, so the line breaks there instead of bridging the gap.
-  const path = values
-    .map((value, index) => {
-      if (value === null) return "";
-      const command = index > 0 && values[index - 1] !== null ? "L" : "M";
-      return `${command}${x(index)},${y(value)}`;
-    })
-    .join("");
-  svg.append(svgElement("path", { class: "turnout-line", d: path }));
-
-  const labelStep = MONTH_LABEL_STEPS.find((candidate) => candidate * step >= MONTH_LABEL_MIN_SPACING) ?? 12;
-  let labelledYear = null;
-  months.forEach((month, index) => {
-    const value = values[index];
-    if (value !== null) {
-      const label = options.tooltip(month);
-      const group = svgElement("g", {
-        class: "chart-mark",
-        tabindex: "0",
-        role: "img",
-        "aria-label": label,
-      });
-      group.append(
-        svgElement("rect", {
-          class: "turnout-hit",
-          x: x(index) - step / 2,
-          y: margin.top,
-          width: step,
-          height: plotHeight,
-        }),
-        svgElement("line", {
-          class: "turnout-guide",
-          x1: x(index),
-          x2: x(index),
-          y1: margin.top,
-          y2: margin.top + plotHeight,
-        }),
-        svgElement("circle", { class: "turnout-dot", cx: x(index), cy: y(value), r: 4 }),
-        svgElement("title", {}, label),
-      );
-      bindTooltip(group, label);
-      svg.append(group);
-    }
-
-    if ((Number(month.id.slice(5)) - 1) % labelStep !== 0) return;
-    const [monthName, year] = month.label.split(" ");
-    svg.append(svgElement(
-      "text",
-      { class: "axis-label axis-label--period", x: x(index), y: height - 34, "text-anchor": "middle" },
-      monthName.toUpperCase(),
-    ));
-    if (year !== labelledYear) {
-      svg.append(svgElement(
-        "text",
-        { class: "axis-label", x: x(index), y: height - 19, "text-anchor": "middle" },
-        year,
-      ));
-      labelledYear = year;
-    }
-  });
-
-  svg.append(
-    svgElement(
-      "text",
-      { class: "axis-label", x: 14, y: margin.top + plotHeight / 2, transform: `rotate(-90 14 ${margin.top + plotHeight / 2})`, "text-anchor": "middle" },
-      options.axisTitle,
     ),
   );
   return svg;
@@ -546,6 +443,31 @@ function renderTable(container, headers, rows) {
 
 const BANDS = new Set(["prime", "normal", "quiet"]);
 
+function isCount(value) {
+  return Number.isInteger(value) && value >= 0;
+}
+
+// Weekly reach is all null until a full week exists, then min <= median <= max <= racers.
+function hasValidWeeklyRacers(item) {
+  const weekly = [item.weekly_racers_median, item.weekly_racers_min, item.weekly_racers_max];
+  if (item.full_week_count === 0) return weekly.every((value) => value === null);
+  return weekly.every((value) => Number.isFinite(value))
+    && item.weekly_racers_min >= 0
+    && item.weekly_racers_min <= item.weekly_racers_median
+    && item.weekly_racers_median <= item.weekly_racers_max
+    && item.weekly_racers_max <= item.racer_count;
+}
+
+// Season 1 has no earlier season, so both fields are null together.
+function hasValidReturning(item) {
+  if (item.previous_racer_count === null || item.returning_count === null) {
+    return item.previous_racer_count === null && item.returning_count === null;
+  }
+  return Number.isInteger(item.previous_racer_count) && item.previous_racer_count > 0
+    && isCount(item.returning_count)
+    && item.returning_count <= Math.min(item.previous_racer_count, item.racer_count);
+}
+
 function hasValidSeasons(seasons) {
   return (
     Array.isArray(seasons)
@@ -559,6 +481,17 @@ function hasValidSeasons(seasons) {
       && Number.isFinite(item.race_count) && item.race_count >= 0
       && Number.isFinite(item.entrant_total) && item.entrant_total >= 0
       && item.started_count <= item.scheduled_count
+      && isCount(item.real_field_count) && item.real_field_count <= item.started_count
+      && isCount(item.racer_count)
+      && isCount(item.full_week_count)
+      && hasValidWeeklyRacers(item)
+      && hasValidReturning(item)
+      && isCount(item.newcomer_count)
+      && isCount(item.newcomer_matured_count)
+      && isCount(item.newcomer_retained_count)
+      && item.newcomer_retained_count <= item.newcomer_matured_count
+      && item.newcomer_matured_count <= item.newcomer_count
+      && item.newcomer_count <= item.racer_count
     ))
   );
 }
@@ -587,7 +520,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 10
+    || data.schema_version !== 11
     || !hasValidAggregate(data)
     || !hasValidSeasons(data.seasons)
     || !Array.isArray(data.periods)
@@ -652,43 +585,104 @@ function renderCountedThrough(isoString) {
   node.textContent = `Scheduled races counted through ${formatted}`;
 }
 
-function renderSelection(data, selection) {
+function renderSelection(selection) {
   document.querySelector("#active-period-label").textContent = selection.label;
   renderPrimetimeHeatmap(document.querySelector("#primetime-heatmap"), selection.weekday_hourly);
-  mountChart(document.querySelector("#participation-racers-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
-    id: "participation-racers",
-    valueKey: "average_racers",
-    title: "Average racers per race by month",
-    description: "A line with one dot per calendar month shows average total entrants per finished race.",
-    axisTitle: "AVERAGE RACERS PER RACE",
-    axisFormatter: (value) => decimalFormatter.format(value),
-    tooltip: (month) => `${monthTitle(month)}: ${formatAverage(month.average_racers)} average racers across ${integerFormatter.format(month.race_count)} races`,
-  }, width));
-  mountChart(document.querySelector("#participation-entries-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
-    id: "participation-entries",
-    valueKey: "entries_per_day",
-    title: "Race entries per day by month",
-    description: "A line with one dot per calendar month shows recorded race entries per day with scheduled races.",
-    axisTitle: "RACE ENTRIES PER DAY",
+}
+
+function inProgressSuffix(item) {
+  return item.is_complete ? "" : " (in progress)";
+}
+
+// "so far" qualifies a count that the season in progress is still adding to.
+function soFar(item) {
+  return item.is_complete ? "" : " so far";
+}
+
+function pluralize(count, noun) {
+  return `${integerFormatter.format(count)} ${noun}${count === 1 ? "" : "s"}`;
+}
+
+function newcomerText(item) {
+  if (item.newcomer_count === 0) return "no newcomers";
+  const newcomers = pluralize(item.newcomer_count, "newcomer");
+  if (item.newcomer_matured_count === 0) return `${newcomers}, none has had ${NEWCOMER_WINDOW_DAYS} days yet`;
+  return `${newcomers}, ${integerFormatter.format(item.newcomer_retained_count)} of the ${integerFormatter.format(item.newcomer_matured_count)} who have had ${NEWCOMER_WINDOW_DAYS} days raced again`;
+}
+
+function reachText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  const racers = `${integerFormatter.format(item.racer_count)} racers${item.is_complete ? " in the season" : " so far"}`;
+  if (item.full_week_count === 0) {
+    return `${title}: no full week${item.is_complete ? "" : " yet"}; ${racers}`;
+  }
+  const weeks = `${pluralize(item.full_week_count, "full week")}${soFar(item)}`;
+  return `${title}: ${formatCount(item.weekly_racers_median)} active racers in a typical week (${integerFormatter.format(item.weekly_racers_min)} to ${integerFormatter.format(item.weekly_racers_max)} across ${weeks}); ${racers}`;
+}
+
+function realFieldText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  if (item.scheduled_count === 0) return `${title}: no scheduled races counted`;
+  const share = formatPercent(item.real_field_count / item.scheduled_count);
+  const tense = item.is_complete ? "had" : "have had";
+  return `${title}: ${share} of scheduled races ${tense} ${REAL_FIELD_MIN}+ racers${soFar(item)} (${integerFormatter.format(item.real_field_count)} of ${integerFormatter.format(item.scheduled_count)})`;
+}
+
+function returningText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  if (item.previous_racer_count === null) return `${title}: no earlier season; ${newcomerText(item)}`;
+  const share = formatPercent(item.returning_count / item.previous_racer_count);
+  const verb = item.is_complete ? "returned" : "have returned so far";
+  return `${title}: ${share} of season ${item.season - 1}'s racers ${verb} (${integerFormatter.format(item.returning_count)} of ${integerFormatter.format(item.previous_racer_count)}); ${newcomerText(item)}`;
+}
+
+function renderParticipation(data) {
+  const seasons = data.seasons;
+  mountChart(document.querySelector("#participation-reach-chart"), (width) => seasonBarChart(seasons, {
+    id: "participation-reach",
+    title: "Active racers per week by season",
+    description: "Vertical bars show the median number of distinct racers in a full week of each season. The season in progress is drawn muted.",
+    value: (item) => item.weekly_racers_median,
     axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (month) => (month.entries_per_day === null
-      ? `${monthTitle(month)}: no scheduled races`
-      : `${monthTitle(month)}: ${decimalFormatter.format(month.entries_per_day)} entries per day (${integerFormatter.format(month.scheduled_day_entrant_total)} entries over ${integerFormatter.format(month.scheduled_day_count)} scheduled days)`),
+    tooltip: reachText,
   }, width));
-  mountChart(document.querySelector("#participation-races-chart"), (width) => monthlyLineChart(data.monthly, selection.id, {
-    id: "participation-races",
-    valueKey: "fired_per_day",
-    title: "Races fired per day by month",
-    description: "A line with one dot per calendar month shows scheduled races that started per day with scheduled races.",
-    axisTitle: "RACES FIRED PER DAY",
-    axisFormatter: formatCount,
-    tooltip: (month) => (month.fired_per_day === null
-      ? `${monthTitle(month)}: no scheduled races`
-      : `${monthTitle(month)}: ${decimalFormatter.format(month.fired_per_day)} races fired per day (${integerFormatter.format(month.fired_race_count)} fired over ${integerFormatter.format(month.scheduled_day_count)} scheduled days)`),
+  mountChart(document.querySelector("#participation-fields-chart"), (width) => seasonBarChart(seasons, {
+    id: "participation-fields",
+    title: `Share of scheduled races with ${REAL_FIELD_MIN}+ racers by season`,
+    description: `Vertical bars show the share of each season's scheduled races that started with ${REAL_FIELD_MIN} or more racers. The season in progress is drawn muted.`,
+    value: (item) => (item.scheduled_count ? item.real_field_count / item.scheduled_count : null),
+    scale: { maximum: 1, tickCount: 5 },
+    axisFormatter: formatPercent,
+    tooltip: realFieldText,
+  }, width));
+  mountChart(document.querySelector("#participation-returning-chart"), (width) => seasonBarChart(seasons, {
+    id: "participation-returning",
+    title: "Share of the previous season's racers who returned by season",
+    description: "Vertical bars show the share of the previous season's racers who raced again in each season. The season in progress is drawn muted.",
+    value: (item) => (item.previous_racer_count ? item.returning_count / item.previous_racer_count : null),
+    scale: { maximum: 1, tickCount: 5 },
+    axisFormatter: formatPercent,
+    tooltip: returningText,
   }, width));
 
+  const percentOf = (part, whole) => (whole ? `${formatPercent(part / whole)} (${integerFormatter.format(part)} of ${integerFormatter.format(whole)})` : "--");
   renderTable(
-    document.querySelector("#participation-table"),
+    document.querySelector("#participation-season-table"),
+    ["Season", "Racers", "Active per week", "Weekly range", "Full weeks", `${REAL_FIELD_MIN}+ racer races`, "Returning", "Newcomers", "Raced again"],
+    seasons.map((item) => [
+      `${item.season}${inProgressSuffix(item)}`,
+      integerFormatter.format(item.racer_count),
+      item.full_week_count === 0 ? "--" : formatCount(item.weekly_racers_median),
+      item.full_week_count === 0 ? "--" : `${integerFormatter.format(item.weekly_racers_min)} to ${integerFormatter.format(item.weekly_racers_max)}`,
+      integerFormatter.format(item.full_week_count),
+      percentOf(item.real_field_count, item.scheduled_count),
+      percentOf(item.returning_count, item.previous_racer_count),
+      integerFormatter.format(item.newcomer_count),
+      item.newcomer_matured_count === 0 ? "--" : `${integerFormatter.format(item.newcomer_retained_count)} of ${integerFormatter.format(item.newcomer_matured_count)}`,
+    ]),
+  );
+  renderTable(
+    document.querySelector("#participation-month-table"),
     ["Month", "Coverage", "Avg entries", "Median", "95% range", "Races", "Race entries", "Scheduled days", "Entries/day", "Fired/day"],
     data.monthly.map((month) => [
       month.label,
@@ -706,7 +700,6 @@ function renderSelection(data, selection) {
 }
 
 function renderSeasons(seasons) {
-  const inProgress = (item) => (item.is_complete ? "" : " (in progress)");
   const startRate = (item) => (item.scheduled_count ? formatPercent(item.started_count / item.scheduled_count) : "--");
   mountChart(document.querySelector("#season-start-chart"), (width) => seasonBarChart(seasons, {
     id: "season-start",
@@ -716,8 +709,8 @@ function renderSeasons(seasons) {
     scale: { maximum: 1, tickCount: 5 },
     axisFormatter: formatPercent,
     tooltip: (item) => (item.scheduled_count === 0
-      ? `Season ${item.season}${inProgress(item)}: no scheduled races counted`
-      : `Season ${item.season}${inProgress(item)}: ${startRateText(item.started_count, item.scheduled_count)}`),
+      ? `Season ${item.season}${inProgressSuffix(item)}: no scheduled races counted`
+      : `Season ${item.season}${inProgressSuffix(item)}: ${startRateText(item.started_count, item.scheduled_count)}`),
   }, width));
   mountChart(document.querySelector("#season-entries-chart"), (width) => seasonBarChart(seasons, {
     id: "season-entries",
@@ -725,13 +718,13 @@ function renderSeasons(seasons) {
     description: "Vertical bars show the race entries of each season's finished races. The season in progress is drawn muted.",
     value: (item) => item.entrant_total,
     axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (item) => `Season ${item.season}${inProgress(item)}: ${integerFormatter.format(item.entrant_total)} race entries over ${integerFormatter.format(item.race_count)} races (${formatAverage(item.race_count ? item.entrant_total / item.race_count : null)} per race)`,
+    tooltip: (item) => `Season ${item.season}${inProgressSuffix(item)}: ${integerFormatter.format(item.entrant_total)} race entries over ${integerFormatter.format(item.race_count)} races (${formatAverage(item.race_count ? item.entrant_total / item.race_count : null)} per race)`,
   }, width));
   renderTable(
     document.querySelector("#season-start-table"),
     ["Season", "Scheduled", "Started", "Start rate"],
     seasons.map((item) => [
-      `${item.season}${inProgress(item)}`,
+      `${item.season}${inProgressSuffix(item)}`,
       integerFormatter.format(item.scheduled_count),
       integerFormatter.format(item.started_count),
       startRate(item),
@@ -741,7 +734,7 @@ function renderSeasons(seasons) {
     document.querySelector("#season-entries-table"),
     ["Season", "Races", "Race entries", "Avg racers per race"],
     seasons.map((item) => [
-      `${item.season}${inProgress(item)}`,
+      `${item.season}${inProgressSuffix(item)}`,
       integerFormatter.format(item.race_count),
       integerFormatter.format(item.entrant_total),
       formatAverage(item.race_count ? item.entrant_total / item.race_count : null),
@@ -761,7 +754,7 @@ function renderPeriodControls(data) {
     button.setAttribute("aria-pressed", String(selection.id === "all"));
     button.addEventListener("click", () => {
       buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-      renderSelection(data, selection);
+      renderSelection(selection);
     });
     return button;
   });
@@ -784,7 +777,8 @@ function renderDashboard(data) {
   renderSnapshotAge(data.generated_at);
   renderPeriodControls(data);
   renderCountedThrough(data.source.schedule_counted_through);
-  renderSelection(data, allDataSelection(data));
+  renderSelection(allDataSelection(data));
+  renderParticipation(data);
   renderSeasons(data.seasons);
 }
 

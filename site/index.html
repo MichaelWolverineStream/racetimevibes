@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="be7321a3529f">
+    <meta name="app-version" content="610a16e84168">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <script src="theme.js?v=be7321a3529f"></script>
-    <link rel="stylesheet" href="styles.css?v=be7321a3529f">
-    <link rel="stylesheet" href="ui.css?v=be7321a3529f">
-    <link rel="stylesheet" href="feed.css?v=be7321a3529f">
-    <link rel="stylesheet" href="top-rated.css?v=be7321a3529f">
-    <link rel="stylesheet" href="upcoming.css?v=be7321a3529f">
-    <link rel="stylesheet" href="records.css?v=be7321a3529f">
-    <link rel="stylesheet" href="racer-extras.css?v=be7321a3529f">
-    <link rel="stylesheet" href="share-card.css?v=be7321a3529f">
-    <link rel="stylesheet" href="faceoff.css?v=be7321a3529f">
-    <link rel="stylesheet" href="easter-eggs.css?v=be7321a3529f">
+    <script src="theme.js?v=610a16e84168"></script>
+    <link rel="stylesheet" href="styles.css?v=610a16e84168">
+    <link rel="stylesheet" href="ui.css?v=610a16e84168">
+    <link rel="stylesheet" href="feed.css?v=610a16e84168">
+    <link rel="stylesheet" href="top-rated.css?v=610a16e84168">
+    <link rel="stylesheet" href="upcoming.css?v=610a16e84168">
+    <link rel="stylesheet" href="records.css?v=610a16e84168">
+    <link rel="stylesheet" href="racer-extras.css?v=610a16e84168">
+    <link rel="stylesheet" href="share-card.css?v=610a16e84168">
+    <link rel="stylesheet" href="faceoff.css?v=610a16e84168">
+    <link rel="stylesheet" href="easter-eggs.css?v=610a16e84168">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -232,36 +232,41 @@
           <header class="panel-heading">
             <div>
               <p class="panel-index">05 / Participation</p>
-              <h2>Turnout over time</h2>
+              <h2>Season health</h2>
             </div>
-            <p>By calendar month</p>
+            <p>By season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
           </header>
+          <!-- The 4 in "4+ racers" must match REAL_FIELD_MIN in scripts/build_stats.py and site/app.js. -->
           <div class="participation-grid">
             <div>
               <div class="heatmap-heading">
-                <h3>Average racers per race</h3>
-                <p>Finished races</p>
+                <h3>Active racers per week</h3>
+                <p>Median of the season's full weeks</p>
               </div>
-              <div id="participation-racers-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+              <div id="participation-reach-chart" class="chart-host" aria-live="polite"></div>
             </div>
             <div>
               <div class="heatmap-heading">
-                <h3>Race entries per day</h3>
-                <p>Days with scheduled races</p>
+                <h3>Races with 4+ racers</h3>
+                <p>Share of scheduled races</p>
               </div>
-              <div id="participation-entries-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+              <div id="participation-fields-chart" class="chart-host" aria-live="polite"></div>
             </div>
             <div>
               <div class="heatmap-heading">
-                <h3>Races fired per day</h3>
-                <p>Days with scheduled races</p>
+                <h3>Returning racers</h3>
+                <p>Share of last season's racers</p>
               </div>
-              <div id="participation-races-chart" class="chart-host chart-host--periods" aria-live="polite"></div>
+              <div id="participation-returning-chart" class="chart-host" aria-live="polite"></div>
             </div>
           </div>
           <details class="data-details">
+            <summary>View season values</summary>
+            <div id="participation-season-table" class="table-wrap"></div>
+          </details>
+          <details class="data-details">
             <summary>View monthly values</summary>
-            <div id="participation-table" class="table-wrap"></div>
+            <div id="participation-month-table" class="table-wrap"></div>
           </details>
         </article>
 
@@ -399,20 +404,20 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=be7321a3529f" defer></script>
-    <script src="racer-charts.js?v=be7321a3529f" defer></script>
-    <script src="store.js?v=be7321a3529f" defer></script>
-    <script src="ui.js?v=be7321a3529f" defer></script>
-    <script src="top-rated.js?v=be7321a3529f" defer></script>
-    <script src="upcoming.js?v=be7321a3529f" defer></script>
-    <script src="feed.js?v=be7321a3529f" defer></script>
-    <script src="records.js?v=be7321a3529f" defer></script>
-    <script src="racer-extras.js?v=be7321a3529f" defer></script>
-    <script src="share-card.js?v=be7321a3529f" defer></script>
-    <script src="faceoff.js?v=be7321a3529f" defer></script>
-    <script src="easter-eggs.js?v=be7321a3529f" defer></script>
-    <script src="leaderboard.js?v=be7321a3529f" defer></script>
-    <script src="version-check.js?v=be7321a3529f" defer></script>
-    <script src="visitor-counter.js?v=be7321a3529f" defer></script>
+    <script src="app.js?v=610a16e84168" defer></script>
+    <script src="racer-charts.js?v=610a16e84168" defer></script>
+    <script src="store.js?v=610a16e84168" defer></script>
+    <script src="ui.js?v=610a16e84168" defer></script>
+    <script src="top-rated.js?v=610a16e84168" defer></script>
+    <script src="upcoming.js?v=610a16e84168" defer></script>
+    <script src="feed.js?v=610a16e84168" defer></script>
+    <script src="records.js?v=610a16e84168" defer></script>
+    <script src="racer-extras.js?v=610a16e84168" defer></script>
+    <script src="share-card.js?v=610a16e84168" defer></script>
+    <script src="faceoff.js?v=610a16e84168" defer></script>
+    <script src="easter-eggs.js?v=610a16e84168" defer></script>
+    <script src="leaderboard.js?v=610a16e84168" defer></script>
+    <script src="version-check.js?v=610a16e84168" defer></script>
+    <script src="visitor-counter.js?v=610a16e84168" defer></script>
   </body>
 </html>
