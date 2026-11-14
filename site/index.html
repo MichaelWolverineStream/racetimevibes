@@ -5,34 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="657d89630e90">
+    <meta name="app-version" content="be7321a3529f">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <script src="theme.js?v=657d89630e90"></script>
-    <link rel="stylesheet" href="styles.css?v=657d89630e90">
-    <link rel="stylesheet" href="ui.css?v=657d89630e90">
-    <link rel="stylesheet" href="feed.css?v=657d89630e90">
-    <link rel="stylesheet" href="top-rated.css?v=657d89630e90">
-    <link rel="stylesheet" href="upcoming.css?v=657d89630e90">
-    <link rel="stylesheet" href="records.css?v=657d89630e90">
-    <link rel="stylesheet" href="racer-extras.css?v=657d89630e90">
-    <link rel="stylesheet" href="share-card.css?v=657d89630e90">
-    <link rel="stylesheet" href="faceoff.css?v=657d89630e90">
-    <link rel="stylesheet" href="easter-eggs.css?v=657d89630e90">
+    <script src="theme.js?v=be7321a3529f"></script>
+    <link rel="stylesheet" href="styles.css?v=be7321a3529f">
+    <link rel="stylesheet" href="ui.css?v=be7321a3529f">
+    <link rel="stylesheet" href="feed.css?v=be7321a3529f">
+    <link rel="stylesheet" href="top-rated.css?v=be7321a3529f">
+    <link rel="stylesheet" href="upcoming.css?v=be7321a3529f">
+    <link rel="stylesheet" href="records.css?v=be7321a3529f">
+    <link rel="stylesheet" href="racer-extras.css?v=be7321a3529f">
+    <link rel="stylesheet" href="share-card.css?v=be7321a3529f">
+    <link rel="stylesheet" href="faceoff.css?v=be7321a3529f">
+    <link rel="stylesheet" href="easter-eggs.css?v=be7321a3529f">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
     <div class="top-rail" aria-hidden="true"></div>
     <main>
       <header class="masthead">
-        <img
-          class="category-mark"
-          src="assets/alttpr-ladder.png"
-          alt="ALTTPR Step Ladder category artwork"
-          width="112"
-          height="112"
-        >
+        <a id="home-link" class="category-mark-link" href="./">
+          <img
+            class="category-mark"
+            src="assets/alttpr-ladder.png"
+            alt="Home"
+            width="112"
+            height="112"
+          >
+        </a>
         <div class="title-block">
           <p class="kicker">Stepladder results</p>
           <h1><a class="title-block__link" href="https://alttpr.racing/" target="_blank" rel="noreferrer">Climbers</a></h1>
@@ -300,7 +302,7 @@
         <article class="chart-panel chart-panel--racers chart-panel--player">
           <header class="panel-heading">
             <div class="player-heading__links">
-              <a class="back-link" href="#leaderboard">&larr; All racers</a>
+              <a id="player-back" class="back-link" href="#leaderboard"><span class="back-link__arrow" aria-hidden="true">&larr;</span><span class="back-link__label">All racers</span></a>
               <div class="player-heading__actions">
                 <span id="player-follow" class="player-follow"></span>
                 <a id="player-faceoff" class="player-faceoff" href="#/faceoff">Face off</a>
@@ -367,6 +369,7 @@
         <article class="chart-panel chart-panel--faceoff">
           <header class="panel-heading">
             <div>
+              <a id="faceoff-back" class="back-link" href="./"><span class="back-link__arrow" aria-hidden="true">&larr;</span><span class="back-link__label">Back</span></a>
               <p class="panel-index">Face Off</p>
               <h2 id="faceoff-title" tabindex="-1">Face off</h2>
             </div>
@@ -396,20 +399,20 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=657d89630e90" defer></script>
-    <script src="racer-charts.js?v=657d89630e90" defer></script>
-    <script src="store.js?v=657d89630e90" defer></script>
-    <script src="ui.js?v=657d89630e90" defer></script>
-    <script src="top-rated.js?v=657d89630e90" defer></script>
-    <script src="upcoming.js?v=657d89630e90" defer></script>
-    <script src="feed.js?v=657d89630e90" defer></script>
-    <script src="records.js?v=657d89630e90" defer></script>
-    <script src="racer-extras.js?v=657d89630e90" defer></script>
-    <script src="share-card.js?v=657d89630e90" defer></script>
-    <script src="faceoff.js?v=657d89630e90" defer></script>
-    <script src="easter-eggs.js?v=657d89630e90" defer></script>
-    <script src="leaderboard.js?v=657d89630e90" defer></script>
-    <script src="version-check.js?v=657d89630e90" defer></script>
-    <script src="visitor-counter.js?v=657d89630e90" defer></script>
+    <script src="app.js?v=be7321a3529f" defer></script>
+    <script src="racer-charts.js?v=be7321a3529f" defer></script>
+    <script src="store.js?v=be7321a3529f" defer></script>
+    <script src="ui.js?v=be7321a3529f" defer></script>
+    <script src="top-rated.js?v=be7321a3529f" defer></script>
+    <script src="upcoming.js?v=be7321a3529f" defer></script>
+    <script src="feed.js?v=be7321a3529f" defer></script>
+    <script src="records.js?v=be7321a3529f" defer></script>
+    <script src="racer-extras.js?v=be7321a3529f" defer></script>
+    <script src="share-card.js?v=be7321a3529f" defer></script>
+    <script src="faceoff.js?v=be7321a3529f" defer></script>
+    <script src="easter-eggs.js?v=be7321a3529f" defer></script>
+    <script src="leaderboard.js?v=be7321a3529f" defer></script>
+    <script src="version-check.js?v=be7321a3529f" defer></script>
+    <script src="visitor-counter.js?v=be7321a3529f" defer></script>
   </body>
 </html>

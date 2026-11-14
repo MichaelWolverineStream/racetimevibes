@@ -1261,7 +1261,8 @@ function renderPlayerView(playerIndex) {
     playerState.mode = mode;
     playerState.sort = null;
     playerState.presetSort = null;
-    history.replaceState(null, "", playerHash(player.id, mode));
+    // Keeps the entry's state, its origin (entryOrigin), while the address takes the new mode.
+    history.replaceState(history.state, "", playerHash(player.id, mode));
     renderPlayerView(playerIndex);
     renderPlayerCharts(playerIndex);
     renderRacerRating(playerIndex);
@@ -1358,7 +1359,8 @@ function renderRacerRating(playerIndex) {
   }
 }
 
-function showPlayer(playerIndex, modeId, isInitial) {
+// origin is the view this history entry was reached from (entryOrigin).
+function showPlayer(playerIndex, modeId, isInitial, origin) {
   const wasPlayer = currentView && currentView.kind === "player";
   playerState.mode = modeId;
   if (!wasPlayer || currentView.index !== playerIndex) {
@@ -1367,6 +1369,7 @@ function showPlayer(playerIndex, modeId, isInitial) {
     playerState.query = "";
     document.querySelector("#player-search").value = "";
   }
+  setPlayerBack(origin);
   if (!isInitial && currentView?.kind === "leaderboard") {
     boardScrollY = window.scrollY;
   }
@@ -1386,12 +1389,24 @@ function showPlayer(playerIndex, modeId, isInitial) {
   renderRacerRating(playerIndex);
 }
 
-// The pair's corners are player indexes, or null for an empty corner.
-function showFaceOff(playerIndexA, playerIndexB, isInitial) {
+// A racer page reached from Face Off reads ← Face Off and steps back to it (bindBackLinks); one reached any
+// other way reads ← All racers, a link to the board.
+function setPlayerBack(origin) {
+  const fromFaceOff = origin?.kind === "faceoff";
+  const link = document.querySelector("#player-back");
+  link.href = fromFaceOff ? origin.hash : "#leaderboard";
+  link.querySelector(".back-link__label").textContent = fromFaceOff ? "Face Off" : "All racers";
+}
+
+// The pair's corners are player indexes, or null for an empty corner. origin is the view this history entry
+// was reached from (entryOrigin): ← Back steps back to it, or opens the board when there is none.
+function showFaceOff(playerIndexA, playerIndexB, isInitial, origin) {
   const wasFaceOff = currentView && currentView.kind === "faceoff";
   if (!isInitial && currentView?.kind === "leaderboard") {
     boardScrollY = window.scrollY;
   }
+  // The href names the destination for a new tab; a plain click is handled in bindBackLinks.
+  document.querySelector("#faceoff-back").href = origin?.hash ?? "./";
   document.body.classList.remove("viewing-player");
   document.querySelector("#player-view").hidden = true;
   document.body.classList.add("viewing-faceoff");
@@ -1406,7 +1421,9 @@ function showFaceOff(playerIndexA, playerIndexB, isInitial) {
   if (!isInitial && !wasFaceOff) {
     focusHeading("#faceoff-title");
   }
-  currentView = { kind: "faceoff" };
+  // The hash names the pair on the card, for a racer page opened from here. The origin outlives picks, which
+  // replace the history entry and so its state (entryOrigin).
+  currentView = { kind: "faceoff", hash: window.location.hash, origin };
 }
 
 // Every other view clears Face Off, including a comment draw still waiting for its data.
@@ -1419,14 +1436,17 @@ function leaveFaceOff() {
   }
 }
 
-function showLeaderboard(isInitial) {
+// toTop is the masthead's mark (openBoard): the top of the page from any view, with focus left on the mark.
+function showLeaderboard(isInitial, toTop = false) {
   const wasPlayer = currentView && currentView.kind === "player";
   const wasFaceOff = currentView && currentView.kind === "faceoff";
   document.body.classList.remove("viewing-player");
   document.querySelector("#player-view").hidden = true;
   leaveFaceOff();
   document.title = BASE_TITLE;
-  if (!isInitial && wasPlayer) {
+  if (toTop) {
+    window.scrollTo(0, 0);
+  } else if (!isInitial && wasPlayer) {
     returnToBoard();
   } else if (!isInitial && wasFaceOff) {
     scrollToSection();
@@ -1458,24 +1478,104 @@ function returnToBoard() {
   document.querySelector("#leaderboard-title").focus({ preventScroll: true });
 }
 
-function route(isInitial) {
+function route(isInitial, { toTop = false } = {}) {
   if (!participants) {
     return;
   }
   const target = parseRoute();
+  const origin = entryOrigin(isInitial, target);
   if (target && target.kind === "faceoff") {
     // An unknown racer leaves their corner empty, and the same racer twice keeps only the red corner.
     const [indexA, indexB] = target.ids.map((id) => (id === null ? null : playerIndexById.get(id) ?? null));
-    showFaceOff(indexA, indexB === indexA ? null : indexB, isInitial);
+    showFaceOff(indexA, indexB === indexA ? null : indexB, isInitial, origin);
     return;
   }
   const playerIndex = target ? playerIndexById.get(target.id) : undefined;
   if (target && playerIndex !== undefined) {
     const mode = participants.modes.includes(target.mode) ? target.mode : ALL_MODES;
-    showPlayer(playerIndex, mode, isInitial);
+    showPlayer(playerIndex, mode, isInitial, origin);
     return;
   }
-  showLeaderboard(isInitial);
+  showLeaderboard(isInitial, toTop);
+}
+
+// The view this history entry was first reached from in the page: { kind: "board" }, or a racer page or
+// Face Off as { kind, hash }. Null when the visit began on the entry. It is kept in the entry's own state, so
+// Back, Forward and a reload find it again, and so the entry before this one is always that view: the
+// back links (bindBackLinks) can then step back through history, like the browser's Back, without ever
+// looping between two pages. An entry with no state is new, made by a link, a typed address or openBoard,
+// except that a Face Off pick replaces Face Off's entry, so it keeps the origin Face Off had.
+function entryOrigin(isInitial, target) {
+  if (history.state && "origin" in history.state) {
+    return history.state.origin;
+  }
+  let origin = null;
+  if (!isInitial && currentView.kind === "faceoff" && target?.kind === "faceoff") {
+    origin = currentView.origin;
+  } else if (!isInitial) {
+    origin = viewOrigin(currentView);
+  }
+  history.replaceState({ origin }, "");
+  return origin;
+}
+
+// The view being left, as an origin. playerState.mode is still the racer page's own mode here.
+function viewOrigin(view) {
+  if (view.kind === "player") {
+    return { kind: "player", hash: playerHash(participants.players[view.index].id, playerState.mode) };
+  }
+  if (view.kind === "faceoff") {
+    return { kind: "faceoff", hash: view.hash };
+  }
+  return { kind: "board" };
+}
+
+// A click a link should handle itself: the main button with no modifier key. Any other, such as one for a
+// new tab, is left to the browser and the link's href.
+function isPlainClick(event) {
+  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+}
+
+// Face Off's ← Back and a racer page's ← Face Off step back through history when their entry has an origin
+// (entryOrigin), so they never add an entry and never loop. Face Off opened at the start of the visit has
+// nothing to step back to, so its ← Back opens the board. ← All racers stays a plain link to the board.
+function bindBackLinks() {
+  document.querySelector("#faceoff-back").addEventListener("click", (event) => {
+    if (history.state?.origin) {
+      stepBack(event);
+    } else {
+      openBoard(event, { toTop: false });
+    }
+  });
+  document.querySelector("#player-back").addEventListener("click", (event) => {
+    if (history.state?.origin?.kind === "faceoff") {
+      stepBack(event);
+    }
+  });
+}
+
+function stepBack(event) {
+  if (!isPlainClick(event)) {
+    return;
+  }
+  event.preventDefault();
+  history.back();
+}
+
+// The board at the page's own address, without a hash: the one path there, for the masthead's mark (toTop)
+// and Face Off's ← Back when it has nothing to step back to (where the board was left). A link to the bare
+// address would reload the page, so a plain click pushes the address itself, and since that fires no
+// hashchange, it runs the router itself. Browser Back to this entry later is the router's own empty-hash
+// case, so it returns to where the board was left, never to the top.
+function openBoard(event, { toTop }) {
+  if (!isPlainClick(event)) {
+    return;
+  }
+  event.preventDefault();
+  if (window.location.hash) {
+    history.pushState(null, "", window.location.pathname + window.location.search);
+  }
+  route(false, { toTop });
 }
 
 function bindFilter(inputSelector, state, rerender) {
@@ -1534,6 +1634,9 @@ async function loadParticipants() {
     document.querySelector("#leaderboard-controls").hidden = false;
     route(true);
     window.addEventListener("hashchange", () => route(false));
+    // Until the data loads, the mark is a plain link to the page, which reloads it.
+    document.querySelector("#home-link").addEventListener("click", (event) => openBoard(event, { toTop: true }));
+    bindBackLinks();
     if (typeof TopRated !== "undefined") {
       runFeature("TopRated.init", () => TopRated.init());
     }

@@ -280,8 +280,15 @@ footer {
   animation: arrive 500ms ease-out both;
 }
 
-.category-mark {
+/* The artwork links home (openBoard in leaderboard.js). The link is the grid item and exactly the artwork's
+   box, so wrapping it moves nothing; the global a:focus-visible ring follows its corners. */
+.category-mark-link {
   grid-area: mark;
+  display: block;
+  border-radius: 4px;
+}
+
+.category-mark {
   display: block;
   width: 104px;
   height: 104px;
@@ -289,6 +296,12 @@ footer {
   border: 1px solid var(--line);
   border-radius: 4px;
   box-shadow: var(--shadow);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.category-mark-link:hover .category-mark {
+  border-color: var(--accent);
+  transform: translateY(-1px);
 }
 
 .kicker,
@@ -1699,14 +1712,34 @@ th[aria-sort="descending"] .sort-button::after {
 }
 
 /* Racer page */
+/* The back link on racer pages and Face Off: a neutral outlined chip, so it reads as navigation apart from the
+   green labels and actions around it. It keeps the label type above and is as tall as the racer page's Face
+   off chip (faceoff.css), so its line does not grow. */
 .back-link {
-  display: inline-block;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  min-height: 26px;
   margin-bottom: 7px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
   text-decoration: none;
+  white-space: nowrap;
+  /* On Face Off it sits in a line of its own; top alignment keeps that line exactly the chip's height. */
+  vertical-align: top;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.back-link__arrow {
+  color: var(--accent);
 }
 
 .back-link:hover {
-  color: var(--accent-strong);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--ink);
 }
 
 #player-name:focus-visible {
