@@ -9,6 +9,24 @@
   border-top-color: var(--gold);
 }
 
+/* The card's actions sit at the heading's right, level with the title and tagline, so the hero holds
+   nothing but the corners and the VS. */
+.chart-panel--faceoff .panel-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+}
+
+.faceoff-actions {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  align-self: center;
+}
+
 .faceoff {
   --faceoff-avatar: 128px;
   --faceoff-columns: minmax(0, 1fr) minmax(150px, auto) minmax(0, 1fr);
@@ -38,20 +56,20 @@
 }
 
 /* Hero: the corners face each other across a diagonal split in their two colours, with a gold slash
-   behind the VS. ::before is the one sheen that crosses the card when a pair arrives. faceoff.js sets
-   --split-shift, how far below the hero's middle the VS's middle sits (above when negative), and the split
-   and the slash pivot there. The split is a 300%-tall image centred on that point, so it always covers the
-   hero, and its 3px seam hides under the 4px slash. */
+   behind the VS, which spans every row and sits at the hero's middle. ::before is the one sheen that crosses
+   the card when a pair arrives. faceoff.js sets --split-shift, how far below the hero's middle the VS's
+   middle sits (above when negative), and the split and the slash pivot there. The split is a 300%-tall
+   image centred on that point, so it always covers the hero, and its 3px seam hides under the 4px slash. */
 .faceoff-hero {
   position: relative;
   display: grid;
   grid-template-columns: var(--faceoff-columns);
   grid-template-areas:
-    "say-a   .     say-b"
+    "say-a   spine say-b"
     "frame-a spine frame-b"
-    "pick-a  note  pick-b"
-    "rate-a  note  rate-b"
-    "chips-a note  chips-b";
+    "pick-a  spine pick-b"
+    "rate-a  spine rate-b"
+    "chips-a spine chips-b";
   column-gap: var(--faceoff-gap);
   justify-items: center;
   padding: 28px 32px 26px;
@@ -318,23 +336,13 @@
   outline-offset: 2px;
 }
 
-/* Spine: the VS and the corner actions. */
-.faceoff-spine {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  align-items: center;
-  align-self: center;
-  justify-content: center;
-  text-align: center;
-}
-
-/* Larger than --text-2xl on purpose: the one mark the card turns on. It is decoration (aria-hidden), so it
-   takes the corner colours as offset shadows, like the bubbles' hard shadow. Two equal columns put the gap
-   between the V and the S at its middle, where the slash crosses. The gap clears the 4px slash, its lean
-   across the cap height and the letters' shadows at every VS size. */
+/* The VS alone holds the spine. Larger than --text-2xl on purpose: the one mark the card turns on. It is
+   decoration (aria-hidden), so it takes the corner colours as offset shadows, like the bubbles' hard shadow.
+   Two equal columns put the gap between the V and the S at its middle, where the slash crosses. The gap
+   clears the 4px slash, its lean across the cap height and the letters' shadows at every VS size. */
 .faceoff-vs {
   display: grid;
+  align-self: center;
   grid-template-columns: 1fr 1fr;
   column-gap: calc(0.08em + 18px);
   color: var(--ink);
@@ -353,11 +361,6 @@
 
 .faceoff-vs > :last-child {
   justify-self: start;
-}
-
-.faceoff-spine__actions {
-  display: flex;
-  gap: 8px;
 }
 
 .faceoff-action {
@@ -393,22 +396,9 @@
   outline-offset: 2px;
 }
 
-.faceoff-note {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  align-self: start;
-  margin-top: 22px;
-  text-align: center;
-}
-
-.faceoff-note:empty {
-  display: none;
-}
-
+/* As tall as the icon buttons beside it. */
 .faceoff-rivalry {
-  min-height: 32px;
+  min-height: 36px;
   padding: 4px 14px;
   border: 2px solid var(--rule);
   border-radius: 999px;
@@ -1020,8 +1010,9 @@
   }
 }
 
-/* Phones: the corners stay face to face with smaller avatars, and the bubbles move under them, chat-style,
-   the red corner's at the left and the blue corner's at the right. The badge lists stack. */
+/* Phones: the corners stay face to face with smaller avatars and the VS level with them, and the bubbles move
+   under them, chat-style, the red corner's at the left and the blue corner's at the right. The heading's
+   actions wrap under its title, and the badge lists stack. */
 @media (max-width: 620px) {
   .faceoff {
     --faceoff-avatar: 72px;
@@ -1029,21 +1020,25 @@
     --faceoff-gap: 10px;
   }
 
+  /* The global phone heading is a block (styles.css); this restates it over the grid above. */
+  .chart-panel--faceoff .panel-heading {
+    display: block;
+  }
+
+  .faceoff-actions {
+    margin-top: 12px;
+  }
+
   .faceoff-hero {
     grid-template-areas:
       "frame-a spine   frame-b"
       "pick-a  .       pick-b"
       "rate-a  .       rate-b"
-      "note    note    note"
       "chips-a chips-a chips-a"
       "chips-b chips-b chips-b"
       "say-a   say-a   say-a"
       "say-b   say-b   say-b";
     padding: 18px 16px 16px;
-  }
-
-  .faceoff-note {
-    margin-top: 12px;
   }
 
   .faceoff-picker {
@@ -1083,8 +1078,8 @@
     height: 32px;
   }
 
-  .faceoff-spine {
-    gap: 8px;
+  .faceoff-rivalry {
+    min-height: 32px;
   }
 
   .faceoff-say {

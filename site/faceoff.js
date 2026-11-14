@@ -44,8 +44,8 @@ const FaceOff = (() => {
   let commentPool = null;
   let lastDraw = null;
   let rivalries = null;
-  // The corner whose avatar link takes focus once the pair renders, set by the buttons that a render removes
-  // (a Most met chip, Random rivalry), so keyboard focus never falls back to the page.
+  // The corner whose avatar link takes focus once the pair renders, set by a Most met chip, which the render
+  // removes, so keyboard focus never falls back to the page.
   let focusCorner = null;
   // The tale of the tape's period: the current season (false) or all time (true). It holds across pairs and
   // swaps while the page is open, and a reload starts on the season again, like the top-rated toggle.
@@ -310,7 +310,7 @@ const FaceOff = (() => {
     parts = { hero };
     pickers = {};
     // Grid areas place the pieces; the DOM keeps each corner together, so the tab order runs through
-    // the red corner, then the spine, then the blue corner.
+    // the red corner, then the blue corner.
     const corner = {};
     SIDES.forEach((side) => {
       ["say", "frame", "rate", "chips"].forEach((slot) => {
@@ -321,42 +321,38 @@ const FaceOff = (() => {
       pickers[side] = createPicker(side);
       corner[side] = [parts[`say-${side}`], parts[`frame-${side}`], pickers[side].root, parts[`rate-${side}`], parts[`chips-${side}`]];
     });
-    // The spine holds the VS and the corner actions level with the avatars. The note under it (the empty
-    // card's Random rivalry) is its own grid item, so on a phone it can take a full row instead of widening
-    // the middle column.
-    const spine = element("div", "faceoff-spine");
-    spine.style.gridArea = "spine";
-    // Two letters, so the gap between them can sit at the VS's middle, where the slash crosses.
+    // The VS alone holds the spine, the middle column. Two letters, so the gap between them can sit at the
+    // VS's middle, where the slash crosses.
     const vs = element("span", "faceoff-vs");
+    vs.style.gridArea = "spine";
     vs.append(element("span", null, "V"), element("span", null, "S"));
     vs.setAttribute("aria-hidden", "true");
-    parts.spine = spine;
     parts.vs = vs;
-    // Built once and only shown or hidden, so a focused button keeps focus while the pair it changed renders.
+    // The card's actions sit in the panel heading, outside the hero. Built once and only shown or hidden, so
+    // a focused button keeps focus while the pair it changed renders. Random rivalry is always shown and
+    // comes last, so it stays put while the other two come and go.
     parts.swap = button("faceoff-action", "⇄", "Swap corners", () => navigate({ a: shown.b, b: shown.a }));
     parts.again = button("faceoff-action faceoff-action--again", "↻", "Other comments", paintComments);
     parts.swap.hidden = true;
     parts.again.hidden = true;
-    const actions = element("div", "faceoff-spine__actions");
-    actions.append(parts.swap, parts.again);
-    spine.append(vs, actions);
-    parts.note = element("div", "faceoff-note");
-    parts.note.style.gridArea = "note";
-    hero.append(...corner.a, spine, parts.note, ...corner.b);
+    const rivalry = button("faceoff-rivalry", "Random rivalry", "Random rivalry: two racers who have met often", randomRivalry);
+    document.querySelector("#faceoff-actions").append(parts.swap, parts.again, rivalry);
+    hero.append(...corner.a, vs, ...corner.b);
     parts.body = element("div", "faceoff-body");
     card.append(hero, parts.body);
-    // A bubble, a chip row, a button or a font load can move the VS only by resizing the hero or one of
-    // its pieces, so watching those keeps the slash on the VS.
+    // A bubble, a chip row or a font load can move the VS only by resizing the hero or one of its pieces, so
+    // watching those keeps the slash on the VS.
     const observer = new ResizeObserver(pivotOnVs);
     [hero, ...hero.children].forEach((node) => observer.observe(node));
   }
 
-  // The gold slash and the colour split pivot on the VS's middle, wherever the rows above have put it, so the
-  // slash always runs between the V and the S. Offsets ignore transforms, so the entrance cannot skew this.
-  // The property moves only paint (faceoff.css), never layout, so it cannot set the observer off again.
+  // The gold slash and the colour split pivot on the VS's middle, so the slash always runs between the V and
+  // the S. The VS sits at the hero's middle, but on a phone it stays level with the avatars, above the rows
+  // stacked under them. Offsets ignore transforms, so the entrance cannot skew this. The property moves only
+  // paint (faceoff.css), never layout, so it cannot set the observer off again.
   function pivotOnVs() {
-    const { hero, spine, vs } = parts;
-    const middle = spine.offsetTop + vs.offsetTop + vs.offsetHeight / 2;
+    const { hero, vs } = parts;
+    const middle = vs.offsetTop + vs.offsetHeight / 2;
     hero.style.setProperty("--split-shift", `${middle - hero.clientHeight / 2}px`);
   }
 
@@ -433,13 +429,10 @@ const FaceOff = (() => {
     });
   }
 
-  function renderSpine() {
+  // Random rivalry always shows; Other comments shows again once the new pair's comments are drawn.
+  function renderActions() {
     parts.swap.hidden = shown.a === null && shown.b === null;
     parts.again.hidden = true;
-    parts.note.replaceChildren();
-    if (shown.a === null && shown.b === null) {
-      parts.note.append(button("faceoff-rivalry", "Random rivalry", "Random rivalry: two racers who have met often", randomRivalry));
-    }
   }
 
   // The pairs who have raced each other most, counted once on first use.
@@ -463,14 +456,16 @@ const FaceOff = (() => {
     return rivalries;
   }
 
+  // Never the pair on the card, in either order, so a click always brings a new rivalry, not nothing or a swap.
+  // The button stays through the render, so it keeps focus.
   function randomRivalry() {
-    const pool = topRivalries();
+    const onCard = ([first, second]) => (first === shown.a && second === shown.b) || (first === shown.b && second === shown.a);
+    const pool = topRivalries().filter((pair) => !onCard(pair));
     if (!pool.length) {
       return;
     }
     const [first, second] = pool[Math.floor(Math.random() * pool.length)];
     const flip = Math.random() < 0.5;
-    focusCorner = "a";
     navigate({ a: flip ? second : first, b: flip ? first : second });
   }
 
@@ -970,7 +965,7 @@ const FaceOff = (() => {
       renderRate(side);
       renderChips(side);
     });
-    renderSpine();
+    renderActions();
     const facts = a !== null && b !== null ? pairFacts(a, b) : null;
     const bands = facts ? [oddsBand(a, b, facts), tapeBand(a, b, facts), badgesBand(a, b)] : [];
     parts.body.replaceChildren(...bands);
