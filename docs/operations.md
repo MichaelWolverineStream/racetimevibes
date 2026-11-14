@@ -45,6 +45,7 @@ No test uses the network. The production suite rebuilds all three datasets from 
 ## Deployment
 
 - `.github/workflows/pages.yml` runs the production suite and deploys `site/` whenever `main` is pushed, or from **Actions › Deploy GitHub Pages**. Pages must be set to deploy from GitHub Actions.
+- After the tests pass, their job uploads the Pages artifact; a separate deploy job waits for it, avoiding an immediate artifact lookup that can race the upload.
 - `.github/workflows/analysis-tests.yml` runs the analysis suite on pushes to `main` and on pull requests that change `scripts/`, `tests/analyses/`, `schedule-plan.json` or the workflow itself, weekly against the newest archive, and on demand. It never blocks a deploy.
 
 ### Scheduled data refresh
