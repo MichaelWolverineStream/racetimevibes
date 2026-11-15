@@ -132,7 +132,7 @@ class AggregationTests(unittest.TestCase):
 
         stats = aggregate(races)
 
-        self.assertEqual(stats["schema_version"], 11)
+        self.assertEqual(stats["schema_version"], 12)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 21)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
@@ -209,7 +209,7 @@ class AggregationTests(unittest.TestCase):
             ]
         )
 
-        self.assertEqual(stats["schema_version"], 11)
+        self.assertEqual(stats["schema_version"], 12)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -679,6 +679,10 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "real_field_count": 2,
                     "race_count": 2,
                     "entrant_total": 10,
+                    "scheduled_day_count": 3,
+                    "scheduled_day_entrant_total": 10,
+                    "fired_race_count": 2,
+                    "fired_entrant_total": 10,
                     "racer_count": 10,
                     "full_week_count": 3,
                     "weekly_racers_median": 4,
@@ -698,6 +702,10 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "real_field_count": 1,
                     "race_count": 2,
                     "entrant_total": 8,
+                    "scheduled_day_count": 2,
+                    "scheduled_day_entrant_total": 5,
+                    "fired_race_count": 1,
+                    "fired_entrant_total": 5,
                     "racer_count": 8,
                     "full_week_count": 1,
                     "weekly_racers_median": 0,
@@ -715,6 +723,64 @@ class ScheduleAggregationTests(unittest.TestCase):
             stats["diagnostics"]["seasons"],
             {"races_without_season": 1, "slots_without_season": 1},
         )
+
+    def test_season_per_day_counts_use_the_seasons_own_scheduled_days(self):
+        stats = aggregate(
+            [
+                race("may", started_at="2026-05-10T17:00:00Z", entrants_count=2),
+                race("a", started_at="2026-06-01T17:00:00Z", entrants_count=6, info=seeded(1)),
+                # On a scheduled day, but too late to join its slot: entries count, it never fired.
+                race("extra", started_at="2026-06-01T20:00:00Z", entrants_count=2),
+                # On the day of a pulled slot, which is still a scheduled day.
+                race("pulled-day", started_at="2026-06-02T20:00:00Z", entrants_count=7),
+                # Season 2 starts at 17:00 on June 8: this race is season 1's, on none of its scheduled days.
+                race("gap", started_at="2026-06-08T12:00:00Z", entrants_count=9),
+                race("d", started_at="2026-06-08T17:00:00Z", entrants_count=4, info=seeded(8)),
+                # Its slot is after the schedule counted through, but its day is still scheduled.
+                race("e", started_at="2026-06-15T17:00:00Z", entrants_count=5, info=seeded(15)),
+                race("newest", started_at="2026-06-16T12:00:00Z", entrants_count=3),
+            ],
+            [
+                slot(1, 1, "2026-06-01T17:00:00Z"),
+                slot(2, None, "2026-06-02T17:00:00Z"),
+                slot(3, 3, "2026-06-03T17:00:00Z"),
+                slot(4, 8, "2026-06-08T17:00:00Z", season=2),
+                slot(5, 15, "2026-06-15T17:00:00Z", season=2),
+                # Misfiled before season 1: a scheduled day that belongs to no season.
+                slot(6, 20, "2026-05-20T17:00:00Z", season=2),
+                # Season 3's first slot, on the newest race's day but after counted through: its day is
+                # scheduled, but season 3 has no race or counted slot, so it gets no row.
+                slot(7, 107, "2026-06-16T17:00:00Z", season=3),
+            ],
+        )
+
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-15T12:00:00Z")
+        keys = (
+            "scheduled_day_count",
+            "scheduled_day_entrant_total",
+            "fired_race_count",
+            "fired_entrant_total",
+        )
+        self.assertEqual(
+            {item["season"]: {key: item[key] for key in keys} for item in stats["seasons"]},
+            {
+                1: {
+                    "scheduled_day_count": 3,
+                    "scheduled_day_entrant_total": 15,
+                    "fired_race_count": 1,
+                    "fired_entrant_total": 6,
+                },
+                2: {
+                    "scheduled_day_count": 2,
+                    "scheduled_day_entrant_total": 9,
+                    "fired_race_count": 2,
+                    "fired_entrant_total": 9,
+                },
+            },
+        )
+        monthly = {item["id"]: item for item in stats["monthly"]}
+        self.assertEqual(monthly["2026-05"]["scheduled_day_count"], 1)
+        self.assertEqual(monthly["2026-06"]["scheduled_day_count"], 6)
 
 
 def crowd(*ids, anonymous=0):
@@ -1124,7 +1190,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 11)
+        self.assertEqual(data["schema_version"], 12)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],

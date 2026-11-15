@@ -482,6 +482,13 @@ function hasValidSeasons(seasons) {
       && Number.isFinite(item.entrant_total) && item.entrant_total >= 0
       && item.started_count <= item.scheduled_count
       && isCount(item.real_field_count) && item.real_field_count <= item.started_count
+      && isCount(item.scheduled_day_count)
+      && isCount(item.scheduled_day_entrant_total)
+      && isCount(item.fired_race_count)
+      && isCount(item.fired_entrant_total)
+      && item.fired_race_count <= item.race_count
+      && item.fired_entrant_total <= item.scheduled_day_entrant_total
+      && item.scheduled_day_entrant_total <= item.entrant_total
       && isCount(item.racer_count)
       && isCount(item.full_week_count)
       && hasValidWeeklyRacers(item)
@@ -520,7 +527,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 11
+    || data.schema_version !== 12
     || !hasValidAggregate(data)
     || !hasValidSeasons(data.seasons)
     || !Array.isArray(data.periods)
@@ -636,26 +643,53 @@ function returningText(item) {
   return `${title}: ${share} of season ${item.season - 1}'s racers ${verb} (${integerFormatter.format(item.returning_count)} of ${integerFormatter.format(item.previous_racer_count)}); ${newcomerText(item)}`;
 }
 
+// Per-day and per-race ratios of the season counts; null when the denominator is 0.
+function ratio(part, whole) {
+  return whole ? part / whole : null;
+}
+
+function entriesPerDayText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  if (item.scheduled_day_count === 0) return `${title}: no scheduled days`;
+  return `${title}: ${formatAverage(item.scheduled_day_entrant_total / item.scheduled_day_count)} race entries per scheduled day (${integerFormatter.format(item.scheduled_day_entrant_total)} over ${pluralize(item.scheduled_day_count, "scheduled day")}${soFar(item)})`;
+}
+
+function firedPerDayText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  if (item.scheduled_day_count === 0) return `${title}: no scheduled days`;
+  return `${title}: ${formatAverage(item.fired_race_count / item.scheduled_day_count)} races fired per scheduled day (${integerFormatter.format(item.fired_race_count)} over ${pluralize(item.scheduled_day_count, "scheduled day")}${soFar(item)})`;
+}
+
+function fieldSizeText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  if (item.fired_race_count === 0) return `${title}: no fired races`;
+  return `${title}: ${formatAverage(item.fired_entrant_total / item.fired_race_count)} racers per fired race (${integerFormatter.format(item.fired_entrant_total)} entries over ${pluralize(item.fired_race_count, "fired race")}${soFar(item)})`;
+}
+
+function startedText(item) {
+  const title = `Season ${item.season}${inProgressSuffix(item)}`;
+  if (item.scheduled_count === 0) return `${title}: no scheduled races counted`;
+  return `${title}: ${startRateText(item.started_count, item.scheduled_count)}`;
+}
+
+function entriesText(item) {
+  return `Season ${item.season}${inProgressSuffix(item)}: ${integerFormatter.format(item.entrant_total)} race entries over ${integerFormatter.format(item.race_count)} races (${formatAverage(ratio(item.entrant_total, item.race_count))} per race)`;
+}
+
 function renderParticipation(data) {
   const seasons = data.seasons;
-  mountChart(document.querySelector("#participation-reach-chart"), (width) => seasonBarChart(seasons, {
+  const chart = (selector, options) => {
+    mountChart(document.querySelector(selector), (width) => seasonBarChart(seasons, options, width));
+  };
+  chart("#participation-reach-chart", {
     id: "participation-reach",
     title: "Active racers per week by season",
     description: "Vertical bars show the median number of distinct racers in a full week of each season. The season in progress is drawn muted.",
     value: (item) => item.weekly_racers_median,
     axisFormatter: (value) => integerFormatter.format(value),
     tooltip: reachText,
-  }, width));
-  mountChart(document.querySelector("#participation-fields-chart"), (width) => seasonBarChart(seasons, {
-    id: "participation-fields",
-    title: `Share of scheduled races with ${REAL_FIELD_MIN}+ racers by season`,
-    description: `Vertical bars show the share of each season's scheduled races that started with ${REAL_FIELD_MIN} or more racers. The season in progress is drawn muted.`,
-    value: (item) => (item.scheduled_count ? item.real_field_count / item.scheduled_count : null),
-    scale: { maximum: 1, tickCount: 5 },
-    axisFormatter: formatPercent,
-    tooltip: realFieldText,
-  }, width));
-  mountChart(document.querySelector("#participation-returning-chart"), (width) => seasonBarChart(seasons, {
+  });
+  chart("#participation-returning-chart", {
     id: "participation-returning",
     title: "Share of the previous season's racers who returned by season",
     description: "Vertical bars show the share of the previous season's racers who raced again in each season. The season in progress is drawn muted.",
@@ -663,22 +697,89 @@ function renderParticipation(data) {
     scale: { maximum: 1, tickCount: 5 },
     axisFormatter: formatPercent,
     tooltip: returningText,
-  }, width));
+  });
+  chart("#participation-entries-day-chart", {
+    id: "participation-entries-day",
+    title: "Race entries per scheduled day by season",
+    description: "Vertical bars show the average race entries per scheduled day of each season. The season in progress is drawn muted.",
+    value: (item) => ratio(item.scheduled_day_entrant_total, item.scheduled_day_count),
+    axisFormatter: formatCount,
+    tooltip: entriesPerDayText,
+  });
+  chart("#participation-entries-chart", {
+    id: "participation-entries",
+    title: "Race entries by season",
+    description: "Vertical bars show the race entries of each season's finished races. The season in progress is drawn muted.",
+    value: (item) => item.entrant_total,
+    axisFormatter: (value) => integerFormatter.format(value),
+    tooltip: entriesText,
+  });
+  chart("#participation-fired-chart", {
+    id: "participation-fired",
+    title: "Races fired per scheduled day by season",
+    description: "Vertical bars show the average races fired per scheduled day of each season. The season in progress is drawn muted.",
+    value: (item) => ratio(item.fired_race_count, item.scheduled_day_count),
+    axisFormatter: formatCount,
+    tooltip: firedPerDayText,
+  });
+  chart("#participation-started-chart", {
+    id: "participation-started",
+    title: "Share of scheduled races that started by season",
+    description: "Vertical bars show the share of each season's scheduled races that started. The season in progress is drawn muted.",
+    value: (item) => ratio(item.started_count, item.scheduled_count),
+    scale: { maximum: 1, tickCount: 5 },
+    axisFormatter: formatPercent,
+    tooltip: startedText,
+  });
+  chart("#participation-field-size-chart", {
+    id: "participation-field-size",
+    title: "Racers per fired race by season",
+    description: "Vertical bars show the average racers in each fired race of each season. The season in progress is drawn muted.",
+    value: (item) => ratio(item.fired_entrant_total, item.fired_race_count),
+    axisFormatter: formatCount,
+    tooltip: fieldSizeText,
+  });
+  chart("#participation-fields-chart", {
+    id: "participation-fields",
+    title: `Share of scheduled races with ${REAL_FIELD_MIN}+ racers by season`,
+    description: `Vertical bars show the share of each season's scheduled races that started with ${REAL_FIELD_MIN} or more racers. The season in progress is drawn muted.`,
+    value: (item) => ratio(item.real_field_count, item.scheduled_count),
+    scale: { maximum: 1, tickCount: 5 },
+    axisFormatter: formatPercent,
+    tooltip: realFieldText,
+  });
 
   const percentOf = (part, whole) => (whole ? `${formatPercent(part / whole)} (${integerFormatter.format(part)} of ${integerFormatter.format(whole)})` : "--");
   renderTable(
-    document.querySelector("#participation-season-table"),
-    ["Season", "Racers", "Active per week", "Weekly range", "Full weeks", `${REAL_FIELD_MIN}+ racer races`, "Returning", "Newcomers", "Raced again"],
+    document.querySelector("#participation-racer-table"),
+    ["Season", "Racers", "Active per week", "Weekly range", "Full weeks", "Returning", "Newcomers", "Raced again", "Race entries", "Entries/day"],
     seasons.map((item) => [
       `${item.season}${inProgressSuffix(item)}`,
       integerFormatter.format(item.racer_count),
       item.full_week_count === 0 ? "--" : formatCount(item.weekly_racers_median),
       item.full_week_count === 0 ? "--" : `${integerFormatter.format(item.weekly_racers_min)} to ${integerFormatter.format(item.weekly_racers_max)}`,
       integerFormatter.format(item.full_week_count),
-      percentOf(item.real_field_count, item.scheduled_count),
       percentOf(item.returning_count, item.previous_racer_count),
       integerFormatter.format(item.newcomer_count),
       item.newcomer_matured_count === 0 ? "--" : `${integerFormatter.format(item.newcomer_retained_count)} of ${integerFormatter.format(item.newcomer_matured_count)}`,
+      integerFormatter.format(item.entrant_total),
+      formatAverage(ratio(item.scheduled_day_entrant_total, item.scheduled_day_count)),
+    ]),
+  );
+  renderTable(
+    document.querySelector("#participation-race-table"),
+    ["Season", "Scheduled", "Started", "Start rate", "Races", "Scheduled days", "Fired races", "Fired/day", "Racers per fired race", `${REAL_FIELD_MIN}+ racer races`],
+    seasons.map((item) => [
+      `${item.season}${inProgressSuffix(item)}`,
+      integerFormatter.format(item.scheduled_count),
+      integerFormatter.format(item.started_count),
+      item.scheduled_count ? formatPercent(item.started_count / item.scheduled_count) : "--",
+      integerFormatter.format(item.race_count),
+      integerFormatter.format(item.scheduled_day_count),
+      integerFormatter.format(item.fired_race_count),
+      formatAverage(ratio(item.fired_race_count, item.scheduled_day_count)),
+      formatAverage(ratio(item.fired_entrant_total, item.fired_race_count)),
+      percentOf(item.real_field_count, item.scheduled_count),
     ]),
   );
   renderTable(
@@ -695,49 +796,6 @@ function renderParticipation(data) {
       integerFormatter.format(month.scheduled_day_count),
       formatAverage(month.entries_per_day),
       formatAverage(month.fired_per_day),
-    ]),
-  );
-}
-
-function renderSeasons(seasons) {
-  const startRate = (item) => (item.scheduled_count ? formatPercent(item.started_count / item.scheduled_count) : "--");
-  mountChart(document.querySelector("#season-start-chart"), (width) => seasonBarChart(seasons, {
-    id: "season-start",
-    title: "Share of scheduled races that started by season",
-    description: "Vertical bars show the share of each season's scheduled races that started. The season in progress is drawn muted.",
-    value: (item) => (item.scheduled_count ? item.started_count / item.scheduled_count : null),
-    scale: { maximum: 1, tickCount: 5 },
-    axisFormatter: formatPercent,
-    tooltip: (item) => (item.scheduled_count === 0
-      ? `Season ${item.season}${inProgressSuffix(item)}: no scheduled races counted`
-      : `Season ${item.season}${inProgressSuffix(item)}: ${startRateText(item.started_count, item.scheduled_count)}`),
-  }, width));
-  mountChart(document.querySelector("#season-entries-chart"), (width) => seasonBarChart(seasons, {
-    id: "season-entries",
-    title: "Race entries by season",
-    description: "Vertical bars show the race entries of each season's finished races. The season in progress is drawn muted.",
-    value: (item) => item.entrant_total,
-    axisFormatter: (value) => integerFormatter.format(value),
-    tooltip: (item) => `Season ${item.season}${inProgressSuffix(item)}: ${integerFormatter.format(item.entrant_total)} race entries over ${integerFormatter.format(item.race_count)} races (${formatAverage(item.race_count ? item.entrant_total / item.race_count : null)} per race)`,
-  }, width));
-  renderTable(
-    document.querySelector("#season-start-table"),
-    ["Season", "Scheduled", "Started", "Start rate"],
-    seasons.map((item) => [
-      `${item.season}${inProgressSuffix(item)}`,
-      integerFormatter.format(item.scheduled_count),
-      integerFormatter.format(item.started_count),
-      startRate(item),
-    ]),
-  );
-  renderTable(
-    document.querySelector("#season-entries-table"),
-    ["Season", "Races", "Race entries", "Avg racers per race"],
-    seasons.map((item) => [
-      `${item.season}${inProgressSuffix(item)}`,
-      integerFormatter.format(item.race_count),
-      integerFormatter.format(item.entrant_total),
-      formatAverage(item.race_count ? item.entrant_total / item.race_count : null),
     ]),
   );
 }
@@ -779,7 +837,6 @@ function renderDashboard(data) {
   renderCountedThrough(data.source.schedule_counted_through);
   renderSelection(allDataSelection(data));
   renderParticipation(data);
-  renderSeasons(data.seasons);
 }
 
 async function load() {

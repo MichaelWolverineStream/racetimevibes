@@ -58,6 +58,7 @@ These terms use the [ladder schedule mirror](archive.md#ladder-schedule-mirror).
 
   The second time is a staleness guard: alttpr.racing fills in a `raceId` only when a room is created, so a stale mirror must never make recent slots look pulled. The bot syncs the mirror on every data run, so the first time is almost always the earlier one, and the guard bites only when a schedule sync fails or someone builds with an old mirror. When no slot has a `raceId`, nothing counts. The result is published as `source.schedule_counted_through` and shown on the page.
 - **Scheduled day:** an Eastern Time date inside the archive's dates that holds at least one slot. Pulled slots count. Slots of `ladder_test` races do not. The days that are not scheduled are the gaps between seasons and the time before the first slot, so April 2025 has none.
+  - A scheduled day belongs to the season of each of its slots, by the [season rule](#seasons), so a changeover day can belong to two seasons. A day whose slots fall in no season is a scheduled day for the monthly numbers and belongs to no season.
   - Scheduled days deliberately ignore **counted through**. The schedule is published ahead, so whether a day has races is known before its outcomes are, and the latest days stay in the per-day averages.
   - A season the mirror does not list yet only delays its days. Their entries leave the numerator too, so the average is never inflated.
 - **Last whole day:** the Eastern Time date of **counted through**, minus one day.

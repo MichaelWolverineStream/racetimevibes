@@ -61,20 +61,24 @@
   --bronze: #d49a68;
   --bronze-ink: #995a28;
   --red: #c84a3e;
-  /* Data roles: one hue for single-series bars, a diverging pair for rating deltas, an ordinal ramp for schedule bands. */
+  /* Data roles: one hue for single-series bars, a terracotta and oat pair for the Ladder Data season bars, a diverging pair
+     for rating deltas, an ordinal ramp for schedule bands. */
   --series: #39778a;
   --series-muted: #aeb9b4;
+  --ladder-series: #b85a36;
+  --ladder-series-muted: #cdb594;
   --positive: #2e6da4;
   --negative: var(--red);
   --teal: #39778a;
   --teal-deep: #1d4f5f;
-  /* Schedule bands, ordered by lightness so they read without hue: the busier the band, the further it stands
-     from the panel, so the order flips in the dark theme. Each ink is the cell text on its fill. */
-  --band-prime: #1d4f5f;
+  /* Schedule bands, a warm one-hue ramp (apricot, clay, rust) ordered by lightness so they read without hue: the
+     busier the band, the further it stands from the panel, so the order flips in the dark theme. Each ink is the
+     cell text on its fill. */
+  --band-prime: #8e3f22;
   --band-prime-ink: var(--on-fill);
-  --band-normal: #7fb0c0;
+  --band-normal: #c97a4e;
   --band-normal-ink: var(--ink);
-  --band-quiet: #dcebef;
+  --band-quiet: #e4a87a;
   --band-quiet-ink: var(--ink);
   /* One fixed hue per race mode; the order is what keeps neighbouring violins colour-blind safe. */
   --mode-1: #2a78d6;
@@ -176,13 +180,15 @@
   --red: #fe7365;
   --series: #66aabf;
   --series-muted: #5c6660;
+  --ladder-series: #d17a55;
+  --ladder-series-muted: #6b5a48;
   --positive: #80b7eb;
   --teal: #77b6ca;
   --teal-deep: #9dcddd;
-  --band-prime: #86cadf;
-  --band-normal: #5290a3;
+  --band-prime: #f0b886;
+  --band-normal: #c47a4c;
   --band-normal-ink: var(--on-fill);
-  --band-quiet: #213b43;
+  --band-quiet: #7a4a30;
   --mode-1: #4e96f1;
   --mode-2: #ff9168;
   --mode-3: #52cc98;
@@ -775,12 +781,6 @@ summary:focus-visible {
 }
 
 /* Panels */
-.season-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-}
-
 .chart-panel {
   position: relative;
   min-width: 0;
@@ -804,17 +804,58 @@ summary:focus-visible {
 
 .participation-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
 }
 
-/* These headings sit directly under the panel heading, whose rule already divides them. */
+/* Quiet group title: a terracotta bar, the name, then a hairline along the rest of the row. */
+.participation-group {
+  margin-bottom: 24px;
+}
+
+.participation-group__title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 18px 24px 0;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: var(--text-md);
+  text-transform: uppercase;
+}
+
+.participation-group__title::before {
+  flex: none;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ladder-series);
+  content: "";
+}
+
+.participation-group__title::after {
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+  content: "";
+}
+
+/* These headings sit under their group title, whose hairline already divides them. The caption stacks under the
+   title, so a narrow column never squeezes it. */
 .participation-grid .heatmap-heading {
+  flex-direction: column;
+  gap: 2px;
+  align-items: start;
   border-top: 0;
 }
 
-.chart-panel--schedule {
+.chart-panel--primetime {
   margin-bottom: 24px;
+}
+
+.chart-panel--primetime,
+.chart-panel--participation {
+  border-top-color: var(--ladder-series);
 }
 
 /* Schedule and heatmaps */
@@ -828,7 +869,8 @@ summary:focus-visible {
   border-top: 1px solid var(--line);
 }
 
-.heatmap-heading h3 {
+.heatmap-heading h3,
+.heatmap-heading h4 {
   margin: 0;
   font-family: var(--display);
   font-size: var(--text-lg);
@@ -886,7 +928,7 @@ summary:focus-visible {
 }
 
 .heatmap-key--in-progress {
-  background: var(--series-muted);
+  background: var(--ladder-series-muted);
 }
 
 /* An outlined dot, like the racer's own finishes in a violin chart. It leads its legend. */
@@ -1073,11 +1115,11 @@ summary:focus-visible {
 }
 
 .bar--series {
-  fill: var(--series);
+  fill: var(--ladder-series);
 }
 
 .bar--muted {
-  fill: var(--series-muted);
+  fill: var(--ladder-series-muted);
 }
 
 /* The pointer target of a season without a value, where a dash stands in for the bar. */
@@ -1761,6 +1803,11 @@ footer p {
 /* Responsive */
 
 @media (max-width: 1365px) {
+  /* A 4-across chart host would drop under MIN_CHART_WIDTH and scroll sideways. */
+  .participation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .section-nav__link,
   .section-nav__faceoff {
     font-size: var(--text-lg);
@@ -1817,7 +1864,6 @@ footer p {
     border-left: 0;
   }
 
-  .season-grid,
   .participation-grid {
     grid-template-columns: 1fr;
   }

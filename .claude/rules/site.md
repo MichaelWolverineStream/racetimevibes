@@ -53,7 +53,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 
 ## CSS (`site/*.css`)
 
-- Tokens live on `:root` in `styles.css`: colours, data roles (`--series`, `--mode-*`, `--band-*`, `--tag-*`, `--corner-a`/`--corner-b`), the type scale `--text-*`, `--shadow`, `--scrim`, and the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`. Prefer tokens over literals, and name the token, not a number, when a comment mentions a layer.
+- Tokens live on `:root` in `styles.css`: colours, data roles (`--series`, `--ladder-series*`, `--mode-*`, `--band-*`, `--tag-*`, `--corner-a`/`--corner-b`), the type scale `--text-*`, `--shadow`, `--scrim`, and the overlay stack, lowest first: `--layer-backdrop`, `--layer-dialog`, `--layer-effects`, `--layer-tooltip`. Prefer tokens over literals, and name the token, not a number, when a comment mentions a layer.
 - **Dark theme.** `theme.js` sets `data-theme` on `<html>`, and the `/* Dark theme */` section after `:root` redeclares every `:root` token whose value holds a literal colour, repeating any value that stays the same. Aliases follow on their own. `tests/test_site_theme.py` fails on a token missing from the dark block and checks the contrast pairs in both themes.
   - Pick dark values by role, not by inverting:
     - Large surfaces stay deep (`--brand-fill` with `--on-brand` for the nav band).
@@ -67,6 +67,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
   - `theme.js` mirrors `--brand-fill` for the browser toolbar and spells out `STORAGE_PREFIX`. `tests/test_site_theme.py` checks both.
 - `--corner-a` and `--corner-b` are Face Off's red and blue corner data role, with their own values, so a corner never reads as a mode. They colour fills, rings and bars, never text, and `tests/test_site_theme.py` checks both at 3:1 against the panel. `faceoff.css` sets `--corner` and `--lean` per side, and its rules use only those two.
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
+- `--ladder-series` and `--ladder-series-muted` mean the Ladder Data season bars, the season in progress and the two Ladder Data panels' top rules.
 - `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
 - `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. Reduced motion is handled at the end of `styles.css`.
 - Desktop-first, and good on phones. Desktop (1024px and up, with a mouse) must not change when you work on phones.

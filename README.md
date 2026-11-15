@@ -7,7 +7,7 @@ The dashboard is published at <https://michaelwolverinestream.github.io/racetime
 - **Ratings:** an in-house ladder rating from placement alone, overall, per mode and per season, with win chances between any two racers.
 - **Racers:** a leaderboard, racer pages, head-to-head records, player cards and followed racers.
 - **Highlights:** race tags, badges, streaks, records and a feed of the latest results.
-- **Schedule:** turnout and start rates by hour and weekday, joined with the alttpr.racing ladder schedule.
+- **Ladder data:** a primetime heatmap of turnout by hour and weekday, and season-by-season participation, joined with the alttpr.racing ladder schedule.
 
 This README covers the project, the [ladder rating](#ladder-rating) and [privacy](#privacy). Everything else is in [docs/](#documentation).
 

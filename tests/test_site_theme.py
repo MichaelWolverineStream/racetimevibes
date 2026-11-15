@@ -59,6 +59,7 @@ NON_TEXT_PAIRS = [
     ("--rule", "--panel"),
     ("--gold", "--brand-fill"),
     ("--gold", "--brand-fill-strong"),
+    ("--ladder-series", "--panel"),
     ("--corner-a", "--panel"),
     ("--corner-b", "--panel"),
 ]

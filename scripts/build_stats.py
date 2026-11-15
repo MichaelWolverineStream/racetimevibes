@@ -287,12 +287,18 @@ def _season_summary(
     slots: list[JsonObject],
     starts: list[tuple[int, datetime]],
     counted_through: datetime | None,
+    scheduled_days: dict[date, set[int]],
+    joined_races: set[str],
 ) -> tuple[list[JsonObject], JsonObject]:
     """Return one row per season and the counts of races and slots that fall in none.
 
     Races are every included race; slots are the counted, unpulled ones. A season is
     complete once the next season has started within the counted schedule. Racers are
     the identified entrants, counted as distinct people.
+
+    The per-day counts mirror the monthly ones: a scheduled day belongs to every season
+    one of its slots falls in, and a race counts only on a scheduled day of its own
+    season. A fired race is an included race a slot joined.
     """
     rows: dict[int, JsonObject] = {}
 
@@ -307,6 +313,10 @@ def _season_summary(
                 "real_field_count": 0,
                 "race_count": 0,
                 "entrant_total": 0,
+                "scheduled_day_count": 0,
+                "scheduled_day_entrant_total": 0,
+                "fired_race_count": 0,
+                "fired_entrant_total": 0,
             },
         )
 
@@ -320,6 +330,11 @@ def _season_summary(
             continue
         row(season)["race_count"] += 1
         row(season)["entrant_total"] += record["entrants_count"]
+        if season in scheduled_days.get(record["local_started_at"].date(), ()):
+            row(season)["scheduled_day_entrant_total"] += record["entrants_count"]
+            if record["name"] in joined_races:
+                row(season)["fired_race_count"] += 1
+                row(season)["fired_entrant_total"] += record["entrants_count"]
         season_records[season].append(record)
         season_racers[season] |= record["racer_ids"]
     slots_without_season = 0
@@ -331,6 +346,11 @@ def _season_summary(
         row(season)["scheduled_count"] += 1
         row(season)["started_count"] += slot["started"]
         row(season)["real_field_count"] += slot["racers"] >= REAL_FIELD_MIN
+
+    # Only seasons with a race or a counted slot have a row; a scheduled day never makes one.
+    for day_seasons in scheduled_days.values():
+        for season in day_seasons & rows.keys():
+            rows[season]["scheduled_day_count"] += 1
 
     start_of = dict(starts)
     next_start = {
@@ -443,14 +463,24 @@ def _newcomers(
 
 
 def _scheduled_days(
-    joined: list[schedule_archive.JoinedSlot], archive_start: date, archive_end: date
-) -> set[date]:
-    """Return the archive's Eastern dates that hold a slot, pulled slots included."""
-    days = set()
+    joined: list[schedule_archive.JoinedSlot],
+    starts: list[tuple[int, datetime]],
+    archive_start: date,
+    archive_end: date,
+) -> dict[date, set[int]]:
+    """Return the archive's Eastern dates that hold a slot, pulled slots included.
+
+    Each date maps to the seasons of its slots; a date whose slots fall in no season
+    stays a scheduled day with an empty set.
+    """
+    days: dict[date, set[int]] = {}
     for slot in joined:
         day = slot.started_at.astimezone(SCHEDULE_TIMEZONE).date()
         if archive_start <= day <= archive_end:
-            days.add(day)
+            seasons = days.setdefault(day, set())
+            season = schedule_archive.season_of(slot.started_at, starts)
+            if season is not None:
+                seasons.add(season)
     return days
 
 
@@ -497,7 +527,7 @@ def _monthly_turnout(
     records: list[JsonObject],
     archive_start: date,
     archive_end: date,
-    scheduled_days: set[date],
+    scheduled_days: dict[date, set[int]],
     joined_races: set[str],
 ) -> list[JsonObject]:
     """Summarize each archive month's races, with entries and fired races per scheduled day.
@@ -689,7 +719,7 @@ def aggregate_races(
 
     starts = schedule_archive.season_starts(schedule)
     joined = schedule_archive.join_races(schedule, modes, contexts, excluded_seeds)
-    scheduled_days = _scheduled_days(joined, archive_start, archive_end)
+    scheduled_days = _scheduled_days(joined, starts, archive_start, archive_end)
     joined_races = {slot.race["race"]["name"] for slot in joined if slot.race}
     slot_records: list[JsonObject] = []
     period_slots: dict[str, list[JsonObject]] = defaultdict(list)
@@ -747,14 +777,19 @@ def aggregate_races(
         )
 
     seasons, season_diagnostics = _season_summary(
-        included_records, slot_records, starts, counted_through
+        included_records,
+        slot_records,
+        starts,
+        counted_through,
+        scheduled_days,
+        joined_races,
     )
 
     generated = (generated_at or datetime.now(UTC)).astimezone(UTC)
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 11,
+        "schema_version": 12,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {

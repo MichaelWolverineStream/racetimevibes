@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="198cbff34a44">
+    <meta name="app-version" content="5eac7060e766">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <script src="theme.js?v=198cbff34a44"></script>
-    <link rel="stylesheet" href="styles.css?v=198cbff34a44">
-    <link rel="stylesheet" href="ui.css?v=198cbff34a44">
-    <link rel="stylesheet" href="feed.css?v=198cbff34a44">
-    <link rel="stylesheet" href="top-rated.css?v=198cbff34a44">
-    <link rel="stylesheet" href="upcoming.css?v=198cbff34a44">
-    <link rel="stylesheet" href="records.css?v=198cbff34a44">
-    <link rel="stylesheet" href="racer-extras.css?v=198cbff34a44">
-    <link rel="stylesheet" href="share-card.css?v=198cbff34a44">
-    <link rel="stylesheet" href="faceoff.css?v=198cbff34a44">
-    <link rel="stylesheet" href="easter-eggs.css?v=198cbff34a44">
+    <script src="theme.js?v=5eac7060e766"></script>
+    <link rel="stylesheet" href="styles.css?v=5eac7060e766">
+    <link rel="stylesheet" href="ui.css?v=5eac7060e766">
+    <link rel="stylesheet" href="feed.css?v=5eac7060e766">
+    <link rel="stylesheet" href="top-rated.css?v=5eac7060e766">
+    <link rel="stylesheet" href="upcoming.css?v=5eac7060e766">
+    <link rel="stylesheet" href="records.css?v=5eac7060e766">
+    <link rel="stylesheet" href="racer-extras.css?v=5eac7060e766">
+    <link rel="stylesheet" href="share-card.css?v=5eac7060e766">
+    <link rel="stylesheet" href="faceoff.css?v=5eac7060e766">
+    <link rel="stylesheet" href="easter-eggs.css?v=5eac7060e766">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -93,10 +93,8 @@
         </div>
         <div class="section-nav__group section-nav__group--data" role="group" aria-labelledby="section-nav-data">
           <span id="section-nav-data" class="section-nav__heading">Ladder Data</span>
-          <a class="section-nav__link" href="#schedule">Schedule</a>
+          <a class="section-nav__link" href="#primetime">Primetime</a>
           <a class="section-nav__link" href="#participation">Participation</a>
-          <a class="section-nav__link" href="#traffic">Traffic</a>
-          <a class="section-nav__link" href="#turnout">Turnout</a>
         </div>
       </nav>
 
@@ -212,10 +210,10 @@
           <p id="schedule-counted-through" class="period-current period-counted" hidden></p>
         </section>
 
-        <article id="schedule" class="chart-panel chart-panel--schedule" style="--i: 0">
+        <article id="primetime" class="chart-panel chart-panel--primetime" style="--i: 0">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">04 / Schedule</p>
+              <p class="panel-index">04 / Primetime</p>
               <h2>Primetime heatmap</h2>
             </div>
             <p>Racers per scheduled race</p>
@@ -236,71 +234,86 @@
             </div>
             <p>By season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
           </header>
-          <!-- The 4 in "4+ racers" must match REAL_FIELD_MIN in scripts/build_stats.py and site/app.js. -->
-          <div class="participation-grid">
-            <div>
-              <div class="heatmap-heading">
-                <h3>Active racers per week</h3>
-                <p>Median of the season's full weeks</p>
+          <section class="participation-group" aria-labelledby="participation-racers-title">
+            <h3 id="participation-racers-title" class="participation-group__title">Racers</h3>
+            <div class="participation-grid">
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Active racers per week</h4>
+                  <p>Median of the season's full weeks</p>
+                </div>
+                <div id="participation-reach-chart" class="chart-host" aria-live="polite"></div>
               </div>
-              <div id="participation-reach-chart" class="chart-host" aria-live="polite"></div>
-            </div>
-            <div>
-              <div class="heatmap-heading">
-                <h3>Races with 4+ racers</h3>
-                <p>Share of scheduled races</p>
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Returning racers</h4>
+                  <p>Share of last season's racers</p>
+                </div>
+                <div id="participation-returning-chart" class="chart-host" aria-live="polite"></div>
               </div>
-              <div id="participation-fields-chart" class="chart-host" aria-live="polite"></div>
-            </div>
-            <div>
-              <div class="heatmap-heading">
-                <h3>Returning racers</h3>
-                <p>Share of last season's racers</p>
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Race entries per day</h4>
+                  <p>Per scheduled day</p>
+                </div>
+                <div id="participation-entries-day-chart" class="chart-host" aria-live="polite"></div>
               </div>
-              <div id="participation-returning-chart" class="chart-host" aria-live="polite"></div>
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Race entries</h4>
+                  <p>Total per season</p>
+                </div>
+                <div id="participation-entries-chart" class="chart-host" aria-live="polite"></div>
+              </div>
             </div>
-          </div>
+          </section>
+          <section class="participation-group" aria-labelledby="participation-races-title">
+            <h3 id="participation-races-title" class="participation-group__title">Races</h3>
+            <div class="participation-grid">
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Races fired per day</h4>
+                  <p>Per scheduled day</p>
+                </div>
+                <div id="participation-fired-chart" class="chart-host" aria-live="polite"></div>
+              </div>
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Races that started</h4>
+                  <p>Share of scheduled races</p>
+                </div>
+                <div id="participation-started-chart" class="chart-host" aria-live="polite"></div>
+              </div>
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Racers per fired race</h4>
+                  <p>Average field size</p>
+                </div>
+                <div id="participation-field-size-chart" class="chart-host" aria-live="polite"></div>
+              </div>
+              <!-- The 4 in "4+ racers" must match REAL_FIELD_MIN in scripts/build_stats.py and site/app.js. -->
+              <div>
+                <div class="heatmap-heading">
+                  <h4>Races with 4+ racers</h4>
+                  <p>Share of scheduled races</p>
+                </div>
+                <div id="participation-fields-chart" class="chart-host" aria-live="polite"></div>
+              </div>
+            </div>
+          </section>
           <details class="data-details">
-            <summary>View season values</summary>
-            <div id="participation-season-table" class="table-wrap"></div>
+            <summary>View racer values by season</summary>
+            <div id="participation-racer-table" class="table-wrap"></div>
+          </details>
+          <details class="data-details">
+            <summary>View race values by season</summary>
+            <div id="participation-race-table" class="table-wrap"></div>
           </details>
           <details class="data-details">
             <summary>View monthly values</summary>
             <div id="participation-month-table" class="table-wrap"></div>
           </details>
         </article>
-
-        <div class="season-grid">
-          <article id="traffic" class="chart-panel" style="--i: 2">
-            <header class="panel-heading">
-              <div>
-                <p class="panel-index">06 / Traffic</p>
-                <h2>How often races start</h2>
-              </div>
-              <p>Share of scheduled races that started, by season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
-            </header>
-            <div id="season-start-chart" class="chart-host" aria-live="polite"></div>
-            <details class="data-details">
-              <summary>View season values</summary>
-              <div id="season-start-table" class="table-wrap"></div>
-            </details>
-          </article>
-
-          <article id="turnout" class="chart-panel" style="--i: 3">
-            <header class="panel-heading">
-              <div>
-                <p class="panel-index">07 / Turnout</p>
-                <h2>Entries by season</h2>
-              </div>
-              <p>Race entries per season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
-            </header>
-            <div id="season-entries-chart" class="chart-host" aria-live="polite"></div>
-            <details class="data-details">
-              <summary>View season values</summary>
-              <div id="season-entries-table" class="table-wrap"></div>
-            </details>
-          </article>
-        </div>
       </section>
 
       <section id="player-view" class="player-view" hidden aria-labelledby="player-name">
@@ -404,20 +417,20 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=198cbff34a44" defer></script>
-    <script src="racer-charts.js?v=198cbff34a44" defer></script>
-    <script src="store.js?v=198cbff34a44" defer></script>
-    <script src="ui.js?v=198cbff34a44" defer></script>
-    <script src="top-rated.js?v=198cbff34a44" defer></script>
-    <script src="upcoming.js?v=198cbff34a44" defer></script>
-    <script src="feed.js?v=198cbff34a44" defer></script>
-    <script src="records.js?v=198cbff34a44" defer></script>
-    <script src="racer-extras.js?v=198cbff34a44" defer></script>
-    <script src="share-card.js?v=198cbff34a44" defer></script>
-    <script src="faceoff.js?v=198cbff34a44" defer></script>
-    <script src="easter-eggs.js?v=198cbff34a44" defer></script>
-    <script src="leaderboard.js?v=198cbff34a44" defer></script>
-    <script src="version-check.js?v=198cbff34a44" defer></script>
-    <script src="visitor-counter.js?v=198cbff34a44" defer></script>
+    <script src="app.js?v=5eac7060e766" defer></script>
+    <script src="racer-charts.js?v=5eac7060e766" defer></script>
+    <script src="store.js?v=5eac7060e766" defer></script>
+    <script src="ui.js?v=5eac7060e766" defer></script>
+    <script src="top-rated.js?v=5eac7060e766" defer></script>
+    <script src="upcoming.js?v=5eac7060e766" defer></script>
+    <script src="feed.js?v=5eac7060e766" defer></script>
+    <script src="records.js?v=5eac7060e766" defer></script>
+    <script src="racer-extras.js?v=5eac7060e766" defer></script>
+    <script src="share-card.js?v=5eac7060e766" defer></script>
+    <script src="faceoff.js?v=5eac7060e766" defer></script>
+    <script src="easter-eggs.js?v=5eac7060e766" defer></script>
+    <script src="leaderboard.js?v=5eac7060e766" defer></script>
+    <script src="version-check.js?v=5eac7060e766" defer></script>
+    <script src="visitor-counter.js?v=5eac7060e766" defer></script>
   </body>
 </html>
