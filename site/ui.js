@@ -286,19 +286,47 @@ const UI = (() => {
     return [description, status, badgeShare(definition.id)].filter(Boolean).join(" · ");
   }
 
-  function badge(definition, { earnedRaceIndex = null, progress = null } = {}) {
+  // A compact tile's art: the still frame, animated only while a mouse hovers the tile or it has
+  // keyboard focus, so a row of them stays calm and a tap never starts it. Reduced-motion
+  // viewers always see the still.
+  function compactArt(definition, root) {
+    const image = badgeImage(definition.still);
+    const play = (event) => {
+      const wanted = event.type === "focus" ? root.matches(":focus-visible") : !isTouchPointer(event);
+      if (wanted && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        image.src = definition.image;
+      }
+    };
+    const rest = () => {
+      image.src = definition.still;
+    };
+    root.addEventListener("pointerenter", play);
+    root.addEventListener("pointerleave", rest);
+    root.addEventListener("focus", play);
+    root.addEventListener("blur", rest);
+    return image;
+  }
+
+  // `compact` draws an earned badge as a small tile with no label: its name leads the tooltip
+  // and names the button instead.
+  function badge(definition, { earnedRaceIndex = null, progress = null, compact = false } = {}) {
     const earned = earnedRaceIndex !== null && earnedRaceIndex !== undefined;
-    const root = element("button", `ui-badge ui-badge--${earned ? "earned" : "locked"}`);
+    const root = element("button", `ui-badge ui-badge--${earned ? "earned" : "locked"}${compact ? " ui-badge--compact" : ""}`);
     root.type = "button";
     root.setAttribute("aria-haspopup", "dialog");
     const tile = element("span", "ui-badge__tile");
-    if (!earned && definition.target && progress) {
+    if (!earned && !compact && definition.target && progress) {
       tile.appendChild(progressFrame(definition, progress));
     }
-    tile.appendChild(badgeArt(definition, earned));
+    tile.appendChild(compact && earned ? compactArt(definition, root) : badgeArt(definition, earned));
     root.appendChild(tile);
-    root.appendChild(element("span", "ui-badge__label", definition.label));
-    const tooltipText = badgeTooltip(definition, earnedRaceIndex, progress);
+    let tooltipText = badgeTooltip(definition, earnedRaceIndex, progress);
+    if (compact) {
+      root.setAttribute("aria-label", definition.label);
+      tooltipText = [definition.label, tooltipText].filter(Boolean).join(" · ");
+    } else {
+      root.appendChild(element("span", "ui-badge__label", definition.label));
+    }
     if (tooltipText) {
       bindTooltip(root, tooltipText);
     }

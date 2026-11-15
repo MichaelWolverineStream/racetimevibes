@@ -513,9 +513,7 @@
 }
 
 .feed-racer__meta,
-.feed-racer__streak,
-.feed-racer__note,
-.feed-racer__claim {
+.feed-racer__streak {
   margin: 2px 0 0;
   font-size: var(--text-xs);
 }
@@ -529,17 +527,157 @@
   font-weight: 800;
 }
 
-.feed-racer__note {
-  color: var(--accent);
-  font-weight: 700;
+/* Featured daily racer: a small trading card in the colour of the highlight that earned the
+   spot. feed.js sets --spot to that tag kind's --tag-* token; it colours only the frame, the
+   avatar ring, the wash, the sparkle and the bullets, never text. */
+.feed-spotlight {
+  --spot: var(--tag-badge);
+  display: grid;
+  gap: 12px;
+  padding: 14px 12px 12px;
+  border: 1px solid var(--grid);
+  border-top: 3px solid var(--spot);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--shine-color) 70%, transparent) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
+    linear-gradient(160deg, color-mix(in srgb, var(--spot) 9%, var(--panel)), var(--panel) 65%);
+  box-shadow: var(--shadow);
 }
 
-.feed-racer__claim {
-  color: var(--ink);
-  font-weight: 700;
+.feed-spotlight__hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.feed-racer__badge {
+/* The avatar keeps a literal 4px radius, as avatars do; the ring is two shadows, as on the top-rated tiles. */
+.feed-spotlight__face {
+  position: relative;
+  display: block;
+  flex: none;
+  border-radius: 4px;
+}
+
+.feed-spotlight__face .ui-avatar {
+  box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--spot);
+}
+
+/* The record tags' four-point sparkle, riding the ring's corner. */
+.feed-spotlight__sparkle {
+  position: absolute;
+  top: -11px;
+  left: -11px;
+  width: 18px;
+  height: 18px;
+  background: var(--spot);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  pointer-events: none;
+}
+
+.feed-spotlight__intro {
+  display: grid;
+  flex: 1;
+  gap: 4px;
+  min-width: 0;
+}
+
+.feed-spotlight__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Only an unusually long name truncates; its own overflow never clips its focus ring. */
+.feed-spotlight__name {
+  margin-right: auto;
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: var(--text-lg);
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feed-spotlight__head .trend {
+  flex: none;
+  font-size: var(--text-xs);
+}
+
+.feed-spotlight__since {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+/* A streak never breaks mid-phrase, so "2 wins in a row" wraps whole. */
+.feed-spotlight__streak {
+  color: var(--gold-ink);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.feed-spotlight__highlight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 2px 0 0;
+  font-size: var(--text-xs);
+}
+
+.feed-spotlight__when {
+  color: var(--muted);
+  font-weight: 700;
+  text-decoration-color: var(--line);
+}
+
+/* The bio is the comic speech bubble, its tail turned up at the avatar's centre: the bubble's
+   padding box starts 2px in, and a 14px tail centred under the 64px avatar starts 23px along. */
+.feed-spotlight .feed-spotlight__bio .ui-speech__bubble::before,
+.feed-spotlight .feed-spotlight__bio .ui-speech__bubble::after {
+  left: 23px;
+  border-width: 0 7px 10px;
+  border-color: transparent;
+}
+
+.feed-spotlight .feed-spotlight__bio .ui-speech__bubble::before {
+  top: -12px;
+  border-bottom-color: var(--rule);
+}
+
+.feed-spotlight .feed-spotlight__bio .ui-speech__bubble::after {
+  top: -8px;
+  border-bottom-color: var(--panel);
+}
+
+.feed-spotlight__honours {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.35;
+  list-style: none;
+}
+
+.feed-spotlight__honour {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.feed-spotlight__bullet {
+  flex: none;
+  color: var(--spot);
+}
+
+.feed-spotlight__honour-text {
+  min-width: 0;
+}
+
+.feed-spotlight__badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -552,19 +690,86 @@
   vertical-align: bottom;
 }
 
-.feed-racer__badge:hover {
+.feed-spotlight__badge:hover {
   text-decoration: underline;
 }
 
-.feed-racer__badge:focus-visible {
+.feed-spotlight__badge:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
-.feed-racer__badge img {
+.feed-spotlight__badge img {
   flex: none;
   border-radius: 3px;
   object-fit: contain;
+}
+
+.feed-spotlight__shelf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--grid);
+}
+
+.feed-spotlight__more {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  text-decoration-color: var(--line);
+}
+
+/* Motion only for viewers who allow it: the card rises in and one sheen sweeps its wash; on
+   hover or focus with a mouse, the face lifts and the sparkle twinkles. */
+@media (prefers-reduced-motion: no-preference) {
+  .feed-spotlight {
+    animation:
+      arrive 500ms 140ms ease-out both,
+      feed-spotlight-shine 1200ms 700ms ease-out both;
+  }
+
+  .feed-spotlight__face {
+    transition: transform 150ms ease-out;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .feed-spotlight:hover .feed-spotlight__face,
+  .feed-spotlight:focus-within .feed-spotlight__face {
+    transform: translateY(-2px);
+  }
+
+  .feed-spotlight:hover .feed-spotlight__sparkle,
+  .feed-spotlight:focus-within .feed-spotlight__sparkle {
+    animation: feed-spotlight-twinkle 600ms ease-out;
+  }
+}
+
+/* With the sheen 2.5 times the card's width, 200% parks it off the left edge and -100% off the right. */
+@keyframes feed-spotlight-shine {
+  from {
+    background-position: 200% 0, 0 0;
+  }
+
+  to {
+    background-position: -100% 0, 0 0;
+  }
+}
+
+@keyframes feed-spotlight-twinkle {
+  0% {
+    transform: scale(1) rotate(0);
+  }
+
+  40% {
+    transform: scale(1.6) rotate(45deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(90deg);
+  }
 }
 
 .feed-fact {

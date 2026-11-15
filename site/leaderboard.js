@@ -1,4 +1,6 @@
-const PARTICIPANT_SCHEMA_VERSION = 16;
+const PARTICIPANT_SCHEMA_VERSION = 17;
+// Must match BIO_MAX_LENGTH in scripts/featured.py, in code points as Python counts them.
+const FEATURED_BIO_MAX_LENGTH = 160;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
 const MEDALS = ["diamond", "gold", "silver", "bronze"];
 const MEDAL_RULE_TOOLTIP =
@@ -219,6 +221,28 @@ function validateParticipants(data) {
     ))
   ) {
     throw new Error("Racer data contains an invalid avatar change.");
+  }
+  // featured: [date, player, race, tag, bio], the tag naming the player; see scripts/featured.py.
+  if (
+    !Array.isArray(data.featured) ||
+    !data.featured.every((pick) => (
+      Array.isArray(pick) &&
+      typeof pick[0] === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(pick[0]) &&
+      Number.isInteger(pick[1]) &&
+      pick[1] >= 0 &&
+      pick[1] < data.players.length &&
+      Number.isInteger(pick[2]) &&
+      pick[2] >= 0 &&
+      pick[2] < data.races.length &&
+      Number.isInteger(pick[3]) &&
+      Array.isArray(data.races[pick[2]].t) &&
+      Array.isArray(data.races[pick[2]].t[pick[3]]) &&
+      data.races[pick[2]].t[pick[3]][1] === pick[1] &&
+      (pick[4] === null || (typeof pick[4] === "string" && Array.from(pick[4]).length <= FEATURED_BIO_MAX_LENGTH))
+    ))
+  ) {
+    throw new Error("Racer data contains an invalid featured racer.");
   }
 }
 
@@ -485,7 +509,8 @@ function ratingRank(playerIndex, modeId = ALL_MODES, season = null) {
   return ratingRanks(modeId, season).get(playerIndex);
 }
 
-// The scopes the top-rated banner crowns and the featured racer avoids: the overall ladder and every named mode.
+// The scopes the top-rated banner crowns: the overall ladder and every named mode.
+// scripts/featured.py mirrors them for the ranks the featured racer avoids.
 function ratingCategories() {
   return [ALL_MODES, ...participants.modes.filter((modeId) => modeId !== UNKNOWN_MODE)];
 }

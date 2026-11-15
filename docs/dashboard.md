@@ -40,7 +40,7 @@ A nav bar under the masthead links to the seven sections, grouped as Racing (01-
 
 ## Top-rated banner
 
-The banner crowns the top-rated racer in each category: **Overall**, then every mode in mode order except `unknown`, which only groups races whose mode could not be read. The featured daily racer uses the same categories.
+The banner crowns the top-rated racer in each category: **Overall**, then every mode in mode order except `unknown`, which only groups races whose mode could not be read. The [featured racer](highlights.md#featured-racer) is never in the top 3 of any of the same categories.
 
 - **Scope:** a two-button toggle in the banner header, in a group labelled "Rating period": the current season, pressed by default and labelled like "Season 10 · TR" with the full name in its tooltip, then **All time**. Toggling redraws the tiles in place, and the choice is not persisted. With no seasons there is no toggle and the banner is all-time. At phone width the toggle leaves the border for a row of its own above the tiles.
 - **Who:** a tile shows exactly the top of the leaderboard sorted by rating in its category and scope: the season's rating under a season, the all-time rating under **All time**. There are no filters and no decay, so a leader keeps the crown until someone rates higher. A season tile shows the season rating, and runners-up use the season's ranks.
@@ -74,26 +74,36 @@ A strip between the top-rated banner and Latest results, hidden on racer pages a
 - **Medal colours:** a finisher's place pill takes the colour of the [medal](definitions.md#entrants) that place earns in that race's field, and a place without a medal stays plain. The same applies to the winner shown on each race row and to the racer page's own rows.
 - **Entrant tags:** in an expanded race, each entrant's row shows the race tags that name that entrant, between the name and the finish time, in race-tag order. Each tag stands alone there, with the same label and tooltip it would have for one racer on the race row, so Upset and Photo finish appear on the winner. At phone width the CR and CPH drop to a line under the name, and the tags to a line under that, so the name keeps its width.
 - **CR and CPH** (see [Chest counts](datasets.md#chest-counts-cr-and-cph)) appear only where races are listed row by row: each finisher's row in an expanded race, and each of the racer's own rows in a racer page's [Latest results](#racer-pages).
-- **Sidebar:** **Your racers**, the **Featured daily racer**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order. At 1199px and below it collapses behind a **Racers & highlights** toggle, closed when the page loads; at 980px and below it sits above the feed.
+- **Sidebar:** the **Featured daily racer**, **Your racers**, **Fact of the day**, **Latest badges** and **Latest avatars**, in that order. At 1199px and below it collapses behind a **Racers & highlights** toggle, closed when the page loads; at 980px and below it sits above the feed.
 - **Your racers** lists the racers followed in this browser (see [Following](#following)), each with their 7-day rank movement (see **Ranks** under [Racer leaderboard](#racer-leaderboard)). With none it reads "☆ Star a racer to follow them here."
 - **Latest badges** lists the 12 most recent unlocks by anyone, however long ago. Clicking a badge opens its holders panel, as on a racer page.
 - **Latest avatars** shows the 6 racers whose avatar changed most recently, newest first, each with how long ago the change was first seen. The section is hidden when there are none. What counts as a change, and how it is dated, is under [Avatar changes](avatars.md#avatar-changes).
 
 ### Featured daily racer
 
-The Latest sidebar's **Featured daily racer**, between **Your racers** and **Fact of the day**, spotlights one racer a day.
+The Latest sidebar's **Featured daily racer**, at the top of the sidebar above **Your racers**, spotlights one racer a day. The build picks them; who can be picked, and how, is under [Featured racer](highlights.md#featured-racer). The page shows the pick for today's Eastern date, and hides the section when there is none. A page left open past midnight keeps its racer until it is reloaded.
 
-- **Candidates:** racers named by a race tag (see [Race tags](highlights.md#race-tags)) in races from the 14 Eastern Time calendar days before today. Today's races do not count. A tag names the racer it is about: the record setter, the first-time winner, the upset or photo-finish winner, the PB or Preset PB setter, the milestone racer or the badge earner.
-- **Exclusion:** a racer in the top 3 of any category (see [Top-rated banner](#top-rated-banner)) at the end of yesterday is not a candidate, in either scope: all time or the current season. Ranks are competition ranks, so ties can put more than three racers in a top 3.
-- **Pick:** candidates are listed in name order. The pick starts at the candidate given by the 32-bit FNV-1a hash of `featured YYYY-MM-DD`, using today's Eastern date, modulo the number of candidates. It steps forward, wrapping around, past anyone who has climbed into a top 3, in either scope, since.
-- **Stability:** everyone sees the same racer all day. A data refresh changes the pick only when the featured racer reaches a top 3, in either scope, that day. A page left open past midnight keeps its racer until it is reloaded.
-- **Card:** the **Your racers** card, with its rank movement, and up to two more lines. The section is hidden when there are no candidates.
-  - **Highlight:** the racer's latest highlight in the window and how long ago it was, such as "★ 250th race · 11 days ago".
-  - **Claim to fame:** the racer's [claim to fame](highlights.md#claim-to-fame), such as "✦ 1 of 7 racers with 7+ wins in a row". A count of 1 reads "✦ Ladder best: …" instead. A badge claim shows the badge's art and name, and clicking it opens the badge's holders panel. A racer without a claim has no such line.
+The card is a small trading card in the colour of the highlight that earned the spot: that tag kind's colour, the same as its [race tag](highlights.md#race-tags), green for a record or PB, red for an upset, and so on. The colour marks the card's top border, the ring round the avatar, a soft wash behind the card, the sparkle on the avatar's corner and the honours' bullets. Text keeps its usual colours.
+
+- **Header:** the racer's avatar, which links to their racer page; their name; their 7-day rank movement (see **Ranks** under [Racer leaderboard](#racer-leaderboard)); and the follow star.
+  - **Racing since:** the month and year of their first race, followed by any active streak, as on the **Your racers** cards.
+  - **Highlight:** the best highlight as a race-tag pill, labelled "Keys record", "Upset win", "First win", "Photo finish", "100th race", "Keys PB" or "Locksmith badge". Its tooltip is the tag's, and a record or legendary badge shines as its tag does. After it comes how long ago the race was, such as "3 days ago", which links to the race on racetime.gg, with the date as its tooltip.
+- **Bio:** the racer's racetime.gg bio, as published (see [README › Privacy](../README.md#privacy)), in the comic speech bubble the comment hero uses, its tail pointing up at the avatar. A racer without a bio has no bubble.
+- **Honours:** a list with a sparkle bullet each. First comes the racer's [claim to fame](highlights.md#claim-to-fame), such as "1 of 7 racers with 7+ wins in a row". A count of 1 reads "Ladder best: …" instead. A badge claim shows the badge's art and name, and clicking it opens the badge's holders panel. Then come up to two of these, in this order:
+
+  | Honour | Reads | When |
+  |---|---|---|
+  | Season titles | "Season 9 champion", or "Champion of Seasons 7 and 9", plus " · named the Season of the Panda" when they named a season (see [Season names](#season-names)) | They won an ended season. The tooltip spells out the seasons' names. |
+  | Records held | "Holds the Keys record · 1:16:22", or "Holds 3 records" with each in the tooltip | They hold a mode's record now, or a preset's once it has as many races as the presets table asks for (8). A run that holds both its mode's record and its preset's counts once, for the mode, as a race carries only the wider record tag. The `unknown` mode doesn't count. |
+  | Hall of records | "#2 in the Hall of records · 18 days in a row" | They are in the top 5 of a [Hall of records](#hall-of-records) card: Photo finishes, Biggest wins, Biggest field won, Most races, or the **All-time** Days, Wins, Podiums or Finishes in a row. Their best spot counts, and a tie goes to the card shown first. A card that repeats the claim's stat is skipped. The tooltip names the card, and the board for a streak. |
+  | Best season | "Best season: 4th in Season 9" | Their best final overall rank in an ended season is 10th or better and they are no champion. Among equal ranks, the latest season counts. |
+
+- **Trophy shelf:** under a rule, up to 5 of the racer's badges, rarest first, as small tiles. Ties go to the order of the badge table, as the claim's do, and a badge the claim already shows is left out. Each tile's tooltip leads with the badge's name, and clicking it opens the holders panel. A tile shows its still frame, and plays its animation only while a mouse is over it or it has keyboard focus, so a tap never starts it. With more badges, "+N" links to the racer page. A racer without badges has no shelf.
+- **Motion:** the card rises in with the page and a sheen sweeps across it once. With a mouse, hovering over the card or focusing inside it lifts the avatar and twinkles the sparkle. With reduced motion none of this happens, and the shelf stays still.
 
 ### Fact of the day
 
-The Latest sidebar's **Fact of the day**, between the **Featured daily racer** and **Latest badges**, shows one of the [facts](highlights.md#records) a day.
+The Latest sidebar's **Fact of the day**, between **Your racers** and **Latest badges**, shows one of the [facts](highlights.md#records) a day.
 
 - **Rotation:** with N facts, every fact shows once in each cycle of N days, and a fact that shows is not repeated for the next 7 days.
   - Day D counts the days from 1970-01-01 to today's Eastern date, and the cycle is ⌊D / N⌋.

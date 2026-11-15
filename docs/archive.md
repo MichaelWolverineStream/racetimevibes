@@ -50,6 +50,7 @@ A racer's bio is on their public profile page, `https://racetime.gg/user/<id>`, 
 - **Since:** when the current bio was first seen. **Earlier:** the racer's earlier bios, oldest first, each `[bio, since]`. A fetch that finds a different bio moves the old one, with its time, to the end of `earlier`; one that finds the same bio changes only the checked-at time. A racer's first fetch is not a change.
 - The history began on 2026-11-05, so an entry stored before then has an unknown `since` and no earlier bios. Only the first earlier bio, or `since` when there are none, can be unknown (`null`). Any other entry shape is refused.
 - Earlier bios are kept so a change of [favourite Pokémon](avatars.md#pokémon-avatars) can be dated (see [Avatar changes](avatars.md#avatar-changes)).
+- **Published:** only a featured racer's current bio, collapsed and capped, in `participants.json`'s `featured` (see [The three files](datasets.md#the-three-files)). Earlier bios and their times never leave `archive/`.
 
 The sync:
 

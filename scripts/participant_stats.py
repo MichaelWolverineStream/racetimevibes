@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 try:
     from scripts import (
         avatar_mirror,
+        featured,
         highlights,
         ladder_rating,
         pokemon_avatars,
@@ -24,6 +25,7 @@ try:
     )
 except ImportError:
     import avatar_mirror
+    import featured
     import highlights
     import ladder_rating
     import pokemon_avatars
@@ -32,7 +34,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 16
+PARTICIPANT_SCHEMA_VERSION = 17
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -531,6 +533,10 @@ def build_participant_payload(
         "badges": derived["badges"],
         "records": derived["records"],
         "facts": derived["facts"],
+        # The coming featured racers, each with their current bio (see featured.published).
+        "featured": featured.published(
+            races, [player["id"] for player in players], modes, bios or {}
+        ),
         "rating": ratings.params,
         "seasons": season_ratings.published_seasons(
             assignment.seasons, [record["d"] for record in records], starts, ledgers

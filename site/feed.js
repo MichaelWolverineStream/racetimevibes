@@ -11,8 +11,12 @@ const Feed = (() => {
   const NEW_BADGE_LIMIT = 12;
   const NEW_AVATAR_LIMIT = 6;
   const NEW_AVATAR_SIZE = 48;
-  const FEATURED_WINDOW_DAYS = 14;
-  const FEATURED_TOP_RANKS = 3;
+  const SPOTLIGHT_AVATAR_SIZE = 64;
+  const SHELF_BADGES = 5;
+  const MAX_HONOURS = 2;
+  const BEST_SEASON_SHOWN = 10;
+  // Must match CARD_ROWS in records.js: a Hall of records card lists its top 5.
+  const HALL_ROWS = 5;
   const FACT_REPEAT_DAYS = 7;
   // Seeds the fact shuffle. Changing it picks a new schedule from today on.
   const FACT_SEED = "fact of the day 2";
@@ -39,6 +43,7 @@ const Feed = (() => {
   });
   const rowDateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
   const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+  const sinceFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 
   let started = false;
   let firstNewIndex = 0;
@@ -83,7 +88,7 @@ const Feed = (() => {
     return status === STATUS_DQ ? "DQ" : "DNF";
   }
 
-  // 32-bit FNV-1a, so the fact order and the featured pick are stable for everyone on the same date.
+  // 32-bit FNV-1a, so the fact order is stable for everyone on the same date.
   function fnv1a(text) {
     let hash = 2166136261;
     for (let index = 0; index < text.length; index += 1) {
@@ -763,40 +768,7 @@ const Feed = (() => {
     comeback: (value, plus) => `a comeback after ${value}${plus} days away`,
   };
 
-  // The featured racer's claim to fame: [kind, value, count], where count racers match or beat it.
-  function claimNode(claim) {
-    if (!claim) {
-      return null;
-    }
-    const [kind, value, count] = claim;
-    const paragraph = element("p", "feed-racer__claim");
-    if (kind !== "badge") {
-      const phrase = CLAIM_PHRASES[kind];
-      paragraph.textContent = count === 1
-        ? `✦ Ladder best: ${phrase(integerFormatter.format(value), "")}`
-        : `✦ 1 of ${integerFormatter.format(count)} racers with ${phrase(integerFormatter.format(value), "+")}`;
-      return paragraph;
-    }
-    const definition = badgeDefinition(value);
-    paragraph.appendChild(document.createTextNode(
-      count === 1 ? "✦ The only racer with " : `✦ 1 of ${integerFormatter.format(count)} racers with `,
-    ));
-    const button = element("button", "feed-racer__badge");
-    button.type = "button";
-    button.setAttribute("aria-haspopup", "dialog");
-    const image = element("img");
-    image.src = definition.still;
-    image.alt = "";
-    image.width = 16;
-    image.height = 16;
-    button.append(image, document.createTextNode(definition.label));
-    bindTooltip(button, definition.description);
-    button.addEventListener("click", () => UI.badgePanel(definition));
-    paragraph.appendChild(button);
-    return paragraph;
-  }
-
-  function racerCard(playerIndex, deltas, { note = null, claim = null } = {}) {
+  function racerCard(playerIndex, deltas) {
     const season = currentSeason();
     const card = element("div", "feed-racer");
     card.appendChild(UI.avatar(playerIndex, 32));
@@ -816,13 +788,6 @@ const Feed = (() => {
     if (streaks.length) {
       body.appendChild(element("p", "feed-racer__streak", streaks.join(" · ")));
     }
-    if (note) {
-      body.appendChild(element("p", "feed-racer__note", note));
-    }
-    const claimLine = claimNode(claim);
-    if (claimLine) {
-      body.appendChild(claimLine);
-    }
     card.appendChild(body);
     return card;
   }
@@ -839,44 +804,25 @@ const Feed = (() => {
     host.replaceChildren(section);
   }
 
-  // Candidates come from races before today, so the pick holds all day as new results arrive;
-  // it moves on only if the featured racer climbs into a top 3 today.
-  function featuredRacer() {
+  // ---- Featured daily racer ----
+
+  // Today's pick, chosen by the build (scripts/featured.py): null when the data names none.
+  function featuredToday() {
     const today = todayInZone();
-    const through = shiftIsoDate(today, -1);
-    const from = shiftIsoDate(today, -FEATURED_WINDOW_DAYS);
-    const latestHighlight = new Map();
-    participants.races.forEach((race, raceIndex) => {
-      if (race.d >= from && race.d <= through) {
-        (race.t || []).forEach((tag) => latestHighlight.set(tag[1], { tag, raceIndex }));
-      }
-    });
-    // A racer leading either the all-time or the current season's ladder in any category is already featured elsewhere.
-    const categories = ratingCategories();
-    const scopes = [null, currentSeason()].filter((season, index, all) => all.indexOf(season) === index);
-    const inTopRanks = (rankMaps, playerIndex) => rankMaps.some((ranks) => ranks.get(playerIndex) <= FEATURED_TOP_RANKS);
-    const ranksThrough = scopes.flatMap((season) => categories.map((modeId) => ratingRanksThrough(modeId, through, season)));
-    const candidates = [...latestHighlight.keys()]
-      .filter((playerIndex) => !inTopRanks(ranksThrough, playerIndex))
-      .sort((left, right) => left - right);
-    if (!candidates.length) {
+    const pick = participants.featured.find(([date]) => date === today);
+    if (!pick) {
       return null;
     }
-    const ranksNow = scopes.flatMap((season) => categories.map((modeId) => ratingRanks(modeId, season)));
-    const start = fnv1a(`featured ${today}`) % candidates.length;
-    for (let step = 0; step < candidates.length; step += 1) {
-      const playerIndex = candidates[(start + step) % candidates.length];
-      if (!inTopRanks(ranksNow, playerIndex)) {
-        return { playerIndex, ...latestHighlight.get(playerIndex) };
-      }
-    }
-    return null;
+    const [, playerIndex, raceIndex, tagIndex, bio] = pick;
+    return { playerIndex, raceIndex, tag: participants.races[raceIndex].t[tagIndex], bio };
   }
 
+  // The highlight pill's label, short because the pill's colour already names the kind. A badge
+  // says "badge", since many badge names ("Keys", "Rival") read as something else alone.
   function highlightLabel(tag, race) {
     switch (tag[0]) {
       case "badge":
-        return `Unlocked ${badgeDefinition(tag[2]).label}`;
+        return `${badgeDefinition(tag[2]).label} badge`;
       case "first_win":
         return "First win";
       case "pb":
@@ -890,24 +836,273 @@ const Feed = (() => {
       case "upset":
         return "Upset win";
       case "photo":
-        return "Won a photo finish";
+        return "Photo finish";
       case "milestone":
         return `${ordinal(tag[2])} race`;
       default:
-        return "New highlight";
+        return "Highlight";
     }
   }
 
+  // The claim to fame, [kind, value, count] where count racers match or beat it, as the nodes of its line.
+  function claimParts([kind, value, count]) {
+    if (kind !== "badge") {
+      const phrase = CLAIM_PHRASES[kind];
+      return [document.createTextNode(count === 1
+        ? `Ladder best: ${phrase(integerFormatter.format(value), "")}`
+        : `1 of ${integerFormatter.format(count)} racers with ${phrase(integerFormatter.format(value), "+")}`)];
+    }
+    const definition = badgeDefinition(value);
+    const button = element("button", "feed-spotlight__badge");
+    button.type = "button";
+    button.setAttribute("aria-haspopup", "dialog");
+    const image = element("img");
+    image.src = definition.still;
+    image.alt = "";
+    image.width = 16;
+    image.height = 16;
+    button.append(image, document.createTextNode(definition.label));
+    bindTooltip(button, definition.description);
+    button.addEventListener("click", () => UI.badgePanel(definition));
+    return [
+      document.createTextNode(count === 1 ? "The only racer with " : `1 of ${integerFormatter.format(count)} racers with `),
+      button,
+    ];
+  }
+
+  function joinWords(items) {
+    return items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
+  }
+
+  function endedSeasons() {
+    return participants.seasons.filter((season) => season.ended).map((season) => season.n);
+  }
+
+  // Every ended season the racer won, and the latest season they named.
+  function championHonour(playerIndex) {
+    const won = endedSeasons().filter((season) => seasonChampions(season).includes(playerIndex));
+    if (!won.length) {
+      return null;
+    }
+    const titles = won.length === 1 ? `Season ${won[0]} champion` : `Champion of Seasons ${joinWords(won)}`;
+    const named = won.filter((season) => seasonNamers(season + 1).includes(playerIndex));
+    const naming = named.length ? ` · named ${seasonTitle(named.at(-1) + 1).replace(/^The /, "the ")}` : "";
+    return { text: titles + naming, tooltip: won.map((season) => seasonFullLabel(season)).join(", ") };
+  }
+
+  // Records held now: each named mode's record, and each preset's once the preset has the
+  // races the presets table asks for. A run that holds its mode's record counts once, for the
+  // mode, as a race carries only the wider record tag.
+  function recordHonour(playerIndex) {
+    const held = [];
+    const modeRecordRaces = new Set();
+    participants.records.modes.forEach(({ m, steps }) => {
+      const current = steps.at(-1);
+      if (current && current[1] === playerIndex && participants.modes[m] !== UNKNOWN_MODE) {
+        held.push([modeLabel(participants.modes[m]), current[2]]);
+        modeRecordRaces.add(current[0]);
+      }
+    });
+    participants.presets.forEach((preset) => {
+      const best = preset.best;
+      if (best && best[0] === playerIndex && preset.races >= participants.preset_min_races && !modeRecordRaces.has(best[2])) {
+        held.push([preset.n, best[1]]);
+      }
+    });
+    if (!held.length) {
+      return null;
+    }
+    if (held.length === 1) {
+      return { text: `Holds the ${held[0][0]} record · ${formatDuration(held[0][1])}`, tooltip: null };
+    }
+    return {
+      text: `Holds ${held.length} records`,
+      tooltip: held.map(([name, seconds]) => `${name} ${formatDuration(seconds)}`).join(" · "),
+    };
+  }
+
+  // The Hall of records cards a racer can appear on, in page order: whose each row is, and what it
+  // says. `claim` names the claim-to-fame stat a card repeats, so a card never says the claim twice.
+  function hallCards() {
+    const records = participants.records;
+    const streak = (kind, claim, unit, label) => ({
+      card: `Streaks · ${label} · All-time`,
+      claim,
+      rows: records.streaks[kind].best,
+      player: (row) => row[0],
+      text: (row) => `${integerFormatter.format(row[1])} ${unit} in a row`,
+    });
+    return [
+      { card: "Photo finishes", claim: null, rows: records.photo, player: (row) => row[1], text: (row) => `${row[3].toFixed(2)}s photo finish` },
+      {
+        card: `Biggest wins · ${participants.blowout_min_field}+ racers`,
+        claim: null,
+        rows: records.blowouts,
+        player: (row) => row[1],
+        text: (row) => `won by ${formatDuration(row[3])}`,
+      },
+      { card: "Biggest field won", claim: null, rows: records.big_field, player: (row) => row[1], text: (row) => `won a ${row[2]}-racer field` },
+      { card: "Most races", claim: "races", rows: records.most_races, player: (row) => row[0], text: (row) => `${integerFormatter.format(row[1])} races` },
+      streak("daily", "daily", "days", "Days in a row"),
+      streak("win", "win_streak", "wins", "Wins in a row"),
+      streak("podium", "podium_streak", "podiums", "Podiums in a row"),
+      streak("finish", "finish_streak", "finishes", "Finishes in a row"),
+    ];
+  }
+
+  // The racer's best spot in the top HALL_ROWS of a Hall of records card; a tie goes to the card first on the page.
+  function hallHonour(playerIndex, claim) {
+    let best = null;
+    hallCards().forEach(({ card, claim: repeats, rows, player, text }) => {
+      if (claim && claim[0] === repeats) {
+        return;
+      }
+      const position = rows.slice(0, HALL_ROWS).findIndex((row) => player(row) === playerIndex);
+      if (position >= 0 && (best === null || position < best.position)) {
+        best = { position, says: text(rows[position]), card };
+      }
+    });
+    return best && { text: `#${best.position + 1} in the Hall of records · ${best.says}`, tooltip: best.card };
+  }
+
+  // The best final overall rank in an ended season, when it is BEST_SEASON_SHOWN or better.
+  // Among equal ranks, the latest season.
+  function seasonFinishHonour(playerIndex) {
+    let best = null;
+    endedSeasons().forEach((season) => {
+      const rank = ratingRank(playerIndex, ALL_MODES, season);
+      if (rank !== undefined && rank <= BEST_SEASON_SHOWN && (best === null || rank <= best.rank)) {
+        best = { rank, season };
+      }
+    });
+    return best && { text: `Best season: ${ordinal(best.rank)} in Season ${best.season}`, tooltip: seasonFullLabel(best.season) };
+  }
+
+  // Up to MAX_HONOURS, best first. A champion's season titles stand in for their best season finish.
+  function featuredHonours(playerIndex, claim) {
+    const champion = championHonour(playerIndex);
+    return [champion, recordHonour(playerIndex), hallHonour(playerIndex, claim), champion ? null : seasonFinishHonour(playerIndex)]
+      .filter(Boolean)
+      .slice(0, MAX_HONOURS);
+  }
+
+  function honourItem(parts, tooltip = null) {
+    const item = element("li", "feed-spotlight__honour");
+    const bullet = element("span", "feed-spotlight__bullet", "✦");
+    bullet.setAttribute("aria-hidden", "true");
+    const text = element("span", "feed-spotlight__honour-text");
+    text.append(...parts);
+    if (tooltip) {
+      text.tabIndex = 0;
+      bindTooltip(text, tooltip);
+    }
+    item.append(bullet, text);
+    return item;
+  }
+
+  // The racer's rarest badges, ties in badge-table order as the claim breaks them, without the
+  // badge their claim already shows. "+N" links to the rest on the racer page.
+  function trophyShelf(playerIndex, claim) {
+    const player = participants.players[playerIndex];
+    const claimed = claim && claim[0] === "badge" ? claim[1] : null;
+    const tableOrder = new Map(participants.badges.map((definition, index) => [definition.id, index]));
+    const earned = Object.entries(player.badges)
+      .filter(([badgeId]) => badgeId !== claimed)
+      .sort(([a], [b]) => (badgeHolderCounts.get(a) ?? 0) - (badgeHolderCounts.get(b) ?? 0)
+        || (tableOrder.get(a) ?? tableOrder.size) - (tableOrder.get(b) ?? tableOrder.size));
+    if (!earned.length) {
+      return null;
+    }
+    const shelf = element("div", "feed-spotlight__shelf");
+    earned.slice(0, SHELF_BADGES).forEach(([badgeId, raceIndex]) => {
+      shelf.appendChild(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, compact: true }));
+    });
+    const rest = earned.length - SHELF_BADGES;
+    if (rest > 0) {
+      const more = element("a", "feed-spotlight__more", `+${rest}`);
+      more.href = playerHash(player.id, ALL_MODES);
+      bindTooltip(more, `${rest} more ${rest === 1 ? "badge" : "badges"}`);
+      shelf.appendChild(more);
+    }
+    return shelf;
+  }
+
+  // A small trading card in the colour of the highlight that earned the spot: --spot is that tag kind's --tag-* token.
+  function spotlightCard({ playerIndex, raceIndex, tag, bio }) {
+    const player = participants.players[playerIndex];
+    const race = participants.races[raceIndex];
+    const description = tagDescription(tag) ?? { kind: "badge", detail: null, rarity: "common" };
+    const kind = TAG_KINDS.has(tag[0]) ? tag[0] : "badge";
+    const card = element("article", "feed-spotlight");
+    card.style.setProperty("--spot", `var(--tag-${kind.replaceAll("_", "-")})`);
+
+    // The face repeats the name link for the pointer only, so it adds no tab stop.
+    const face = element("a", "feed-spotlight__face");
+    face.href = playerHash(player.id, ALL_MODES);
+    face.tabIndex = -1;
+    face.setAttribute("aria-hidden", "true");
+    face.append(UI.avatar(playerIndex, SPOTLIGHT_AVATAR_SIZE), element("span", "feed-spotlight__sparkle"));
+
+    const head = element("div", "feed-spotlight__head");
+    head.appendChild(playerLink(playerIndex, "racer-link feed-spotlight__name"));
+    const movement = rankMovementNode(sidebarRankDeltas(), playerIndex, currentSeason());
+    if (movement) {
+      head.appendChild(movement);
+    }
+    head.appendChild(UI.followStar(playerIndex));
+
+    const firstRace = participants.races[raceIndexesByPlayer[playerIndex][0]];
+    const since = element("p", "feed-spotlight__since", `Racing since ${sinceFormatter.format(new Date(`${firstRace.d}T00:00:00Z`))}`);
+    const streaks = activeStreakTexts(playerIndex);
+    streaks.forEach((text) => {
+      since.append(document.createTextNode(" · "), element("span", "feed-spotlight__streak", text));
+    });
+
+    const when = element("a", "feed-spotlight__when", UI.relativeDay(race.d));
+    when.href = RACE_ROOT + race.r;
+    when.target = "_blank";
+    when.rel = "noopener noreferrer";
+    bindTooltip(when, formatRaceDate(race.d));
+    const highlight = element("p", "feed-spotlight__highlight");
+    highlight.append(UI.tag(description.kind, highlightLabel(tag, race), description.detail, description.rarity), when);
+
+    const intro = element("div", "feed-spotlight__intro");
+    intro.append(head, since, highlight);
+    const hero = element("div", "feed-spotlight__hero");
+    hero.append(face, intro);
+    card.appendChild(hero);
+
+    if (bio) {
+      const quote = element("div", "feed-spotlight__bio");
+      quote.appendChild(UI.speech(bio, { size: "compact" }));
+      card.appendChild(quote);
+    }
+
+    const honours = element("ul", "feed-spotlight__honours");
+    if (player.claim) {
+      honours.appendChild(honourItem(claimParts(player.claim)));
+    }
+    featuredHonours(playerIndex, player.claim).forEach(({ text, tooltip }) => {
+      honours.appendChild(honourItem([document.createTextNode(text)], tooltip));
+    });
+    if (honours.children.length) {
+      card.appendChild(honours);
+    }
+
+    const shelf = trophyShelf(playerIndex, player.claim);
+    if (shelf) {
+      card.appendChild(shelf);
+    }
+    return card;
+  }
+
   function renderFeatured(host) {
-    const featured = featuredRacer();
+    const featured = featuredToday();
     if (!featured) {
       return;
     }
-    const race = participants.races[featured.raceIndex];
-    const note = `★ ${highlightLabel(featured.tag, race)} · ${UI.relativeDay(race.d)}`;
-    const deltas = sidebarRankDeltas();
     const section = sidebarSection("Featured daily racer");
-    section.appendChild(racerCard(featured.playerIndex, deltas, { note, claim: participants.players[featured.playerIndex].claim }));
+    section.appendChild(spotlightCard(featured));
     host.appendChild(section);
   }
 
@@ -1008,9 +1203,9 @@ const Feed = (() => {
 
   function renderSidebar() {
     const sidebar = document.getElementById("updates-sidebar-body");
+    renderFeatured(sidebar);
     const racersHost = element("div", "feed-side-racers");
     sidebar.appendChild(racersHost);
-    renderFeatured(sidebar);
     renderFact(sidebar);
     renderNewBadges(sidebar);
     renderLatestAvatars(sidebar);

@@ -169,3 +169,26 @@ A racer's claim to fame is the one thing about them that the fewest racers match
 - **Count:** a stat takes part only at 2 or more. Its count is the number of racers whose value is at least as high, the racer included, so tied racers share a count.
 - **Badge:** the racer's rarest badge takes part too, with its holder count as the count. Among equally rare badges, the one earlier in the badge table wins.
 - **Pick:** the lowest count wins. Equal counts go to the stat earlier in the list above, and a badge comes after every stat. A racer has no claim when the lowest count is above 10% of the racers who have entered a race.
+
+## Featured racer
+
+The [Featured daily racer](dashboard.md#featured-daily-racer) is one racer a day. The build picks them, in `scripts/featured.py`, and publishes the coming days' picks as `featured` in `participants.json` (see [The three files](datasets.md#the-three-files)). Below, D is a day's Eastern Time date.
+
+- **Inputs:** a pick reads only races dated D−2 or earlier. A race that ends after midnight, or any race after that, never changes a day's pick, so everyone sees the same racer all day.
+- **Candidates:** racers named by a [race tag](#race-tags) in races dated D−15 to D−2, which is 14 days. A tag names the racer it is about: the record setter, the first-time winner, the upset or photo-finish winner, the PB or Preset PB setter, the milestone racer or the badge earner.
+- **Best highlight:** each candidate's tag that comes first in the order below; between two of a kind, the later one. It also gives them their tickets for the draw.
+
+  | Order | Highlight | Tickets |
+  |---|---|---|
+  | 1–3 | Mode record, preset record, legendary badge | 8 |
+  | 4–8 | Upset, first win, photo finish, rare badge, milestone | 4 |
+  | 9–12 | PB, Preset PB, common badge, any other tag | 1 |
+
+  - A badge's rarity uses the badge tags' 2% and 10% thresholds (see [Race tags](#race-tags)), but on the share at the end of D−2: the racers holding it by then over the racers who had entered a race by then. Today's share would change past picks.
+- **Excluded:**
+  - Anyone in a top 3 of any category at the end of D−2, all time or in the season of the newest race by then. The categories are the [top-rated banner's](dashboard.md#top-rated-banner): overall and every mode but `unknown`. Ranks are competition ranks, so ties can put more than three racers in a top 3. On a new season's first two days, the season's top 3 is still the one the previous season ended with.
+  - Anyone featured in the 27 days before D, so nobody is featured twice within 28 days.
+- **Draw:** each ticket t of a racer with user ID U scores the first 8 bytes, big-endian, of the SHA-256 of `featured 1 D U t`, with D as `YYYY-MM-DD` and t counting from 0. The highest-scoring ticket wins, and a tie goes to the lower user ID. A day with no one left has no pick, and the section is hidden.
+- **Memory:** the build replays every day from the first race's on, so each day knows the picks before it, and nothing is stored. The 28-day rule holds while these rules and the past races stay the same; a change to either can bring a racer back early once.
+- **Published:** the picks from the newest race's date through 15 days after it, the last day that can have a candidate. A viewer's today is never before the newest race's date.
+  - The picks for the newest race's date and the day after read only finished days, so they are final. A later day's pick reads days still to come, so a later build can change it as races arrive; it is final once its D−2 is over. The two-hourly refresh finalises every pick well before its day starts, and the later ones cover quiet days with no races.

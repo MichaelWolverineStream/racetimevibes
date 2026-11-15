@@ -455,6 +455,24 @@ tr:focus-within .follow-star--row,
   color: var(--muted);
 }
 
+/* A compact tile, for a row of earned badges: no label, and the art at 30px. */
+.ui-badge--compact {
+  width: auto;
+}
+
+.ui-badge--compact .ui-badge__tile {
+  width: 40px;
+  height: 40px;
+  border-width: 2px;
+  border-radius: 9px;
+}
+
+.ui-badge--compact .ui-badge__image {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+}
+
 .ui-dialog,
 .ui-dialog-backdrop {
   --zelda-box: #1b2470;
