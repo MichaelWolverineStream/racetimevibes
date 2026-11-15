@@ -544,7 +544,7 @@ class BadgeTests(unittest.TestCase):
     def test_hat_trick_needs_consecutive_wins(self):
         result = run([duel(0, 1), duel(0, 1), duel(1, 0), duel(0, 1)])
         self.assertNotIn("hat_trick", result["players"][0]["badges"])
-        self.assertEqual(result["players"][0]["progress"]["hat_trick"], 2)
+        self.assertEqual(result["players"][0]["progress"]["hat_trick"], 1)
 
     def test_ok_dude_lucksack_needs_nine_wins_in_a_row(self):
         self.assertNotIn("ok_dude_lucksack", self.badges([duel(0, 1)] * 8))
@@ -919,7 +919,7 @@ class BadgeTests(unittest.TestCase):
 
         player = entranced([0, 1, 2, 3, 5, 6])
         self.assertNotIn("entranced", player["badges"])
-        self.assertEqual(player["progress"]["entranced"], 4)
+        self.assertEqual(player["progress"]["entranced"], 2)
         self.assertEqual(entranced([0, 1, 2, 3, 4])["badges"]["entranced"], 4)
 
     def test_entranced_counts_a_day_once_and_counts_a_dnf(self):
@@ -948,6 +948,19 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(weeks([1, 7]), 1)
         self.assertEqual(weeks([1, 8]), 2)
         self.assertEqual(weeks([1, 15]), 1)
+
+    def test_entranced_progress_lapses_after_a_missed_day_or_week(self):
+        def progress(entrance_days, newest_day):
+            records = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in entrance_days]
+            # The newest race is someone else's, in another mode: only the date moves on.
+            records.append(record([done(1, 1, 3000.0)], day=newest_day))
+            return run(records, modes=ENTRANCE_MODES)["players"][0]["progress"]
+
+        self.assertEqual(progress([0, 1, 2], 3)["entranced"], 3)
+        self.assertEqual(progress([0, 1, 2], 4)["entranced"], 0)
+        # Days 1, 8 and 15 are Mondays; day 21 is the Sunday that ends day 15's week.
+        self.assertEqual(progress([1, 8], 21)["entranced_weeks"], 2)
+        self.assertEqual(progress([1, 8], 22)["entranced_weeks"], 0)
 
     def test_entranced_weeks_needs_twenty_weeks_in_a_row(self):
         def badges(count):
@@ -1285,7 +1298,15 @@ class BadgeTests(unittest.TestCase):
         fourth = self.bronze_race(place=4)
         result = run([third] * 4 + [fourth] + [third])["players"][0]
         self.assertNotIn("on_the_ped", result["badges"])
-        self.assertEqual(result["progress"]["on_the_ped"], 4)
+        self.assertEqual(result["progress"]["on_the_ped"], 1)
+
+    def test_streak_badge_progress_is_the_current_run(self):
+        third = self.bronze_race()
+        fourth = self.bronze_race(place=4)
+        progress = run([third] * 4 + [fourth] + [third] * 2)["players"][0]["progress"]
+        self.assertEqual((progress["on_the_ped"], progress["ped_regular"]), (2, 2))
+        broken = run([third] * 4 + [fourth])["players"][0]["progress"]
+        self.assertEqual((broken["on_the_ped"], broken["ped_regular"]), (0, 0))
 
     def test_bridesmaid_needs_three_second_places_in_a_row(self):
         self.assertNotIn("bridesmaid", self.badges([duel(1, 0)] * 2))
@@ -1295,7 +1316,7 @@ class BadgeTests(unittest.TestCase):
         lost = record([done(1, 1, 3000.0), dnf(0)])
         result = run([duel(1, 0), duel(1, 0), lost, duel(1, 0)])["players"][0]
         self.assertNotIn("bridesmaid", result["badges"])
-        self.assertEqual(result["progress"]["bridesmaid"], 2)
+        self.assertEqual(result["progress"]["bridesmaid"], 1)
 
     def test_connoisseur_counts_distinct_presets_finished(self):
         presets = [{"m": 0, "n": f"Preset {i}"} for i in range(20)]

@@ -192,12 +192,11 @@ class _Run:
 class _CalendarRun:
     """Consecutive calendar units (days or weeks) in which a racer showed up."""
 
-    __slots__ = ("last", "length", "best")
+    __slots__ = ("last", "length")
 
     def __init__(self) -> None:
         self.last: int | None = None
         self.length = 0
-        self.best = 0
 
     def step(self, unit: int) -> None:
         if unit == self.last:
@@ -207,7 +206,11 @@ class _CalendarRun:
         else:
             self.length = 1
         self.last = unit
-        self.best = max(self.best, self.length)
+
+    def lapse(self, unit: int) -> None:
+        """End the run if, as of `unit`, a whole unit has passed since its last one."""
+        if self.last is not None and unit - self.last > 1:
+            self.length = 0
 
 
 class _Player:
@@ -220,9 +223,7 @@ class _Player:
         "window_starts",
         "best_window_finishes",
         "comment_streak",
-        "best_comment_streak",
         "second_streak",
-        "best_second_streak",
         "beaten",
         "finish_times",
         "mystery_fast",
@@ -252,9 +253,7 @@ class _Player:
         self.window_starts: deque[float] = deque()
         self.best_window_finishes = 0
         self.comment_streak = 0
-        self.best_comment_streak = 0
         self.second_streak = 0
-        self.best_second_streak = 0
         self.beaten: Counter[int] = Counter()
         self.finish_times: set[int] = set()
         self.mystery_fast = False
@@ -306,9 +305,9 @@ class _Moment(NamedTuple):
 class Badge(NamedTuple):
     """One badge and the single rule that unlocks it.
 
-    A counter badge has a `progress` rule, the best value so far; it unlocks when that
-    reaches the target and drives the progress border. A one-race badge has an `earned`
-    rule on that race alone.
+    A counter badge has a `progress` rule, the value so far: a running count, or for an
+    "in a row" badge the current run. It unlocks when that reaches the target and drives
+    the progress border. A one-race badge has an `earned` rule on that race alone.
     """
 
     id: str
@@ -332,6 +331,15 @@ def medal(place: int, field: int) -> str | None:
 
 def _best_run(kind: str) -> Callable[[_Player], int]:
     return lambda state: (state.runs[kind].best or (0,))[0]
+
+
+def _current_run(kind: str) -> Callable[[_Player], int]:
+    return lambda state: state.runs[kind].length
+
+
+def _week(ordinal: int) -> int:
+    """The Monday-to-Sunday week a date ordinal falls in."""
+    return (ordinal - 1) // 7
 
 
 def _mode_finishes(mode: str) -> Callable[[_Player], int]:
@@ -372,21 +380,21 @@ BADGES = (
         "Hat Trick",
         f"Win {HAT_TRICK_WINS} races in a row.",
         HAT_TRICK_WINS,
-        progress=_best_run("win"),
+        progress=_current_run("win"),
     ),
     Badge(
         "hummers",
         "Hummers",
         f"Win {HUMMERS_WINS} races in a row.",
         HUMMERS_WINS,
-        progress=_best_run("win"),
+        progress=_current_run("win"),
     ),
     Badge(
         "ok_dude_lucksack",
         "OkDudeLucksack",
         f"Win {LUCKSACK_WINS} races in a row.",
         LUCKSACK_WINS,
-        progress=_best_run("win"),
+        progress=_current_run("win"),
     ),
     Badge(
         "doubled",
@@ -414,42 +422,42 @@ BADGES = (
         "On the Ped",
         f"Finish on the podium in {PODIUM_RUNS[0]} races in a row.",
         PODIUM_RUNS[0],
-        progress=_best_run("podium"),
+        progress=_current_run("podium"),
     ),
     Badge(
         "ped_regular",
         "Ped Regular",
         f"Finish on the podium in {PODIUM_RUNS[1]} races in a row.",
         PODIUM_RUNS[1],
-        progress=_best_run("podium"),
+        progress=_current_run("podium"),
     ),
     Badge(
         "bridesmaid",
         "Bridesmaid",
         f"Finish 2nd in {BRIDESMAID_RUN} races in a row.",
         BRIDESMAID_RUN,
-        progress=lambda s: s.best_second_streak,
+        progress=lambda s: s.second_streak,
     ),
     Badge(
         "no_dodge",
         "No Dodge",
         f"Finish {NO_DODGE_FINISHES} races in a row.",
         NO_DODGE_FINISHES,
-        progress=_best_run("finish"),
+        progress=_current_run("finish"),
     ),
     Badge(
         "more_no_dodge",
         "More No Dodge",
         f"Finish {MORE_NO_DODGE_FINISHES} races in a row.",
         MORE_NO_DODGE_FINISHES,
-        progress=_best_run("finish"),
+        progress=_current_run("finish"),
     ),
     Badge(
         "nice",
         "Nice",
         f"Finish {NICE_FINISHES} races in a row.",
         NICE_FINISHES,
-        progress=_best_run("finish"),
+        progress=_current_run("finish"),
     ),
     Badge(
         "centurian_v",
@@ -683,14 +691,14 @@ BADGES = (
         "Entranced",
         f"Enter an {ENTRANCE_MODE} race on {ENTRANCED_DAYS} days in a row.",
         ENTRANCED_DAYS,
-        progress=lambda s: s.entrance_days.best,
+        progress=lambda s: s.entrance_days.length,
     ),
     Badge(
         "entranced_weeks",
         "Entranced!",
         f"Enter an {ENTRANCE_MODE} race in {ENTRANCED_WEEKS} weeks in a row.",
         ENTRANCED_WEEKS,
-        progress=lambda s: s.entrance_weeks.best,
+        progress=lambda s: s.entrance_weeks.length,
     ),
     Badge(
         "what",
@@ -750,7 +758,7 @@ BADGES = (
         "Yap",
         f"Comment on {YAP_COMMENTS} races in a row.",
         YAP_COMMENTS,
-        progress=lambda s: s.best_comment_streak,
+        progress=lambda s: s.comment_streak,
     ),
     Badge(
         "step_letter",
@@ -1066,11 +1074,9 @@ def compute(
                 state.modes_won.add(mode)
             if mode_name == ENTRANCE_MODE:
                 state.entrance_days.step(race_ordinal)
-                state.entrance_weeks.step((race_ordinal - 1) // 7)
+                state.entrance_weeks.step(_week(race_ordinal))
             state.comment_streak = state.comment_streak + 1 if player in rec["c"] else 0
-            state.best_comment_streak = max(state.best_comment_streak, state.comment_streak)
             state.second_streak = state.second_streak + 1 if finisher and place == 2 else 0
-            state.best_second_streak = max(state.best_second_streak, state.second_streak)
             state.runs["win"].step(ri, won)
             state.runs["podium"].step(ri, finisher and medal(place, n) is not None)
             if not (excused_dnf and status == DNF_STATUS_CODE):
@@ -1178,6 +1184,14 @@ def compute(
         for tag in flat:
             tag_counts[tag[0]] += 1
         race_tags.append(flat)
+
+    # An entrance run that missed a day (week) by the newest race is over, so its badge
+    # progress shows 0 rather than the run as it last stood.
+    if records:
+        newest = date.fromisoformat(records[-1]["d"]).toordinal()
+        for state in states.values():
+            state.entrance_days.lapse(newest)
+            state.entrance_weeks.lapse(_week(newest))
 
     # Presets.
     preset_stats: list[JsonObject] = []

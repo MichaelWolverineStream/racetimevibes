@@ -17,7 +17,7 @@ Each badge is one row in `BADGES` in `scripts/highlights.py` plus two images. Th
 | Tests | `BadgeTests` in `tests/test_highlights.py`, `tests/test_badge_assets.py`, `tests/test_participant_stats.py` |
 | Docs | The table under [Badges](../../../docs/highlights.md#badges) in `docs/highlights.md` |
 
-**Two kinds.** A row has exactly one rule. A **counter** badge has `progress=`, which takes a `_Player` and returns the best value so far; it unlocks at `target`, and a target above 1 shows a progress border until then. A **one-race** badge has `earned=`, which takes a `_Moment` and returns `True` when that result earns it.
+**Two kinds.** A row has exactly one rule. A **counter** badge has `progress=`, which takes a `_Player` and returns the value so far, a running count or, for an "in a row" badge, the current run; it unlocks at `target`, and a target above 1 shows a progress border until then. A **one-race** badge has `earned=`, which takes a `_Moment` and returns `True` when that result earns it.
 
 Badges are recomputed from the whole archive on every build and never taken away, so a new badge goes to every racer who already qualifies. "Latest badges" lists the 12 newest unlocks, so old unlocks of a new badge show there only if they are among them.
 
