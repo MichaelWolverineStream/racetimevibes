@@ -63,12 +63,12 @@ A strip between the top-rated banner and Latest results, hidden on racer pages a
 
 - **Title:** "Upcoming races in the Season of the Panda" for a champion season, else "Upcoming races in " and the season label.
 - **Full Schedule:** a link on the strip's top border, opposite the title, opens `https://alttpr.racing/calendar` in a new tab. At phone width it sits under the title instead.
-- **Slot:** the Eastern Time weekday and start time, a countdown rounded up such as "in 1 d 6 h", the mode's dot and the schedule's mode name.
+- **Slot:** the weekday and start time in the viewer's time zone (see [Viewer time zone](#viewer-time-zone)) with the zone's short name, such as "Sun, 1:00 PM EST" or "Sun, 7:00 PM GMT+1", a countdown rounded up such as "in 1 d 6 h", the mode's dot and the schedule's mode name.
 - **Refresh:** it redraws every minute, so countdowns tick and a started slot drops off. It is hidden when no slot is left.
 
 ## Latest results
 
-- **Feed:** the newest races first, 20 at a time, with **Show 20 more** for the next 20.
+- **Feed:** the newest races first, 20 at a time, with **Show 20 more** for the next 20. Each row shows its start hour in the [viewer's time zone](#viewer-time-zone), under a heading for its date there: TODAY, YESTERDAY, or a date such as SAT, NOV 14.
 - **New since your last visit:** the header counts the races added since this browser last loaded the page, as "N new since your last visit", followed by how many of them carry each tag: PB, Preset PB, Mode record, Preset record, First win, Upset, Photo finish, Milestone and Badge, with ×N for repeats. Each of those races has a "New" dot. The marker stays put when the same tab reloads, and the header shows nothing when no race is new. The browser stores the newest race it has shown in local storage, and the tab's starting point in session storage.
 - Each race shows its [race tags](highlights.md#race-tags). Expanding a race lists each entrant with their change in the season's rating in that race's mode: `+12`, `−9`, or `±0`, with a true minus sign and no arrow. ▲ and ▼ are for rank movement only, so a points change never looks like a rank change. The change is the entrant's season-mode points after the race minus their points before it, or minus the starting 1000 in their first race of that mode in that season. Its tooltip reads, for example, "Season 10 · Turtle Rock · Keys rating after this race: 1234". A race with no season shows no change.
 - **Medal colours:** a finisher's place pill takes the colour of the [medal](definitions.md#entrants) that place earns in that race's field, and a place without a medal stays plain. The same applies to the winner shown on each race row and to the racer page's own rows.
@@ -196,8 +196,8 @@ Sections 04-07 chart `race-stats.json`. [Schedule and participation metrics](dat
   - Every stat covers all modes and the whole archive, whatever mode is selected. Among opponents with at least five decisive meetings, **Nemesis** is the one with the lowest head-to-head win rate below 50%, and **Favourite Victim** the one with the highest above 50%; ties go to the opponent met more often.
 - **Rating strip:** the racer's current all-time rating overall, then in every mode they are rated in, in mode order. Each tile gives their rank out of every racer rated there, marked provisional below 5 finishes there, and its tooltip explains the rating.
 - **Badges:** earned badges come first in the order they were won, oldest first, and locked badges follow in table order (see [Badges](highlights.md#badges)). Earned badges animate, and locked badges show the grey still. A counter badge fills its border as it progresses. Hovering a badge shows the share of racers who hold it, to two significant digits, counted on the page from the current data. Clicking a badge, here or in the Latest results sidebar, opens a panel with every racer who holds it, earliest unlock first.
-- **Latest results:** every race the racer entered, newest first, under a heading per month: the 5 latest at first, then 20 more at a time with **Show 20 more**. It covers every mode, whatever mode is selected.
-  - Each row is the racer's own result: the date and Eastern Time start hour, the mode, the preset, their place (blank for a DNF or DQ), their comment, their finish time or DNF or DQ, the field size, their CR and CPH, the race tags that name them, and their change in the season's rating in that race's mode, shown as in [Latest results](#latest-results).
+- **Latest results:** every race the racer entered, newest first, under a heading per month in the [viewer's time zone](#viewer-time-zone): the 5 latest at first, then 20 more at a time with **Show 20 more**. It covers every mode, whatever mode is selected.
+  - Each row is the racer's own result: the date and start hour in the viewer's time zone, the mode, the preset, their place (blank for a DNF or DQ), their comment, their finish time or DNF or DQ, the field size, their CR and CPH, the race tags that name them, and their change in the season's rating in that race's mode, shown as in [Latest results](#latest-results).
   - The comment fits on one line, and hovering or tapping it shows the whole comment. Up to four tags show, then +N. Tags follow the entrant-tag rule under [Latest results](#latest-results), so Upset and Photo finish appear only on races the racer won.
   - Clicking a row expands the whole race exactly as Latest results does, with the racer's own row highlighted.
 - **Mode picker:** it sits below the rating strip, the badges and Latest results. Everything above it covers all modes, and everything below it follows it.
@@ -284,6 +284,13 @@ A page that sets two racers on one mirrored card. It computes everything in the 
 - **Motion:** a pair's entrance plays once each time a new pair is shown: the corners slide in, the VS stamps, the bands rise, the bar pulls from 50/50, the tape grows from the spine, the badges pop in turn and a sheen crosses the card. With reduced motion the card shows its final state at once, without the sheen.
 - **Phones:** at 620px and below the corners stay face to face with smaller avatars, and each bubble moves under them, chat-style, with a coloured edge at the side of its corner. The heading's actions wrap under the title, the "Most met" chips sit under the corners, the badge lists stack and nothing scrolls sideways. The nameplate's ▾ caret is hidden there.
 - **Colours:** the corners use `--corner-a` (red) and `--corner-b` (blue), their own tokens that never read as a mode. They colour fills, rings and bars only, never text, and both themes keep 3:1 against the panel.
+
+## Viewer time zone
+
+- **What follows it:** the start times in [Upcoming races](#upcoming-races) and [Latest results](#latest-results), on the home page and racer pages, and the Latest results day and month headings, including TODAY and YESTERDAY.
+- **Which zone:** the viewer's device time zone, or Eastern Time when the device names none. A race at 11 PM Eastern on Nov 14 shows at 5 AM under Nov 15 in Sweden.
+- **Everything else** stays in Eastern Time: stats, day buckets, streaks, badges, records, the featured racer and the fact of the day (see [Time](definitions.md#time)).
+- The page footer says so: "Upcoming and latest race times show in your device's time zone; everything else uses America/New_York wall-clock time."
 
 ## Dialogs, keyboard and touch
 

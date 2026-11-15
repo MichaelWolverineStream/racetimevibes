@@ -16,6 +16,7 @@
 ## Time
 
 - All dates, hours and schedule buckets use `America/New_York` (Eastern Time), including the seasonal switch between EST and EDT. A race's **date**, or **day**, is its Eastern Time local start date.
+- The one exception is display: the dashboard shows the start times in Upcoming races and Latest results, and the Latest results date headings, in the viewer's own time zone (see [Viewer time zone](dashboard.md#viewer-time-zone)).
 - A **week** runs Monday to Sunday. A **season week** is the exception: seven days counted from the Eastern Time date of the season's start (see [Seasons](#seasons)).
 
 ## Entrants

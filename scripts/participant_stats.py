@@ -32,7 +32,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 15
+PARTICIPANT_SCHEMA_VERSION = 16
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -404,7 +404,7 @@ def build_participant_payload(
             "mode": row["mode"],
             "d": row["d"],
             "h": row["h"],
-            # The exact start, for the Rando Sicko window; never published.
+            # The exact start, for the Rando Sicko window and the published `u`.
             "started_at": row["started_at"],
             "n": row["n"],
             "p": preset_index.get((mode_index[row["mode"]], row["preset"])),
@@ -470,7 +470,7 @@ def build_participant_payload(
             "r": record["r"],
             "m": record["m"],
             "d": record["d"],
-            "h": record["h"],
+            "u": int(record["started_at"].timestamp()),
             "n": record["n"],
             "p": record["p"],
             "e": [

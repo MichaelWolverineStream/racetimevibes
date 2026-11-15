@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 15;
+const PARTICIPANT_SCHEMA_VERSION = 16;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
 const MEDALS = ["diamond", "gold", "silver", "bronze"];
 const MEDAL_RULE_TOOLTIP =
@@ -183,9 +183,8 @@ function validateParticipants(data) {
       !Number.isInteger(race.m) ||
       race.m < 0 ||
       race.m >= data.modes.length ||
-      !Number.isInteger(race.h) ||
-      race.h < 0 ||
-      race.h > 23 ||
+      !Number.isInteger(race.u) ||
+      race.u <= 0 ||
       !(race.s === undefined || (Number.isInteger(race.s) && seasonNumbers.has(race.s)))
     ) {
       throw new Error("Racer data contains an invalid race record.");
@@ -680,6 +679,30 @@ function formatRaceDate(isoDate) {
 function todayInZone() {
   const timeZone = (participants.timezone && participants.timezone.name) || DEFAULT_TIMEZONE;
   return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+}
+
+// Start times shown to the viewer use their device's time zone, or Eastern Time when the device names none.
+// Everything else stays in the data's timezone.
+function viewerTimeZone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || DEFAULT_TIMEZONE;
+}
+
+let viewerClockFormatter = null;
+
+// A moment's calendar date ("2026-11-15") and hour (0-23) in the viewer's time zone.
+function viewerDateHour(seconds) {
+  viewerClockFormatter ??= new Intl.DateTimeFormat("en-CA", {
+    timeZone: viewerTimeZone(),
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hourCycle: "h23",
+  });
+  const parts = Object.fromEntries(
+    viewerClockFormatter.formatToParts(new Date(seconds * 1000)).map(({ type, value }) => [type, value])
+  );
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, hour: Number(parts.hour) };
 }
 
 function shiftIsoDate(isoDate, days) {

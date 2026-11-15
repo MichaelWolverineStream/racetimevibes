@@ -4,6 +4,7 @@ import unittest
 from datetime import UTC, datetime
 from unittest import mock
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from scripts import (
     avatar_mirror,
@@ -426,8 +427,9 @@ class PayloadShapeTests(unittest.TestCase):
             ]
         )
         self.assertEqual(
-            [(race_row["r"], race_row["d"], race_row["h"]) for race_row in result["races"]],
-            [("winter", "2026-01-14", 22), ("summer", "2026-07-14", 23)],
+            [(race_row["r"], race_row["d"], race_row["u"]) for race_row in result["races"]],
+            # Unix seconds of 2026-01-15T03:30Z and 2026-07-15T03:30Z.
+            [("winter", "2026-01-14", 1768447800), ("summer", "2026-07-14", 1784086200)],
         )
 
     def test_filtering_matches_the_dashboard_aggregate(self):
@@ -609,7 +611,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 15)
+        self.assertEqual(result["schema_version"], 16)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -1145,10 +1147,12 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             for entry in race_row["e"]:
                 self.assertTrue(0 <= entry[0] < player_count)
 
-    def test_every_race_has_an_eastern_start_hour(self):
+    def test_every_race_has_a_start_time(self):
+        eastern = ZoneInfo("America/New_York")
         for race_row in self.participants["races"]:
-            self.assertIsInstance(race_row["h"], int)
-            self.assertTrue(0 <= race_row["h"] <= 23)
+            self.assertIsInstance(race_row["u"], int)
+            started = datetime.fromtimestamp(race_row["u"], eastern)
+            self.assertEqual(started.date().isoformat(), race_row["d"])
 
     def test_every_mode_has_a_leaderboard(self):
         modes = [board["mode"] for board in self.participants["leaderboards"]]
@@ -1165,7 +1169,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 15)
+        self.assertEqual(self.participants["schema_version"], 16)
         for key in (
             "presets",
             "hardest_preset",

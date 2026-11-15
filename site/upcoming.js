@@ -1,13 +1,8 @@
 const Upcoming = (() => {
   const SHOWN = 5;
   const REFRESH_MS = 60_000;
-  const whenFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/New_York",
-    timeZoneName: "short",
-  });
+  // Built on first use: viewerTimeZone lives in leaderboard.js, which loads after this script.
+  let whenFormatter = null;
   let started = false;
 
   function element(tag, className, text = null) {
@@ -53,6 +48,13 @@ const Upcoming = (() => {
   }
 
   function slotItem([time, modeName, modeIndex], now) {
+    whenFormatter ??= new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: viewerTimeZone(),
+      timeZoneName: "short",
+    });
     const start = new Date(time * 1000);
     const item = element("li", "upcoming__slot");
     const when = element("time", "upcoming__when", whenFormatter.format(start));

@@ -423,19 +423,22 @@ const Feed = (() => {
     return detail;
   }
 
+  // Rows show the start in the viewer's time zone, so their headings group by the viewer's dates too.
   function dayLabel(isoDate) {
-    const today = todayInZone();
+    const today = viewerDateHour(Date.now() / 1000).date;
     if (isoDate === today) return "TODAY";
     if (isoDate === shiftIsoDate(today, -1)) return "YESTERDAY";
     return dayFormatter.format(new Date(`${isoDate}T00:00:00Z`)).toUpperCase();
   }
 
   function dayHeading(race) {
-    return { key: race.d, label: dayLabel(race.d) };
+    const { date } = viewerDateHour(race.u);
+    return { key: date, label: dayLabel(date) };
   }
 
   function monthHeading(race) {
-    return { key: race.d.slice(0, 7), label: monthFormatter.format(new Date(`${race.d}T00:00:00Z`)).toUpperCase() };
+    const { date } = viewerDateHour(race.u);
+    return { key: date.slice(0, 7), label: monthFormatter.format(new Date(`${date}T00:00:00Z`)).toUpperCase() };
   }
 
   // The home feed's row: the race and its winner.
@@ -451,7 +454,7 @@ const Feed = (() => {
     time.appendChild(winnerEntry && winnerEntry[3] !== null ? UI.time(winnerEntry[3]) : document.createTextNode("—"));
     return [
       newDot,
-      element("span", "feed-row__hour", fullHour(race.h)),
+      element("span", "feed-row__hour", fullHour(viewerDateHour(race.u).hour)),
       modeCell(race),
       presetCell(race),
       winner,
@@ -493,7 +496,8 @@ const Feed = (() => {
     const entryIndex = race.e.findIndex((entry) => entry[0] === playerIndex);
     const entry = race.e[entryIndex];
     const [, place, status, seconds] = entry;
-    const when = element("span", "feed-row__when", `${rowDateFormatter.format(new Date(`${race.d}T00:00:00Z`))} · ${fullHour(race.h)}`);
+    const start = viewerDateHour(race.u);
+    const when = element("span", "feed-row__when", `${rowDateFormatter.format(new Date(`${start.date}T00:00:00Z`))} · ${fullHour(start.hour)}`);
     const placeCell = element("span", "feed-row__place");
     if (status === 0 && place !== null) {
       placeCell.appendChild(placePill(place, race.n));
