@@ -247,6 +247,8 @@ const BAND_MIN_SCHEDULED = 5;
 const REAL_FIELD_MIN = 4;
 // Must match NEWCOMER_WINDOW_DAYS in scripts/build_stats.py.
 const NEWCOMER_WINDOW_DAYS = 28;
+// Must match SEASON_WEEK_DAYS in scripts/build_stats.py.
+const SEASON_WEEK_DAYS = 7;
 
 function startRateText(startedCount, scheduledCount) {
   return `${integerFormatter.format(startedCount)} of ${integerFormatter.format(scheduledCount)} scheduled races started (${formatPercent(startedCount / scheduledCount)})`;
@@ -447,15 +449,24 @@ function isCount(value) {
   return Number.isInteger(value) && value >= 0;
 }
 
-// Weekly reach is all null until a full week exists, then min <= median <= max <= racers.
+// Every season week, partial ones included, adds its racers to the racer-week total.
+// The weekly range covers the full weeks only: null until one exists, then
+// min <= max <= racers.
 function hasValidWeeklyRacers(item) {
-  const weekly = [item.weekly_racers_median, item.weekly_racers_min, item.weekly_racers_max];
-  if (item.full_week_count === 0) return weekly.every((value) => value === null);
-  return weekly.every((value) => Number.isFinite(value))
-    && item.weekly_racers_min >= 0
-    && item.weekly_racers_min <= item.weekly_racers_median
-    && item.weekly_racers_median <= item.weekly_racers_max
+  if (!isCount(item.season_day_count) || !isCount(item.racer_week_total)) return false;
+  const weekCount = Math.ceil(item.season_day_count / SEASON_WEEK_DAYS);
+  if (item.full_week_count !== Math.floor(item.season_day_count / SEASON_WEEK_DAYS)) return false;
+  if (item.racer_week_total > item.racer_count * weekCount) return false;
+  const range = [item.weekly_racers_min, item.weekly_racers_max];
+  if (item.full_week_count === 0) return range.every((value) => value === null);
+  return range.every(isCount)
+    && item.weekly_racers_min <= item.weekly_racers_max
     && item.weekly_racers_max <= item.racer_count;
+}
+
+// Active racers per week: the racer-week total over the season's days counted, in weeks.
+function activePerWeek(item) {
+  return ratio(item.racer_week_total * SEASON_WEEK_DAYS, item.season_day_count);
 }
 
 // Season 1 has no earlier season, so both fields are null together.
@@ -527,7 +538,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 13
+    || data.schema_version !== 14
     || !hasValidAggregate(data)
     || !hasValidSeasons(data.seasons)
     || !Array.isArray(data.periods)
@@ -620,11 +631,13 @@ function newcomerText(item) {
 function reachText(item) {
   const title = `Season ${item.season}${inProgressSuffix(item)}`;
   const racers = `${integerFormatter.format(item.racer_count)} racers${item.is_complete ? " in the season" : " so far"}`;
-  if (item.full_week_count === 0) {
-    return `${title}: no full week${item.is_complete ? "" : " yet"}; ${racers}`;
+  if (item.season_day_count === 0) {
+    return `${title}: no whole day${item.is_complete ? "" : " yet"}; ${racers}`;
   }
-  const weeks = `${pluralize(item.full_week_count, "full week")}${soFar(item)}`;
-  return `${title}: ${formatCount(item.weekly_racers_median)} active racers in a typical week (${integerFormatter.format(item.weekly_racers_min)} to ${integerFormatter.format(item.weekly_racers_max)} across ${weeks}); ${racers}`;
+  const range = item.full_week_count === 0
+    ? `no full week${item.is_complete ? "" : " yet"}`
+    : `full weeks ${integerFormatter.format(item.weekly_racers_min)} to ${integerFormatter.format(item.weekly_racers_max)} across ${pluralize(item.full_week_count, "full week")}`;
+  return `${title}: ${formatAverage(activePerWeek(item))} active racers per week over ${pluralize(item.season_day_count, "day")}${soFar(item)} (${range}); ${racers}`;
 }
 
 function realFieldText(item) {
@@ -684,8 +697,8 @@ function renderParticipation(data) {
   chart("#participation-reach-chart", {
     id: "participation-reach",
     title: "Active racers per week by season",
-    description: "Vertical bars show the median number of distinct racers in a full week of each season. The season in progress is drawn muted.",
-    value: (item) => item.weekly_racers_median,
+    description: "Vertical bars show the average number of distinct racers per week of each season, with a partial week counted by its days. The season in progress is drawn muted.",
+    value: activePerWeek,
     axisFormatter: (value) => integerFormatter.format(value),
     tooltip: reachText,
   });
@@ -756,7 +769,7 @@ function renderParticipation(data) {
     seasons.map((item) => [
       `${item.season}${inProgressSuffix(item)}`,
       integerFormatter.format(item.racer_count),
-      item.full_week_count === 0 ? "--" : formatCount(item.weekly_racers_median),
+      formatAverage(activePerWeek(item)),
       item.full_week_count === 0 ? "--" : `${integerFormatter.format(item.weekly_racers_min)} to ${integerFormatter.format(item.weekly_racers_max)}`,
       integerFormatter.format(item.full_week_count),
       percentOf(item.returning_count, item.previous_racer_count),

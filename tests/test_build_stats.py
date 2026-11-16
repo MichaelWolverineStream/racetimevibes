@@ -147,7 +147,7 @@ class AggregationTests(unittest.TestCase):
 
         stats = aggregate(races)
 
-        self.assertEqual(stats["schema_version"], 13)
+        self.assertEqual(stats["schema_version"], 14)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 21)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
@@ -224,7 +224,7 @@ class AggregationTests(unittest.TestCase):
             ]
         )
 
-        self.assertEqual(stats["schema_version"], 13)
+        self.assertEqual(stats["schema_version"], 14)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -700,8 +700,9 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "fired_entrant_total": 10,
                     "racer_count": 10,
                     # Season 1 ends on Jun 15, its last slot's date, so Jun 15-21 is no full week.
+                    "season_day_count": 15,
+                    "racer_week_total": 10,
                     "full_week_count": 2,
-                    "weekly_racers_median": 5,
                     "weekly_racers_min": 4,
                     "weekly_racers_max": 6,
                     "previous_racer_count": None,
@@ -723,8 +724,10 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "fired_race_count": 1,
                     "fired_entrant_total": 5,
                     "racer_count": 8,
+                    # Counted through Jun 29: Jun 22-28 is counted, and its races are on Jun 29 and later.
+                    "season_day_count": 7,
+                    "racer_week_total": 0,
                     "full_week_count": 1,
-                    "weekly_racers_median": 0,
                     "weekly_racers_min": 0,
                     "weekly_racers_max": 0,
                     "previous_racer_count": 10,
@@ -820,8 +823,9 @@ def season_row(races, slots, number=1):
 
 def weekly(row):
     return (
+        row["season_day_count"],
+        row["racer_week_total"],
         row["full_week_count"],
-        row["weekly_racers_median"],
         row["weekly_racers_min"],
         row["weekly_racers_max"],
     )
@@ -844,11 +848,12 @@ class SeasonRacerTests(unittest.TestCase):
             [slot(1, 1, at(1)), slot(2, 2, at(9))],
         )
 
-        # Counted through Jun 9: the last whole day is Jun 8, so only week 1 is full.
-        self.assertEqual(weekly(row), (1, 3, 3, 3))
+        # Counted through Jun 9: the last whole day is Jun 8, so only week 1 is full, and
+        # the Jun 9 race is past the days counted.
+        self.assertEqual(weekly(row), (8, 3, 1, 3, 3))
         self.assertEqual(row["racer_count"], 4)
 
-    def test_a_partial_last_week_is_dropped_but_its_racers_count(self):
+    def test_a_partial_last_week_counts_by_its_days_but_not_in_the_range(self):
         row = season_row(
             [
                 race("r1", started_at=at(2), **crowd("ann")),
@@ -859,16 +864,18 @@ class SeasonRacerTests(unittest.TestCase):
         )
 
         # The last whole day is Jun 15: weeks Jun 1-7 and Jun 8-14 are full, Jun 15 is not.
-        self.assertEqual(weekly(row), (2, 1.5, 1, 2))
+        # Eve's Jun 15 race adds to the total, not to the range.
+        self.assertEqual(weekly(row), (15, 4, 2, 1, 2))
         self.assertEqual(row["racer_count"], 3)
 
-    def test_a_season_without_a_full_week_has_no_weekly_values(self):
+    def test_a_season_without_a_full_week_has_a_total_but_no_range(self):
         row = season_row(
             [race("r1", started_at=at(2), **crowd("ann"))],
             [slot(1, 1, at(1)), slot(2, 2, at(5))],
         )
 
-        self.assertEqual(weekly(row), (0, None, None, None))
+        # Counted through Jun 5: Jun 1-4 are counted.
+        self.assertEqual(weekly(row), (4, 1, 0, None, None))
         self.assertEqual(row["racer_count"], 1)
 
     def test_a_week_is_full_only_when_its_last_day_is_whole(self):
@@ -879,8 +886,8 @@ class SeasonRacerTests(unittest.TestCase):
         # Counted through Jun 7: the 7th day is the counted-through date itself.
         partial = season_row(races, [slot(1, 1, at(1)), slot(2, 2, at(7))])
 
-        self.assertEqual(weekly(whole), (1, 1, 1, 1))
-        self.assertEqual(weekly(partial), (0, None, None, None))
+        self.assertEqual(weekly(whole), (7, 1, 1, 1, 1))
+        self.assertEqual(weekly(partial), (6, 1, 0, None, None))
 
     def test_weeks_end_at_the_seasons_last_slot_whatever_the_count(self):
         stats = aggregate(
@@ -905,12 +912,13 @@ class SeasonRacerTests(unittest.TestCase):
 
         self.assertTrue(first["is_complete"])
         # Season 1 ends on Jun 15, its last slot's date: Jun 15-21 is cut short, although
-        # the count runs through Jun 28 and season 2 starts only on Jun 22.
-        self.assertEqual(weekly(first), (2, 2, 2, 2))
+        # the count runs through Jun 28 and season 2 starts only on Jun 22. Its one day,
+        # Jun 15, still adds Dee to the total.
+        self.assertEqual(weekly(first), (15, 5, 2, 2, 2))
         self.assertEqual(first["racer_count"], 4)
         self.assertFalse(second["is_complete"])
         # Jun 22-28 is season 2's one full week, ending on the last whole day.
-        self.assertEqual(weekly(second), (1, 2, 2, 2))
+        self.assertEqual(weekly(second), (7, 2, 1, 2, 2))
         self.assertEqual(second["racer_count"], 2)
         self.assertEqual(stats["diagnostics"]["excluded_in_season_breaks"], 1)
 
@@ -1007,12 +1015,54 @@ class SeasonHelperTests(unittest.TestCase):
         self.assertEqual(
             summary,
             {
+                "season_day_count": 14,
+                "racer_week_total": 1,
                 "full_week_count": 2,
-                "weekly_racers_median": 0.5,
                 "weekly_racers_min": 0,
                 "weekly_racers_max": 1,
             },
         )
+
+    def test_a_race_before_the_seasons_first_day_counts_in_no_week(self):
+        # The season starts at 00:02 ET on Jun 1; a race 4 minutes earlier is on May 31.
+        start = datetime(2026, 6, 1, 4, 2, tzinfo=UTC)
+        early = record(date(2026, 6, 1), "ann", hour=3)
+        early["local_started_at"] = datetime(
+            2026, 5, 31, 23, 58, tzinfo=ZoneInfo("America/New_York")
+        )
+
+        span = schedule_archive.SeasonSpan(1, start, datetime(2026, 6, 30, 17, tzinfo=UTC))
+        summary = build_stats._season_weeks([early], span, date(2026, 6, 7))
+
+        self.assertEqual(
+            summary,
+            {
+                "season_day_count": 7,
+                "racer_week_total": 0,
+                "full_week_count": 1,
+                "weekly_racers_min": 0,
+                "weekly_racers_max": 0,
+            },
+        )
+
+    def test_a_season_without_a_whole_day_counts_no_day(self):
+        start = datetime(2026, 6, 1, 17, tzinfo=UTC)
+        span = schedule_archive.SeasonSpan(1, start, datetime(2026, 6, 30, 17, tzinfo=UTC))
+        races = [record(date(2026, 6, 1), "ann")]
+
+        # The last whole day is the day before the season starts, or there is none.
+        for last_whole_day in (date(2026, 5, 31), None):
+            with self.subTest(last_whole_day=last_whole_day):
+                self.assertEqual(
+                    build_stats._season_weeks(races, span, last_whole_day),
+                    {
+                        "season_day_count": 0,
+                        "racer_week_total": 0,
+                        "full_week_count": 0,
+                        "weekly_racers_min": None,
+                        "weekly_racers_max": None,
+                    },
+                )
 
     def test_newcomers_mature_at_28_days_and_are_retained_by_a_later_date(self):
         def day(month, number):
@@ -1269,7 +1319,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 13)
+        self.assertEqual(data["schema_version"], 14)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
@@ -1341,25 +1391,27 @@ class GeneratedDataTests(unittest.TestCase):
         )
         self.assertTrue(all(row["started_count"] <= row["scheduled_count"] for row in seasons))
         for row in seasons:
-            for key in ("real_field_count", "racer_count", "full_week_count"):
+            for key in (
+                "real_field_count",
+                "racer_count",
+                "season_day_count",
+                "racer_week_total",
+                "full_week_count",
+            ):
                 self.assertIsInstance(row[key], int)
             self.assertTrue(0 <= row["real_field_count"] <= row["started_count"])
             self.assertGreaterEqual(row["racer_count"], 0)
-            self.assertGreaterEqual(row["full_week_count"], 0)
-            weekly = [
-                row["weekly_racers_median"],
-                row["weekly_racers_min"],
-                row["weekly_racers_max"],
-            ]
+            days, total = row["season_day_count"], row["racer_week_total"]
+            self.assertGreaterEqual(days, 0)
+            self.assertEqual(row["full_week_count"], days // build_stats.SEASON_WEEK_DAYS)
+            week_count = -(-days // build_stats.SEASON_WEEK_DAYS)
+            self.assertTrue(0 <= total <= row["racer_count"] * week_count)
+            low, high = row["weekly_racers_min"], row["weekly_racers_max"]
             if row["full_week_count"] == 0:
-                self.assertEqual(weekly, [None, None, None])
+                self.assertEqual((low, high), (None, None))
             else:
-                median, low, high = (
-                    row["weekly_racers_median"],
-                    row["weekly_racers_min"],
-                    row["weekly_racers_max"],
-                )
-                self.assertTrue(0 <= low <= median <= high <= row["racer_count"])
+                self.assertTrue(0 <= low <= high <= row["racer_count"])
+                self.assertLessEqual(low * row["full_week_count"], total)
             previous, returning = row["previous_racer_count"], row["returning_count"]
             if previous is None or returning is None:
                 self.assertEqual((previous, returning), (None, None))
