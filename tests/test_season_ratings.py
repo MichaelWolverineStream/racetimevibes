@@ -220,6 +220,9 @@ class LockSeasonsTests(unittest.TestCase):
         self.archive_dir = self.root / "archive"
         self.ledger_dir = season_ratings.ledger_dir_for(self.archive_dir)
         self.outputs = tuple(self.root / name for name in ("race-stats.json", "participants.json", "comments.json"))
+        # The fixture racers aren't the real ones, so the committed overrides can't apply.
+        self.overrides_path = self.root / "badge-overrides.json"
+        self.overrides_path.write_text(json.dumps({"schema_version": 1, "overrides": []}))
 
     def archive(self, races, rows):
         for item in races:
@@ -243,7 +246,9 @@ class LockSeasonsTests(unittest.TestCase):
             )
 
     def build(self):
-        return build_stats.build(self.archive_dir, *self.outputs)[1]
+        return build_stats.build(
+            self.archive_dir, *self.outputs, badge_overrides_path=self.overrides_path
+        )[1]
 
     def test_the_ledger_sits_beside_the_archive(self):
         self.assertEqual(self.ledger_dir, self.root / "season-ratings")

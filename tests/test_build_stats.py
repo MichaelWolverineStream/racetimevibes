@@ -1206,6 +1206,9 @@ class BuildTests(unittest.TestCase):
             self.directory / "participants.json",
             self.directory / "comments.json",
         )
+        # The fixture racers aren't the real ones, so the committed overrides can't apply.
+        self.overrides_path = self.directory / "badge-overrides.json"
+        self.overrides_path.write_text(json.dumps({"schema_version": 1, "overrides": []}))
 
     def archive(self, race_record):
         race_archive.write_json_atomic(
@@ -1259,7 +1262,7 @@ class BuildTests(unittest.TestCase):
         )
 
         stats, participants, comments = build_stats.build(
-            self.archive_dir, *self.output_paths
+            self.archive_dir, *self.output_paths, badge_overrides_path=self.overrides_path
         )
 
         source = stats["source"]
@@ -1292,7 +1295,9 @@ class BuildTests(unittest.TestCase):
         with self.assertRaisesRegex(
             build_stats.DataError, "run scripts/race_archive.py first"
         ):
-            build_stats.build(self.archive_dir, *self.output_paths)
+            build_stats.build(
+                self.archive_dir, *self.output_paths, badge_overrides_path=self.overrides_path
+            )
         self.assertFalse(self.output_paths[0].exists())
 
     def test_refuses_an_archive_without_a_schedule_mirror(self):
@@ -1300,7 +1305,9 @@ class BuildTests(unittest.TestCase):
         with self.assertRaisesRegex(
             build_stats.DataError, "run scripts/schedule_archive.py first"
         ):
-            build_stats.build(self.archive_dir, *self.output_paths)
+            build_stats.build(
+                self.archive_dir, *self.output_paths, badge_overrides_path=self.overrides_path
+            )
         self.assertFalse(self.output_paths[0].exists())
 
 
