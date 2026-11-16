@@ -527,7 +527,7 @@ function isIsoDate(value) {
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 12
+    || data.schema_version !== 13
     || !hasValidAggregate(data)
     || !hasValidSeasons(data.seasons)
     || !Array.isArray(data.periods)

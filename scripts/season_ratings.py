@@ -93,15 +93,15 @@ def ledger_dir_for(archive_dir: Path) -> Path:
 
 def assign(
     races: list[Race],
-    starts: list[tuple[int, datetime]],
+    spans: list[schedule_archive.SeasonSpan],
     ledgers: Mapping[int, Ledger],
 ) -> Assignment:
     """Return each race's season.
 
     A race in a ledger belongs to that ledger's season, as long as its mode and
-    entrants still match the ledger. Any other race belongs to the season its start
-    falls in (`schedule_archive.season_of`), unless that season is locked: a ledger
-    holds the whole season, so such a race gets no season.
+    entrants still match the ledger. Any other race belongs to the season whose span
+    holds its start (`schedule_archive.season_of`), unless that season is locked: a
+    ledger holds the whole season, so such a race gets no season.
     """
     locked = {name: ledger.season for ledger in ledgers.values() for name in ledger.races}
     seasons: list[int | None] = []
@@ -115,7 +115,7 @@ def assign(
                 mismatched += 1
                 season = None
         else:
-            season = schedule_archive.season_of(race.started_at, starts)
+            season = schedule_archive.season_of(race.started_at, spans)
             if season in ledgers:
                 left_out += 1
                 season = None
@@ -149,7 +149,7 @@ def overlay(
 def published_seasons(
     seasons: list[int | None],
     dates: list[str],
-    starts: list[tuple[int, datetime]],
+    spans: list[schedule_archive.SeasonSpan],
     ledgers: Mapping[int, Ledger],
 ) -> list[JsonObject]:
     """Return every season that holds a race, oldest first.
@@ -157,7 +157,7 @@ def published_seasons(
     Each gives its number, the Eastern dates of its first and latest race, and
     whether it has ended: it is locked, or a later season has started.
     """
-    newest_start = max((number for number, _start in starts), default=0)
+    newest_start = max((span.season for span in spans), default=0)
     found: dict[int, list[str]] = {}
     for season, day in zip(seasons, dates, strict=True):
         if season is not None:

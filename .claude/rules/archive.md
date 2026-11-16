@@ -15,5 +15,5 @@ paths:
 - `archive/` is never edited by hand and never copied into `site/`. Only the sync scripts write it.
 - Write archive files with `race_archive.write_json_atomic` (minified JSON, one trailing newline) or `write_bytes_atomic`.
 - A field newly read from racetime.gg or alttpr.racing that reaches `site/` must fit README › Privacy.
-- `schedule_archive.join_races` is the one slot-to-race join, and `season_starts`/`season_of` the one season rule; the build and the planner share them. Their terms are in `docs/definitions.md`.
+- `schedule_archive.join_races` is the one slot-to-race join, and `season_starts`, `season_spans` and `season_of` the one season rule; the build and the planner share them. Their terms are in `docs/definitions.md`.
 - Tests mock every response and never use the network.

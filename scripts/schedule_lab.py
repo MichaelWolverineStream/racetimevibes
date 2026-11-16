@@ -354,7 +354,10 @@ def build_context(
                 "so it can neither plan nor score them"
             )
     if pairs is None:
-        pairs = planner.pair_scores(build_stats.included_race_contexts(races), sources)
+        pairs = planner.pair_scores(
+            build_stats.included_race_contexts(races, schedule_archive.season_spans(schedule)),
+            sources,
+        )
     period_start, period_end = planner.season_bounds(
         *planner.plan_season(config, schedule, start, weeks)
     )

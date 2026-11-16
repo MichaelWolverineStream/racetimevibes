@@ -428,10 +428,11 @@ def history_slots(
 
     Returns the slots and the window's UTC start and end.
     """
+    spans = schedule_archive.season_spans(schedule)
     contexts: list[JsonObject] = []
     excluded: set[int] = set()
     for race in races:
-        context, reason = build_stats.classify_race(race)
+        context, reason = build_stats.classify_race(race, spans)
         if context is None:
             seed = schedule_archive.seed_race_id(race.get("info"))
             if reason[0] == "mode" and seed is not None:
@@ -2350,7 +2351,10 @@ def analyse(
     layout = parse_bands(config.get("bands"))
     if pairs is None:
         sources = sorted({source for category in categories for source in category.sources})
-        pairs = pair_scores(build_stats.included_race_contexts(races), sources)
+        pairs = pair_scores(
+            build_stats.included_race_contexts(races, schedule_archive.season_spans(schedule)),
+            sources,
+        )
 
     period_start, period_end = season_bounds(first_day, weeks, last_day)
     known = set(schedule_archive.ARCHETYPE_CATEGORIES.values()) | set(config["composition"])

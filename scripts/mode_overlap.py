@@ -45,11 +45,12 @@ from typing import Any
 
 # Supports both `python3 scripts/mode_overlap.py` and `from scripts import mode_overlap`.
 try:
-    from scripts import build_stats, participant_stats, race_archive
+    from scripts import build_stats, participant_stats, race_archive, schedule_archive
 except ImportError:
     import build_stats
     import participant_stats
     import race_archive
+    import schedule_archive
 
 MIN_MONTHLY_RACES = 4
 MIN_CO_ACTIVE_MONTHS = 6
@@ -828,7 +829,8 @@ Hover a cell for its co-active months.</p>{_trend_table(result)}</section>
 def load_contexts(archive_dir: Path = race_archive.ARCHIVE_DIR) -> list[JsonObject]:
     """Return the dashboard's included race contexts from the archive."""
     races = [envelope["race"] for envelope in race_archive.load_races(archive_dir)]
-    return build_stats.included_race_contexts(races)
+    spans = schedule_archive.season_spans(schedule_archive.load_schedule(archive_dir))
+    return build_stats.included_race_contexts(races, spans)
 
 
 def parse_args() -> argparse.Namespace:

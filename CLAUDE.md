@@ -36,7 +36,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - Mode and season ratings use the overall parameters, untuned; every racer debuts at 1000 in every season. A locked season's ledger wins over what the rating computes today.
    - Predictions (win chance, Upset, God Route, Big Routing, Upsetti) always use the overall rating.
    - `β`, `σ₀` and `α` were tuned by `rating_lab.py` on races before 2026-01-01. Never retune on 2026 data. Evaluate with `python3 scripts/ladder_rating.py --backtest`.
-9. **All dates, hours and day buckets are `America/New_York`.** The one exception is display: the page shows Upcoming races and Latest results start times, and the Latest results date headings, in the viewer's device time zone (Eastern when the device names none). The `ladder_test` mode is excluded from everything.
+9. **All dates, hours and day buckets are `America/New_York`.** The one exception is display: the page shows Upcoming races and Latest results start times, and the Latest results date headings, in the viewer's device time zone (Eastern when the device names none). The `ladder_test` mode and races in a season break are excluded from everything.
 10. **Frontend scripts share one global scope.** No script may touch another script's globals while it loads (see `.claude/rules/site.md`).
 
 ## Docs map

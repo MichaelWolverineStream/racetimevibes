@@ -74,8 +74,9 @@ The sync:
 - **Validation:** every response is validated before any file is written. A slot needs integer `id`, `season` and `mode`, a `raceId` that is an integer or null, a `time` of digits (Unix seconds), and its file's season. A mode needs integer `id` and `archetype`, a string `name`, and a boolean `active`. Any failure writes nothing.
 - **Rewrites:** a file is rewritten only when its body changed, so a run without news changes nothing. Files are never deleted.
 - **Reading it back:** `load_schedule` returns every slot once by its `id`; the same id with different content is an error.
-- **Seasons:** `season_starts`, `season_of` and `stray_slots` also live in this module, for the rules under [Seasons](definitions.md#seasons).
+- **Seasons:** `season_starts`, `season_spans`, `season_of`, `in_season_break` and `stray_slots` also live in this module, for the rules under [Seasons](definitions.md#seasons).
 - **The join:** `join_races` also lives in this module. It matches slots to included races by the rules under [Schedule](definitions.md#schedule), for the build and the planner alike.
 - **Race ids arrive late.** alttpr.racing fills in a slot's `raceId` only when the room is created. A mirror is therefore only as current as its last sync, and the build counts slots only up to the latest one with a `raceId` (see **Counted through** under [Schedule](definitions.md#schedule)).
+- **A stale mirror at a season change.** The newest season's span ends 30 minutes after its latest published slot. alttpr.racing publishes a whole season ahead, so this bites only in a real break. If the mirror is stale when a new season begins, that season's first races fall in a [season break](definitions.md#seasons) and are excluded until the next good sync. The build reads only the archive, so the next build restores them, and a stale mirror never starts the next season, so it cannot lock one early.
 - **Output:** the script ends with `Schedule: N seasons, M slots, K files changed.` and exits with 1 on any failure.
 - **Privacy:** the schedule holds slot times, mode ids and alttpr.racing race ids, nothing about racers.

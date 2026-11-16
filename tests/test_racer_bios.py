@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts import race_archive, racer_bios
+from scripts import race_archive, racer_bios, schedule_archive
 
 
 PROFILE_HEAD = """<main>
@@ -179,33 +179,45 @@ class LoadRacerBiosTests(unittest.TestCase):
 class RacersToCheckTests(unittest.TestCase):
     def test_a_racer_without_an_entry_is_due(self):
         races = [envelope("a-1", ["u2", "u1"])]
-        self.assertEqual(racer_bios.racers_to_check(races, {}), ["u1", "u2"])
+        self.assertEqual(racer_bios.racers_to_check(races, {}, []), ["u1", "u2"])
 
     def test_a_racer_who_raced_after_the_check_is_due(self):
         races = [envelope("a-1", ["u1"])]
         bios = {"u1": [None, "2026-10-01T13:00:00Z", None, []]}
-        self.assertEqual(racer_bios.racers_to_check(races, bios), ["u1"])
+        self.assertEqual(racer_bios.racers_to_check(races, bios, []), ["u1"])
 
     def test_a_racer_who_raced_before_the_check_is_not_due(self):
         races = [envelope("a-1", ["u1"])]
-        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER, None, []]}), [])
+        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER, None, []]}, []), [])
 
     def test_the_latest_race_decides(self):
         races = [
             envelope("a-1", ["u1"], ended_at="2026-09-01T00:00:00Z"),
             envelope("a-2", ["u1"], ended_at="2026-10-09T00:00:00Z"),
         ]
-        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER, None, []]}), ["u1"])
+        self.assertEqual(racer_bios.racers_to_check(races, {"u1": ["x", LATER, None, []]}, []), ["u1"])
 
     def test_unidentified_entrants_are_skipped(self):
         races = [envelope("a-1", [None, "u1"])]
         races[0]["race"]["entrants"].append({"user": {"id": ""}})
         races[0]["race"]["entrants"].append({})
-        self.assertEqual(racer_bios.racers_to_check(races, {}), ["u1"])
+        self.assertEqual(racer_bios.racers_to_check(races, {}, []), ["u1"])
 
     def test_excluded_races_are_ignored(self):
         races = [envelope("a-1", ["u1"], mode="ladder_test")]
-        self.assertEqual(racer_bios.racers_to_check(races, {}), [])
+        self.assertEqual(racer_bios.racers_to_check(races, {}, []), [])
+
+    def test_a_race_in_a_season_break_is_ignored(self):
+        spans = [
+            schedule_archive.SeasonSpan(
+                1, datetime(2026, 9, 1, 12, tzinfo=UTC), datetime(2026, 9, 10, 12, tzinfo=UTC)
+            ),
+            schedule_archive.SeasonSpan(
+                2, datetime(2026, 11, 1, 12, tzinfo=UTC), datetime(2026, 11, 10, 12, tzinfo=UTC)
+            ),
+        ]
+        races = [envelope("a-1", ["u1"])]
+        self.assertEqual(racer_bios.racers_to_check(races, {}, spans), [])
 
 
 class FetchProfileTests(unittest.TestCase):
@@ -287,7 +299,7 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(self.stored()["u1"], ["old", EARLIER, None, []])
         self.assertIn("u2", self.stored())
         due = racer_bios.racers_to_check(
-            race_archive.load_races(self.archive), racer_bios.load_racer_bios(self.archive)
+            race_archive.load_races(self.archive), racer_bios.load_racer_bios(self.archive), []
         )
         self.assertEqual(due, ["u1"])
 

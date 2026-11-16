@@ -285,16 +285,17 @@ def _slot_summary(slots: list[JsonObject]) -> JsonObject:
 def _season_summary(
     records: list[JsonObject],
     slots: list[JsonObject],
-    starts: list[tuple[int, datetime]],
+    spans: list[schedule_archive.SeasonSpan],
     counted_through: datetime | None,
     scheduled_days: dict[date, set[int]],
     joined_races: set[str],
 ) -> tuple[list[JsonObject], JsonObject]:
     """Return one row per season and the counts of races and slots that fall in none.
 
-    Races are every included race; slots are the counted, unpulled ones. A season is
-    complete once the next season has started within the counted schedule. Racers are
-    the identified entrants, counted as distinct people.
+    Races are every included race; none is in a season break, so a race without a
+    season started before the first season. Slots are the counted, unpulled ones. A
+    season is complete once the next season has started within the counted schedule.
+    Racers are the identified entrants, counted as distinct people.
 
     The per-day counts mirror the monthly ones: a scheduled day belongs to every season
     one of its slots falls in, and a race counts only on a scheduled day of its own
@@ -324,7 +325,7 @@ def _season_summary(
     season_records: dict[int, list[JsonObject]] = defaultdict(list)
     season_racers: dict[int, set[str]] = defaultdict(set)
     for record in records:
-        season = schedule_archive.season_of(record["started_at"], starts)
+        season = schedule_archive.season_of(record["started_at"], spans)
         if season is None:
             races_without_season += 1
             continue
@@ -339,7 +340,7 @@ def _season_summary(
         season_racers[season] |= record["racer_ids"]
     slots_without_season = 0
     for slot in slots:
-        season = schedule_archive.season_of(slot["started_at"], starts)
+        season = schedule_archive.season_of(slot["started_at"], spans)
         if season is None:
             slots_without_season += 1
             continue
@@ -352,13 +353,12 @@ def _season_summary(
         for season in day_seasons & rows.keys():
             rows[season]["scheduled_day_count"] += 1
 
-    start_of = dict(starts)
+    span_of = {span.season: span for span in spans}
     next_start = {
-        number: starts[index + 1][1]
-        for index, (number, _start) in enumerate(starts[:-1])
+        span.season: following.first_slot for span, following in zip(spans, spans[1:])
     }
     last_whole_day = _last_whole_day(counted_through)
-    newcomers = _newcomers(records, starts, last_whole_day)
+    newcomers = _newcomers(records, spans, last_whole_day)
     for season, item in rows.items():
         following = next_start.get(season)
         item["is_complete"] = (
@@ -369,9 +369,7 @@ def _season_summary(
         racers = season_racers[season]
         previous = season_racers.get(season - 1)
         item["racer_count"] = len(racers)
-        item |= _season_weeks(
-            season_records[season], start_of[season], following, last_whole_day
-        )
+        item |= _season_weeks(season_records[season], span_of[season], last_whole_day)
         item["previous_racer_count"] = len(previous) if previous else None
         item["returning_count"] = len(previous & racers) if previous else None
         item |= {key: newcomers[season][key] for key in NEWCOMER_KEYS}
@@ -390,24 +388,20 @@ def _last_whole_day(counted_through: datetime | None) -> date | None:
 
 def _season_weeks(
     records: list[JsonObject],
-    start: datetime,
-    next_start: datetime | None,
+    span: schedule_archive.SeasonSpan,
     last_whole_day: date | None,
 ) -> JsonObject:
     """Summarize the distinct racers of each full season week of one season.
 
-    A season week is SEASON_WEEK_DAYS days counted from the season's Eastern start date.
-    The season's last day is the day before the next season's start date, or the last
-    whole day when that is earlier. A week that reaches past the last day is not full,
-    and its races count toward no week.
+    A season week is SEASON_WEEK_DAYS days counted from the Eastern date of the
+    season's first slot. The season's last day is the Eastern date of its last slot,
+    or the last whole day when that is earlier. A week that reaches past the last day
+    is not full, and its races count toward no week.
     """
-    start_day = start.astimezone(SCHEDULE_TIMEZONE).date()
+    start_day = span.first_slot.astimezone(SCHEDULE_TIMEZONE).date()
     full_week_count = 0
     if last_whole_day is not None:
-        last_day = last_whole_day
-        if next_start is not None:
-            next_start_day = next_start.astimezone(SCHEDULE_TIMEZONE).date()
-            last_day = min(last_day, next_start_day - timedelta(days=1))
+        last_day = min(last_whole_day, span.last_slot.astimezone(SCHEDULE_TIMEZONE).date())
         full_week_count = max(0, ((last_day - start_day).days + 1) // SEASON_WEEK_DAYS)
 
     weeks: list[set[str]] = [set() for _ in range(full_week_count)]
@@ -427,7 +421,7 @@ def _season_weeks(
 
 def _newcomers(
     records: list[JsonObject],
-    starts: list[tuple[int, datetime]],
+    spans: list[schedule_archive.SeasonSpan],
     last_whole_day: date | None,
 ) -> dict[int, Counter[str]]:
     """Count each season's newcomers, and the matured and retained ones among them.
@@ -447,7 +441,7 @@ def _newcomers(
 
     counts: dict[int, Counter[str]] = defaultdict(Counter)
     for racer, started_at in first_started_at.items():
-        season = schedule_archive.season_of(started_at, starts)
+        season = schedule_archive.season_of(started_at, spans)
         if season is None:
             continue
         counts[season]["newcomer_count"] += 1
@@ -464,7 +458,7 @@ def _newcomers(
 
 def _scheduled_days(
     joined: list[schedule_archive.JoinedSlot],
-    starts: list[tuple[int, datetime]],
+    spans: list[schedule_archive.SeasonSpan],
     archive_start: date,
     archive_end: date,
 ) -> dict[date, set[int]]:
@@ -478,7 +472,7 @@ def _scheduled_days(
         day = slot.started_at.astimezone(SCHEDULE_TIMEZONE).date()
         if archive_start <= day <= archive_end:
             seasons = days.setdefault(day, set())
-            season = schedule_archive.season_of(slot.started_at, starts)
+            season = schedule_archive.season_of(slot.started_at, spans)
             if season is not None:
                 seasons.add(season)
     return days
@@ -597,8 +591,14 @@ def _period_coverage(
     }
 
 
-def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] | None]:
-    """Return a race's mode and timing context, or the reason it is excluded."""
+def classify_race(
+    race: JsonObject, spans: list[schedule_archive.SeasonSpan]
+) -> tuple[JsonObject | None, tuple[str, str] | None]:
+    """Return a race's mode and timing context, or the reason it is excluded.
+
+    `spans` are the seasons' spans (`schedule_archive.season_spans`); a race that
+    started in a break between them is excluded.
+    """
     status = race.get("status")
     status_value = status.get("value") if isinstance(status, dict) else None
     if status_value != "finished":
@@ -627,6 +627,9 @@ def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] 
     if mode in EXCLUDED_MODES:
         return None, ("mode", mode)
 
+    if schedule_archive.in_season_break(started_at, spans):
+        return None, ("season_break", "season_break")
+
     return {
         "race": race,
         "started_at": started_at,
@@ -637,18 +640,24 @@ def classify_race(race: JsonObject) -> tuple[JsonObject | None, tuple[str, str] 
     }, None
 
 
-def included_envelopes(envelopes: list[JsonObject]) -> list[JsonObject]:
+def included_envelopes(
+    envelopes: list[JsonObject], spans: list[schedule_archive.SeasonSpan]
+) -> list[JsonObject]:
     """Return the archive envelopes whose races pass the dashboard filters."""
     return [
-        envelope for envelope in envelopes if classify_race(envelope["race"])[0] is not None
+        envelope
+        for envelope in envelopes
+        if classify_race(envelope["race"], spans)[0] is not None
     ]
 
 
-def included_race_contexts(races: list[JsonObject]) -> list[JsonObject]:
+def included_race_contexts(
+    races: list[JsonObject], spans: list[schedule_archive.SeasonSpan]
+) -> list[JsonObject]:
     """Return the context for every race that passes the dashboard filters."""
     contexts = []
     for race in races:
-        context, _reason = classify_race(race)
+        context, _reason = classify_race(race, spans)
         if context is not None:
             contexts.append(context)
     return contexts
@@ -664,6 +673,7 @@ def aggregate_races(
     """Filter and aggregate races and the ladder schedule into the page's JSON schema."""
     excluded_statuses: Counter[str] = Counter()
     excluded_modes: Counter[str] = Counter()
+    excluded_in_season_breaks = 0
     invalid_records: Counter[str] = Counter()
     excluded_seeds: set[int] = set()
     contexts: list[JsonObject] = []
@@ -671,9 +681,10 @@ def aggregate_races(
     period_records: dict[str, list[JsonObject]] = defaultdict(list)
     period_metadata: dict[str, JsonObject] = {}
     unknown_mode_count = 0
+    spans = schedule_archive.season_spans(schedule)
 
     for race in races:
-        context, reason = classify_race(race)
+        context, reason = classify_race(race, spans)
         if context is None:
             kind, detail = reason
             if kind == "status":
@@ -683,6 +694,8 @@ def aggregate_races(
                 seed = schedule_archive.seed_race_id(race.get("info"))
                 if seed is not None:
                     excluded_seeds.add(seed)
+            elif kind == "season_break":
+                excluded_in_season_breaks += 1
             else:
                 invalid_records[detail] += 1
             continue
@@ -717,9 +730,8 @@ def aggregate_races(
     newest_started_at = max(record["started_at"] for record in included_records)
     counted_through = _schedule_counted_through(schedule, newest_started_at)
 
-    starts = schedule_archive.season_starts(schedule)
     joined = schedule_archive.join_races(schedule, modes, contexts, excluded_seeds)
-    scheduled_days = _scheduled_days(joined, starts, archive_start, archive_end)
+    scheduled_days = _scheduled_days(joined, spans, archive_start, archive_end)
     joined_races = {slot.race["race"]["name"] for slot in joined if slot.race}
     slot_records: list[JsonObject] = []
     period_slots: dict[str, list[JsonObject]] = defaultdict(list)
@@ -779,7 +791,7 @@ def aggregate_races(
     seasons, season_diagnostics = _season_summary(
         included_records,
         slot_records,
-        starts,
+        spans,
         counted_through,
         scheduled_days,
         joined_races,
@@ -789,7 +801,7 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 12,
+        "schema_version": 13,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {
@@ -818,6 +830,7 @@ def aggregate_races(
         "diagnostics": {
             "excluded_by_status": dict(sorted(excluded_statuses.items())),
             "excluded_by_mode": dict(sorted(excluded_modes.items())),
+            "excluded_in_season_breaks": excluded_in_season_breaks,
             "invalid_records": dict(sorted(invalid_records.items())),
             "unknown_mode_count": unknown_mode_count,
             "schedule": {
@@ -856,7 +869,8 @@ def build(
             "run scripts/schedule_archive.py first"
         )
     generated_at = datetime.now(UTC)
-    contexts = included_race_contexts(races)
+    spans = schedule_archive.season_spans(schedule)
+    contexts = included_race_contexts(races, spans)
     stats = aggregate_races(
         races, schedule=schedule, modes=modes, generated_at=generated_at
     )
@@ -867,7 +881,7 @@ def build(
         timezone_name=SCHEDULE_TIMEZONE_NAME,
         generated_at=generated_at,
         current_names=race_archive.load_racer_names(archive_dir),
-        envelopes=included_envelopes(envelopes),
+        envelopes=included_envelopes(envelopes, spans),
         avatar_observations=race_archive.load_racer_avatars(archive_dir),
         bios=racer_bios.load_racer_bios(archive_dir),
         pokemon=pokemon_avatars.load_catalogue(pokemon_dir),

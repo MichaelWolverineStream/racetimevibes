@@ -41,7 +41,9 @@ from scripts import race_archive, schedule_archive, schedule_planner as sp
 
 class JoinTests(unittest.TestCase):
     def join(self, slots, races):
-        return sp.history_slots(slots, MODES, [newest_race(), *races])[0]
+        # A slot at the newest race keeps it inside the season, not in a break after it.
+        newest = slot(9000, 9000, NEWEST, 11)
+        return sp.history_slots([*slots, newest], MODES, [newest_race(), *races])[0]
 
     def test_seed_id_join_uses_the_races_own_mode_and_entrants(self):
         at = NEWEST - timedelta(days=5)
@@ -111,6 +113,7 @@ class JoinTests(unittest.TestCase):
             slot(2, 902, NEWEST - timedelta(hours=12), 11),
             slot(3, 903, start - timedelta(hours=1), 11),
             slot(4, 904, start + timedelta(hours=1), 11),
+            slot(5, 9000, NEWEST, 11),
         ]
         slots, window_start, window_end = sp.history_slots(rows, MODES, [newest_race()])
         self.assertEqual((window_start, window_end), (start, end))

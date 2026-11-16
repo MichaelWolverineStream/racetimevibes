@@ -75,10 +75,25 @@ def slot(slot_id, race_id, started_at, mode=1, season=1):
     }
 
 
-def aggregate(races, schedule=(), modes=MODES):
+def published_ahead(schedule):
+    """The schedule plus one uncreated slot long after every fixture race, filed under
+    the newest season.
+
+    alttpr.racing publishes a season's slots ahead, so the newest race falls inside the
+    current season's span. A fixture schedule stops early, which would put its newest
+    race in a season break. The added slot is never counted, joined or a scheduled day.
+    """
+    if not schedule:
+        return []
+    newest_season = schedule_archive.season_starts(schedule)[-1][0]
+    return [*schedule, slot(9999, None, "2027-12-31T17:00:00Z", season=newest_season)]
+
+
+def aggregate(races, schedule=(), modes=MODES, *, ahead=True):
+    """Aggregate the races, with the schedule published ahead unless `ahead` is False."""
     return build_stats.aggregate_races(
         list(races),
-        schedule=list(schedule),
+        schedule=published_ahead(list(schedule)) if ahead else list(schedule),
         modes=modes,
         generated_at=datetime(2026, 9, 17, 12, tzinfo=UTC),
     )
@@ -132,7 +147,7 @@ class AggregationTests(unittest.TestCase):
 
         stats = aggregate(races)
 
-        self.assertEqual(stats["schema_version"], 12)
+        self.assertEqual(stats["schema_version"], 13)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 21)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
@@ -209,7 +224,7 @@ class AggregationTests(unittest.TestCase):
             ]
         )
 
-        self.assertEqual(stats["schema_version"], 12)
+        self.assertEqual(stats["schema_version"], 13)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -684,9 +699,10 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "fired_race_count": 2,
                     "fired_entrant_total": 10,
                     "racer_count": 10,
-                    "full_week_count": 3,
-                    "weekly_racers_median": 4,
-                    "weekly_racers_min": 0,
+                    # Season 1 ends on Jun 15, its last slot's date, so Jun 15-21 is no full week.
+                    "full_week_count": 2,
+                    "weekly_racers_median": 5,
+                    "weekly_racers_min": 4,
                     "weekly_racers_max": 6,
                     "previous_racer_count": None,
                     "returning_count": None,
@@ -733,28 +749,29 @@ class ScheduleAggregationTests(unittest.TestCase):
                 race("extra", started_at="2026-06-01T20:00:00Z", entrants_count=2),
                 # On the day of a pulled slot, which is still a scheduled day.
                 race("pulled-day", started_at="2026-06-02T20:00:00Z", entrants_count=7),
-                # Season 2 starts at 17:00 on June 8: this race is season 1's, on none of its scheduled days.
-                race("gap", started_at="2026-06-08T12:00:00Z", entrants_count=9),
+                # In season 1's span, on a day without a slot: season 1's, on none of its scheduled days.
+                race("gap", started_at="2026-06-03T12:00:00Z", entrants_count=9),
                 race("d", started_at="2026-06-08T17:00:00Z", entrants_count=4, info=seeded(8)),
                 # Its slot is after the schedule counted through, but its day is still scheduled.
                 race("e", started_at="2026-06-15T17:00:00Z", entrants_count=5, info=seeded(15)),
-                race("newest", started_at="2026-06-16T12:00:00Z", entrants_count=3),
+                # Within 30 minutes of season 2's last slot, on its scheduled day; it joins no slot.
+                race("newest", started_at="2026-06-15T17:20:00Z", entrants_count=3),
             ],
             [
                 slot(1, 1, "2026-06-01T17:00:00Z"),
                 slot(2, None, "2026-06-02T17:00:00Z"),
-                slot(3, 3, "2026-06-03T17:00:00Z"),
+                slot(3, 3, "2026-06-04T17:00:00Z"),
                 slot(4, 8, "2026-06-08T17:00:00Z", season=2),
                 slot(5, 15, "2026-06-15T17:00:00Z", season=2),
                 # Misfiled before season 1: a scheduled day that belongs to no season.
                 slot(6, 20, "2026-05-20T17:00:00Z", season=2),
-                # Season 3's first slot, on the newest race's day but after counted through: its day is
-                # scheduled, but season 3 has no race or counted slot, so it gets no row.
-                slot(7, 107, "2026-06-16T17:00:00Z", season=3),
+                # Season 3's first slot, on the newest race's day but after counted through: season 3
+                # has no race or counted slot, so it gets no row.
+                slot(7, 107, "2026-06-15T23:00:00Z", season=3),
             ],
         )
 
-        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-15T12:00:00Z")
+        self.assertEqual(stats["source"]["schedule_counted_through"], "2026-06-14T17:20:00Z")
         keys = (
             "scheduled_day_count",
             "scheduled_day_entrant_total",
@@ -772,7 +789,7 @@ class ScheduleAggregationTests(unittest.TestCase):
                 },
                 2: {
                     "scheduled_day_count": 2,
-                    "scheduled_day_entrant_total": 9,
+                    "scheduled_day_entrant_total": 12,
                     "fired_race_count": 2,
                     "fired_entrant_total": 9,
                 },
@@ -780,7 +797,8 @@ class ScheduleAggregationTests(unittest.TestCase):
         )
         monthly = {item["id"]: item for item in stats["monthly"]}
         self.assertEqual(monthly["2026-05"]["scheduled_day_count"], 1)
-        self.assertEqual(monthly["2026-06"]["scheduled_day_count"], 6)
+        # Jun 1, 2, 4, 8 and 15.
+        self.assertEqual(monthly["2026-06"]["scheduled_day_count"], 5)
 
 
 def crowd(*ids, anonymous=0):
@@ -864,43 +882,44 @@ class SeasonRacerTests(unittest.TestCase):
         self.assertEqual(weekly(whole), (1, 1, 1, 1))
         self.assertEqual(weekly(partial), (0, None, None, None))
 
-    def test_weeks_end_the_day_before_the_next_season_whatever_the_count(self):
+    def test_weeks_end_at_the_seasons_last_slot_whatever_the_count(self):
         stats = aggregate(
             [
                 race("r1", started_at=at(2), **crowd("ann", "bob")),
                 race("r2", started_at=at(9), **crowd("bob", "cy")),
-                race("r3", started_at=at(16), **crowd("dee")),
-                # Before season 2's first slot on its start date: still season 1.
+                race("r3", started_at=at(15), **crowd("dee")),
+                # After season 1's last slot and before season 2's first: in the break.
                 race("r4", started_at=at(18, 12), **crowd("fred")),
-                race("r5", started_at=at(19), **crowd("ann", "gus")),
+                race("r5", started_at=at(22), **crowd("ann", "gus")),
                 LATE,
             ],
             [
                 slot(1, 1, at(1)),
                 slot(2, 2, at(8)),
                 slot(3, 3, at(15)),
-                slot(4, 4, at(18), season=2),
-                slot(5, 5, at(25), season=2),
+                slot(4, 4, at(22), season=2),
+                slot(5, 5, at(29), season=2),
             ],
         )
         first, second = stats["seasons"]
 
         self.assertTrue(first["is_complete"])
-        # Jun 1-17 holds two full weeks; Jun 15-21 is cut short by season 2, although
-        # the count runs through Jun 24.
+        # Season 1 ends on Jun 15, its last slot's date: Jun 15-21 is cut short, although
+        # the count runs through Jun 28 and season 2 starts only on Jun 22.
         self.assertEqual(weekly(first), (2, 2, 2, 2))
-        self.assertEqual(first["racer_count"], 5)
+        self.assertEqual(first["racer_count"], 4)
         self.assertFalse(second["is_complete"])
-        # Jun 18-24 is season 2's one full week, ending on the last whole day.
+        # Jun 22-28 is season 2's one full week, ending on the last whole day.
         self.assertEqual(weekly(second), (1, 2, 2, 2))
         self.assertEqual(second["racer_count"], 2)
+        self.assertEqual(stats["diagnostics"]["excluded_in_season_breaks"], 1)
 
     def test_the_first_season_has_no_returning_count_and_the_second_counts_returners(self):
         stats = aggregate(
             [
                 race("r1", started_at=at(2), **crowd("ann", "bob")),
                 race("r2", started_at=at(9), **crowd("bob", "cy")),
-                race("r3", started_at=at(16), **crowd("dee")),
+                race("r3", started_at=at(15), **crowd("dee")),
                 race("r5", started_at=at(19), **crowd("ann", "gus")),
                 LATE,
             ],
@@ -982,7 +1001,8 @@ class SeasonHelperTests(unittest.TestCase):
             2026, 6, 7, 23, 30, tzinfo=ZoneInfo("America/New_York")
         )
 
-        summary = build_stats._season_weeks([late], start, None, date(2026, 6, 14))
+        span = schedule_archive.SeasonSpan(1, start, datetime(2026, 6, 30, 17, tzinfo=UTC))
+        summary = build_stats._season_weeks([late], span, date(2026, 6, 14))
 
         self.assertEqual(
             summary,
@@ -998,9 +1018,13 @@ class SeasonHelperTests(unittest.TestCase):
         def day(month, number):
             return date(2026, month, number)
 
-        starts = [
-            (1, datetime(2026, 6, 1, 17, tzinfo=UTC)),
-            (2, datetime(2026, 6, 20, 17, tzinfo=UTC)),
+        spans = [
+            schedule_archive.SeasonSpan(
+                1, datetime(2026, 6, 1, 17, tzinfo=UTC), datetime(2026, 6, 19, 17, tzinfo=UTC)
+            ),
+            schedule_archive.SeasonSpan(
+                2, datetime(2026, 6, 20, 17, tzinfo=UTC), datetime(2026, 7, 31, 17, tzinfo=UTC)
+            ),
         ]
         records = [
             record(day(5, 20), "pre"),  # first race before season 1: no newcomer
@@ -1017,7 +1041,7 @@ class SeasonHelperTests(unittest.TestCase):
             record(day(6, 22), "h"),  # a season 2 newcomer, not yet matured
         ]
 
-        counts = build_stats._newcomers(records, starts, day(7, 10))
+        counts = build_stats._newcomers(records, spans, day(7, 10))
 
         self.assertEqual(
             dict(counts[1]),
@@ -1026,9 +1050,10 @@ class SeasonHelperTests(unittest.TestCase):
         self.assertEqual(dict(counts[2]), {"newcomer_count": 1})
 
     def test_no_newcomer_matures_without_a_last_whole_day(self):
-        starts = [(1, datetime(2026, 6, 1, 17, tzinfo=UTC))]
+        start = datetime(2026, 6, 1, 17, tzinfo=UTC)
+        spans = [schedule_archive.SeasonSpan(1, start, start)]
 
-        counts = build_stats._newcomers([record(date(2026, 6, 1), "a")], starts, None)
+        counts = build_stats._newcomers([record(date(2026, 6, 1), "a")], spans, None)
 
         self.assertEqual(dict(counts[1]), {"newcomer_count": 1})
 
@@ -1065,9 +1090,59 @@ class ExtractPresetTests(unittest.TestCase):
 
     def test_classify_race_includes_the_preset(self):
         context, _ = build_stats.classify_race(
-            race("preset", info="Step Ladder Series - [keys] - HMG [DR]")
+            race("preset", info="Step Ladder Series - [keys] - HMG [DR]"), []
         )
         self.assertEqual(context["preset"], "HMG (DR)")
+
+
+class SeasonBreakTests(unittest.TestCase):
+    """A race after season 1's span opens but in no season's span is left out entirely."""
+
+    SCHEDULE = [
+        slot(1, 1, "2026-06-01T17:00:00Z"),
+        slot(2, 2, "2026-06-08T17:00:00Z"),
+        slot(3, 3, "2026-06-22T17:00:00Z", season=2),
+        slot(4, 4, "2026-06-29T17:00:00Z", season=2),
+    ]
+
+    def test_classify_race_gives_the_season_break_reason(self):
+        spans = schedule_archive.season_spans(self.SCHEDULE)
+        cases = {
+            "2026-05-20T17:00:00Z": None,  # before season 1: included, with no season
+            "2026-06-08T17:30:00Z": None,  # 30 minutes after season 1's last slot
+            "2026-06-08T17:31:00Z": ("season_break", "season_break"),
+            "2026-06-22T16:54:00Z": ("season_break", "season_break"),
+            "2026-06-22T16:55:00Z": None,  # 5 minutes before season 2's first slot
+        }
+        for started_at, reason in cases.items():
+            with self.subTest(started_at=started_at):
+                context, why = build_stats.classify_race(race("r", started_at=started_at), spans)
+                self.assertEqual(why, reason)
+                self.assertEqual(context is None, reason is not None)
+
+    def test_a_break_race_is_left_out_of_every_count(self):
+        races = [
+            race("a", started_at="2026-06-01T17:00:00Z", **crowd("ann", "bob")),
+            race("b", started_at="2026-06-08T17:00:00Z", **crowd("bob")),
+            race("break", started_at="2026-06-15T17:00:00Z", **crowd("ann", "cy")),
+            race("c", started_at="2026-06-29T17:00:00Z", **crowd("cy")),
+        ]
+        stats = aggregate(races, self.SCHEDULE, ahead=False)
+        without = aggregate(
+            [item for item in races if item["name"] != "break"],
+            self.SCHEDULE,
+            ahead=False,
+        )
+
+        self.assertEqual(stats["diagnostics"]["excluded_in_season_breaks"], 1)
+        self.assertEqual(stats["source"]["archived_race_count"], 4)
+        self.assertEqual(stats["source"]["excluded_archived_race_count"], 1)
+        self.assertEqual(stats["source"]["included_race_count"], 3)
+        # Apart from the archived race counts, the break race changes nothing.
+        for key in ("seasons", "periods", "monthly", "weekday_hourly"):
+            self.assertEqual(stats[key], without[key], key)
+        self.assertEqual(stats["seasons"][0]["racer_count"], 2)
+        self.assertEqual(stats["diagnostics"]["seasons"]["races_without_season"], 0)
 
 
 class BuildTests(unittest.TestCase):
@@ -1123,7 +1198,11 @@ class BuildTests(unittest.TestCase):
             )
         )
         self.archive(race("alttpr-ladder/newest-race-0003", started_at="2026-09-20T20:00:00Z"))
-        self.schedule([slot(1, 1, "2026-09-17T20:00:00Z"), slot(2, 2, "2026-09-18T20:00:00Z")])
+        self.schedule(
+            published_ahead(
+                [slot(1, 1, "2026-09-17T20:00:00Z"), slot(2, 2, "2026-09-18T20:00:00Z")]
+            )
+        )
         race_archive.write_json_atomic(
             {"player-a": "Renamed"},
             self.archive_dir / race_archive.RACER_NAMES_FILE,
@@ -1190,7 +1269,7 @@ class GeneratedDataTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 12)
+        self.assertEqual(data["schema_version"], 13)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],

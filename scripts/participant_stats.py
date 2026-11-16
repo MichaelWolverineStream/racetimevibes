@@ -240,7 +240,7 @@ def _upcoming(
     schedule: list[JsonObject],
     schedule_modes: list[JsonObject],
     staged: list[JsonObject],
-    starts: list[tuple[int, datetime]],
+    spans: list[schedule_archive.SeasonSpan],
     modes: list[str],
 ) -> list[list]:
     """The next scheduled slots as [time, mode name, published mode index, season].
@@ -262,7 +262,7 @@ def _upcoming(
                 int(row["time"]),
                 mode["name"],
                 modes.index(category) if category in modes else None,
-                schedule_archive.season_of(schedule_archive.slot_time(row), starts),
+                schedule_archive.season_of(schedule_archive.slot_time(row), spans),
             ]
         )
     return upcoming
@@ -431,7 +431,7 @@ def build_participant_payload(
     # season's mode, as computed now or as a locked season's ledger holds them.
     schedule = schedule or []
     ledgers = ledgers or {}
-    starts = schedule_archive.season_starts(schedule)
+    spans = schedule_archive.season_spans(schedule)
     season_races = [
         season_ratings.Race(
             row["r"],
@@ -441,14 +441,14 @@ def build_participant_payload(
         )
         for row in staged
     ]
-    assignment = season_ratings.assign(season_races, starts, ledgers)
+    assignment = season_ratings.assign(season_races, spans, ledgers)
     season_points = season_ratings.overlay(
         season_races,
         assignment.seasons,
         ladder_rating.rate_by_season(records, len(players), assignment.seasons).points(),
         ledgers,
     )
-    upcoming = _upcoming(schedule, schedule_modes or [], staged, starts, modes)
+    upcoming = _upcoming(schedule, schedule_modes or [], staged, spans, modes)
     derived = highlights.compute(
         records, players=players, modes=modes, presets=presets, ratings=ratings
     )
@@ -539,7 +539,7 @@ def build_participant_payload(
         ),
         "rating": ratings.params,
         "seasons": season_ratings.published_seasons(
-            assignment.seasons, [record["d"] for record in records], starts, ledgers
+            assignment.seasons, [record["d"] for record in records], spans, ledgers
         ),
         "season_names": season_names_module.published_names(season_names or {}),
         "upcoming": upcoming,
@@ -552,7 +552,7 @@ def build_participant_payload(
             "finishes_without_time": diagnostics["finishes_without_time"],
             "races_without_preset": diagnostics["races_without_preset"],
             "seasons": {
-                "stray_slots": schedule_archive.stray_slots(schedule, starts),
+                "stray_slots": schedule_archive.stray_slots(schedule, spans),
                 "races_without_season": assignment.seasons.count(None),
                 "left_out_of_locked_seasons": assignment.left_out,
                 "mismatched_locked_races": assignment.mismatched,

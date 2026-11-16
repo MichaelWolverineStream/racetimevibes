@@ -14,7 +14,7 @@
 | `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date `d`, its start time `u` in Unix seconds, its seed preset, its derived tags and its season (see [Season fields](#season-fields)). Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)). `featured` lists the coming [featured racers](highlights.md#featured-racer), one per Eastern date from the newest race's date through 15 days after it that has a pick, each as `[date, player, race, tag, bio]`: `races[race].t[tag]` is their best highlight, and `bio` is their current racetime.gg bio or `null`, with whitespace runs collapsed to single spaces and cut to 160 characters with "…", at its last word break if that keeps at least half of it. `medal_tiers` publishes the [medal](definitions.md#entrants) rule, and each leaderboard row carries `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total). |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
-`race-stats.json` and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](avatars.md#avatar-mirror)). What each of these may contain is fixed by [Privacy](../README.md#privacy).
+`race-stats.json` (`schema_version` 13) and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](avatars.md#avatar-mirror)). What each of these may contain is fixed by [Privacy](../README.md#privacy).
 
 ### Season fields
 
@@ -33,7 +33,7 @@ The season fields of `participants.json`:
 - **`races[].s`:** the race's season number. It is absent for a race with no season.
 - **Entries:** `races[].e[k]` is `[player, place, status, seconds, overall_after, mode_after, season_after, season_mode_after]`. `[6]` and `[7]` are integers when the race has `s`, and both `null` otherwise.
 - **No per-player season fields.** A racer's standing in a season is derived from their entries: their last `[6]` among the season's races for the overall rating, and their last `[7]` among the season's races in a mode for that mode's rating. Their season finishes are their finisher entries in those races, and they are provisional below 5.
-- **`diagnostics.seasons`:** `stray_slots`, `races_without_season`, `left_out_of_locked_seasons` and `mismatched_locked_races`.
+- **`diagnostics.seasons`:** `stray_slots`, `races_without_season`, `left_out_of_locked_seasons` and `mismatched_locked_races`. `races_without_season` counts only races before season 1's span: a race in a [season break](definitions.md#seasons) is excluded, not seasonless.
 - `rating`, each player's rating, $\mu$, $\sigma$, finishes and mode ratings, and `leaderboards` are all-time.
 
 ## Schedule and participation metrics
@@ -49,7 +49,7 @@ The season fields of `participants.json`:
   - `scheduled_count` and `started_count` count the counted slots that are scheduled races in that season, and how many started. The start rate is `started_count / scheduled_count`.
   - `race_count` and `entrant_total` cover every included race in the season, and are not cut at **counted through**.
   - `scheduled_day_count` is the season's scheduled days. `scheduled_day_entrant_total` is the entries of the season's included races that started on one of them. `fired_race_count` is those races that a slot joined, and `fired_entrant_total` is their entries. They mirror the monthly per-day numbers and ignore **counted through**.
-  - A scheduled day belongs to the season of each of its slots, and a race counts only on a scheduled day of its own season. A race on the next season's start date before that season's first slot belongs to the earlier season but falls on none of its scheduled days, so it counts toward no season's per-day fields.
+  - A scheduled day belongs to the season of each of its slots, and a race counts only on a scheduled day of its own season. A race in a season's span on a day without one of its slots, such as one just after midnight within 30 minutes of its last slot, counts toward the season but toward none of its per-day fields. A race in a [season break](definitions.md#seasons) is not included at all.
   - A changeover day that holds the last slots of one season and the first slot of the next is a scheduled day of both, so the seasons' scheduled days can add up to more than the months'.
   - The page computes entries per day, fired races per day and racers per fired race from these counts. Each is null, shown as a dash, when its denominator is 0.
   - `is_complete` is true once the next season started on or before **counted through**, so all of the season's slots and races are in. The newest season is normally in progress.
@@ -67,7 +67,7 @@ The season fields of `participants.json`:
   - A cell is `prime` if its `average_racers` is at least `q3`, else `quiet` if it is at most `q1`, else `normal`. A tie at a quartile goes to `prime` or `quiet`.
   - A cell with fewer than 5 scheduled races has no band, and when no cell qualifies none has one.
 - **Medians and quartiles** describe the observed distribution. Quartiles are the median of each half of the sorted values, leaving out the middle value when the count is odd. The 95% ranges are normal confidence intervals for the mean using the sample standard deviation, and the ranges for entry counts never go below zero. A group with fewer than two values has no range.
-- **Diagnostics** report `diagnostics.schedule`: `scheduled_count`, `started_count`, `pulled_count`, and `unscheduled_race_count`, the included races up to **counted through** that no slot became. `diagnostics.seasons` reports `races_without_season` and `slots_without_season`: the included races and counted scheduled races before season 1's span, which the `seasons` rows leave out.
+- **Diagnostics** report `diagnostics.schedule`: `scheduled_count`, `started_count`, `pulled_count`, and `unscheduled_race_count`, the included races up to **counted through** that no slot became. `diagnostics.seasons` reports `races_without_season` and `slots_without_season`: the included races and counted scheduled races before season 1's span, which the `seasons` rows leave out. `diagnostics.excluded_in_season_breaks`, an integer beside `excluded_by_mode`, counts the races excluded for starting in a [season break](definitions.md#seasons); they are also in `source.excluded_archived_race_count`.
 
 Some of this is deliberate behaviour of the data, not a defect:
 
@@ -75,8 +75,8 @@ Some of this is deliberate behaviour of the data, not a defect:
 - **Before the schedule.** A race that started before the first slot joins no slot, so the schedule panels leave it out. The first such races, in April 2025, are in the monthly turnout but not in a per-day value. Those April 2025 races have no season either, so the season rows leave them out (`races_without_season`).
 - **Season 1's newcomers** (185) are a data-start effect: the archive begins just before it.
 - **A young season's returning share** starts low because the season is young, not because racers left. Season 11 stood at about half on day 6, where earlier seasons stood at 35-57% on their day 6 and ended at 67-90%.
-- **A last full week can include break days.** A season's last full week can run into the break before the next season, as season 10's does, which lowers that week's count.
-- **Next-season start date.** Races on the next season's start date before its first slot belong to the earlier season. They count toward its racers but toward no week.
+- **Season breaks.** A race more than 30 minutes after a season's last slot and more than 5 minutes before the next season's first slot is in a [season break](definitions.md#seasons) and in no dataset, such as the two races on 2026-11-06 between seasons 10 and 11.
+- **Season 10's last week.** Season 10 ends on 2026-11-05, its last slot's date, so its ninth week (Nov 2-8) is partial and left out: it has 8 full weeks.
 - **Weeks lag.** A week appears about two days after it ends, because weeks follow **counted through**.
 - **A misfiled slot.** A slot filed under a later season but dated before season 1 has no season by the [season rule](definitions.md#seasons). It counts in the heatmap and in `slots_without_season`, but in no season row.
 
@@ -95,10 +95,10 @@ Only the data bot passes `--lock-seasons` (see [Scheduled data refresh](operatio
 
 `season-ratings/season-N.json`, beside `archive/` and outside `site/`, holds one locked season: `{schema_version: 1, season, start, end, rating, races}`.
 
-- **Contents:** `start` and `end` are the season's span in UTC, and `rating` is the parameters at lock time. Each race is `{r, mode, e}`: the race slug, the mode name, and `e`, a list of `[user ID, season points, season-mode points]` in entry order. It is keyed by slug, user ID and mode name, never by indexes, so it survives a rebuild that renumbers races and racers.
+- **Contents:** `start` is the season's start and `end` the next season's start, in UTC, and `rating` is the parameters at lock time. Each race is `{r, mode, e}`: the race slug, the mode name, and `e`, a list of `[user ID, season points, season-mode points]` in entry order. It is keyed by slug, user ID and mode name, never by indexes, so it survives a rebuild that renumbers races and racers.
 - **Deterministic:** it holds no wall-clock time, so two locks of the same archive write identical bytes.
 - **Written once:** it is created exclusively and never overwritten. Deleting a ledger is the only way to lock that season again, with the rating as it is then.
-- **What the build does with it:** a locked season's races and points come from its ledger, whatever the rating computes today. A race the spans place in a locked season that the ledger does not hold, or a ledger race whose mode or entrants no longer match, gets no season and is never re-rated. Both are counted in `diagnostics.seasons` (`left_out_of_locked_seasons`, `mismatched_locked_races`).
+- **What the build does with it:** a locked season's races and points come from its ledger, whatever the rating computes today, for the races the build includes. A ledger race in a season break is excluded and appears nowhere: season 10's ledger still lists the two 2026-11-06 break races `wonderful-bugnet-5002` and `scruffy-structuralmike-9862`. Season 10 is deliberately not relocked. A race the spans place in a locked season that the ledger does not hold, or a ledger race whose mode or entrants no longer match, gets no season and is never re-rated. Both are counted in `diagnostics.seasons` (`left_out_of_locked_seasons`, `mismatched_locked_races`).
 - **No visible change:** while the rating is unchanged, locking changes no published byte. Changing the rating changes the open season only.
 
 ## Chest counts (CR and CPH)

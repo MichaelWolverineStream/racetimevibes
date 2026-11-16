@@ -529,17 +529,19 @@ def _backtest_records(
     # without an import cycle. Supports both `python3 scripts/ladder_rating.py`
     # and `from scripts import ladder_rating`.
     try:
-        from scripts import build_stats, participant_stats, race_archive
+        from scripts import build_stats, participant_stats, race_archive, schedule_archive
     except ImportError:
         import build_stats
         import participant_stats
         import race_archive
+        import schedule_archive
 
     if archive_dir is None:
         archive_dir = race_archive.ARCHIVE_DIR
     races = [envelope["race"] for envelope in race_archive.load_races(archive_dir)]
+    spans = schedule_archive.season_spans(schedule_archive.load_schedule(archive_dir))
     contexts = sorted(
-        build_stats.included_race_contexts(races),
+        build_stats.included_race_contexts(races, spans),
         key=lambda context: (context["started_at"], context["race"].get("name") or ""),
     )
     modes = sorted({context["mode"] for context in contexts})

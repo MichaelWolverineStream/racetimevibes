@@ -366,10 +366,15 @@ class SeasonTests(unittest.TestCase):
             slot(902, 1, time=str(SEASON_ONE + 70 * DAY)),
             slot(903, 1, time=str(SEASON_ONE + 71 * DAY)),
         ]
-        starts = schedule_archive.season_starts(rows)
-        self.assertEqual(starts, schedule_archive.season_starts(self.three_seasons()))
-        self.assertEqual(schedule_archive.stray_slots(rows, starts), 4)
-        self.assertEqual(schedule_archive.stray_slots(self.three_seasons(), starts), 0)
+        spans = schedule_archive.season_spans(rows)
+        self.assertEqual(
+            schedule_archive.season_starts(rows),
+            schedule_archive.season_starts(self.three_seasons()),
+        )
+        # Season 1's own slots after season 2's start do not move season 1's end either.
+        self.assertEqual(spans, schedule_archive.season_spans(self.three_seasons()))
+        self.assertEqual(schedule_archive.stray_slots(rows, spans), 4)
+        self.assertEqual(schedule_archive.stray_slots(self.three_seasons(), spans), 0)
 
     def test_the_first_season_starts_at_its_first_slot_even_if_misfiled_later(self):
         rows = season_slots(1, SEASON_ONE, 30, 1) + [slot(900, 1, time=str(SEASON_ONE + 400 * DAY))]
@@ -377,9 +382,10 @@ class SeasonTests(unittest.TestCase):
 
     def test_a_season_with_no_slot_after_the_middle_of_the_last_has_no_start(self):
         rows = season_slots(1, SEASON_ONE, 30, 1) + [slot(900, 2, time=str(SEASON_ONE + 5 * DAY))]
-        starts = schedule_archive.season_starts(rows)
-        self.assertEqual(starts, [(1, at(SEASON_ONE))])
-        self.assertEqual(schedule_archive.stray_slots(rows, starts), 1)
+        self.assertEqual(schedule_archive.season_starts(rows), [(1, at(SEASON_ONE))])
+        spans = schedule_archive.season_spans(rows)
+        self.assertEqual([span.season for span in spans], [1])
+        self.assertEqual(schedule_archive.stray_slots(rows, spans), 1)
 
     def test_a_new_season_with_one_slot_starts_at_it(self):
         rows = season_slots(1, SEASON_ONE, 30, 1) + [slot(900, 2, time=str(SEASON_ONE + 31 * DAY))]
@@ -387,30 +393,82 @@ class SeasonTests(unittest.TestCase):
             schedule_archive.season_starts(rows)[-1], (2, at(SEASON_ONE + 31 * DAY))
         )
 
-    def test_no_schedule_has_no_seasons(self):
+    def test_no_schedule_has_no_seasons_and_no_breaks(self):
         self.assertEqual(schedule_archive.season_starts([]), [])
+        self.assertEqual(schedule_archive.season_spans([]), [])
         self.assertIsNone(schedule_archive.season_of(at(SEASON_ONE), []))
+        self.assertFalse(schedule_archive.in_season_break(at(SEASON_ONE), []))
 
-    def test_a_race_belongs_to_the_season_it_started_in(self):
-        starts = schedule_archive.season_starts(self.three_seasons())
-        early = schedule_archive.JOIN_EARLY
-        second = at(SEASON_ONE + 30 * DAY)
+    def test_a_span_runs_from_the_first_slot_to_the_last(self):
+        self.assertEqual(
+            schedule_archive.season_spans(self.three_seasons()),
+            [
+                schedule_archive.SeasonSpan(1, at(SEASON_ONE), at(SEASON_ONE + 29 * DAY)),
+                schedule_archive.SeasonSpan(
+                    2, at(SEASON_ONE + 30 * DAY), at(SEASON_ONE + 59 * DAY)
+                ),
+                schedule_archive.SeasonSpan(
+                    3, at(SEASON_ONE + 60 * DAY), at(SEASON_ONE + 89 * DAY)
+                ),
+            ],
+        )
+
+    def test_a_race_belongs_to_the_season_whose_span_holds_its_start(self):
+        spans = schedule_archive.season_spans(self.three_seasons())
+        early, late, second = schedule_archive.JOIN_EARLY, schedule_archive.JOIN_LATE, timedelta(seconds=1)
+        first_end = at(SEASON_ONE + 29 * DAY) + late
+        second_start = at(SEASON_ONE + 30 * DAY) - early
+        newest_end = at(SEASON_ONE + 89 * DAY) + late
         cases = [
-            (at(SEASON_ONE) - early - timedelta(seconds=1), None),
-            (at(SEASON_ONE) - early, 1),
-            (second - early - timedelta(seconds=1), 1),
-            (second - early, 2),
-            (second + timedelta(hours=1), 2),
-            (at(SEASON_ONE + 400 * DAY), 3),
+            (at(SEASON_ONE) - early - second, None, False),
+            (at(SEASON_ONE) - early, 1, False),
+            (first_end, 1, False),
+            (first_end + second, None, True),
+            (second_start - second, None, True),
+            (second_start, 2, False),
+            (second_start + timedelta(hours=1), 2, False),
+            (newest_end, 3, False),
+            # The newest season ends at its latest published slot too.
+            (newest_end + second, None, True),
         ]
-        for started_at, expected in cases:
+        for started_at, season, in_break in cases:
             with self.subTest(started_at=started_at):
-                self.assertEqual(schedule_archive.season_of(started_at, starts), expected)
+                self.assertEqual(schedule_archive.season_of(started_at, spans), season)
+                self.assertEqual(schedule_archive.in_season_break(started_at, spans), in_break)
 
-    def test_a_race_in_the_break_counts_toward_the_earlier_season(self):
+    def test_a_race_in_a_break_has_no_season(self):
         rows = season_slots(1, SEASON_ONE, 30, 1) + season_slots(2, SEASON_ONE + 33 * DAY, 30, 100)
-        starts = schedule_archive.season_starts(rows)
-        self.assertEqual(schedule_archive.season_of(at(SEASON_ONE + 31 * DAY), starts), 1)
+        spans = schedule_archive.season_spans(rows)
+        self.assertIsNone(schedule_archive.season_of(at(SEASON_ONE + 31 * DAY), spans))
+        self.assertTrue(schedule_archive.in_season_break(at(SEASON_ONE + 31 * DAY), spans))
+
+    def test_an_older_seasons_stray_slot_in_a_break_moves_no_end(self):
+        # Seasons 2 and 3 have a break between them; a season-1 slot sits in it.
+        clean = (
+            season_slots(1, SEASON_ONE, 30, 1)
+            + season_slots(2, SEASON_ONE + 30 * DAY, 30, 100)
+            + season_slots(3, SEASON_ONE + 63 * DAY, 30, 200)
+        )
+        stray = at(SEASON_ONE + 61 * DAY)
+        rows = clean + [slot(900, 1, time=str(SEASON_ONE + 61 * DAY))]
+        spans = schedule_archive.season_spans(rows)
+        self.assertEqual(spans, schedule_archive.season_spans(clean))
+        self.assertTrue(schedule_archive.in_season_break(stray, spans))
+        self.assertEqual(schedule_archive.stray_slots(rows, spans), 1)
+
+    def test_where_two_spans_overlap_the_later_season_wins(self):
+        last_of_one = SEASON_ONE + 29 * DAY
+        rows = season_slots(1, SEASON_ONE, 30, 1) + season_slots(2, last_of_one + 600, 30, 100)
+        spans = schedule_archive.season_spans(rows)
+        self.assertEqual(spans[1].first_slot, at(last_of_one + 600))
+        cases = [
+            (at(last_of_one + 4 * 60), 1),  # before season 2's span opens at +5 minutes
+            (at(last_of_one + 5 * 60), 2),  # both spans hold it
+            (at(last_of_one + 20 * 60), 2),
+        ]
+        for started_at, season in cases:
+            with self.subTest(started_at=started_at):
+                self.assertEqual(schedule_archive.season_of(started_at, spans), season)
 
 
 if __name__ == "__main__":

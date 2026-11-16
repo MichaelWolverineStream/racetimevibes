@@ -12,6 +12,8 @@ from scripts import (
     highlights,
     participant_stats,
     pokemon_avatars,
+    race_archive,
+    schedule_archive,
     season_ratings,
 )
 
@@ -77,7 +79,9 @@ def payload(
     if schedule and schedule_modes is None:
         schedule_modes = [{"id": 1, "archetype": 1, "name": "Open"}]
     return participant_stats.build_participant_payload(
-        build_stats.included_race_contexts(races),
+        build_stats.included_race_contexts(
+            races, schedule_archive.season_spans(schedule or [])
+        ),
         source_url=SOURCE_URL,
         timezone_label="Eastern Time",
         timezone_name=build_stats.SCHEDULE_TIMEZONE_NAME,
@@ -817,14 +821,15 @@ class SeasonPayloadTests(unittest.TestCase):
     def test_each_race_gets_the_season_it_started_in(self):
         result = payload(self.races(), schedule=SEASON_SCHEDULE)
         seasons = {name: race_row.get("s") for name, race_row in self.by_name(result).items()}
+        # The race in the break between the seasons is left out altogether.
         self.assertEqual(
             seasons,
-            {"early": None, "one-a": 1, "one-b": 1, "break": 1, "two-a": 2, "two-b": 2},
+            {"early": None, "one-a": 1, "one-b": 1, "two-a": 2, "two-b": 2},
         )
         self.assertEqual(
             result["seasons"],
             [
-                {"n": 1, "first": "2026-09-01", "last": "2026-09-12", "ended": True},
+                {"n": 1, "first": "2026-09-01", "last": "2026-09-02", "ended": True},
                 {"n": 2, "first": "2026-09-15", "last": "2026-09-16", "ended": False},
             ],
         )
@@ -879,7 +884,7 @@ class SeasonPayloadTests(unittest.TestCase):
         open_result = payload(races, schedule=SEASON_SCHEDULE)
         locked = payload(races, schedule=SEASON_SCHEDULE, ledgers={1: self.ledger(open_result, 1, 7)})
         before, after = self.by_name(open_result), self.by_name(locked)
-        for name in ("one-a", "one-b", "break"):
+        for name in ("one-a", "one-b"):
             self.assertEqual(
                 [[points + 7 for points in entry[6:]] for entry in before[name]["e"]],
                 [entry[6:] for entry in after[name]["e"]],
@@ -1298,14 +1303,38 @@ class GeneratedParticipantDataTests(unittest.TestCase):
                     self.assertGreaterEqual(entry[points_index], before, race_row["r"])
             self.assertGreater(winners, 3000)
 
+    def archived_starts(self):
+        """Each archived race's start, and the seasons' spans, from the committed archive."""
+        starts = {
+            envelope["race"]["name"]: race_archive.parse_timestamp(
+                envelope["race"]["started_at"], "started_at"
+            )
+            for envelope in race_archive.load_races()
+        }
+        return starts, schedule_archive.season_spans(schedule_archive.load_schedule())
+
+    def test_no_published_race_started_in_a_season_break(self):
+        starts, spans = self.archived_starts()
+        for race_row in self.participants["races"]:
+            self.assertFalse(
+                schedule_archive.in_season_break(starts[race_row["r"]], spans), race_row["r"]
+            )
+
     def test_committed_ledgers_match_the_published_points(self):
         ledgers = season_ratings.load_ledgers(REPO_ROOT / season_ratings.LEDGER_DIRECTORY)
         players = self.participants["players"]
         modes = self.participants["modes"]
         published = {race_row["r"]: race_row for race_row in self.participants["races"]}
+        starts, spans = self.archived_starts()
+        unpublished = set()
         for season, ledger in ledgers.items():
             for name, locked in ledger.races.items():
                 with self.subTest(season=season, race=name):
+                    if name not in published:
+                        # Only a race in a season break may leave a locked season.
+                        self.assertTrue(schedule_archive.in_season_break(starts[name], spans))
+                        unpublished.add(name)
+                        continue
                     race_row = published[name]
                     self.assertEqual(race_row["s"], season)
                     self.assertEqual(modes[race_row["m"]], locked.mode)
@@ -1313,6 +1342,14 @@ class GeneratedParticipantDataTests(unittest.TestCase):
                         {players[entry[0]]["id"]: (entry[6], entry[7]) for entry in race_row["e"]},
                         locked.points,
                     )
+        # Season 10 was locked before races in a season break were excluded.
+        self.assertEqual(
+            unpublished,
+            {
+                "alttpr-ladder/wonderful-bugnet-5002",
+                "alttpr-ladder/scruffy-structuralmike-9862",
+            },
+        )
         self.assertEqual(self.participants["diagnostics"]["seasons"]["left_out_of_locked_seasons"], 0)
         self.assertEqual(self.participants["diagnostics"]["seasons"]["mismatched_locked_races"], 0)
 
@@ -1427,8 +1464,10 @@ class UpcomingPayloadTests(unittest.TestCase):
             schedule_slot(6, 2, "2026-09-10T20:00:00Z"),
             schedule_slot(7, 2, "2026-09-11T20:00:00Z"),
             schedule_slot(2, 2, "2026-09-18T20:00:00Z") | {"mode": 2},
+            schedule_slot(4, 1, "2026-09-18T22:00:00Z"),
             schedule_slot(3, 2, "2026-09-19T20:00:00Z") | {"mode": 3},
-            schedule_slot(4, 1, "2026-09-20T20:00:00Z"),
+            # A misfiled season-1 slot after season 2's last slot sits in a break.
+            schedule_slot(8, 1, "2026-09-25T20:00:00Z"),
         ]
         result = self.result(rows)
         self.assertEqual(result["modes"], ["simple"])
@@ -1439,9 +1478,10 @@ class UpcomingPayloadTests(unittest.TestCase):
             [
                 # The entrance category is not published, as no race was run in it.
                 [stamp("2026-09-18T20:00:00Z"), "Entrance Open", None, 2],
+                # Filed under season 1, but the rule puts it in season 2's span.
+                [stamp("2026-09-18T22:00:00Z"), "Open", simple, 2],
                 [stamp("2026-09-19T20:00:00Z"), "Odd", None, 2],
-                # Filed under season 1, but the rule puts it in season 2.
-                [stamp("2026-09-20T20:00:00Z"), "Open", simple, 2],
+                [stamp("2026-09-25T20:00:00Z"), "Open", simple, None],
             ],
         )
 

@@ -322,24 +322,67 @@ def _median_time(times: list[datetime]) -> datetime:
     return datetime.fromtimestamp(statistics.median(t.timestamp() for t in times), UTC)
 
 
-def season_of(started_at: datetime, starts: list[tuple[int, datetime]]) -> int | None:
+@dataclass(frozen=True)
+class SeasonSpan:
+    """A season's run: from JOIN_EARLY before its first slot to JOIN_LATE after its last."""
+
+    season: int
+    first_slot: datetime
+    last_slot: datetime
+
+    def holds(self, started_at: datetime) -> bool:
+        return self.first_slot - JOIN_EARLY <= started_at <= self.last_slot + JOIN_LATE
+
+
+def season_spans(rows: list[JsonObject]) -> list[SeasonSpan]:
+    """Return the span of every season that has a start, in season order.
+
+    A season's first slot is its start (`season_starts`). Its last slot is the latest
+    slot filed under it from that start until the next season's start, or from that
+    start on for the newest season, so a misfiled slot never moves an end.
+    """
+    starts = season_starts(rows)
+    spans = []
+    for index, (season, start) in enumerate(starts):
+        following = starts[index + 1][1] if index + 1 < len(starts) else None
+        own = [slot_time(row) for row in rows if row["season"] == season]
+        last_slot = max(
+            started_at
+            for started_at in own
+            if start <= started_at and (following is None or started_at < following)
+        )
+        spans.append(SeasonSpan(season, start, last_slot))
+    return spans
+
+
+def season_of(started_at: datetime, spans: list[SeasonSpan]) -> int | None:
     """Return the season a race that started at `started_at` belongs to, or None.
 
-    A season runs from JOIN_EARLY before its start until JOIN_EARLY before the next
-    season's start, so a race in the break between two seasons counts toward the
-    earlier one. A race before the first season has none.
+    A race belongs to the season whose span holds its start; where two spans overlap,
+    to the later season. A race before the first season, or in a break between two
+    seasons (see `in_season_break`), has none.
     """
     season = None
-    for number, start in starts:
-        if started_at < start - JOIN_EARLY:
-            break
-        season = number
+    for span in spans:
+        if span.holds(started_at):
+            season = span.season
     return season
 
 
-def stray_slots(rows: list[JsonObject], starts: list[tuple[int, datetime]]) -> int:
-    """Count the slots outside their own season's run: before its start, or in a later season's."""
-    return sum(1 for row in rows if season_of(slot_time(row), starts) != row["season"])
+def in_season_break(started_at: datetime, spans: list[SeasonSpan]) -> bool:
+    """Whether a race started in a season break: after the first season's span opens,
+    in no season's span. Without spans nothing is in a break."""
+    return (
+        bool(spans)
+        and started_at >= spans[0].first_slot - JOIN_EARLY
+        and season_of(started_at, spans) is None
+    )
+
+
+def stray_slots(rows: list[JsonObject], spans: list[SeasonSpan]) -> int:
+    """Count the slots outside their own season's span: before it, in a break, or in
+    another season's span."""
+    return sum(1 for row in rows if season_of(slot_time(row), spans) != row["season"])
 
 
 def upcoming_slots(rows: list[JsonObject], after: datetime, limit: int) -> list[JsonObject]:

@@ -2,12 +2,12 @@
 
 - **Purpose:** the shared terms. The README and every doc use them with exactly these meanings.
 - **Read before:** changing which races count, how a race's mode, preset, date or season is derived, or how schedule slots join races.
-- **Code:** `scripts/build_stats.py` (races, modes, presets), `scripts/highlights.py` (`MEDAL_TIERS`), `scripts/schedule_archive.py` (`join_races`, `season_starts`, `season_of`).
+- **Code:** `scripts/build_stats.py` (races, modes, presets), `scripts/highlights.py` (`MEDAL_TIERS`), `scripts/schedule_archive.py` (`join_races`, `season_starts`, `season_spans`, `season_of`, `in_season_break`).
 
 ## Races
 
-- **Included race:** only records whose `status.value` is `finished` are included. The datasets cover every archived finished race, beginning 2025-04-20.
-- **Excluded mode:** races whose normalized `info` mode is `ladder_test` or `ladder test` are excluded from every metric.
+- **Included race:** only records whose `status.value` is `finished` and that are not in a [season break](#seasons) are included. The datasets cover every archived finished race, beginning 2025-04-20.
+- **Excluded mode:** races whose normalized `info` mode is `ladder_test` or `ladder test` are excluded from every metric. So are races in a [season break](#seasons).
 - **Mode:** the text in the brackets of the `Step Ladder Series - [mode]` prefix of `info`, trimmed and lowercased. Later tags such as `[VT]` are ignored. A missing or malformed prefix is grouped as `unknown`.
 - **Preset:** the name after the mode in the race's `info` first line, trimmed, cut at any seed URL (along with a room slug such as `owner/slug` just before it), with `[x]` turned into `(x)` and any `Grab Bag (...)` collapsed to `Grab Bag`. Each preset belongs to its mode.
 - **Field:** the race's entrant count, which includes DNFs and anonymous entrants.
@@ -66,12 +66,15 @@ These terms use the [ladder schedule mirror](archive.md#ladder-schedule-mirror).
 
 ## Seasons
 
-These terms drive the [season ratings](../README.md#season-ratings). `schedule_archive.season_starts` and `season_of` implement them.
+These terms drive the [season ratings](../README.md#season-ratings). `schedule_archive.season_starts`, `season_spans`, `season_of` and `in_season_break` implement them.
 
-- **Season start:** season 1 starts at its first slot. Every later season starts at its first slot after the middle of the season before it, which is the later of that season's start and the median time of its slots. A season with no slot after that point has no start yet. The mirror holds a season's slots, future ones included, as soon as alttpr.racing publishes its schedule, but a season's end is only known once the next season's first slot appears.
+- **Season start:** season 1 starts at its first slot. Every later season starts at its first slot after the middle of the season before it, which is the later of that season's start and the median time of its slots. A season with no slot after that point has no start yet. The mirror holds a season's slots, future ones included, as soon as alttpr.racing publishes its schedule, so a season's last slot, and with it the end of its span, is known ahead.
   - A race's season comes from this rule, not from the season number its slot carries. alttpr.racing files the odd slot under the wrong season, such as an old season-1 slot listed inside a later season, and the rule keeps such a slot from moving a boundary. `diagnostics.seasons.stray_slots` counts the slots outside their own season's run.
-- **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start until 5 minutes before the next season's start. A race belongs to the season its start falls in. Races before season 1's span have none, and `diagnostics.seasons.races_without_season` counts them.
+- **Season:** the span from 5 minutes (`JOIN_EARLY`) before its start to 30 minutes (`JOIN_LATE`) after its **last slot**, inclusive (`SeasonSpan`, from `season_spans`). A race belongs to the season whose span holds its start, scheduled or not. Where two spans overlap, the later season wins.
+  - A season's **last slot** is the latest slot filed under it from its start until the next season's start (for the newest season, from its start on), so a misfiled slot never moves an end.
+  - Races before season 1's span have no season but are included everywhere else, and `diagnostics.seasons.races_without_season` counts only them.
+- **Season break:** a start after season 1's span opens that no season's span holds. A race in a season break is excluded from everything, like the **Excluded mode**: every rating, season and all-time stats, records, comments, racer pages, bios and avatars. `diagnostics.excluded_in_season_breaks` and `source.excluded_archived_race_count` count it.
 - **Current season:** the newest season holding at least one included race.
-- **Season week:** seven days counted from the Eastern Time date of the season's start. The season's last day is the earlier of the day before the next season's start date and the **last whole day**. A season week is **full** when it ends on or before that day. A partial last week is left out: its races count toward the season's racers but toward no week.
+- **Season week:** seven days counted from the Eastern Time date of the season's start. The season's last day is the earlier of the Eastern Time date of its **last slot** and the **last whole day**. A season week is **full** when it ends on or before that day. A partial last week is left out: its races count toward the season's racers but toward no week.
 - **Returning racer:** one of the previous season's racers who is also one of this season's. The first season has none, because no season comes before it.
 - **Newcomer:** a racer whose first included race falls in the season. A racer who first raced before season 1 is no season's newcomer. A newcomer has **matured** when the 28 days (`NEWCOMER_WINDOW_DAYS`) after the date of their first race end on or before the **last whole day**, and is **retained** when they raced on a later date within those 28 days. That race may be in the next season.

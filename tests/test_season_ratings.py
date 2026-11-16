@@ -30,8 +30,9 @@ def slot(slot_id, season, moment):
 
 
 def schedule(first=SEASON_ONE, second=SEASON_TWO, second_slots=12):
-    """Daily slots: 10 of season 1 from `first`, then `second_slots` of season 2 from `second`."""
-    return [slot(day, 1, first + timedelta(days=day)) for day in range(10)] + [
+    """Daily slots: 14 of season 1 from `first`, the last a day before season 2, then
+    `second_slots` of season 2 from `second`."""
+    return [slot(day, 1, first + timedelta(days=day)) for day in range(14)] + [
         slot(100 + day, 2, second + timedelta(days=day)) for day in range(second_slots)
     ]
 

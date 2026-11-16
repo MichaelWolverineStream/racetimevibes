@@ -17,10 +17,11 @@ from typing import Any
 
 # Supports both `python3 scripts/racer_bios.py` and `from scripts import racer_bios`.
 try:
-    from scripts import pokemon_avatars, race_archive
+    from scripts import pokemon_avatars, race_archive, schedule_archive
 except ImportError:
     import pokemon_avatars
     import race_archive
+    import schedule_archive
 
 
 RACER_BIOS_FILE = "racer-bios.json"
@@ -152,11 +153,16 @@ def load_racer_bios(
     return {user_id: _validated_entry(entry, path) for user_id, entry in bios.items()}
 
 
-def racers_to_check(envelopes: list[JsonObject], bios: Mapping[str, list]) -> list[str]:
+def racers_to_check(
+    envelopes: list[JsonObject],
+    bios: Mapping[str, list],
+    spans: list[schedule_archive.SeasonSpan],
+) -> list[str]:
     """Return the sorted IDs of racers whose profile is due for a fetch.
 
     A racer is due if they have no stored bio, or entered an included race that finished
-    after their profile was last fetched.
+    after their profile was last fetched. `spans` are the schedule's season spans; a race
+    in a season break is not an included race.
     """
     # build_stats imports modules that import this one, so import it at call time.
     try:
@@ -165,7 +171,7 @@ def racers_to_check(envelopes: list[JsonObject], bios: Mapping[str, list]) -> li
         import build_stats
 
     latest: dict[str, datetime] = {}
-    for envelope in build_stats.included_envelopes(envelopes):
+    for envelope in build_stats.included_envelopes(envelopes, spans):
         race = envelope["race"]
         completed = race_archive._completion_time(race)
         for entrant in race.get("entrants") or []:
@@ -211,7 +217,8 @@ def sync(
     load = loader or fetch_profile
     now = clock or (lambda: datetime.now(UTC))
     bios = load_racer_bios(archive_dir)
-    due = racers_to_check(race_archive.load_races(archive_dir), bios)
+    spans = schedule_archive.season_spans(schedule_archive.load_schedule(archive_dir))
+    due = racers_to_check(race_archive.load_races(archive_dir), bios, spans)
 
     checked = failed = consecutive = 0
     requested = stopped = False

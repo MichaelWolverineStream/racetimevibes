@@ -19,10 +19,11 @@ from typing import Any
 
 # Supports both `python3 scripts/avatar_mirror.py` and `from scripts import avatar_mirror`.
 try:
-    from scripts import pokemon_avatars, race_archive
+    from scripts import pokemon_avatars, race_archive, schedule_archive
 except ImportError:
     import pokemon_avatars
     import race_archive
+    import schedule_archive
 
 
 AVATAR_ORIGIN = "https://racetime.gg/media/"
@@ -199,7 +200,8 @@ def mirror(
 
     load = loader or _fetch_avatar
     published = _published_avatars(participants_path)
-    envelopes = build_stats.included_envelopes(race_archive.load_races(archive_dir))
+    spans = schedule_archive.season_spans(schedule_archive.load_schedule(archive_dir))
+    envelopes = build_stats.included_envelopes(race_archive.load_races(archive_dir), spans)
     urls = current_avatar_urls(envelopes, race_archive.load_racer_avatars(archive_dir))
 
     wanted: dict[str, str] = {}
