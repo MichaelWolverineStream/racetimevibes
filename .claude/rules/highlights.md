@@ -2,9 +2,12 @@
 paths:
   - "scripts/highlights.py"
   - "scripts/badge_images.py"
+  - "scripts/badge_overrides.py"
+  - "badge-overrides.json"
   - "site/assets/badges/**"
   - "tests/test_highlights.py"
   - "tests/test_badge_assets.py"
+  - "tests/test_badge_overrides.py"
 ---
 
 # Highlights and badges

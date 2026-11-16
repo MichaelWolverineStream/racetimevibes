@@ -1015,7 +1015,7 @@ const Feed = (() => {
     }
     const shelf = element("div", "feed-spotlight__shelf");
     earned.slice(0, SHELF_BADGES).forEach(([badgeId, raceIndex]) => {
-      shelf.appendChild(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, compact: true }));
+      shelf.appendChild(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, note: player.badge_notes?.[badgeId] ?? null, compact: true }));
     });
     const rest = earned.length - SHELF_BADGES;
     if (rest > 0) {
@@ -1174,7 +1174,8 @@ const Feed = (() => {
     const grid = element("div", "feed-badges");
     unlocks.forEach(({ playerIndex, badgeId, raceIndex }) => {
       const cell = element("div", "feed-badges__item");
-      cell.append(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex }), playerLink(playerIndex, "racer-link"));
+      const note = participants.players[playerIndex].badge_notes?.[badgeId] ?? null;
+      cell.append(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, note }), playerLink(playerIndex, "racer-link"));
       grid.appendChild(cell);
     });
     section.appendChild(grid);

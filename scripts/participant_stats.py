@@ -6,7 +6,7 @@ from __future__ import annotations
 import re
 import statistics
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 try:
     from scripts import (
         avatar_mirror,
+        badge_overrides as badge_overrides_module,
         featured,
         highlights,
         ladder_rating,
@@ -25,6 +26,7 @@ try:
     )
 except ImportError:
     import avatar_mirror
+    import badge_overrides as badge_overrides_module
     import featured
     import highlights
     import ladder_rating
@@ -34,7 +36,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 18
+PARTICIPANT_SCHEMA_VERSION = 19
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -284,6 +286,7 @@ def build_participant_payload(
     ledgers: Mapping[int, season_ratings.Ledger] | None = None,
     schedule_modes: list[JsonObject] | None = None,
     season_names: Mapping[int, str] | None = None,
+    badge_overrides: Sequence[badge_overrides_module.Override] | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
 
@@ -303,6 +306,9 @@ def build_participant_payload(
     `season_names` holds the animals that name seasons from 11 on. The next
     UPCOMING_SLOTS slots of the schedule after the newest included race are published
     as `upcoming`, each mode named by the `schedule_modes` row it points to.
+
+    `badge_overrides` are badges given by hand (see `badge_overrides`): each unlocks in
+    its racer's last race on its date, and its note is published in `badge_notes`.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -449,6 +455,7 @@ def build_participant_payload(
         ledgers,
     )
     upcoming = _upcoming(schedule, schedule_modes or [], staged, spans, modes)
+    by_hand = badge_overrides_module.resolve(badge_overrides or [], records, players)
     derived = highlights.compute(
         records,
         players=players,
@@ -456,6 +463,7 @@ def build_participant_payload(
         presets=presets,
         ratings=ratings,
         seasons=assignment.seasons,
+        granted=by_hand.granted,
     )
 
     for index, (player, (user_id, _name)) in enumerate(zip(players, ordered_players)):
@@ -469,6 +477,8 @@ def build_participant_payload(
             if by_player[index] is not None
         }
         player.update(derived["players"][index])
+        if index in by_hand.notes:
+            player["badge_notes"] = by_hand.notes[index]
 
     races = []
     for index, record in enumerate(records):

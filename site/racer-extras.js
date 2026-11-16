@@ -158,6 +158,7 @@ const RacerExtras = (() => {
         UI.badge(definition, {
           earnedRaceIndex: player.badges[definition.id] ?? null,
           progress: player.progress[definition.id] ?? null,
+          note: player.badge_notes?.[definition.id] ?? null,
         }),
       ),
     );

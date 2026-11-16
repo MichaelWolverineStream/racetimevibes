@@ -274,7 +274,8 @@ const UI = (() => {
     return rarity ? rarity[0] : "common";
   }
 
-  function badgeTooltip(definition, earnedRaceIndex, progress) {
+  // `note` is the text a badge given by hand may carry (the racer's badge_notes); it follows the date.
+  function badgeTooltip(definition, earnedRaceIndex, progress, note) {
     const description = definition.description || "";
     let status = "";
     if (earnedRaceIndex !== null && earnedRaceIndex !== undefined) {
@@ -283,7 +284,7 @@ const UI = (() => {
     } else if (definition.target && progress !== null && progress !== undefined) {
       status = `${progress} / ${definition.target}`;
     }
-    return [description, status, badgeShare(definition.id)].filter(Boolean).join(" · ");
+    return [description, status, note, badgeShare(definition.id)].filter(Boolean).join(" · ");
   }
 
   // A compact tile's art: the still frame, animated only while a mouse hovers the tile or it has
@@ -309,7 +310,7 @@ const UI = (() => {
 
   // `compact` draws an earned badge as a small tile with no label: its name leads the tooltip
   // and names the button instead.
-  function badge(definition, { earnedRaceIndex = null, progress = null, compact = false } = {}) {
+  function badge(definition, { earnedRaceIndex = null, progress = null, note = null, compact = false } = {}) {
     const earned = earnedRaceIndex !== null && earnedRaceIndex !== undefined;
     const root = element("button", `ui-badge ui-badge--${earned ? "earned" : "locked"}${compact ? " ui-badge--compact" : ""}`);
     root.type = "button";
@@ -320,7 +321,7 @@ const UI = (() => {
     }
     tile.appendChild(compact && earned ? compactArt(definition, root) : badgeArt(definition, earned));
     root.appendChild(tile);
-    let tooltipText = badgeTooltip(definition, earnedRaceIndex, progress);
+    let tooltipText = badgeTooltip(definition, earnedRaceIndex, progress, note);
     if (compact) {
       root.setAttribute("aria-label", definition.label);
       tooltipText = [definition.label, tooltipText].filter(Boolean).join(" · ");

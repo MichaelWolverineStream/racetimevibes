@@ -16,6 +16,7 @@ Each badge is one row in `BADGES` in `scripts/highlights.py` plus two images. Th
 | Art | `site/assets/badges/<id>.webp` and `<id>-still.webp`, made by `scripts/badge_images.py` (ImageMagick 7) |
 | Tests | `BadgeTests` in `tests/test_highlights.py`, `tests/test_badge_assets.py`, `tests/test_participant_stats.py` |
 | Docs | The table under [Badges](../../../docs/highlights.md#badges) in `docs/highlights.md` |
+| Badges given by hand | `badge-overrides.json`, read by `scripts/badge_overrides.py` ([rules](../../../docs/highlights.md#badges-given-by-hand)) |
 
 **Two kinds.** A row has exactly one rule. A **counter** badge has `progress=`, which takes a `_Player` and returns the value so far, a running count or, for an "in a row" badge, the current run; it unlocks at `target`, and a target above 1 shows a progress border until then. A **one-race** badge has `earned=`, which takes a `_Moment` and returns `True` when that result earns it.
 
@@ -37,7 +38,7 @@ Badges are recomputed from the whole archive on every build and never taken away
 
 ## Remove a badge
 
-1. Delete its `BADGES` row, its two images, its tests, its id in `test_badge_table_order`, and its row and note in `docs/highlights.md`.
+1. Delete its `BADGES` row, its two images, its tests, its id in `test_badge_table_order`, its row and note in `docs/highlights.md`, and any entry for it in `badge-overrides.json` (the build fails on an unknown id).
 2. Delete any constant or `_Player` field only it used, with the lines in `compute()` that update it (check with `grep`).
 3. If the art was Twemoji, update the README credit, and remove the footer credit in `site/index.html` once no Twemoji art remains.
 4. Rebuild and test as above. `test_badge_assets.py` fails on any leftover image.
@@ -47,7 +48,11 @@ Badges are recomputed from the whole archive on every build and never taken away
 - **Art:** rerun `badge_images.py` with the same id; it overwrites both files.
 - **Threshold:** change the constant. The description follows; the tests and `docs/highlights.md` don't.
 - **Label or description:** edit the row. The page shows labels in capitals.
-- **Id:** avoid it. If you must, rename both images too. Browsers store no badge ids.
+- **Id:** avoid it. If you must, rename both images and its entries in `badge-overrides.json` too. Browsers store no badge ids.
+
+## Give a badge by hand
+
+A racer who deserves a badge the rules don't give gets an entry in `badge-overrides.json`, not a new rule: their user ID, the badge id, a date they raced and an optional tooltip note. The steps are under [Giving a badge by hand](../../../docs/operations.md#giving-a-badge-by-hand), and the rules under [Badges given by hand](../../../docs/highlights.md#badges-given-by-hand). First Blood can't be given by hand.
 
 ## Conventions
 

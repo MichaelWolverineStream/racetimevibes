@@ -61,7 +61,9 @@ class FakeRatings:
         return 1 / (1 + math.exp(b[0] - a[0]))
 
 
-def run(records, *, means=None, mode_count=2, modes=None, presets=(), names=None, seasons=None):
+def run(
+    records, *, means=None, mode_count=2, modes=None, presets=(), names=None, seasons=None, granted=None
+):
     names = names or {}
     return highlights.compute(
         records,
@@ -70,6 +72,7 @@ def run(records, *, means=None, mode_count=2, modes=None, presets=(), names=None
         presets=list(presets),
         ratings=FakeRatings(records, means),
         seasons=seasons,
+        granted=granted,
     )
 
 
@@ -1229,6 +1232,45 @@ class BadgeTests(unittest.TestCase):
 
     def test_badger_target_is_reachable(self):
         self.assertLess(highlights.BADGER_BADGES, len(highlights.BADGES))
+
+    def test_a_badge_given_by_hand_unlocks_in_its_race_with_a_tag(self):
+        result = run([duel(0, 1)] * 3, granted={(1, "hummers"): 1})
+        racer = result["players"][1]
+        self.assertEqual(racer["badges"]["hummers"], 1)
+        self.assertIn(["badge", 1, "hummers"], tags_of(result, 1, "badge"))
+        self.assertNotIn(["badge", 1, "hummers"], tags_of(result, 0, "badge") + tags_of(result, 2, "badge"))
+        # An unlocked counter badge publishes no progress.
+        self.assertNotIn("hummers", racer["progress"])
+        self.assertEqual(result["diagnostics"]["badge_holders"]["hummers"], 1)
+
+    def test_a_badge_given_by_hand_unlocks_on_its_date_not_its_rule(self):
+        # The rule unlocks Hat Trick in race 2; a hand-given date before or after wins.
+        for race in (0, 4):
+            with self.subTest(race=race):
+                result = run([duel(0, 1)] * 5, granted={(0, "hat_trick"): race})
+                self.assertEqual(result["players"][0]["badges"]["hat_trick"], race)
+                hat_tricks = [
+                    index
+                    for index in range(5)
+                    if ["badge", 0, "hat_trick"] in tags_of(result, index, "badge")
+                ]
+                self.assertEqual(hat_tricks, [race])
+
+    def test_a_badge_given_by_hand_leaves_other_racers_to_the_rule(self):
+        result = run([duel(0, 1)] * 3 + [duel(1, 0)] * 3, granted={(0, "hat_trick"): 4})
+        self.assertEqual(result["players"][0]["badges"]["hat_trick"], 4)
+        self.assertEqual(result["players"][1]["badges"]["hat_trick"], 5)
+
+    def test_badger_counts_a_badge_given_by_hand_in_the_same_race(self):
+        table = tuple(
+            badge._replace(target=3) if badge.id == "badger" else badge
+            for badge in highlights.BADGES
+        )
+        with mock.patch.object(highlights, "BADGES", table):
+            result = run([duel(0, 1)] * 3, granted={(1, "sniper"): 2})
+        # Racer 1: Déjà Vu and Bridesmaid by rule, plus Sniper by hand, all by race 2.
+        self.assertEqual(result["players"][1]["badges"]["badger"], 2)
+        self.assertIn(["badge", 1, "badger"], tags_of(result, 2, "badge"))
 
     def test_badge_table_order(self):
         ids = [badge["id"] for badge in run([])["badges"]]

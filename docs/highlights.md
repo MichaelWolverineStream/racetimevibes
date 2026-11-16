@@ -2,7 +2,7 @@
 
 - **Purpose:** every race tag, badge, streak, preset statistic, record, fact and claim to fame, and the rule behind each.
 - **Read before:** changing `scripts/highlights.py`. To add, remove or change a badge, follow the `badges` skill in [.claude/skills/badges/SKILL.md](../.claude/skills/badges/SKILL.md).
-- **Code:** `scripts/highlights.py` (thresholds are constants at the top of the module), `scripts/badge_images.py`; badge art in `site/assets/badges/`.
+- **Code:** `scripts/highlights.py` (thresholds are constants at the top of the module), `scripts/badge_images.py`, `scripts/badge_overrides.py`; badge art in `site/assets/badges/`.
 
 `scripts/highlights.py` derives every tag, badge, streak, preset statistic, record, claim to fame and fact in one chronological pass, and `participants.json` publishes the results. Finishers, timed finishers, the winner and provisional racers are as defined under [Entrants](definitions.md#entrants); where a winner is anonymous, winner-dependent tags are skipped. Every tag and badge that reads a rating reads the overall rating.
 
@@ -131,6 +131,36 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 - **Omnivore:** needs 7 of the 8 modes, because hardly anyone finishes all 8.
 - **Apex Predator:** Omnivore's rule for wins: a win in 7 different modes.
 - **Badger:** counts every badge the racer holds, First Blood included. It unlocks in the same race as the 30th badge.
+
+### Badges given by hand
+
+`badge-overrides.json` at the repository root gives a racer a badge by hand, such as one the rules missed. It is hand-maintained, like `season-names.json`, and `scripts/badge_overrides.py` reads it:
+
+```json
+{
+  "schema_version": 1,
+  "overrides": [
+    { "racer": "<user id>", "badge": "hat_trick", "date": "2026-11-10", "note": "Three straight wins in the charity relay." }
+  ]
+}
+```
+
+- **Racer:** the racetime.gg user ID, the one in the racer page's address, `#/player/<user id>`.
+- **Badge:** any badge id in the table but `first_blood`, which belongs to the First win tag, so only a win unlocks it.
+- **Date:** an Eastern Time date on which the racer entered an included race. The badge unlocks in their last race that day, as if a rule had unlocked it there. It gets a Badge tag on that race, shows under Latest badges, and counts toward Badger, holder shares, claims to fame and featured-racer tickets.
+- **The date wins over the rule.** The badge's rule is never checked for that racer, so the badge unlocks on the given date even when the rule would unlock it on another.
+- **Note:** optional text. The badge's tooltip shows it after the date the badge was earned (see [Racer pages](dashboard.md#racer-pages)), and `participants.json` publishes it as `badge_notes`.
+- Badges are recomputed on every build, so deleting an entry takes the badge back, unless its rule unlocks it.
+
+`badge_overrides.load` and `badge_overrides.resolve` raise `BadgeOverridesError`, failing the build and naming the entry, unless:
+
+- The file has exactly the keys `schema_version` (1) and `overrides`, a list.
+- Every entry has exactly the keys `racer`, `badge` and `date`, and may have `note`.
+- `racer` is a non-empty string without leading or trailing whitespace, and a racer in `participants.json`.
+- `badge` is a badge id other than `first_blood`.
+- `date` is written `YYYY-MM-DD`, is a real date, and the racer entered an included race on it.
+- `note`, when present, is one line of printable text, at most 160 characters, with no leading or trailing whitespace.
+- No racer gets the same badge twice.
 
 ## Streaks
 

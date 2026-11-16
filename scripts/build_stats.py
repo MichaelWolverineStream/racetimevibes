@@ -18,6 +18,7 @@ from zoneinfo import ZoneInfo
 # Supports both `python3 scripts/build_stats.py` and `from scripts import build_stats`.
 try:
     from scripts import (
+        badge_overrides,
         comment_stats,
         participant_stats,
         pokemon_avatars,
@@ -28,6 +29,7 @@ try:
         season_ratings,
     )
 except ImportError:
+    import badge_overrides
     import comment_stats
     import participant_stats
     import pokemon_avatars
@@ -857,6 +859,7 @@ def build(
     pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
     ledger_dir: Path | None = None,
     season_names_path: Path = season_names.NAMES_PATH,
+    badge_overrides_path: Path = badge_overrides.OVERRIDES_PATH,
 ) -> tuple[JsonObject, JsonObject, JsonObject]:
     """Build and write the three datasets. It reads the season ledgers in `ledger_dir`,
     by default the one beside the archive, and never writes one."""
@@ -896,6 +899,7 @@ def build(
         ),
         schedule_modes=modes,
         season_names=season_names.load(season_names_path),
+        badge_overrides=badge_overrides.load(badge_overrides_path),
     )
     comments = comment_stats.build_comments_payload(
         contexts, generated_at=generated_at
@@ -975,6 +979,7 @@ def main() -> int:
         comment_stats.CommentDataError,
         season_ratings.SeasonLedgerError,
         season_names.SeasonNamesError,
+        badge_overrides.BadgeOverridesError,
     ) as error:
         print(f"Data build failed: {error}", file=sys.stderr)
         return 1

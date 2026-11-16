@@ -66,6 +66,10 @@ No test uses the network. The production suite rebuilds all three datasets from 
 
 From Season 11 the previous season's champion picks an animal. Add `"N": {"animal": "…"}` to `season-names.json`, run `python3 scripts/build_stats.py` (the rules are under [Season fields](datasets.md#season-fields)), run the tests, and commit the file with `site/data`. Pass no `--lock-seasons`: the ledgers stay untouched.
 
+### Giving a badge by hand
+
+Add `{"racer": "<user id>", "badge": "<badge id>", "date": "YYYY-MM-DD"}`, with an optional `"note"`, to `overrides` in `badge-overrides.json`. The user ID is in the racer page's address. Run `python3 scripts/build_stats.py` (the rules are under [Badges given by hand](highlights.md#badges-given-by-hand)), run the tests, and commit the file with `site/data`. Pass no `--lock-seasons`. An entry that breaks a rule fails every build, the bot's too, so build before you push.
+
 ### Refreshing by hand
 
 Pull first, because the bot may have pushed since your last sync. Run the refresh steps and commit `archive/`, `site/data` and `site/avatars`. Never pass `--lock-seasons` locally: locking is the bot's job. `racer_bios.py` and `schedule_archive.py` are optional by hand, as long as `archive/ladder-schedule/` exists.

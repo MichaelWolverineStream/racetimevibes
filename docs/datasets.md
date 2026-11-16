@@ -2,7 +2,7 @@
 
 - **Purpose:** what `build_stats.py` publishes in `site/data/`, the schedule and participation metrics behind the Ladder data panels, how season ratings are locked into ledgers, and how chest counts are parsed from comments.
 - **Read before:** changing a field of `race-stats.json`, `participants.json` or `comments.json`, the season lock, or the chest-count parser. A new field must fit [Privacy](../README.md#privacy), and a schema change bumps the version in Python and in JS together.
-- **Code:** `scripts/build_stats.py`, `scripts/participant_stats.py`, `scripts/comment_stats.py`, `scripts/season_ratings.py`, `scripts/season_names.py`. The rating itself is in the [README](../README.md#ladder-rating), and tags, badges and records are in [highlights.md](highlights.md).
+- **Code:** `scripts/build_stats.py`, `scripts/participant_stats.py`, `scripts/comment_stats.py`, `scripts/season_ratings.py`, `scripts/season_names.py`, `scripts/badge_overrides.py`. The rating itself is in the [README](../README.md#ladder-rating), and tags, badges and records are in [highlights.md](highlights.md).
 
 ## The three files
 
@@ -11,14 +11,14 @@
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the Ladder data panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date `d`, its start time `u` in Unix seconds, its seed preset, its derived tags and its season (see [Season fields](#season-fields)). Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame. `avatar_changes` lists the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)). `featured` lists the coming [featured racers](highlights.md#featured-racer), one per Eastern date from the newest race's date through 15 days after it that has a pick, each as `[date, player, race, tag, bio]`: `races[race].t[tag]` is their best highlight, and `bio` is their current racetime.gg bio or `null`, with whitespace runs collapsed to single spaces and cut to 160 characters with "…", at its last word break if that keeps at least half of it. `medal_tiers` publishes the [medal](definitions.md#entrants) rule, and each leaderboard row carries `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total). |
+| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date `d`, its start time `u` in Unix seconds, its seed preset, its derived tags and its season (see [Season fields](#season-fields)). Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame, plus `badge_notes`, `{badge id: note}`, when a [badge given by hand](highlights.md#badges-given-by-hand) has a note. `avatar_changes` lists the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)). `featured` lists the coming [featured racers](highlights.md#featured-racer), one per Eastern date from the newest race's date through 15 days after it that has a pick, each as `[date, player, race, tag, bio]`: `races[race].t[tag]` is their best highlight, and `bio` is their current racetime.gg bio or `null`, with whitespace runs collapsed to single spaces and cut to 160 characters with "…", at its last word break if that keeps at least half of it. `medal_tiers` publishes the [medal](definitions.md#entrants) rule, and each leaderboard row carries `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total). |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
 `race-stats.json` (`schema_version` 14) and `participants.json` carry a schema version, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](avatars.md#avatar-mirror)). What each of these may contain is fixed by [Privacy](../README.md#privacy).
 
 ### Season fields
 
-The season names come from `scripts/season_names.py`, which holds the retro names, and from `season-names.json` at the repository root: the one hand-maintained input, `{schema_version: 1, seasons: {"11": {"animal": "Panda"}}}`. `season_names.load` raises `SeasonNamesError`, failing the build, unless:
+The season names come from `scripts/season_names.py`, which holds the retro names, and from `season-names.json` at the repository root: a hand-maintained input, `{schema_version: 1, seasons: {"11": {"animal": "Panda"}}}`. The other one is `badge-overrides.json` (see [Badges given by hand](highlights.md#badges-given-by-hand)). `season_names.load` raises `SeasonNamesError`, failing the build, unless:
 
 - The file has exactly the keys `schema_version` (1) and `seasons`.
 - Every key is a plain whole number from 11 on, and every entry has exactly the key `animal`.

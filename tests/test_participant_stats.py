@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 
 from scripts import (
     avatar_mirror,
+    badge_overrides,
     build_stats,
     highlights,
     participant_stats,
@@ -73,6 +74,7 @@ def payload(
     ledgers=None,
     schedule_modes=None,
     season_names=None,
+    badge_overrides=None,
 ):
     # Each race file was fetched when its race ended.
     envelopes = [{"fetched_at": item["ended_at"], "race": item} for item in races]
@@ -95,6 +97,7 @@ def payload(
         ledgers=ledgers,
         schedule_modes=schedule_modes,
         season_names=season_names,
+        badge_overrides=badge_overrides,
     )
 
 
@@ -400,6 +403,32 @@ class LeaderboardTests(unittest.TestCase):
 
 
 class PayloadShapeTests(unittest.TestCase):
+    def test_badges_given_by_hand_unlock_in_the_last_race_that_day_and_publish_their_notes(self):
+        races = [
+            placed_race("early", ["ana", "bob"], started_at="2026-03-01T20:00:00.000Z"),
+            placed_race("late", ["bob", "ana"], started_at="2026-03-01T23:00:00.000Z"),
+            placed_race("next day", ["ana", "bob"], started_at="2026-03-02T20:00:00.000Z"),
+        ]
+        result = payload(
+            races,
+            badge_overrides=[
+                badge_overrides.Override("ana", "hat_trick", "2026-03-01", "Given by hand."),
+                badge_overrides.Override("bob", "sniper", "2026-03-01", None),
+            ],
+        )
+        players = {player["id"]: player for player in result["players"]}
+        self.assertEqual(players["ana"]["badges"]["hat_trick"], 1)
+        self.assertEqual(players["bob"]["badges"]["sniper"], 1)
+        self.assertEqual(players["ana"]["badge_notes"], {"hat_trick": "Given by hand."})
+        self.assertNotIn("badge_notes", players["bob"])
+        self.assertNotIn("badge_notes", payload(races)["players"][0])
+
+    def test_a_badge_given_by_hand_on_a_day_the_racer_missed_fails(self):
+        races = [placed_race("only", ["ana"], started_at="2026-03-01T20:00:00.000Z")]
+        missed = [badge_overrides.Override("ana", "hat_trick", "2026-03-02", None)]
+        with self.assertRaisesRegex(badge_overrides.BadgeOverridesError, "ana entered no included race"):
+            payload(races, badge_overrides=missed)
+
     def test_races_are_ordered_oldest_first(self):
         result = payload(
             [
@@ -615,7 +644,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 18)
+        self.assertEqual(result["schema_version"], 19)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -1174,7 +1203,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 18)
+        self.assertEqual(self.participants["schema_version"], 19)
         for key in (
             "presets",
             "hardest_preset",

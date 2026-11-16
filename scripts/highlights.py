@@ -6,7 +6,7 @@ from __future__ import annotations
 import bisect
 import statistics
 from collections import Counter, defaultdict, deque
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from datetime import date
 from typing import Any, NamedTuple
 
@@ -892,12 +892,16 @@ def compute(
     presets: list[JsonObject],
     ratings: Any,
     seasons: list[int | None] | None = None,
+    granted: Mapping[tuple[int, str], int] | None = None,
 ) -> JsonObject:
     """Run one chronological pass over the records and derive every highlight.
 
     `seasons` holds each race's season (None outside any season); with it the record
-    boards are also built per season.
+    boards are also built per season. `granted` maps (player, badge id) to the race of a
+    badge given by hand (see badge_overrides): it unlocks in that race and its rule is
+    never checked for that racer.
     """
+    granted = granted or {}
     states: dict[int, _Player] = {}
     race_tags: list[list[list[Any]]] = []
     mode_best: dict[int, int] = {}
@@ -1187,7 +1191,9 @@ def compute(
             for badge in BADGES:
                 if badge.id in state.badges:
                     continue
-                if badge.progress is not None:
+                if (player, badge.id) in granted:
+                    unlocked = granted[(player, badge.id)] == ri
+                elif badge.progress is not None:
                     unlocked = badge.progress(state) >= targets[badge.id]
                 else:
                     unlocked = badge.earned(moment)

@@ -21,7 +21,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing schedule in `archive/ladder-schedule/`.** Never edit it, and never move or copy any of it into `site/`: it holds full profiles, comments and verbatim bios with their history, and is never deployed.
 4. **Publish only what the privacy contract allows** ([README › Privacy](README.md#privacy)). Any new published field must fit it.
    - `race-stats.json` is anonymous: no IDs, names or entrant arrays.
-   - `participants.json` carries only display names, stable user IDs and mirrored avatar file names: the hash of a `racetime.gg/media/` raster URL plus its extension, or `pokemon-` plus a sprite file name. Plus `avatar_changes`, the Eastern date an avatar change (upload or bio favourite) was first seen, never the old avatar. Plus `featured`, the coming featured racers (later days' picks can still change), each with their current bio, whitespace collapsed and capped at 160 characters.
+   - `participants.json` carries only display names, stable user IDs and mirrored avatar file names: the hash of a `racetime.gg/media/` raster URL plus its extension, or `pokemon-` plus a sprite file name. Plus `avatar_changes`, the Eastern date an avatar change (upload or bio favourite) was first seen, never the old avatar. Plus `featured`, the coming featured racers (later days' picks can still change), each with their current bio, whitespace collapsed and capped at 160 characters. Plus `badge_notes`, the maintainers' one-line notes (at most 160 characters) on badges given by hand in `badge-overrides.json`.
    - `site/avatars/` holds exactly the files `participants.json` names, as validated raster images.
    - `comments.json` carries comments capped at 500 characters.
    - `season-ratings/` (user IDs and season points) sits beside `archive/` and is never deployed.
@@ -48,7 +48,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 | `docs/archive.md` | Archive files, sync, names, avatar observations, bios, schedule mirror | `race_archive.py`, `racer_bios.py`, `schedule_archive.py` |
 | `docs/racetime-api.md` | racetime.gg endpoints and fields read | `race_archive.py`, `racer_bios.py` |
 | `docs/datasets.md` | `site/data` files, schedule metrics, season locking and ledgers, chest counts | `build_stats.py`, `participant_stats.py`, `season_ratings.py`, `season_names.py`, `comment_stats.py` |
-| `docs/highlights.md` | Tags, badges, streaks, presets, records, claims, facts, featured racer | `highlights.py`, `badge_images.py`, `featured.py` |
+| `docs/highlights.md` | Tags, badges, badges given by hand, streaks, presets, records, claims, facts, featured racer | `highlights.py`, `badge_images.py`, `badge_overrides.py`, `featured.py` |
 | `docs/avatars.md` | Avatar mirror, Pokémon avatars, sprites, avatar changes | `avatar_mirror.py`, `pokemon_avatars.py`, `pokemon_images.py` |
 | `docs/dashboard.md` | Everything the page shows and does | `site/` |
 | `docs/operations.md` | Refresh steps and options, asset versioning, tests, workflows | `.github/workflows/`, `version_assets.py` |

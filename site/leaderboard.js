@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 18;
+const PARTICIPANT_SCHEMA_VERSION = 19;
 // Must match BIO_MAX_LENGTH in scripts/featured.py, in code points as Python counts them.
 const FEATURED_BIO_MAX_LENGTH = 160;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
@@ -176,6 +176,14 @@ function validateParticipants(data) {
         throw new Error("Racer data contains an invalid mode rating.");
       }
     });
+    // Present only for a racer with a badge given by hand that has a note: {badge id: note}.
+    const notes = player.badge_notes;
+    if (
+      notes !== undefined &&
+      (notes === null || typeof notes !== "object" || Array.isArray(notes) || !Object.values(notes).every(isText))
+    ) {
+      throw new Error("Racer data contains an invalid badge note.");
+    }
   });
   data.races.forEach((race) => {
     if (
