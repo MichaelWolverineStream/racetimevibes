@@ -14,7 +14,7 @@ The page runs top to bottom:
 2. The [Upcoming races](#upcoming-races) strip.
 3. **01 Latest**: the newest results with their tags.
 4. **02 Racers**: the leaderboard, with its season select and the rating column.
-5. **03 Records**: the hall of records.
+5. **03 The Pool Room**: the Hall of Fame, with the season champions, the awards and the Hall of Records.
 6. **04-05**: the Ladder Data panels, Primetime and Participation.
 
 Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)). [Face Off](#face-off) is a page of its own that sets two racers side by side.
@@ -32,7 +32,7 @@ The masthead holds the category artwork, the title block, a racer comment, the v
   - The page cross-fades into the other theme, or switches instantly with reduced motion or in a browser without view transitions.
   - The theme is set before the page first paints, so it never flashes the other one, and the browser's toolbar colour follows the nav bar.
 
-A nav bar under the masthead links to the five sections, grouped as Racing (01-03) and Ladder Data (04-05), whose links are Primetime and Participation, with the Battle group between them. Thin dividers separate the groups, side by side on wide screens and one above the other at 980px and below. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner and the Upcoming races strip sit between the nav bar and Latest, and are hidden on racer pages and on Face Off.
+A nav bar under the masthead links to the five sections, grouped as Racing (01-03: Latest, Racers and Pool Room) and Ladder Data (04-05), whose links are Primetime and Participation, with the Battle group between them. Thin dividers separate the groups, side by side on wide screens and one above the other at 980px and below. Ladder Data is hidden on phone-width screens, and the whole bar is hidden on racer pages. The top-rated banner and the Upcoming races strip sit between the nav bar and Latest, and are hidden on racer pages and on Face Off.
 
 - **Battle:** a caption over one link, **Face Off**, drawn as a pill split diagonally into the [Face Off](#face-off) card's red and blue, deepened so its text keeps 4.5:1, with a gold edge. The halves are equal, and each word is centred in its own, so FACE is wholly red and OFF wholly blue. It is a page, not a section. Its text shares the other links' line, and a sheen crosses it once when the page loads, except with reduced motion. On hover it lifts slightly. While Face Off is open it carries `aria-current="page"` and a second gold edge inside the first. It shows at every width, including phone width where Ladder Data hides.
   - **Width:** each caption takes no width of its own, so it never widens its group. At 1199px and below the groups' side padding and the pill's own side padding narrow, so the three groups keep one row down to 981px.
@@ -95,7 +95,7 @@ The card is a small trading card in the colour of the highlight that earned the 
   |---|---|---|
   | Season titles | "Season 9 champion", or "Champion of Seasons 7 and 9", plus " · named the Season of the Panda" when they named a season (see [Season names](#season-names)) | They won an ended season. The tooltip spells out the seasons' names. |
   | Records held | "Holds the Keys record · 1:16:22", or "Holds 3 records" with each in the tooltip | They hold a mode's record now, or a preset's once it has as many races as the presets table asks for (8). A run that holds both its mode's record and its preset's counts once, for the mode, as a race carries only the wider record tag. The `unknown` mode doesn't count. |
-  | Hall of records | "#2 in the Hall of records · 18 days in a row" | They are in the top 5 of a [Hall of records](#hall-of-records) card: Photo finishes, Biggest wins, Biggest field won, Most races, or the **All-time** Days, Wins, Podiums or Finishes in a row. Their best spot counts, and a tie goes to the card shown first. A card that repeats the claim's stat is skipped. The tooltip names the card, and the board for a streak. |
+  | Hall of Fame | "#2 in the Hall of Fame · 18 days in a row" | They are in the top 5 of an all-time [Awards](#awards) card: Photo finishes, Biggest wins, Biggest field won, Most races, or the Days, Wins, Podiums or Finishes in a row. Their best spot counts, and a tie goes to the card shown first. A card that repeats the claim's stat is skipped. The tooltip is the card's name plus " · All time", such as "Streaks · Days in a row · All time" or "Photo finishes · All time". |
   | Best season | "Best season: 4th in Season 9" | Their best final overall rank in an ended season is 10th or better and they are no champion. Among equal ranks, the latest season counts. |
 
 - **Trophy shelf:** under a rule, up to 5 of the racer's badges, rarest first, as small tiles. Ties go to the order of the badge table, as the claim's do, and a badge the claim already shows is left out. Each tile's tooltip leads with the badge's name, and clicking it opens the holders panel. A tile shows its still frame, and plays its animation only while a mouse is over it or it has keyboard focus, so a tap never starts it. With more badges, "+N" links to the racer page. A racer without badges has no shelf.
@@ -150,18 +150,38 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 
 A star, ☆, follows a racer in this browser, and ★ unfollows them. Stars sit in the leaderboard rows, on the Latest sidebar's racer cards and in a racer page's heading; each is a toggle button labelled "Follow <name>" or "Unfollow <name>". In a leaderboard row an empty star shows only while the row is hovered or focused, and always on a touch screen. Following is kept in this browser's local storage, up to 50 racers, and in memory for the visit when storage is unavailable. It drives **Your racers** and the leaderboard's **Followed** button.
 
-## Hall of records
+## The Pool Room
 
-Records runs in four parts. Only By mode follows the mode picker.
+The Pool Room is the Hall of Fame, in three parts: Champions, Awards and the Hall of Records. **Champions** is hidden with no seasons.
 
-- **Seasons** has a card per season with a race, oldest first, plus the next season once it is named but has no race yet, marked **Upcoming** and dated by its first slot. A season that has not ended is marked **Current**. Hidden with no seasons.
-  - A card shows the season number, a title, its dates, the Champion(s) of an ended season and, for a champion season, who it was **Named by** (see [Season names](#season-names)). Dates are a range, or "Since …" for the current season.
-  - The title is the retro short name, quiet, with the full name as tooltip and accessible description, or "The Season of the Panda" in the accent colour. Clicking it selects that season on the leaderboard and moves focus to the leaderboard heading.
-- **Across all modes** holds the record cards and the streak boards (see [Records](highlights.md#records)): Days, Wins, Podiums and Finishes in a row, up to 5 racers each.
-  - A toggle switches the boards between **Active now**, the default, and **All-time**.
-  - **Active now** ranks every racer's current streak of two or more: a daily streak whose last day is today or yesterday in Eastern Time, or any other kind whose latest race is within the last 30 days. A board with none reads "None active".
-- **Record progression** has a step chart per mode, on one shared date axis with each mode's own time axis. The charts sit three to a row on wide screens, two at 1100px and below, and one at phone width. Each header shows the current record, and the chart draws the first recorded time hollow, each break filled, and the current record with a halo.
-- **By mode** has a mode picker that drives the current-record summary strip, the finish-time violins of the mode's presets, and the presets table, whose Gold median column is the preset's median winning time (see [Finish-time violins and preset tables](#finish-time-violins-and-preset-tables)). It opens on the most-raced mode.
+### Champions
+
+- A card per season with a race, oldest first, plus the next season once it is named but has no race yet, marked **Upcoming** and dated by its first slot. A season that has not ended is marked **Current**.
+- A card shows the season number, a title, its dates, a podium and, for a champion season, who it was **Named by** (see [Season names](#season-names)). Dates are a range, or "Since …" for the current season.
+- The title is the retro short name, quiet, with the full name as tooltip and accessible description, or "The Season of the Panda" in the accent colour. Clicking it selects that season on the leaderboard and moves focus to the leaderboard heading.
+- **Podium:** ranks 1 to 3 by competition rank in the season's overall rating, so tied racers share a rank, and two tied champions leave no 2nd. The caption is "Podium" for an ended season and "Leading" for the current one. An upcoming season has no podium.
+  - Medal pips 1, 2 and 3 are gold, silver and bronze. Their tooltips read Champion, Runner-up and Third, or "1st so far", "2nd so far" and "3rd so far" for the current season.
+  - The champion's row has a bigger avatar and bold text.
+
+### Awards
+
+- The cards are Photo finishes, Biggest wins, Biggest field won, Most races, Streaks and Most-met rivals, up to 5 rows each (see [Records](highlights.md#records)). The Streaks card lists Days, Wins, Podiums and Finishes in a row.
+- A **Season** select in the heading row lists every season with a race, newest first, then **All time**. It opens on the current season, and every card follows it. With no seasons it is hidden and the boards are all time.
+- **Still going:** in the current season, while it has not ended, and in All time, a streak row shows a red live dot in its mode-dot column, with the tooltip and accessible name "Still going". The row must be the racer's current run (the same end), the run must be 2 or longer, and it must be active: a daily streak whose last day is today or yesterday in Eastern Time, or any other kind whose latest race is within the last 30 days. The dot rings out twice on arrival, and stays still with reduced motion.
+- A card with no rows reads "None yet".
+
+### Hall of Records
+
+The fastest time on every preset. A mode picker drives everything below it, under the subheadings **Current records** and **Record progression**.
+
+- **Mode rail:** above 980px, a sticky column on the left with one button per mode, each showing the mode dot, the mode name and its number of presets. At 980px and below it is the usual horizontal mode toggle above the content. It opens on the most-raced mode.
+- **Current records · <Mode>:** a table with one row per preset in the mode, ordered by races, then name. Its columns are Preset, Record, Holder, **Set**, linked to the race, and **Broken**.
+  - Broken shows ×N, with the tooltip "Broken N times since the first recorded time", or "Not broken since the first recorded time".
+  - A preset with fewer than 8 races (`preset_min_races`) is muted, and its tooltip says it has too few races to chart.
+- **Record progression:** a step chart per preset with 8 or more races, in the same order. Each chart has the preset's own date axis, from its first race to its last, padded by 3%, and the stair ends at the preset's last race. Its header shows the preset and its current record, and the chart draws the first recorded time hollow, each break filled, and the current record with a halo.
+  - The charts sit three to a row on wide screens, two at 1100px and below, and one at phone width.
+  - A note lists the presets left out for having too few races.
+- **Finish times by preset:** a closed disclosure holding the violin legend, the finish-time violins of the mode's presets, and the presets table, whose Gold median column is the preset's median winning time (see [Finish-time violins and preset tables](#finish-time-violins-and-preset-tables)).
 
 ## Finish-time violins and preset tables
 
@@ -169,12 +189,12 @@ Records runs in four parts. Only By mode follows the mode picker.
 - The finish-time violin charts draw one violin per seed preset, side by side, with finish time on the vertical axis. Each violin holds every racer's timed finishes in that preset across the whole archive. The shape is a Gaussian kernel density estimate with Silverman's bandwidth, $0.9 \cdot \min(s, \mathrm{IQR}/1.34) \cdot n^{-1/5}$, using $s$ alone when the IQR is zero, cut at the fastest and slowest observed finish. Each dot is spread sideways within the shape by a fixed pseudo-random offset, so dots keep their place across redraws. A preset whose finishes all share one time shows dots without a shape.
 - The bold line marks the preset's median time and the gold line its median winning time. Both come from the preset statistics (see [Presets](highlights.md#presets)), which use exact times, so they match the presets table to the second. The median's tooltip also gives the finishes, the racers, and the quartiles, using the same median-of-halves definition as the dashboard's other quartiles.
 - **Which presets:** a preset is charted only with 10 or more races in total, and a chart shows at most 8. The chart's ranking picks the 8; they are then laid out in the fixed mode order, keeping the ranking within a mode. A chart always has 8 equal slots, so a violin is the same width in every chart, and fewer violins sit centred. When presets are left out, a note above the chart says how many.
-  - **Hall of records › By mode** charts the picked mode's presets, ranked by total races, then by name. The presets table below it lists every preset.
+  - **The Pool Room › Hall of Records › Finish times by preset** charts the picked mode's presets, ranked by total races, then by name. The presets table below it lists every preset.
   - **Racer pages** chart the presets the racer entered most, DNFs included, in the mode picked on the page, or across every mode under **All modes**. Ties go to total races, then name. The racer's finishes are highlighted.
 - Each violin takes its mode's color, and each mode keeps one color everywhere. The eight hues come from a palette checked for color-vision deficiency in this fixed left-to-right order, which is why the violins follow mode order rather than speed. When a chart mixes modes, each violin's label also names its mode, so color is never the only cue.
 - Preset names wrap onto two lines and end in an ellipsis if they still don't fit; every tooltip gives the mode and the full name. A chart narrower than 880px keeps that width and scrolls sideways.
 - On a touch screen, a tap on a median or gold line reads that line, and any other tap reads the nearest finish within about 16px.
-- **Racer presets table:** below the violins, a racer page lists every preset the racer entered in the picked mode, in the same sortable table as Hall of records › By mode. Under **All modes** it lists every mode's presets and adds a Mode column. Every column is the racer's own, defined like the preset statistics (see [Presets](highlights.md#presets)) but over the racer's entries only: **Races** entered, DNFs included; **Median time** of their timed finishes and **Gold median** of their timed wins, each rounded to the second; **DNF %**, their entries that are not finishers; **Avg racers**, the mean field size of those races; and **Fastest**, their best time, linked to its race, the earliest on a tie. The Hardest tag still marks the category-wide hardest preset. The table opens sorted by races, in the violins' ranking, and goes back to that whenever the mode or the racer changes.
+- **Racer presets table:** below the violins, a racer page lists every preset the racer entered in the picked mode, in the same sortable table as the Hall of Records' Finish times by preset. Under **All modes** it lists every mode's presets and adds a Mode column. Every column is the racer's own, defined like the preset statistics (see [Presets](highlights.md#presets)) but over the racer's entries only: **Races** entered, DNFs included; **Median time** of their timed finishes and **Gold median** of their timed wins, each rounded to the second; **DNF %**, their entries that are not finishers; **Avg racers**, the mean field size of those races; and **Fastest**, their best time, linked to its race, the earliest on a tie. The Hardest tag still marks the category-wide hardest preset. The table opens sorted by races, in the violins' ranking, and goes back to that whenever the mode or the racer changes.
 
 ## Ladder data panels
 

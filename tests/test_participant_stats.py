@@ -615,7 +615,7 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 17)
+        self.assertEqual(result["schema_version"], 18)
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -1174,7 +1174,7 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 17)
+        self.assertEqual(self.participants["schema_version"], 18)
         for key in (
             "presets",
             "hardest_preset",
@@ -1191,6 +1191,8 @@ class GeneratedParticipantDataTests(unittest.TestCase):
         ):
             self.assertIn(key, self.participants)
         self.assertIn("highlights", self.participants["diagnostics"])
+        for key in ("presets", "seasons"):
+            self.assertIn(key, self.participants["records"])
 
     def test_badge_rules_use_names_that_exist_in_the_data(self):
         for mode in (

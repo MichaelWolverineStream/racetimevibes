@@ -38,7 +38,7 @@ const STEP_DOT_RADIUS = 4;
 const STEP_CURRENT_RADIUS = 5;
 const STEP_HALO_RADIUS = 10;
 const STEP_HIT_RADIUS = 12;
-// The racer page's presets table opens like the one in Hall of records.
+// The racer page's presets table opens like the one under Hall of Records › Finish times by preset.
 const PLAYER_PRESET_SORT = { key: "races", direction: "desc" };
 
 const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" });
@@ -657,7 +657,7 @@ function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, title, 
 
 // Columns of the presets table under each preset violin chart. A row is { preset, index, rank }: preset is
 // shaped like a participants.presets entry and index is its preset index. fastestLink(best) gives the node
-// after the fastest time, from best = [player, seconds, raceIndex]: the racer in Hall of records, the race
+// after the fastest time, from best = [player, seconds, raceIndex]: the racer in the Hall of Records, the race
 // on a racer page. Mixing modes adds a Mode column, so color is never the only cue.
 function presetColumns({ showMode = false, fastestLink }) {
   const modeColumn = {

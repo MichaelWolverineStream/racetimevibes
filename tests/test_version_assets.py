@@ -20,6 +20,7 @@ INDEX_TEMPLATE = """<!doctype html>
     <link rel="stylesheet" href="feed.css">
     <link rel="stylesheet" href="top-rated.css">
     <link rel="stylesheet" href="upcoming.css">
+    <link rel="stylesheet" href="pool-room.css">
     <link rel="stylesheet" href="records.css">
     <link rel="stylesheet" href="racer-extras.css">
     <link rel="stylesheet" href="share-card.css">
@@ -34,6 +35,7 @@ INDEX_TEMPLATE = """<!doctype html>
     <script src="top-rated.js" defer></script>
     <script src="upcoming.js" defer></script>
     <script src="feed.js" defer></script>
+    <script src="pool-room.js" defer></script>
     <script src="records.js" defer></script>
     <script src="racer-extras.js" defer></script>
     <script src="share-card.js" defer></script>

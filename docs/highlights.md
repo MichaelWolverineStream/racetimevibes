@@ -146,12 +146,14 @@ Presets are named as defined under [Races](definitions.md#races). Statistics are
 ## Records
 
 - **Mode records:** one progression step per race that sets a new record, per mode.
+- **Preset records:** one progression step per race that lowers a preset's record, per preset. A race that also set the mode record still adds its step. The last step is the preset's fastest finish.
 - **Photo finishes:** the 10 smallest margins between places 1 and 2 among photo finishes (see [Race tags](#race-tags)).
 - **Blowouts:** the 10 largest margins between places 1 and 2, in fields of 5 or more racers.
 - **Big fields:** the 10 largest fields of 16 or more that had an identified winner.
 - **Most races:** the 10 racers with the most entries.
 - **Most-met rivals:** the 10 pairs of racers who entered the most races together. Any entry counts, DNFs and DQs included.
-- **Streak boards:** the 10 best streaks of each kind. Whether a streak is still active depends on today's date, so the page works that out (see [Hall of records](dashboard.md#hall-of-records)).
+- **Streak boards:** the 10 best streaks of each kind. Whether a streak is still going (live) depends on today's date, so the page works that out, for the current season's boards and the all-time ones (see [The Pool Room](dashboard.md#the-pool-room)).
+- **Season boards:** the same boards (photo finishes, blowouts, big fields, most races, rivals, streaks) per season, counting only that season's races. Streaks are cut at season boundaries, and a calendar day that ends one season and opens the next counts in both. Races before Season 1 count only all-time. Every season with a race has its boards.
 - **Facts:** English sentences generated from the data, such as the hardest preset, the biggest upset or the busiest day of the week. A fact without enough data is skipped.
   - Each fact is published as three strings: the text before its headline number, the number, and the text after. The page highlights exactly that number, even when a racer's name holds digits.
   - A streak fact needs a streak of 2 or more, and the comeback fact a break of 30 days or more, measured as for Touched Grass but with no start date.

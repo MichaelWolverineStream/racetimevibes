@@ -34,7 +34,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 17
+PARTICIPANT_SCHEMA_VERSION = 18
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -450,7 +450,12 @@ def build_participant_payload(
     )
     upcoming = _upcoming(schedule, schedule_modes or [], staged, spans, modes)
     derived = highlights.compute(
-        records, players=players, modes=modes, presets=presets, ratings=ratings
+        records,
+        players=players,
+        modes=modes,
+        presets=presets,
+        ratings=ratings,
+        seasons=assignment.seasons,
     )
 
     for index, (player, (user_id, _name)) in enumerate(zip(players, ordered_players)):

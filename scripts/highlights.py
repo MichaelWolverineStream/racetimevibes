@@ -237,6 +237,8 @@ class _Player:
         "pbs",
         "badges",
         "runs",
+        "season_runs",
+        "season_dates",
         "dates",
         "mean",
         "last_ordinal",
@@ -267,6 +269,9 @@ class _Player:
         self.pbs: dict[int, list[list[int]]] = {}
         self.badges: dict[str, int] = {}
         self.runs = {kind: _Run() for kind in STREAK_KINDS}
+        # The same streaks and race dates, counted within one season at a time.
+        self.season_runs: dict[int, dict[str, _Run]] = {}
+        self.season_dates: dict[int, list[str]] = {}
         self.dates: list[str] = []
         self.mean: float | None = None
         self.last_ordinal = 0
@@ -886,8 +891,13 @@ def compute(
     modes: list[str],
     presets: list[JsonObject],
     ratings: Any,
+    seasons: list[int | None] | None = None,
 ) -> JsonObject:
-    """Run one chronological pass over the records and derive every highlight."""
+    """Run one chronological pass over the records and derive every highlight.
+
+    `seasons` holds each race's season (None outside any season); with it the record
+    boards are also built per season.
+    """
     states: dict[int, _Player] = {}
     race_tags: list[list[list[Any]]] = []
     mode_best: dict[int, int] = {}
@@ -895,6 +905,12 @@ def compute(
     photos: list[list[Any]] = []
     blowouts: list[list[Any]] = []
     big_fields: list[list[Any]] = []
+    preset_steps: dict[int, list[list[Any]]] = {p: [] for p in range(len(presets))}
+    season_photos: dict[int, list[list[Any]]] = defaultdict(list)
+    season_blowouts: dict[int, list[list[Any]]] = defaultdict(list)
+    season_big_fields: dict[int, list[list[Any]]] = defaultdict(list)
+    season_race_counts: dict[int, Counter[int]] = defaultdict(Counter)
+    season_pair_counts: dict[int, Counter[tuple[int, int]]] = defaultdict(Counter)
     tag_counts: Counter[str] = Counter()
 
     # Omnivore and Apex Predator ask for fewer modes when the data has fewer than their target.
@@ -921,6 +937,7 @@ def compute(
         entries = rec["e"]
         n = rec["n"]
         mode = rec["m"]
+        season = seasons[ri] if seasons is not None else None
         mode_name = modes[mode]
         preset_name = presets[rec["p"]]["n"] if rec["p"] is not None else None
         race_ordinal = date.fromisoformat(rec["d"]).toordinal()
@@ -998,14 +1015,20 @@ def compute(
             if 0 <= margin < PHOTO_MAX_MARGIN:
                 tags["photo"].append(["photo", winner[0], runner_up[0], round(margin, 2)])
                 photos.append([ri, winner[0], runner_up[0], margin])
+                if season is not None:
+                    season_photos[season].append(photos[-1])
                 snipers = {winner[0]}
                 sniped = {runner_up[0]}
             if n >= BIG_BRAIN_MIN_FIELD and margin >= BIG_BRAIN_MIN_MARGIN:
                 big_brain = {winner[0]}
             if n >= BLOWOUT_MIN_FIELD:
                 blowouts.append([ri, winner[0], runner_up[0], margin])
+                if season is not None:
+                    season_blowouts[season].append(blowouts[-1])
         if winner is not None and n >= BIG_FIELD_SIZE:
             big_fields.append([ri, winner[0], n])
+            if season is not None:
+                season_big_fields[season].append(big_fields[-1])
 
         # God Route, Big Routing and Upsetti need the pre-race ranking, so they run before
         # state updates.
@@ -1044,6 +1067,11 @@ def compute(
             state.races += 1
             if not state.dates or state.dates[-1] != rec["d"]:
                 state.dates.append(rec["d"])
+            if season is not None:
+                season_race_counts[season][player] += 1
+                season_dates = state.season_dates.setdefault(season, [])
+                if not season_dates or season_dates[-1] != rec["d"]:
+                    season_dates.append(rec["d"])
             if finisher:
                 state.finishes += 1
                 state.modes_done.add(mode)
@@ -1077,10 +1105,20 @@ def compute(
                 state.entrance_weeks.step(_week(race_ordinal))
             state.comment_streak = state.comment_streak + 1 if player in rec["c"] else 0
             state.second_streak = state.second_streak + 1 if finisher and place == 2 else 0
+            podium = finisher and medal(place, n) is not None
+            counts_finish = not (excused_dnf and status == DNF_STATUS_CODE)
             state.runs["win"].step(ri, won)
-            state.runs["podium"].step(ri, finisher and medal(place, n) is not None)
-            if not (excused_dnf and status == DNF_STATUS_CODE):
+            state.runs["podium"].step(ri, podium)
+            if counts_finish:
                 state.runs["finish"].step(ri, finisher)
+            if season is not None:
+                runs = state.season_runs.get(season)
+                if runs is None:
+                    runs = state.season_runs[season] = {kind: _Run() for kind in STREAK_KINDS}
+                runs["win"].step(ri, won)
+                runs["podium"].step(ri, podium)
+                if counts_finish:
+                    runs["finish"].step(ri, finisher)
 
             palindrome = False
             deja_vu = False
@@ -1165,6 +1203,8 @@ def compute(
             for entry_b in range(entry_a + 1, len(entries)):
                 a, b = entries[entry_a][0], entries[entry_b][0]
                 pair_counts[(a, b) if a < b else (b, a)] += 1
+                if season is not None:
+                    season_pair_counts[season][(a, b) if a < b else (b, a)] += 1
 
         preset = rec["p"]
         if preset is not None:
@@ -1173,10 +1213,13 @@ def compute(
             row["entries"] += len(entries)
             row["fields"] += n
             row["bad"] += sum(1 for e in entries if not _is_finisher(e[1], e[2]))
+            best_before = row["best"]
             for e in timed:
                 row["times"].append(e[3])
                 if row["best"] is None or round(e[3]) < row["best"][1]:
                     row["best"] = [e[0], round(e[3]), ri]
+            if row["best"] != best_before:
+                preset_steps[preset].append([ri, row["best"][0], row["best"][1]])
             if winner is not None and winner[3] is not None:
                 row["wins"].append(winner[3])
 
@@ -1247,32 +1290,29 @@ def compute(
             }
         )
 
+    streak_sources = _streak_sources(states, daily)
     records_out = {
         "modes": [{"m": m, "steps": mode_steps[m]} for m in range(len(modes))],
-        "photo": [
-            [ri, w, r, round(margin, 2)]
-            for ri, w, r, margin in _top(photos, lambda row: (row[3], row[0]), BOARD_TOP)
-        ],
-        "blowouts": [
-            [ri, w, r, round(margin)]
-            for ri, w, r, margin in _top(
-                [row for row in blowouts if row[3] >= 0],
-                lambda row: (-row[3], row[0]),
-                BOARD_TOP,
+        "presets": [{"p": p, "steps": preset_steps[p]} for p in range(len(presets))],
+        **_award_boards(
+            photos,
+            blowouts,
+            big_fields,
+            Counter({index: state.races for index, state in states.items()}),
+            pair_counts,
+            streak_sources,
+        ),
+        "seasons": {
+            str(season): _award_boards(
+                season_photos[season],
+                season_blowouts[season],
+                season_big_fields[season],
+                season_race_counts[season],
+                season_pair_counts[season],
+                _streak_sources(states, daily, season),
             )
-        ],
-        "big_field": _top(big_fields, lambda row: (-row[2], row[0]), BOARD_TOP),
-        "most_races": _top(
-            [[index, state.races] for index, state in states.items()],
-            lambda row: (-row[1], row[0]),
-            BOARD_TOP,
-        ),
-        "rivals": _top(
-            [[a, b, count] for (a, b), count in pair_counts.items()],
-            lambda row: (-row[2], row[0], row[1]),
-            BOARD_TOP,
-        ),
-        "streaks": _streak_boards(states, daily),
+            for season in sorted(season_race_counts)
+        },
     }
 
     holders = {badge.id: 0 for badge in BADGES}
@@ -1410,22 +1450,75 @@ def _progress(state: _Player, targets: dict[str, int]) -> dict[str, int]:
     }
 
 
-def _streak_boards(
-    states: dict[int, _Player], daily: dict[int, tuple[list[Any], list[Any]]]
-) -> JsonObject:
-    boards: JsonObject = {}
-    sources = {
-        "daily": {index: pair for index, pair in daily.items()},
-        **{
-            kind: {
-                index: (state.runs[kind].best_value(), state.runs[kind].current_value())
-                for index, state in states.items()
-            }
-            for kind in STREAK_KINDS
-        },
+def _streak_sources(
+    states: dict[int, _Player],
+    daily: dict[int, tuple[list[Any], list[Any]]],
+    season: int | None = None,
+) -> dict[str, dict[int, tuple[Any, Any]]]:
+    """Each racer's (best, current) per streak kind, all-time or within one season."""
+    if season is None:
+        return {
+            "daily": dict(daily),
+            **{
+                kind: {
+                    index: (state.runs[kind].best_value(), state.runs[kind].current_value())
+                    for index, state in states.items()
+                }
+                for kind in STREAK_KINDS
+            },
+        }
+    sources: dict[str, dict[int, tuple[Any, Any]]] = {
+        kind: {} for kind in ("daily", *STREAK_KINDS)
     }
+    for index, state in states.items():
+        if season in state.season_dates:
+            sources["daily"][index] = _daily_streaks(state.season_dates[season])
+        for kind, run in state.season_runs.get(season, {}).items():
+            sources[kind][index] = (run.best_value(), run.current_value())
+    return sources
+
+
+def _award_boards(
+    photos: list[list[Any]],
+    blowouts: list[list[Any]],
+    big_fields: list[list[Any]],
+    race_counts: Counter[int],
+    pair_counts: Counter[tuple[int, int]],
+    streak_sources: dict[str, dict[int, tuple[Any, Any]]],
+) -> JsonObject:
+    """The record boards over one set of races: all of them, or one season's."""
+    return {
+        "photo": [
+            [ri, w, r, round(margin, 2)]
+            for ri, w, r, margin in _top(photos, lambda row: (row[3], row[0]), BOARD_TOP)
+        ],
+        "blowouts": [
+            [ri, w, r, round(margin)]
+            for ri, w, r, margin in _top(
+                [row for row in blowouts if row[3] >= 0],
+                lambda row: (-row[3], row[0]),
+                BOARD_TOP,
+            )
+        ],
+        "big_field": _top(big_fields, lambda row: (-row[2], row[0]), BOARD_TOP),
+        "most_races": _top(
+            [[index, count] for index, count in race_counts.items()],
+            lambda row: (-row[1], row[0]),
+            BOARD_TOP,
+        ),
+        "rivals": _top(
+            [[a, b, count] for (a, b), count in pair_counts.items()],
+            lambda row: (-row[2], row[0], row[1]),
+            BOARD_TOP,
+        ),
+        "streaks": _streak_boards(streak_sources),
+    }
+
+
+def _streak_boards(sources: dict[str, dict[int, tuple[Any, Any]]]) -> JsonObject:
+    boards: JsonObject = {}
     # Active streaks depend on today's date, so the page derives them from each racer's
-    # own current run; only the all-time boards are exported.
+    # own current run; only the best runs are exported.
     for kind, by_player in sources.items():
         best_rows = [
             [index, *best] for index, (best, _current) in by_player.items() if best

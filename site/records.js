@@ -1,16 +1,4 @@
 const Records = (() => {
-  const CARD_ROWS = 5;
-  const MIN_ACTIVE_STREAK = 2;
-  const STREAK_KINDS = [
-    { kind: "daily", label: "Days in a row", unit: ["day", "days"] },
-    { kind: "win", label: "Wins in a row", unit: ["win", "wins"] },
-    { kind: "podium", label: "Podiums in a row", unit: ["podium", "podiums"] },
-    { kind: "finish", label: "Finishes in a row", unit: ["finish", "finishes"] },
-  ];
-  const STREAK_VIEWS = [
-    { id: "current", label: "Active now" },
-    { id: "best", label: "All-time" },
-  ];
   const CHART_ID = "records-progress";
   // The height must match .records-chart-host in records.css.
   const CHART_LAYOUT = {
@@ -21,15 +9,21 @@ const Records = (() => {
   };
   // Narrow enough that two columns never scroll sideways, down to the 620px breakpoint.
   const CHART_MIN_WIDTH = 220;
-  // Room below the current record, as a share of the mode's total improvement, so the latest run never sits on the axis.
+  // Room below the current record, as a share of the preset's total improvement, so the latest run never sits on the axis.
   const AXIS_FLOOR_ROOM = 0.1;
+  // Room either side of a preset's dates, as a share of the days it was raced.
+  const AXIS_DATE_ROOM = 0.03;
 
   const state = {
     mode: null,
-    streakView: "current",
     presetSort: { key: "races", direction: "desc" },
   };
   const parts = {};
+  // Each mode's progression panels, built the first time the mode is picked and reused after that.
+  const progressPanels = new Map();
+  let revealObserver = null;
+  let stepsByPreset = null;
+  let spansByPreset = null;
 
   function element(tag, className, text = null) {
     const node = document.createElement(tag);
@@ -54,18 +48,6 @@ const Records = (() => {
     ), 0);
   }
 
-  function buildToggle(container, options, activeId, onSelect) {
-    container.replaceChildren(
-      ...options.map(({ id, label }) => {
-        const button = element("button", "mode-toggle__button", label);
-        button.type = "button";
-        button.setAttribute("aria-pressed", String(id === activeId));
-        button.addEventListener("click", () => onSelect(id));
-        return button;
-      }),
-    );
-  }
-
   function raceLink(raceIndex, text) {
     const link = element("a", "records-muted-link", text);
     link.href = RACE_ROOT + participants.races[raceIndex].r;
@@ -84,173 +66,13 @@ const Records = (() => {
     return cell;
   }
 
-  function modeDot(modeIndex) {
-    const modeName = participants.modes[modeIndex];
-    const dot = UI.modeDot(modeName);
-    dot.tabIndex = 0;
-    dot.setAttribute("aria-label", modeLabel(modeName));
-    bindTooltip(dot, modeLabel(modeName));
-    return dot;
-  }
-
-  // One list row: rank, racer, optional muted suffix, value, optional mode dot.
-  function listRow(rank, playerIndex, { suffix = null, value, tip = null, modeIndex = null }) {
-    const row = element("li", "records-row");
-    row.appendChild(element("span", "records-row__rank", String(rank)));
-    const who = racerCell(playerIndex, 22);
-    if (suffix) {
-      who.append(" ", suffix);
-    }
-    row.appendChild(who);
-    const valueNode = element("span", "records-row__value");
-    valueNode.append(value);
-    if (tip) {
-      valueNode.tabIndex = 0;
-      bindTooltip(valueNode, tip);
-    }
-    row.appendChild(valueNode);
-    row.appendChild(modeIndex === null ? element("span", "ui-mode-dot ui-mode-dot--none") : modeDot(modeIndex));
-    return row;
-  }
-
-  function emptyRow(text) {
-    return element("li", "records-row records-row--empty", text);
-  }
-
-  function rankedList(rows) {
-    const list = element("ol", "records-list");
-    list.append(...(rows.length ? rows : [emptyRow("None yet")]));
-    return list;
-  }
-
   function card(title, className = "") {
     const node = element("section", `records-card ${className}`.trim());
-    node.appendChild(element("h4", "records-card__label", title));
+    node.appendChild(element("h5", "records-card__label", title));
     return node;
   }
 
-  function photoCard() {
-    const rows = participants.records.photo.slice(0, CARD_ROWS).map(([raceIndex, winner, runnerUp, margin], index) => {
-      const over = raceLink(raceIndex, `over ${participants.players[runnerUp].name}`);
-      return listRow(index + 1, winner, {
-        suffix: over,
-        value: `${margin.toFixed(2)}s`,
-        modeIndex: participants.races[raceIndex].m,
-      });
-    });
-    const node = card("Photo finishes");
-    node.appendChild(rankedList(rows));
-    return node;
-  }
-
-  function blowoutCard() {
-    const rows = participants.records.blowouts.slice(0, CARD_ROWS).map(([raceIndex, winner, runnerUp, margin], index) => {
-      const over = raceLink(raceIndex, `over ${participants.players[runnerUp].name}`);
-      return listRow(index + 1, winner, {
-        suffix: over,
-        value: formatDuration(margin),
-        modeIndex: participants.races[raceIndex].m,
-      });
-    });
-    const node = card(`Biggest wins · ${participants.blowout_min_field}+ racers`);
-    node.appendChild(rankedList(rows));
-    return node;
-  }
-
-  function bigFieldCard() {
-    const rows = participants.records.big_field.slice(0, CARD_ROWS).map(([raceIndex, winner, size], index) => {
-      const date = raceLink(raceIndex, formatRaceDate(participants.races[raceIndex].d));
-      return listRow(index + 1, winner, {
-        suffix: date,
-        value: plural(size, ["racer", "racers"]),
-        modeIndex: participants.races[raceIndex].m,
-      });
-    });
-    const node = card("Biggest field won");
-    node.appendChild(rankedList(rows));
-    return node;
-  }
-
-  function mostRacesCard() {
-    const rows = participants.records.most_races.slice(0, CARD_ROWS).map(([player, count], index) => (
-      listRow(index + 1, player, { value: plural(count, ["race", "races"]) })
-    ));
-    const node = card("Most races");
-    node.appendChild(rankedList(rows));
-    return node;
-  }
-
-  function rivalsCard() {
-    const rows = participants.records.rivals.slice(0, CARD_ROWS).map(([first, second, count], index) => {
-      const partner = participants.players[second];
-      const link = element("a", "records-muted-link", `& ${partner.name}`);
-      link.href = playerHash(partner.id, ALL_MODES);
-      return listRow(index + 1, first, { suffix: link, value: plural(count, ["race", "races"]) });
-    });
-    const node = card("Most-met rivals");
-    node.appendChild(rankedList(rows));
-    return node;
-  }
-
-  function streakBounds(kind, start, end) {
-    return kind === "daily"
-      ? [start, end]
-      : [participants.races[start].d, participants.races[end].d];
-  }
-
-  function isStreakActive(kind, end) {
-    const endDate = kind === "daily" ? end : participants.races[end].d;
-    const earliest = kind === "daily" ? shiftIsoDate(todayInZone(), -1) : daysAgoCutoff(RECENT_DAYS);
-    return endDate >= earliest;
-  }
-
-  // The exported "current" board keeps only the longest runs, which have mostly ended,
-  // so active streaks come from every racer's own current run instead.
-  function activeStreaks(kind) {
-    const entries = [];
-    participants.players.forEach((player, index) => {
-      const current = player.streaks[kind].current;
-      if (current && current[0] >= MIN_ACTIVE_STREAK && isStreakActive(kind, current[2])) {
-        entries.push([index, ...current]);
-      }
-    });
-    return entries.sort((a, b) => b[1] - a[1] || (a[3] < b[3] ? 1 : a[3] > b[3] ? -1 : 0) || a[0] - b[0]);
-  }
-
-  function streakList({ kind, label, unit }, view) {
-    const entries = view === "current" ? activeStreaks(kind) : participants.records.streaks[kind].best;
-    const rows = entries.slice(0, CARD_ROWS).map(([player, length, start, end], index) => {
-      const [from, to] = streakBounds(kind, start, end);
-      const span = from === to ? formatRaceDate(from) : `${formatRaceDate(from)} – ${formatRaceDate(to)}`;
-      return listRow(index + 1, player, { value: plural(length, unit), tip: span });
-    });
-    const group = element("div", "records-streak");
-    group.appendChild(element("h5", "records-card__sublabel", label));
-    group.appendChild(rankedList(view === "current" && !rows.length ? [emptyRow("None active")] : rows));
-    return group;
-  }
-
-  function streaksCard() {
-    const node = card("Streaks", "records-card--wide records-card--tall");
-    const toggle = element("div", "mode-toggle records-card__toggle");
-    toggle.setAttribute("role", "group");
-    toggle.setAttribute("aria-label", "Streak board");
-    const lists = element("div", "records-streaks");
-
-    function draw() {
-      buildToggle(toggle, STREAK_VIEWS, state.streakView, (view) => {
-        state.streakView = view;
-        draw();
-      });
-      lists.replaceChildren(...STREAK_KINDS.map((spec) => streakList(spec, state.streakView)));
-    }
-
-    node.querySelector(".records-card__label").after(toggle);
-    node.appendChild(lists);
-    draw();
-    return node;
-  }
-
+  // The Hall of Records is a section of the Pool Room, under its h3; its own parts are h4s.
   function sectionHeading(text, note = null) {
     const heading = element("div", "heatmap-heading records-heading");
     heading.appendChild(element("h3", null, text));
@@ -260,143 +82,139 @@ const Records = (() => {
     return heading;
   }
 
-  // Season dates are Eastern dates already, so they format in UTC; an upcoming slot is a moment, so it formats in Eastern Time.
-  const seasonDateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
-  const slotDateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "America/New_York" });
-
-  function seasonDay(isoDate) {
-    return new Date(`${isoDate}T00:00:00Z`);
+  function subheading(text) {
+    const heading = element("div", "heatmap-heading records-subheading");
+    heading.appendChild(element("h4", null, text));
+    return heading;
   }
 
-  // Every season with a race, oldest first, then the next season once it has a name but no race yet.
-  function timelineSeasons() {
-    const seasons = participants.seasons.map((season) => ({ ...season, upcoming: false }));
-    const next = seasons.at(-1).n + 1;
-    return seasonName(next) ? [...seasons, { n: next, upcoming: true }] : seasons;
+  // The mode's presets in the violins' ranking: most races first, then by name.
+  function presetsInMode(modeIndex) {
+    const presets = participants.presets;
+    return presets
+      .map((_, index) => index)
+      .filter((index) => presets[index].m === modeIndex)
+      .sort((left, right) => presets[right].races - presets[left].races || presets[left].n.localeCompare(presets[right].n));
   }
 
-  function seasonDates(season) {
-    if (season.upcoming) {
-      const slot = participants.upcoming.find((row) => row[3] === season.n);
-      return slot ? `Starts ${slotDateFormatter.format(new Date(slot[0] * 1000))}` : "Not started";
+  function isCharted(presetIndex) {
+    return participants.presets[presetIndex].races >= participants.preset_min_races;
+  }
+
+  function presetSteps(presetIndex) {
+    stepsByPreset ??= new Map(participants.records.presets.map(({ p, steps }) => [p, steps]));
+    return stepsByPreset.get(presetIndex) ?? [];
+  }
+
+  // The day numbers of a preset's first and last race.
+  function presetSpan(presetIndex) {
+    if (!spansByPreset) {
+      spansByPreset = new Map();
+      participants.races.forEach((race) => {
+        if (race.p === null) {
+          return;
+        }
+        const day = dayNumber(race.d);
+        const span = spansByPreset.get(race.p);
+        spansByPreset.set(race.p, span ? { first: span.first, last: day } : { first: day, last: day });
+      });
     }
-    if (!season.ended) {
-      return `Since ${seasonDateFormatter.format(seasonDay(season.first))}`;
+    return spansByPreset.get(presetIndex);
+  }
+
+  // Mode rail
+
+  function renderRail() {
+    parts.rail.replaceChildren(
+      ...participants.modes.map((modeName, modeIndex) => {
+        const count = presetsInMode(modeIndex).length;
+        const button = element("button", "mode-toggle__button records-rail__button");
+        button.type = "button";
+        button.setAttribute("aria-pressed", String(modeIndex === state.mode));
+        button.setAttribute("aria-label", `${modeLabel(modeName)}, ${plural(count, ["preset", "presets"])}`);
+        button.append(
+          UI.modeDot(modeName),
+          element("span", "records-rail__label", modeLabel(modeName)),
+          element("span", "records-rail__count", String(count)),
+        );
+        button.addEventListener("click", () => {
+          state.mode = modeIndex;
+          renderModeScoped();
+        });
+        return button;
+      }),
+    );
+  }
+
+  // Current records
+
+  function boardCell(content, className = null) {
+    const cell = element("td", className);
+    cell.append(content);
+    return cell;
+  }
+
+  function boardRow(presetIndex) {
+    const preset = participants.presets[presetIndex];
+    const steps = presetSteps(presetIndex);
+    const row = element("tr");
+    const name = element("span", "records-board__preset", preset.n);
+    if (!isCharted(presetIndex)) {
+      row.classList.add("records-board__row--few");
+      name.tabIndex = 0;
+      bindTooltip(name, `${plural(preset.races, ["race", "races"])}: too few to chart (${participants.preset_min_races}+)`);
     }
-    return seasonDateFormatter.formatRange(seasonDay(season.first), seasonDay(season.last));
-  }
-
-  function showSeasonOnLeaderboard(season) {
-    selectLeaderboardSeason(season);
-    const title = document.getElementById("leaderboard-title");
-    title.scrollIntoView({ block: "start" });
-    title.focus({ preventScroll: true });
-  }
-
-  // A season with a race opens its leaderboard; an upcoming one has none yet, so its title is plain text.
-  function seasonTitleNode(season) {
-    const name = seasonName(season.n);
-    const text = seasonTitle(season.n);
-    if (season.upcoming) {
-      return [element("span", "records-season__title", text)];
-    }
-    const button = element("button", "records-season__title", text);
-    button.type = "button";
-    button.addEventListener("click", () => showSeasonOnLeaderboard(season.n));
-    if (name?.kind !== "retro") {
-      return [button];
-    }
-    // The short name is the visible label; the full name describes it, for the tooltip and for screen readers.
-    const full = element("span", "visually-hidden", `${name.full}, named in retrospect`);
-    full.id = `records-season-${season.n}-full`;
-    button.setAttribute("aria-describedby", full.id);
-    bindTooltip(button, full.textContent);
-    return [button, full];
-  }
-
-  function seasonPeople(role, playerIndexes) {
-    const line = element("div", "records-season__people");
-    line.appendChild(element("span", "records-season__role", role));
-    line.append(...playerIndexes.map((playerIndex) => racerCell(playerIndex, 18)));
-    return line;
-  }
-
-  function seasonCard(season) {
-    const kind = seasonName(season.n)?.kind ?? "unnamed";
-    const card = element("li", `records-season records-season--${kind}`);
-    if (season.upcoming) {
-      card.classList.add("records-season--upcoming");
-    }
-    const head = element("div", "records-season__head");
-    head.appendChild(element("span", "records-season__number", `Season ${season.n}`));
-    if (season.upcoming || !season.ended) {
-      head.appendChild(element("span", "records-season__status", season.upcoming ? "Upcoming" : "Current"));
-    }
-    card.append(head, ...seasonTitleNode(season), element("span", "records-season__dates", seasonDates(season)));
-    const champions = season.upcoming ? [] : seasonChampions(season.n);
-    if (champions.length) {
-      card.appendChild(seasonPeople("Champion", champions));
-    }
-    const namers = seasonNamers(season.n);
-    if (namers.length) {
-      card.appendChild(seasonPeople("Named by", namers));
-    }
-    return card;
-  }
-
-  function seasonTimeline() {
-    const list = element("ol", "records-seasons");
-    list.append(...timelineSeasons().map(seasonCard));
-    return list;
-  }
-
-  function summaryTile(label, content) {
-    const item = element("div", "summary-item");
-    item.appendChild(element("span", "summary-label", label));
-    const strong = element("strong");
-    strong.append(content);
-    item.appendChild(strong);
-    return item;
-  }
-
-  function modeSteps(modeIndex) {
-    const entry = participants.records.modes.find((item) => item.m === modeIndex);
-    return entry ? entry.steps : [];
-  }
-
-  function renderSummary() {
-    const steps = modeSteps(state.mode);
+    row.appendChild(boardCell(name));
     if (!steps.length) {
-      parts.summary.replaceChildren(summaryTile("Current record", "--"));
-      return;
+      const empty = boardCell("No timed finish yet", "align-left records-board__empty");
+      empty.colSpan = 4;
+      row.appendChild(empty);
+      return row;
     }
     const [raceIndex, holder, seconds] = steps.at(-1);
-    const race = participants.races[raceIndex];
-    const holderNode = element("span", "records-holder");
-    holderNode.appendChild(UI.avatar(holder, 28));
-    const link = element("a", null, participants.players[holder].name);
-    link.href = playerHash(participants.players[holder].id, ALL_MODES);
-    holderNode.appendChild(link);
-    const setLink = element("a", null, formatRaceDate(race.d));
-    setLink.href = RACE_ROOT + race.r;
-    setLink.target = "_blank";
-    setLink.rel = "noopener noreferrer";
-    const tiles = [
-      summaryTile("Current record", UI.time(seconds)),
-      summaryTile("Holder", holderNode),
-      summaryTile("Set", setLink),
-      summaryTile("Times broken", String(steps.length - 1)),
-    ];
-    bindTooltip(tiles[3], "Record breaks since the first recorded time");
-    parts.summary.replaceChildren(...tiles);
+    const breaks = steps.length - 1;
+    const broken = element("span", "records-board__breaks", `×${breaks}`);
+    broken.tabIndex = 0;
+    bindTooltip(broken, breaks
+      ? `Broken ${plural(breaks, ["time", "times"])} since the first recorded time`
+      : "Not broken since the first recorded time");
+    row.append(
+      boardCell(UI.time(seconds), "records-board__time"),
+      boardCell(racerCell(holder, 22), "align-left"),
+      boardCell(raceLink(raceIndex, formatRaceDate(participants.races[raceIndex].d)), "align-left"),
+      boardCell(broken),
+    );
+    return row;
   }
 
-  // Every panel shares one date axis, from the first race in the archive to the latest.
-  function progressTimeline() {
-    const firstDay = dayNumber(participants.races[0].d);
-    const lastDay = dayNumber(participants.races.at(-1).d);
-    const pad = Math.max(1, (lastDay - firstDay) * 0.03);
-    return { domain: [firstDay - pad, lastDay + pad], lastDay };
+  function renderBoard(presetIndexes) {
+    parts.boardTitle.textContent = `Current records · ${modeLabel(participants.modes[state.mode])}`;
+    if (!presetIndexes.length) {
+      parts.board.replaceChildren(element("p", "table-empty", "No presets in this mode."));
+      return;
+    }
+    const headRow = element("tr");
+    [["Preset", null], ["Record", null], ["Holder", "align-left"], ["Set", "align-left"], ["Broken", null]].forEach(([label, className]) => {
+      const th = element("th", className, label);
+      th.scope = "col";
+      headRow.appendChild(th);
+    });
+    const head = element("thead");
+    head.appendChild(headRow);
+    const body = element("tbody");
+    body.append(...presetIndexes.map(boardRow));
+    const table = element("table", "records-board");
+    table.append(head, body);
+    parts.board.replaceChildren(table);
+  }
+
+  // Record progression
+
+  // Each preset's own dates: many ran for only a season or two, and the archive's full span would squash them.
+  function presetTimeline(presetIndex) {
+    const { first, last } = presetSpan(presetIndex);
+    const pad = Math.max(1, (last - first) * AXIS_DATE_ROOM);
+    return { domain: [first - pad, last + pad], lastDay: last };
   }
 
   function stepLabel(steps, index) {
@@ -405,11 +223,12 @@ const Records = (() => {
     return `${formatDuration(seconds)} · ${participants.players[holder].name} · ${formatRaceDate(participants.races[raceIndex].d)} · ${change}`;
   }
 
-  // A staircase where each record holds until the next one drops it.
-  function progressChart(modeIndex, steps, { domain, lastDay }, width) {
+  // A staircase where each record holds until the next one drops it, ending at the preset's last race.
+  function progressChart(presetIndex, steps, width) {
     const races = participants.races;
-    const modeName = participants.modes[modeIndex];
-    const id = `${CHART_ID}-${modeName}`;
+    const preset = participants.presets[presetIndex];
+    const { domain, lastDay } = presetTimeline(presetIndex);
+    const id = `${CHART_ID}-${presetIndex}`;
     const first = steps[0];
     const current = steps.at(-1);
     const days = steps.map(([raceIndex]) => dayNumber(races[raceIndex].d));
@@ -418,14 +237,14 @@ const Records = (() => {
     const { svg, defs, x, y, plotBottom, clipPath } = finishChartFrame({
       id,
       className: "chart-svg step-chart",
-      title: `${modeLabel(modeName)} record progression`,
+      title: `${preset.n} record progression`,
       description: `${plural(steps.length, ["record", "records"])}, from ${formatDuration(first[2])} on ${formatRaceDate(races[first[0]].d)} to ${formatDuration(current[2])} on ${formatRaceDate(races[current[0]].d)}.`,
       width,
       points: [...steps.map(([, , seconds], index) => ({ seconds, day: days[index] })), floor],
       xDomain: domain,
       layout: CHART_LAYOUT,
     });
-    svg.style.setProperty("--step-color", modeColor(modeName));
+    svg.style.setProperty("--step-color", modeColor(participants.modes[preset.m]));
 
     const { wash, line, at } = stepLine(defs, {
       id,
@@ -442,53 +261,63 @@ const Records = (() => {
     return svg;
   }
 
-  // The panel's header is the chart's end label: the mode and its current record.
-  function progressPanel(modeIndex, steps, host) {
-    const modeName = participants.modes[modeIndex];
-    const node = card(modeLabel(modeName), "records-progress");
+  // The panel's header is the chart's end label: the preset and its current record.
+  function progressPanel(presetIndex) {
+    const preset = participants.presets[presetIndex];
+    const steps = presetSteps(presetIndex);
+    const node = card(preset.n, "records-progress");
     const label = node.querySelector(".records-card__label");
-    label.prepend(UI.modeDot(modeName));
+    label.prepend(UI.modeDot(participants.modes[preset.m]));
+    const host = element("div", "chart-host records-chart-host step-chart-host step-chart-host--pending");
     if (steps.length) {
       const record = element("span", "records-progress__record");
       record.appendChild(UI.time(steps.at(-1)[2]));
       label.after(record);
     }
     node.appendChild(host);
+    if (steps.length) {
+      mountChart(host, (width) => progressChart(presetIndex, steps, width), CHART_MIN_WIDTH);
+    } else {
+      host.appendChild(element("p", "table-empty", "No timed finish yet."));
+    }
     return node;
   }
 
   // Each staircase draws itself once, the first time its panel scrolls into view. Panels that
-  // arrive together stagger by --i; a redraw after that inserts finished nodes, so nothing replays.
-  function revealOnView(panels) {
-    const observer = new IntersectionObserver((entries) => {
+  // arrive together stagger by --i; a panel shown again later keeps its finished drawing.
+  function reveal(panels) {
+    revealObserver ??= new IntersectionObserver((entries) => {
       const shown = entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target);
       shown.forEach((panel, order) => {
-        observer.unobserve(panel);
+        revealObserver.unobserve(panel);
         panel.style.setProperty("--i", order);
       });
       requestAnimationFrame(() => shown.forEach((panel) => {
         panel.querySelector(".step-chart-host").classList.remove("step-chart-host--pending");
       }));
     }, { threshold: 0.4 });
-    panels.forEach((panel) => observer.observe(panel));
+    panels.forEach((panel) => revealObserver.observe(panel));
   }
 
-  function renderProgress() {
-    const timeline = progressTimeline();
-    const panels = participants.modes.map((modeName, modeIndex) => {
-      const steps = modeSteps(modeIndex);
-      const host = element("div", "chart-host records-chart-host step-chart-host step-chart-host--pending");
-      const panel = progressPanel(modeIndex, steps, host);
-      parts.progress.appendChild(panel);
-      if (steps.length) {
-        mountChart(host, (width) => progressChart(modeIndex, steps, timeline, width), CHART_MIN_WIDTH);
-      } else {
-        host.appendChild(element("p", "table-empty", "No finished races in this mode."));
-      }
-      return panel;
-    });
-    revealOnView(panels);
+  function renderProgress(presetIndexes) {
+    const charted = presetIndexes.filter(isCharted);
+    if (!progressPanels.has(state.mode)) {
+      const panels = charted.map(progressPanel);
+      progressPanels.set(state.mode, panels);
+      parts.progress.replaceChildren(...panels);
+      reveal(panels);
+    } else {
+      parts.progress.replaceChildren(...progressPanels.get(state.mode));
+    }
+    parts.progress.hidden = !charted.length;
+    const left = presetIndexes.filter((index) => !isCharted(index)).map((index) => participants.presets[index].n);
+    parts.progressNote.hidden = !left.length;
+    parts.progressNote.textContent = charted.length
+      ? `Not charted, with fewer than ${participants.preset_min_races} races: ${left.join(", ")}.`
+      : `No preset in this mode has ${participants.preset_min_races}+ races to chart.`;
   }
+
+  // Finish times
 
   function fastestRacerLink([player]) {
     const link = element("a", "racer-link", participants.players[player].name);
@@ -536,65 +365,57 @@ const Records = (() => {
     });
   }
 
+  // Closed until opened; a chart in it draws once its host has a width (see mountChart).
+  function finishTimesDetails() {
+    const details = element("details", "data-details records-finishes");
+    details.appendChild(element("summary", null, "Finish times by preset"));
+    details.append(violinLegend(), parts.violinNote, parts.violin, parts.presets);
+    return details;
+  }
+
   function renderModeScoped() {
-    buildToggle(
-      parts.toggle,
-      participants.modes.map((mode, index) => ({ id: index, label: modeLabel(mode) })),
-      state.mode,
-      (index) => {
-        state.mode = index;
-        renderModeScoped();
-      },
-    );
-    renderSummary();
+    const presetIndexes = presetsInMode(state.mode);
+    renderRail();
+    renderBoard(presetIndexes);
+    renderProgress(presetIndexes);
     renderFinishTimes();
     renderPresets();
   }
 
+  // Fills its body inside the Pool Room panel; PoolRoom shows the section.
   function init() {
-    const section = document.querySelector("#records");
     const body = document.querySelector("#records-body");
-    if (!section || !body) {
+    if (!body) {
       return;
     }
     state.mode = mostRacedMode();
 
-    parts.toggle = element("div", "mode-toggle");
-    parts.toggle.setAttribute("role", "group");
-    parts.toggle.setAttribute("aria-label", "Choose a race mode");
-    const toolbar = element("div", "records-toolbar");
-    toolbar.appendChild(parts.toggle);
+    parts.rail = element("div", "mode-toggle records-rail");
+    parts.rail.setAttribute("role", "group");
+    parts.rail.setAttribute("aria-label", "Choose a race mode");
 
-    parts.summary = element("div", "summary-strip records-summary");
+    const boardHeading = subheading("");
+    parts.boardTitle = boardHeading.querySelector("h4");
+    parts.board = element("div", "table-wrap table-wrap--leaderboard records-board-wrap");
+    parts.progress = element("div", "records-grid");
+    parts.progressNote = element("p", "chart-note records-progress-note");
     parts.violinNote = element("p", "chart-note");
     parts.violin = element("div", "chart-host chart-host--violin");
     parts.violin.setAttribute("aria-live", "polite");
-    parts.progress = element("div", "records-grid");
     parts.presets = element("div", "table-wrap table-wrap--leaderboard presets-table");
 
-    const cards = element("div", "records-grid");
-    cards.append(photoCard(), blowoutCard(), bigFieldCard(), mostRacesCard(), streaksCard(), rivalsCard());
-
-    // With no schedule there are no seasons, and nothing to put on a timeline.
-    const timeline = participants.seasons.length
-      ? [sectionHeading("Seasons", "From Season 11, each season's champion names the next after an animal"), seasonTimeline()]
-      : [];
-    body.replaceChildren(
-      ...timeline,
-      sectionHeading("Across all modes"),
-      cards,
-      sectionHeading("Record progression", "Record time by race date"),
+    const main = element("div", "records-main");
+    main.append(
+      boardHeading,
+      parts.board,
+      subheading("Record progression"),
       parts.progress,
-      sectionHeading("By mode"),
-      toolbar,
-      parts.summary,
-      violinLegend(),
-      parts.violinNote,
-      parts.violin,
-      parts.presets,
+      parts.progressNote,
+      finishTimesDetails(),
     );
-    section.hidden = false;
-    renderProgress();
+    const layout = element("div", "records-layout");
+    layout.append(parts.rail, main);
+    body.replaceChildren(sectionHeading("Hall of Records", "Fastest time on every preset"), layout);
     renderModeScoped();
   }
 

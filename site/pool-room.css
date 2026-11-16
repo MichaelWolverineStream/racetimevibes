@@ -1,0 +1,390 @@
+/* clip, not hidden: it clips the same, but isn't a scroll container, so the Hall of Records' mode rail can stick. */
+.chart-panel--pool-room {
+  overflow: clip;
+  border-top-color: var(--gold);
+}
+
+.pool-room-body {
+  padding-bottom: 8px;
+}
+
+.pool-heading {
+  margin-top: 22px;
+}
+
+/* Season picker, in the Awards heading row. */
+.pool-picker {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.pool-picker select {
+  min-width: 170px;
+  min-height: 34px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 var(--text-sm)/1.2 var(--body);
+}
+
+.pool-picker select:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* Award cards */
+.pool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px 24px 4px;
+}
+
+.pool-card {
+  min-width: 0;
+  padding: 14px 16px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.pool-card--wide {
+  grid-column: span 2;
+}
+
+/* Streaks is about as tall as two cards, so it spans two rows and the card after it fills the space beside it. */
+.pool-card--tall {
+  grid-row: span 2;
+}
+
+.pool-card__label {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.pool-card__sublabel {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.pool-streaks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 24px;
+}
+
+.pool-streak {
+  min-width: 0;
+}
+
+.pool-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pool-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto 10px;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--grid);
+  font-size: var(--text-sm);
+}
+
+.pool-row:last-child {
+  border-bottom: 0;
+}
+
+.pool-row--empty {
+  display: block;
+  color: var(--muted);
+}
+
+.pool-row__rank,
+.pool-row__value {
+  font-family: var(--display);
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.pool-row__rank {
+  color: var(--muted);
+}
+
+.pool-row__value {
+  white-space: nowrap;
+}
+
+.pool-racer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.pool-racer .racer-link {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pool-muted-link {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  text-decoration-color: var(--line);
+}
+
+/* A run that is still going: a live dot that rings out once as it arrives. */
+.pool-live {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.pool-live::after {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  content: "";
+  opacity: 0;
+  animation: pool-live-ring 1.4s ease-out 0.3s 2;
+}
+
+.pool-live:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@keyframes pool-live-ring {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+/* Season timeline: retro seasons are quiet paper cards; champion-named seasons carry the accent. */
+.pool-seasons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 16px 24px 4px;
+  list-style: none;
+}
+
+.pool-season {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.pool-season--champion {
+  border-top: 3px solid var(--accent);
+  background: var(--panel);
+}
+
+.pool-season--upcoming {
+  border-style: dashed;
+  border-top-style: solid;
+}
+
+.pool-season__head {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.pool-season__number,
+.pool-season__status,
+.pool-season__role {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.pool-season__number,
+.pool-season__role {
+  color: var(--muted);
+}
+
+.pool-season__status {
+  color: var(--accent);
+}
+
+.pool-season__title {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: left;
+}
+
+button.pool-season__title {
+  cursor: pointer;
+}
+
+button.pool-season__title:hover {
+  text-decoration: underline;
+}
+
+button.pool-season__title:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.pool-season--retro .pool-season__title {
+  color: var(--muted);
+}
+
+.pool-season--champion .pool-season__title {
+  color: var(--accent);
+}
+
+.pool-season__dates {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.pool-season__people {
+  display: grid;
+  gap: 3px;
+  margin-top: 4px;
+  font-size: var(--text-sm);
+}
+
+/* Podium: medal pips, the champion's row a size up. */
+.pool-podium {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--grid);
+}
+
+.pool-podium__list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pool-podium__row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  font-size: var(--text-sm);
+}
+
+.pool-podium__pip {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--on-medal);
+  font-family: var(--display);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pool-podium__row--1 {
+  font-weight: 700;
+}
+
+.pool-podium__row--2 .pool-podium__pip {
+  background: var(--silver);
+}
+
+.pool-podium__row--3 .pool-podium__pip {
+  background: var(--bronze);
+}
+
+@media (max-width: 1100px) {
+  .pool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Streaks spans the full width here, so nothing sits beside it. */
+  .pool-card--tall {
+    grid-row: auto;
+  }
+}
+
+/* One column on phones: two squeeze the racer names to nothing. */
+@media (max-width: 620px) {
+  .pool-grid,
+  .pool-streaks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pool-card--wide {
+    grid-column: auto;
+  }
+
+  .pool-seasons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pool-picker {
+    margin-top: 8px;
+  }
+
+  /* Under 16px, iOS zooms the page when the field is focused. */
+  .pool-picker select {
+    flex: 1;
+    min-width: 0;
+    font-size: 1rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .pool-season__title {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
+  .pool-picker select {
+    min-height: 44px;
+  }
+}

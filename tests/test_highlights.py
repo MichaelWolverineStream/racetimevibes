@@ -61,7 +61,7 @@ class FakeRatings:
         return 1 / (1 + math.exp(b[0] - a[0]))
 
 
-def run(records, *, means=None, mode_count=2, modes=None, presets=(), names=None):
+def run(records, *, means=None, mode_count=2, modes=None, presets=(), names=None, seasons=None):
     names = names or {}
     return highlights.compute(
         records,
@@ -69,6 +69,7 @@ def run(records, *, means=None, mode_count=2, modes=None, presets=(), names=None
         modes=modes or [f"mode{i}" for i in range(mode_count)],
         presets=list(presets),
         ratings=FakeRatings(records, means),
+        seasons=seasons,
     )
 
 
@@ -310,6 +311,65 @@ class PresetPersonalBestTests(unittest.TestCase):
         kinds = highlights.TAG_KINDS
         self.assertEqual(kinds.index("preset_pb"), kinds.index("pb") + 1)
         self.assertIn("preset_pb", run([duel(0, 1)])["diagnostics"]["tag_counts"])
+
+
+class PresetStepTests(unittest.TestCase):
+    presets = PresetRecordTests.presets
+
+    def steps(self, records, preset):
+        result = run(records, presets=self.presets)
+        return result["records"]["presets"][preset]
+
+    def test_one_entry_per_preset_in_preset_order(self):
+        presets = run([duel(0, 1, preset=1)], presets=self.presets)["records"]["presets"]
+        self.assertEqual([row["p"] for row in presets], [0, 1])
+        self.assertEqual(presets[0]["steps"], [])
+        self.assertEqual(presets[1]["steps"], [[0, 0, 3600]])
+
+    def test_each_improving_race_adds_one_step_and_the_last_is_the_best(self):
+        records = [
+            duel(0, 1, first_seconds=3600.0, preset=0),
+            duel(2, 1, first_seconds=3500.0, preset=0, day=1),
+            duel(3, 1, first_seconds=3550.0, preset=0, day=2),
+            duel(4, 1, first_seconds=3400.0, preset=0, day=3),
+        ]
+        result = run(records, presets=self.presets)
+        entry = result["records"]["presets"][0]
+        self.assertEqual(entry["steps"], [[0, 0, 3600], [1, 2, 3500], [3, 4, 3400]])
+        best = result["preset_stats"][0]["best"]
+        self.assertEqual(entry["steps"][-1], [best[2], best[0], best[1]])
+
+    def test_a_race_that_also_set_the_mode_record_still_adds_a_step(self):
+        records = [
+            duel(0, 1, first_seconds=3600.0, preset=0),
+            duel(2, 1, first_seconds=3500.0, preset=0, day=1),
+        ]
+        result = run(records, presets=self.presets)
+        self.assertEqual(len(tags_of(result, 1, "record")), 1)
+        self.assertEqual(tags_of(result, 1, "preset_record"), [])
+        self.assertEqual(result["records"]["presets"][0]["steps"], [[0, 0, 3600], [1, 2, 3500]])
+
+    def test_a_slower_race_adds_no_step(self):
+        records = [
+            duel(0, 1, first_seconds=3600.0, preset=0),
+            duel(2, 1, first_seconds=3700.0, preset=0, day=1),
+        ]
+        self.assertEqual(self.steps(records, 0)["steps"], [[0, 0, 3600]])
+
+    def test_an_equal_whole_second_adds_no_step(self):
+        for second in (3600.0, 3599.6, 3600.4):
+            with self.subTest(second=second):
+                records = [
+                    duel(0, 1, first_seconds=3600.0, preset=0),
+                    duel(2, 1, first_seconds=second, preset=0, day=1),
+                ]
+                self.assertEqual(self.steps(records, 0)["steps"], [[0, 0, 3600]])
+
+    def test_a_race_adds_at_most_one_step(self):
+        race = record(
+            [done(0, 1, 3000.0), done(1, 2, 2900.0), done(2, 3, 2800.0)], preset=0
+        )
+        self.assertEqual(self.steps([race], 0)["steps"], [[0, 2, 2800]])
 
 
 class ModeRecordTests(unittest.TestCase):
@@ -1541,6 +1601,98 @@ class RecordBoardTests(unittest.TestCase):
         self.assertEqual(
             run(records)["records"]["rivals"], [[0, 1, 3], [0, 2, 2], [1, 2, 1]]
         )
+
+
+class SeasonBoardTests(unittest.TestCase):
+    def boards(self, records, seasons):
+        return run(records, seasons=seasons)["records"]["seasons"]
+
+    def test_without_seasons_there_are_no_season_boards(self):
+        self.assertEqual(run([duel(0, 1)])["records"]["seasons"], {})
+
+    def test_season_keys_are_the_seasons_with_races(self):
+        records = [duel(0, 1), duel(0, 1), duel(0, 1)]
+        self.assertEqual(sorted(self.boards(records, [None, 2, 4])), ["2", "4"])
+
+    def test_boards_count_only_the_seasons_races(self):
+        records = [duel(0, 1, margin=3.0), duel(2, 3, margin=0.5), duel(4, 5, margin=9.0)]
+        boards = self.boards(records, [1, 2, 2])
+        self.assertEqual(boards["1"]["photo"], [[0, 0, 1, 3.0]])
+        self.assertEqual(boards["2"]["photo"], [[1, 2, 3, 0.5]])
+
+    def test_blowout_and_big_field_boards_split_by_season(self):
+        field = highlights.BIG_FIELD_SIZE
+        records = [
+            duel(0, 1, margin=900.0, n=field),
+            duel(2, 3, margin=60.0, n=field),
+        ]
+        boards = self.boards(records, [1, 2])
+        self.assertEqual(boards["1"]["blowouts"], [[0, 0, 1, 900]])
+        self.assertEqual(boards["2"]["blowouts"], [[1, 2, 3, 60]])
+        self.assertEqual(boards["1"]["big_field"], [[0, 0, field]])
+        self.assertEqual(boards["2"]["big_field"], [[1, 2, field]])
+
+    def test_most_races_and_rivals_count_per_season(self):
+        records = [duel(0, 1), duel(0, 2), duel(0, 1), duel(0, 1)]
+        boards = self.boards(records, [1, 1, 2, 2])
+        self.assertEqual(boards["1"]["most_races"], [[0, 2], [1, 1], [2, 1]])
+        self.assertEqual(boards["2"]["most_races"], [[0, 2], [1, 2]])
+        self.assertEqual(boards["1"]["rivals"], [[0, 1, 1], [0, 2, 1]])
+        self.assertEqual(boards["2"]["rivals"], [[0, 1, 2]])
+
+    def test_a_race_without_a_season_counts_only_all_time(self):
+        records = [duel(0, 1), duel(0, 1)]
+        result = run(records, seasons=[None, 1])["records"]
+        self.assertEqual(result["most_races"], [[0, 2], [1, 2]])
+        self.assertEqual(result["seasons"]["1"]["most_races"], [[0, 1], [1, 1]])
+        self.assertEqual(result["seasons"]["1"]["rivals"], [[0, 1, 1]])
+
+    def test_a_win_streak_is_cut_at_a_season_boundary(self):
+        records = [duel(0, 1, day=day) for day in range(4)]
+        result = run(records, seasons=[1, 1, 2, 2])["records"]
+        self.assertEqual(result["streaks"]["win"]["best"][0], [0, 4, 0, 3])
+        seasons = result["seasons"]
+        self.assertEqual(seasons["1"]["streaks"]["win"]["best"], [[0, 2, 0, 1]])
+        self.assertEqual(seasons["2"]["streaks"]["win"]["best"], [[0, 2, 2, 3]])
+
+    def test_podium_and_finish_streaks_are_per_season(self):
+        records = [duel(0, 1, day=day) for day in range(3)]
+        seasons = self.boards(records, [1, 2, 2])
+        self.assertEqual(seasons["1"]["streaks"]["finish"]["best"], [[0, 1, 0, 0], [1, 1, 0, 0]])
+        self.assertEqual(seasons["2"]["streaks"]["podium"]["best"], [[0, 2, 1, 2]])
+
+    def test_an_excused_dnf_leaves_the_season_finish_run_alone(self):
+        records = [
+            duel(0, 1, day=0),
+            record([done(0, 1, 3000.0), dnf(1)], day=1),
+            duel(0, 1, day=2),
+        ]
+        finish = self.boards(records, [1, 1, 1])["1"]["streaks"]["finish"]["best"]
+        self.assertEqual(finish, [[0, 3, 0, 2], [1, 2, 0, 2]])
+
+    def test_daily_streaks_are_counted_per_season(self):
+        # One calendar day, 2026-03-02, ends season 1 and opens season 2.
+        records = [duel(0, 1, day=0), duel(0, 1, day=1), duel(0, 1, day=1), duel(0, 1, day=2)]
+        result = run(records, seasons=[1, 1, 2, 2])["records"]
+        self.assertEqual(result["streaks"]["daily"]["best"][0], [0, 3, "2026-03-01", "2026-03-03"])
+        seasons = result["seasons"]
+        self.assertEqual(seasons["1"]["streaks"]["daily"]["best"][0], [0, 2, "2026-03-01", "2026-03-02"])
+        self.assertEqual(seasons["2"]["streaks"]["daily"]["best"][0], [0, 2, "2026-03-02", "2026-03-03"])
+
+    def test_all_time_boards_ignore_the_seasons(self):
+        records = [
+            duel(0, 1, margin=2.0),
+            duel(0, 2, day=1),
+            duel(0, 1, day=3),
+            record([done(2, 1, 3000.0), dnf(0)], day=4),
+        ]
+        plain = run(records)
+        seasoned = run(records, seasons=[None, 1, 1, 2])
+        for key in ("modes", "presets", "photo", "blowouts", "big_field", "most_races",
+                    "rivals", "streaks"):
+            self.assertEqual(plain["records"][key], seasoned["records"][key], key)
+        self.assertEqual(plain["facts"], seasoned["facts"])
+        self.assertEqual(plain["players"], seasoned["players"])
 
 
 class OutputTests(unittest.TestCase):

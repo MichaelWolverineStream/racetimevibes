@@ -15,7 +15,7 @@ const Feed = (() => {
   const SHELF_BADGES = 5;
   const MAX_HONOURS = 2;
   const BEST_SEASON_SHOWN = 10;
-  // Must match CARD_ROWS in records.js: a Hall of records card lists its top 5.
+  // Must match CARD_ROWS in pool-room.js: a Hall of Fame card lists its top 5.
   const HALL_ROWS = 5;
   const FACT_REPEAT_DAYS = 7;
   // Seeds the fact shuffle. Changing it picks a new schedule from today on.
@@ -921,12 +921,12 @@ const Feed = (() => {
     };
   }
 
-  // The Hall of records cards a racer can appear on, in page order: whose each row is, and what it
-  // says. `claim` names the claim-to-fame stat a card repeats, so a card never says the claim twice.
+  // The Hall of Fame award cards a racer can appear on, all time, in page order: whose each row is, and what
+  // it says. `claim` names the claim-to-fame stat a card repeats, so a card never says the claim twice.
   function hallCards() {
     const records = participants.records;
     const streak = (kind, claim, unit, label) => ({
-      card: `Streaks · ${label} · All-time`,
+      card: `Streaks · ${label}`,
       claim,
       rows: records.streaks[kind].best,
       player: (row) => row[0],
@@ -950,7 +950,7 @@ const Feed = (() => {
     ];
   }
 
-  // The racer's best spot in the top HALL_ROWS of a Hall of records card; a tie goes to the card first on the page.
+  // The racer's best spot in the top HALL_ROWS of an all-time Hall of Fame card; a tie goes to the card first on the page.
   function hallHonour(playerIndex, claim) {
     let best = null;
     hallCards().forEach(({ card, claim: repeats, rows, player, text }) => {
@@ -962,7 +962,7 @@ const Feed = (() => {
         best = { position, says: text(rows[position]), card };
       }
     });
-    return best && { text: `#${best.position + 1} in the Hall of records · ${best.says}`, tooltip: best.card };
+    return best && { text: `#${best.position + 1} in the Hall of Fame · ${best.says}`, tooltip: `${best.card} · All time` };
   }
 
   // The best final overall rank in an ended season, when it is BEST_SEASON_SHOWN or better.

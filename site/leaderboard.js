@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 17;
+const PARTICIPANT_SCHEMA_VERSION = 18;
 // Must match BIO_MAX_LENGTH in scripts/featured.py, in code points as Python counts them.
 const FEATURED_BIO_MAX_LENGTH = 160;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
@@ -439,6 +439,15 @@ function ratingLeaders(modeId = ALL_MODES, season = null) {
 // The overall leaders of an ended season; none while it is running or unknown.
 function seasonChampions(season) {
   return participants.seasons.some((item) => item.n === season && item.ended) ? ratingLeaders(ALL_MODES, season) : [];
+}
+
+// A season's overall top 3 by competition rank, as [rank, playerIndex] pairs, best first; ties share a rank,
+// so two champions leave no second place. Final for an ended season, standings so far for the current one.
+function seasonPodium(season) {
+  return [...ratingRanks(ALL_MODES, season)]
+    .filter(([, rank]) => rank <= 3)
+    .map(([playerIndex, rank]) => [rank, playerIndex])
+    .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
 }
 
 // The previous season's champions, who named this season; none unless it has a champion name.
@@ -1693,6 +1702,9 @@ async function loadParticipants() {
     }
     if (typeof Feed !== "undefined") {
       runFeature("Feed.init", () => Feed.init());
+    }
+    if (typeof PoolRoom !== "undefined") {
+      runFeature("PoolRoom.init", () => PoolRoom.init());
     }
     if (typeof Records !== "undefined") {
       runFeature("Records.init", () => Records.init());
