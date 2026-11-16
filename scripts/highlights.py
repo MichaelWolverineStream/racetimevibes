@@ -76,6 +76,7 @@ RANDO_SICKO_HOURS = 24
 STEP_LETTER_MIN_FIELD = 5
 TOUCHED_GRASS_DAYS = 30
 TOUCHED_GRASS_FROM = date(2026, 8, 1)
+PANDAMONIUM_SEASON = 11
 YAP_COMMENTS = 11
 NIGHT_HOURS = range(0, 5)
 BIG_FIELD_SIZE = 16
@@ -291,6 +292,7 @@ class _Moment(NamedTuple):
     deja_vu: bool
     mode: str
     preset: str | None
+    season: int | None
     n: int
     ordinal: int
     last_ordinal: int | None
@@ -779,6 +781,12 @@ BADGES = (
         "in reverse alphabetical order.",
         earned=lambda m: m.player in m.rettel_pets,
     ),
+    Badge(
+        "pandamonium",
+        "Pandamonium",
+        f"Finish one race in Season {PANDAMONIUM_SEASON}.",
+        earned=lambda m: m.finisher and m.season == PANDAMONIUM_SEASON,
+    ),
     # Last on purpose: it counts the badges the rows above unlocked, in this race too.
     Badge(
         "badger",
@@ -1173,6 +1181,7 @@ def compute(
                 deja_vu,
                 mode_name,
                 preset_name,
+                season,
                 n,
                 race_ordinal,
                 last_ordinal,

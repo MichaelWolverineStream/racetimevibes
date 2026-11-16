@@ -1237,6 +1237,8 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertIn(mode, self.participants["modes"])
         preset_names = {preset["n"] for preset in self.participants["presets"]}
         self.assertIn(highlights.CASUAL_BOOTS_PRESET, preset_names)
+        season_numbers = {season["n"] for season in self.participants["seasons"]}
+        self.assertIn(highlights.PANDAMONIUM_SEASON, season_numbers)
 
     def test_avatars_are_mirror_names_or_sprites(self):
         pattern = re.compile(r"^[0-9a-f]{16}\.(png|jpg|jpeg|gif|webp)$")

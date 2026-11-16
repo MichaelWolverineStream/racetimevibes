@@ -946,6 +946,19 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(self.badges(records, modes=SPOILER_MODES)["cruisin"], 2)
         self.assertNotIn("cruisin", self.badges(records[:2], modes=SPOILER_MODES))
 
+    def test_pandamonium_needs_a_season_11_finish(self):
+        season = highlights.PANDAMONIUM_SEASON
+        records = [
+            duel(0, 1),
+            record([dnf(0), done(1, 1, 3000.0)], day=1),
+            duel(1, 0, day=2),
+        ]
+        # A win in the season before, a DNF in the season, then a 2nd-place finish in it.
+        seasons = [season - 1, season, season]
+        self.assertEqual(self.badges(records, seasons=seasons)["pandamonium"], 2)
+        self.assertNotIn("pandamonium", self.badges(records[:2], seasons=seasons[:2]))
+        self.assertNotIn("pandamonium", self.badges([duel(0, 1)], seasons=[season + 1]))
+
     def test_jet_seed_needs_a_casual_boots_finish_under_4200_seconds(self):
         def jet_seed(seconds, preset=0):
             records = [duel(0, 1, first_seconds=seconds, margin=100.0, preset=preset)]
@@ -1337,6 +1350,7 @@ class BadgeTests(unittest.TestCase):
                 "yap",
                 "step_letter",
                 "rettel_pets",
+                "pandamonium",
                 "badger",
             ],
         )
