@@ -2,8 +2,8 @@ name: Update racer bios
 
 "on":
   schedule:
-    # Once a day, clear of the 10:17 backup data run.
-    - cron: "47 5 * * *"
+    # Once a day, clear of the 00:17 backup data run.
+    - cron: "47 01 * * *"
   workflow_dispatch:
 
 permissions:

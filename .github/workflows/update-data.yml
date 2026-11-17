@@ -3,7 +3,7 @@ name: Update race data
 "on":
   schedule:
     # Triggered remotely, one daily run kept as backup
-    - cron: "17 10 * * *"
+    - cron: "17 00 * * *"
   workflow_dispatch:
     inputs:
       reason:
