@@ -699,7 +699,8 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "fired_race_count": 2,
                     "fired_entrant_total": 10,
                     "racer_count": 10,
-                    # Season 1 ends on Jun 15, its last slot's date, so Jun 15-21 is no full week.
+                    # Season 1 ends in its 15th season day, which holds its last slot, so
+                    # its third week is no full week.
                     "season_day_count": 15,
                     "racer_week_total": 10,
                     "full_week_count": 2,
@@ -724,9 +725,11 @@ class ScheduleAggregationTests(unittest.TestCase):
                     "fired_race_count": 1,
                     "fired_entrant_total": 5,
                     "racer_count": 8,
-                    # Counted through Jun 29: Jun 22-28 is counted, and its races are on Jun 29 and later.
-                    "season_day_count": 7,
-                    "racer_week_total": 0,
+                    # Season days start at 12:55 ET from Jun 22. The newest race, at 08:00 ET
+                    # on Jul 3, ends 10 of them: week 1 has no racer, and the Jun 29 race
+                    # falls in the partial week 2.
+                    "season_day_count": 10,
+                    "racer_week_total": 5,
                     "full_week_count": 1,
                     "weekly_racers_min": 0,
                     "weekly_racers_max": 0,
@@ -816,8 +819,13 @@ def crowd(*ids, anonymous=0):
 LATE = race("late", started_at="2026-08-31T16:00:00Z", **crowd(anonymous=1))
 
 
-def season_row(races, slots, number=1):
-    stats = aggregate([*races, LATE], slots)
+def newest(started_at):
+    """The newest race, with no identified racer: its start is the season-week cutoff."""
+    return race("newest", started_at=started_at, **crowd(anonymous=1))
+
+
+def season_row(races, slots, number=1, newest_race=LATE):
+    stats = aggregate([*races, newest_race], slots)
     return next(row for row in stats["seasons"] if row["season"] == number)
 
 
@@ -846,10 +854,12 @@ class SeasonRacerTests(unittest.TestCase):
                 race("r4", started_at=at(9), **crowd("dee")),
             ],
             [slot(1, 1, at(1)), slot(2, 2, at(9))],
+            newest_race=newest(at(9)),
         )
 
-        # Counted through Jun 9: the last whole day is Jun 8, so only week 1 is full, and
-        # the Jun 9 race is past the days counted.
+        # Season days start at 12:55 ET, 5 minutes before the first slot. The newest race,
+        # at 13:00 ET on Jun 9, ends 8 of them, so only week 1 is full, and the Jun 9 race
+        # is past the days counted.
         self.assertEqual(weekly(row), (8, 3, 1, 3, 3))
         self.assertEqual(row["racer_count"], 4)
 
@@ -861,10 +871,11 @@ class SeasonRacerTests(unittest.TestCase):
                 race("r3", started_at=at(15), **crowd("eve")),
             ],
             [slot(1, 1, at(1)), slot(2, 2, at(16))],
+            newest_race=newest(at(16)),
         )
 
-        # The last whole day is Jun 15: weeks Jun 1-7 and Jun 8-14 are full, Jun 15 is not.
-        # Eve's Jun 15 race adds to the total, not to the range.
+        # The newest race, on Jun 16, ends 15 season days: two full weeks and one day.
+        # Eve's Jun 15 race, in that day, adds to the total, not to the range.
         self.assertEqual(weekly(row), (15, 4, 2, 1, 2))
         self.assertEqual(row["racer_count"], 3)
 
@@ -872,19 +883,20 @@ class SeasonRacerTests(unittest.TestCase):
         row = season_row(
             [race("r1", started_at=at(2), **crowd("ann"))],
             [slot(1, 1, at(1)), slot(2, 2, at(5))],
+            newest_race=newest(at(5)),
         )
 
-        # Counted through Jun 5: Jun 1-4 are counted.
+        # The newest race, on Jun 5, ends 4 season days.
         self.assertEqual(weekly(row), (4, 1, 0, None, None))
         self.assertEqual(row["racer_count"], 1)
 
-    def test_a_week_is_full_only_when_its_last_day_is_whole(self):
+    def test_a_week_is_full_once_its_seventh_season_day_has_ended(self):
         races = [race("r1", started_at=at(2), **crowd("ann"))]
+        slots = [slot(1, 1, at(1)), slot(2, 2, at(8))]
 
-        # Counted through Jun 8: the last whole day, Jun 7, is the week's 7th day.
-        whole = season_row(races, [slot(1, 1, at(1)), slot(2, 2, at(8))])
-        # Counted through Jun 7: the 7th day is the counted-through date itself.
-        partial = season_row(races, [slot(1, 1, at(1)), slot(2, 2, at(7))])
+        # Week 1 runs from 12:55 ET on Jun 1 to 12:55 ET on Jun 8.
+        whole = season_row(races, slots, newest_race=newest(at(8)))
+        partial = season_row(races, slots, newest_race=newest(at(8, 16)))
 
         self.assertEqual(weekly(whole), (7, 1, 1, 1, 1))
         self.assertEqual(weekly(partial), (6, 1, 0, None, None))
@@ -898,7 +910,7 @@ class SeasonRacerTests(unittest.TestCase):
                 # After season 1's last slot and before season 2's first: in the break.
                 race("r4", started_at=at(18, 12), **crowd("fred")),
                 race("r5", started_at=at(22), **crowd("ann", "gus")),
-                LATE,
+                newest(at(29)),
             ],
             [
                 slot(1, 1, at(1)),
@@ -911,13 +923,13 @@ class SeasonRacerTests(unittest.TestCase):
         first, second = stats["seasons"]
 
         self.assertTrue(first["is_complete"])
-        # Season 1 ends on Jun 15, its last slot's date: Jun 15-21 is cut short, although
-        # the count runs through Jun 28 and season 2 starts only on Jun 22. Its one day,
-        # Jun 15, still adds Dee to the total.
+        # Season 1 ends with its 15th season day, which holds its last slot: its third week
+        # is cut short, although the newest race is on Jun 29 and season 2 starts only on
+        # Jun 22. That one day still adds Dee to the total.
         self.assertEqual(weekly(first), (15, 5, 2, 2, 2))
         self.assertEqual(first["racer_count"], 4)
         self.assertFalse(second["is_complete"])
-        # Jun 22-28 is season 2's one full week, ending on the last whole day.
+        # The newest race, at 13:00 ET on Jun 29, ends season 2's first full week.
         self.assertEqual(weekly(second), (7, 2, 1, 2, 2))
         self.assertEqual(second["racer_count"], 2)
         self.assertEqual(stats["diagnostics"]["excluded_in_season_breaks"], 1)
@@ -992,6 +1004,26 @@ def record(day, *ids, hour=17):
     }
 
 
+def eastern(year, month, day, hour, minute=0):
+    """An aware Eastern Time moment."""
+    return datetime(year, month, day, hour, minute, tzinfo=ZoneInfo("America/New_York"))
+
+
+def eastern_race(started_at, *ids):
+    """An internal race record starting at an Eastern Time moment, by identified racers."""
+    return {
+        "started_at": started_at.astimezone(UTC),
+        "local_started_at": started_at,
+        "entrants_count": len(ids),
+        "racer_ids": frozenset(ids),
+    }
+
+
+def season_span(first_slot, last_slot):
+    """Season 1's span, from its first to its last slot."""
+    return schedule_archive.SeasonSpan(1, first_slot.astimezone(UTC), last_slot.astimezone(UTC))
+
+
 class SeasonHelperTests(unittest.TestCase):
     def test_the_last_whole_day_is_the_eastern_date_before_counted_through(self):
         self.assertIsNone(build_stats._last_whole_day(None))
@@ -1001,43 +1033,68 @@ class SeasonHelperTests(unittest.TestCase):
             date(2026, 5, 31),
         )
 
-    def test_a_late_evening_race_belongs_to_its_eastern_day(self):
-        start = datetime(2026, 6, 1, 17, tzinfo=UTC)
-        # 23:30 ET on Jun 7 is 03:30 UTC on Jun 8: still the first week.
-        late = record(date(2026, 6, 8), "ann", hour=3)
-        late["local_started_at"] = datetime(
-            2026, 6, 7, 23, 30, tzinfo=ZoneInfo("America/New_York")
-        )
+    def test_week_one_is_full_seven_season_days_after_the_span_starts(self):
+        # The first slot is 09:00 ET on Jun 1, so the span and its season days start at 08:55.
+        span = season_span(eastern(2026, 6, 1, 9), eastern(2026, 6, 30, 21))
 
-        span = schedule_archive.SeasonSpan(1, start, datetime(2026, 6, 30, 17, tzinfo=UTC))
-        summary = build_stats._season_weeks([late], span, date(2026, 6, 14))
+        for cutoff, days in ((eastern(2026, 6, 8, 8, 54), 6), (eastern(2026, 6, 8, 8, 55), 7)):
+            with self.subTest(cutoff=cutoff):
+                summary = build_stats._season_weeks([], span, cutoff)
+                self.assertEqual(summary["season_day_count"], days)
+                self.assertEqual(summary["full_week_count"], days // 7)
+
+    def test_a_race_just_before_the_first_slot_counts_in_week_one(self):
+        span = season_span(eastern(2026, 6, 1, 9), eastern(2026, 6, 30, 21))
+        early = eastern_race(eastern(2026, 6, 1, 8, 57), "ann")
 
         self.assertEqual(
-            summary,
+            build_stats._season_weeks([early], span, eastern(2026, 6, 8, 9)),
             {
-                "season_day_count": 14,
+                "season_day_count": 7,
                 "racer_week_total": 1,
-                "full_week_count": 2,
-                "weekly_racers_min": 0,
+                "full_week_count": 1,
+                "weekly_racers_min": 1,
                 "weekly_racers_max": 1,
             },
         )
 
-    def test_a_race_before_the_seasons_first_day_counts_in_no_week(self):
-        # The season starts at 00:02 ET on Jun 1; a race 4 minutes earlier is on May 31.
-        start = datetime(2026, 6, 1, 4, 2, tzinfo=UTC)
-        early = record(date(2026, 6, 1), "ann", hour=3)
-        early["local_started_at"] = datetime(
-            2026, 5, 31, 23, 58, tzinfo=ZoneInfo("America/New_York")
-        )
-
-        span = schedule_archive.SeasonSpan(1, start, datetime(2026, 6, 30, 17, tzinfo=UTC))
-        summary = build_stats._season_weeks([early], span, date(2026, 6, 7))
+    def test_season_days_turn_at_the_seasons_start_time(self):
+        span = season_span(eastern(2026, 6, 1, 9), eastern(2026, 6, 30, 21))
+        # 08:00 on Jun 8 is still week one; 10:00 is week two.
+        races = [
+            eastern_race(eastern(2026, 6, 8, 8), "ann"),
+            eastern_race(eastern(2026, 6, 8, 10), "bob"),
+        ]
 
         self.assertEqual(
-            summary,
+            build_stats._season_weeks(races, span, eastern(2026, 6, 15, 9)),
             {
-                "season_day_count": 7,
+                "season_day_count": 14,
+                "racer_week_total": 2,
+                "full_week_count": 2,
+                "weekly_racers_min": 1,
+                "weekly_racers_max": 1,
+            },
+        )
+
+    def test_season_days_keep_their_eastern_start_time_across_daylight_saving(self):
+        # Eastern Time falls back on Nov 1, 2026, so week one is 169 hours long.
+        span = season_span(eastern(2026, 10, 26, 9), eastern(2026, 12, 20, 21))
+
+        for cutoff, days in ((eastern(2026, 11, 2, 8, 54), 6), (eastern(2026, 11, 2, 8, 55), 7)):
+            with self.subTest(cutoff=cutoff):
+                summary = build_stats._season_weeks([], span, cutoff)
+                self.assertEqual(summary["season_day_count"], days)
+
+    def test_a_season_ends_with_the_season_day_that_holds_its_span_end(self):
+        # The span ends at 23:30 on Jun 10, in its tenth season day.
+        span = season_span(eastern(2026, 6, 1, 9), eastern(2026, 6, 10, 23))
+        late = eastern_race(eastern(2026, 6, 12, 12), "ann")
+
+        self.assertEqual(
+            build_stats._season_weeks([late], span, eastern(2026, 7, 1, 9)),
+            {
+                "season_day_count": 10,
                 "racer_week_total": 0,
                 "full_week_count": 1,
                 "weekly_racers_min": 0,
@@ -1045,16 +1102,14 @@ class SeasonHelperTests(unittest.TestCase):
             },
         )
 
-    def test_a_season_without_a_whole_day_counts_no_day(self):
-        start = datetime(2026, 6, 1, 17, tzinfo=UTC)
-        span = schedule_archive.SeasonSpan(1, start, datetime(2026, 6, 30, 17, tzinfo=UTC))
-        races = [record(date(2026, 6, 1), "ann")]
+    def test_a_season_counts_no_day_before_its_first_season_day_ends(self):
+        span = season_span(eastern(2026, 6, 1, 9), eastern(2026, 6, 30, 21))
+        races = [eastern_race(eastern(2026, 6, 1, 9), "ann")]
 
-        # The last whole day is the day before the season starts, or there is none.
-        for last_whole_day in (date(2026, 5, 31), None):
-            with self.subTest(last_whole_day=last_whole_day):
+        for cutoff in (eastern(2026, 5, 20, 9), eastern(2026, 6, 2, 8, 54), None):
+            with self.subTest(cutoff=cutoff):
                 self.assertEqual(
-                    build_stats._season_weeks(races, span, last_whole_day),
+                    build_stats._season_weeks(races, span, cutoff),
                     {
                         "season_day_count": 0,
                         "racer_week_total": 0,

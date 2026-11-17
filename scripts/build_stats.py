@@ -91,7 +91,7 @@ BAND_MIN_SCHEDULED = 5
 # that awards gold and silver (highlights.MEDAL_TIERS).
 # Must match REAL_FIELD_MIN in site/app.js and the 05 panel's text in site/index.html.
 REAL_FIELD_MIN = 4
-# A season week is this many days, counted from the season's Eastern start date.
+# A season week is this many season days, counted from the start of the season's span.
 SEASON_WEEK_DAYS = 7
 # A newcomer is retained by racing on a later date within this many days of their first.
 # Must match NEWCOMER_WINDOW_DAYS in site/app.js.
@@ -289,6 +289,7 @@ def _season_summary(
     slots: list[JsonObject],
     spans: list[schedule_archive.SeasonSpan],
     counted_through: datetime | None,
+    newest_started_at: datetime,
     scheduled_days: dict[date, set[int]],
     joined_races: set[str],
 ) -> tuple[list[JsonObject], JsonObject]:
@@ -371,7 +372,7 @@ def _season_summary(
         racers = season_racers[season]
         previous = season_racers.get(season - 1)
         item["racer_count"] = len(racers)
-        item |= _season_weeks(season_records[season], span_of[season], last_whole_day)
+        item |= _season_weeks(season_records[season], span_of[season], newest_started_at)
         item["previous_racer_count"] = len(previous) if previous else None
         item["returning_count"] = len(previous & racers) if previous else None
         item |= {key: newcomers[season][key] for key in NEWCOMER_KEYS}
@@ -388,32 +389,41 @@ def _last_whole_day(counted_through: datetime | None) -> date | None:
     return counted_through.astimezone(SCHEDULE_TIMEZONE).date() - timedelta(days=1)
 
 
+def _eastern_wall_clock(moment: datetime) -> datetime:
+    """Return the naive Eastern wall-clock time of a moment, so a day is always 24 hours."""
+    return moment.astimezone(SCHEDULE_TIMEZONE).replace(tzinfo=None)
+
+
 def _season_weeks(
     records: list[JsonObject],
     span: schedule_archive.SeasonSpan,
-    last_whole_day: date | None,
+    cutoff: datetime | None,
 ) -> JsonObject:
     """Summarize the distinct racers of each season week of one season.
 
-    A season week is SEASON_WEEK_DAYS days counted from the Eastern date of the
-    season's first slot. The season's days counted run from that date to its last
-    day: the Eastern date of its last slot, or the last whole day when that is
-    earlier. Every week counts toward the racer-week total, a partial last week by
-    the racers of its counted days. Only full weeks count toward the weekly range.
-    A race outside the days counted counts toward no week.
+    A season day is one Eastern wall-clock day counted from the start of the season's
+    span (JOIN_EARLY before its first slot), and a season week is SEASON_WEEK_DAYS of
+    them. The season's days counted are the season days that ended by the cutoff, the
+    newest included race's start, up to the season day that holds the span's end.
+    Every week counts toward the racer-week total, a partial last week by the racers
+    of its counted days. Only full weeks count toward the weekly range. A race outside
+    the days counted counts toward no week.
     """
-    start_day = span.first_slot.astimezone(SCHEDULE_TIMEZONE).date()
+    origin = _eastern_wall_clock(span.first_slot - schedule_archive.JOIN_EARLY)
+
+    def season_day(moment: datetime) -> int:
+        return (_eastern_wall_clock(moment) - origin) // timedelta(days=1)
+
     day_count = 0
-    if last_whole_day is not None:
-        last_day = min(last_whole_day, span.last_slot.astimezone(SCHEDULE_TIMEZONE).date())
-        day_count = max(0, (last_day - start_day).days + 1)
+    if cutoff is not None:
+        last_day = season_day(span.last_slot + schedule_archive.JOIN_LATE)
+        day_count = max(0, min(season_day(cutoff), last_day + 1))
     full_week_count = day_count // SEASON_WEEK_DAYS
     week_count = -(-day_count // SEASON_WEEK_DAYS)
 
     weeks: list[set[str]] = [set() for _ in range(week_count)]
     for record in records:
-        # A race in the few minutes before the start, on the day before it, has offset -1.
-        offset = (record["local_started_at"].date() - start_day).days
+        offset = season_day(record["local_started_at"])
         if 0 <= offset < day_count:
             weeks[offset // SEASON_WEEK_DAYS] |= record["racer_ids"]
     counts = [len(week) for week in weeks[:full_week_count]]
@@ -800,6 +810,7 @@ def aggregate_races(
         slot_records,
         spans,
         counted_through,
+        newest_started_at,
         scheduled_days,
         joined_races,
     )

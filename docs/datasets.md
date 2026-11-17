@@ -78,8 +78,8 @@ Some of this is deliberate behaviour of the data, not a defect:
 - **A young season's returning share** starts low because the season is young, not because racers left. Season 11 stood at about half on day 6, where earlier seasons stood at 35-57% on their day 6 and ended at 67-90%.
 - **Season breaks.** A race more than 30 minutes after a season's last slot and more than 5 minutes before the next season's first slot is in a [season break](definitions.md#seasons) and in no dataset, such as the two races on 2026-11-06 between seasons 10 and 11.
 - **A young season's active racers per week** starts high. Most of a week's racers race in its first few days, so a partial week's racers, spread over only those days, overstate a whole week. Season 10 read 385 on its day 1, 208 on day 3 and 125 on day 7, and ended at 116. The value rises briefly again as each new week starts, less so as the season grows.
-- **Season 10's last week.** Season 10 ends on 2026-11-05, its last slot's date, so its ninth week (Nov 2-8) is partial. Its four days count toward active racers per week, but not toward the weekly range: it has 8 full weeks.
-- **Days lag.** A day counts toward active racers per week, and a full week toward the weekly range, about two days after it ends, because both follow **counted through**.
+- **Season 10's last week.** Season 10's season days start at 09:55 ET, and its span ends at 23:30 ET on 2026-11-05, in the season day that ends at 09:55 ET on Nov 6. Its ninth week (Nov 2-9) is partial. Its four days count toward active racers per week, but not toward the weekly range: it has 8 full weeks.
+- **Season days lag little.** A season day counts toward active racers per week, and a full week toward the weekly range, at the first build after a race starts later than that day's end. With races every few hours, that is the next bot run. The schedule panels still follow **counted through** and lag about two days.
 - **A misfiled slot.** A slot filed under a later season but dated before season 1 has no season by the [season rule](definitions.md#seasons). It counts in the heatmap and in `slots_without_season`, but in no season row.
 
 ## Season locking
