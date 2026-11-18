@@ -18,17 +18,6 @@ const TopRated = (() => {
     return node;
   }
 
-  function crown(className) {
-    const icon = svgElement("svg", {
-      class: className,
-      viewBox: "0 0 24 16",
-      "aria-hidden": "true",
-      focusable: "false",
-    });
-    icon.append(svgElement("path", { d: "M2 14 3.5 4.5 8.5 9 12 2l3.5 7 5-4.5L22 14Z" }));
-    return icon;
-  }
-
   // Tied leaders are already in the main stack, so rank 1 is excluded. Ties break by player index, which is name order.
   function runnersUpFor(modeId, season) {
     return [...ratingRanks(modeId, season)]
@@ -86,7 +75,7 @@ const TopRated = (() => {
     leaders.slice(0, MAX_AVATARS).forEach((playerIndex) => {
       avatars.append(UI.avatar(playerIndex, AVATAR_SIZE));
     });
-    avatars.append(crown("top-rated__crown"));
+    avatars.append(UI.crown("top-rated__crown"));
 
     const text = element("div", "top-rated__text");
     text.append(
@@ -155,7 +144,7 @@ const TopRated = (() => {
     if (render(season) === 0) {
       return;
     }
-    document.getElementById("top-rated-title").prepend(crown("top-rated__crown top-rated__crown--title"));
+    document.getElementById("top-rated-title").prepend(UI.crown("top-rated__crown top-rated__crown--title"));
     document.getElementById("top-rated").hidden = false;
   }
 

@@ -12,6 +12,10 @@ const RacerExtras = (() => {
   let quoteToken = 0;
   let followListening = false;
   let ratingObserver = null;
+  // The rating strip's period: the current season (false) or all time (true). It holds from racer to racer
+  // while the page is open, and a reload starts on the season again, like Face Off's tale of the tape.
+  let ratingsAllTime = false;
+  let periodBuilt = false;
 
   function element(tag, className, text = null) {
     const node = document.createElement(tag);
@@ -26,17 +30,6 @@ const RacerExtras = (() => {
 
   function entryOf(race, playerIndex) {
     return race.e.findIndex((entry) => entry[0] === playerIndex);
-  }
-
-  function tile(label, mode = null) {
-    const item = element("div", "summary-item");
-    const caption = element("span", "summary-label");
-    if (mode) {
-      caption.append(UI.modeDot(mode));
-    }
-    caption.append(label);
-    item.append(caption);
-    return item;
   }
 
   function renderFollow(playerIndex) {
@@ -164,27 +157,85 @@ const RacerExtras = (() => {
     );
   }
 
-  // The rank and provisional mark follow the same rules as the rating chart's standing line.
-  function ratingTile(playerIndex, modeId) {
-    const rating = ratingFor(participants.players[playerIndex], modeId);
-    const item = modeId === ALL_MODES ? tile("Overall rating") : tile(modeLabel(modeId), modeId);
-    item.append(element("strong", null, ratingText(rating)));
+  // The season the rating strip shows, or null for all time; with no seasons in the data it is always all time.
+  function ratingPeriod() {
+    return ratingsAllTime ? null : currentSeason();
+  }
+
+  // A tile in the top-rated banner's look: a bar in the mode's colour, gold for Overall, and a crown
+  // when the racer leads the category. The rank and provisional mark follow the same rules as the
+  // rating chart's standing line, in the strip's period.
+  function ratingTile(playerIndex, modeId, season) {
+    const overall = modeId === ALL_MODES;
+    const rating = ratingFor(participants.players[playerIndex], modeId, season);
+    const item = element("div", overall ? "player-rating player-rating--overall" : "player-rating");
+    item.style.setProperty("--tile-color", overall ? "var(--gold)" : modeColor(modeId));
+    const caption = element("span", "summary-label");
+    if (!overall) {
+      caption.append(UI.modeDot(modeId));
+    }
+    caption.append(overall ? "Overall rating" : modeLabel(modeId));
+    item.append(caption, element("strong", "player-rating__value", ratingText(rating)));
     if (rating === null) {
-      item.append(element("span", "rating-note", "Unrated"));
+      item.append(element("span", "rating-note", season === null ? "Unrated" : "No races this season"));
       return item;
     }
-    const rank = `#${integerFormatter.format(ratingRank(playerIndex, modeId))} of ${integerFormatter.format(ratingRanks(modeId).size)}`;
+    const rank = ratingRank(playerIndex, modeId, season);
+    const standing = `#${integerFormatter.format(rank)} of ${integerFormatter.format(ratingRanks(modeId, season).size)}`;
     const provisional = rating.finishes < participants.rating.provisional_finishes ? " · provisional" : "";
-    item.append(element("span", "rating-note", `${rank}${provisional}`));
-    bindTooltip(item, ratingTooltip(modeId));
+    item.append(element("span", "rating-note", `${standing}${provisional}`));
+    if (rank === 1) {
+      item.append(UI.crown("player-rating__crown"));
+    }
+    bindTooltip(item, ratingTooltip(modeId, season));
     return item;
   }
 
-  // Overall always; a mode only once the racer has a rating there.
+  // The current season, then all time, built like the top-rated banner's period toggle (top-rated.js).
+  // Built once: a click redraws only the tiles, so the pressed button keeps focus.
+  function periodButtons(season) {
+    const toggle = document.querySelector("#player-ratings-period");
+    const choices = [
+      [seasonLabel(season), false],
+      ["All time", true],
+    ];
+    toggle.replaceChildren(
+      ...choices.map(([label, allTime]) => {
+        const button = element("button", "mode-toggle__button", label);
+        button.type = "button";
+        const fullLabel = allTime ? label : seasonFullLabel(season);
+        if (fullLabel !== label) {
+          bindTooltip(button, fullLabel);
+        }
+        button.dataset.allTime = String(allTime);
+        button.addEventListener("click", () => {
+          if (allTime === ratingsAllTime) {
+            return;
+          }
+          ratingsAllTime = allTime;
+          renderRatings(renderedPlayer);
+        });
+        return button;
+      }),
+    );
+    toggle.hidden = false;
+  }
+
+  // Overall always; a mode only once the racer has a rating there in the period.
   function renderRatings(playerIndex) {
+    if (!periodBuilt) {
+      periodBuilt = true;
+      if (currentSeason() !== null) {
+        periodButtons(currentSeason());
+      }
+    }
+    const season = ratingPeriod();
     const player = participants.players[playerIndex];
-    const categories = ratingCategories().filter((modeId) => modeId === ALL_MODES || ratingFor(player, modeId) !== null);
-    document.querySelector("#player-ratings").replaceChildren(...categories.map((modeId) => ratingTile(playerIndex, modeId)));
+    const categories = ratingCategories().filter((modeId) => modeId === ALL_MODES || ratingFor(player, modeId, season) !== null);
+    document.querySelector("#player-ratings-list").replaceChildren(...categories.map((modeId) => ratingTile(playerIndex, modeId, season)));
+    document.querySelectorAll("#player-ratings-period [data-all-time]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.allTime === String(ratingsAllTime)));
+    });
   }
 
   function niceStep(range) {

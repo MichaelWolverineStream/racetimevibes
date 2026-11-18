@@ -710,7 +710,7 @@ function ratingText(rating) {
 function ratingTooltip(modeId = ALL_MODES, season = null) {
   const scope = modeId === ALL_MODES ? "all modes" : `${modeLabel(modeId)} races only`;
   const period = season === null ? "" : ` \u00B7 ${seasonFullLabel(season)}`;
-  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 winning never costs points \u00B7 ${scope}${period}`;
+  return `Ladder points \u00B7 new racers start at ${participants.rating.base} \u00B7 ${scope}${period}`;
 }
 
 function formatRaceDate(isoDate) {

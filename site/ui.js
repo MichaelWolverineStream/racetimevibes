@@ -144,6 +144,19 @@ const UI = (() => {
     return dot;
   }
 
+  // The rating leader's crown, on the top-rated banner and the racer page's rating strip. Each caller's
+  // class sizes, places and colours it.
+  function crown(className) {
+    const icon = svgElement("svg", {
+      class: className,
+      viewBox: "0 0 24 16",
+      "aria-hidden": "true",
+      focusable: "false",
+    });
+    icon.append(svgElement("path", { d: "M2 14 3.5 4.5 8.5 9 12 2l3.5 7 5-4.5L22 14Z" }));
+    return icon;
+  }
+
   function syncFollowStar(button) {
     const player = participants.players[Number(button.dataset.player)];
     const following = Following.has(player.id);
@@ -547,5 +560,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, badgeRarity, modalPanel, dialogBox, comments, chestPace, relativeDay };
+  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, crown, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, badgeRarity, modalPanel, dialogBox, comments, chestPace, relativeDay };
 })();

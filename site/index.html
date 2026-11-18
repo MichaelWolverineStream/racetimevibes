@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="a8571e95c2e2">
+    <meta name="app-version" content="029ff79ed205">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <script src="theme.js?v=a8571e95c2e2"></script>
-    <link rel="stylesheet" href="styles.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="ui.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="feed.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="top-rated.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="upcoming.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="pool-room.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="records.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="racer-extras.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="share-card.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="faceoff.css?v=a8571e95c2e2">
-    <link rel="stylesheet" href="easter-eggs.css?v=a8571e95c2e2">
+    <script src="theme.js?v=029ff79ed205"></script>
+    <link rel="stylesheet" href="styles.css?v=029ff79ed205">
+    <link rel="stylesheet" href="ui.css?v=029ff79ed205">
+    <link rel="stylesheet" href="feed.css?v=029ff79ed205">
+    <link rel="stylesheet" href="top-rated.css?v=029ff79ed205">
+    <link rel="stylesheet" href="upcoming.css?v=029ff79ed205">
+    <link rel="stylesheet" href="pool-room.css?v=029ff79ed205">
+    <link rel="stylesheet" href="records.css?v=029ff79ed205">
+    <link rel="stylesheet" href="racer-extras.css?v=029ff79ed205">
+    <link rel="stylesheet" href="share-card.css?v=029ff79ed205">
+    <link rel="stylesheet" href="faceoff.css?v=029ff79ed205">
+    <link rel="stylesheet" href="easter-eggs.css?v=029ff79ed205">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -336,7 +336,10 @@
             </div>
             <div id="player-summary" class="player-summary"></div>
           </header>
-          <div id="player-ratings" class="player-ratings" role="group" aria-label="Player rating"></div>
+          <div class="player-ratings">
+            <div id="player-ratings-period" class="mode-toggle player-ratings__period" role="group" aria-label="Rating period" hidden></div>
+            <div id="player-ratings-list" class="player-ratings__list" role="group" aria-label="Player rating"></div>
+          </div>
           <div id="player-badges" class="player-badges"></div>
           <section class="player-results" aria-labelledby="player-results-title">
             <div class="heatmap-heading">
@@ -419,21 +422,21 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=a8571e95c2e2" defer></script>
-    <script src="racer-charts.js?v=a8571e95c2e2" defer></script>
-    <script src="store.js?v=a8571e95c2e2" defer></script>
-    <script src="ui.js?v=a8571e95c2e2" defer></script>
-    <script src="top-rated.js?v=a8571e95c2e2" defer></script>
-    <script src="upcoming.js?v=a8571e95c2e2" defer></script>
-    <script src="feed.js?v=a8571e95c2e2" defer></script>
-    <script src="pool-room.js?v=a8571e95c2e2" defer></script>
-    <script src="records.js?v=a8571e95c2e2" defer></script>
-    <script src="racer-extras.js?v=a8571e95c2e2" defer></script>
-    <script src="share-card.js?v=a8571e95c2e2" defer></script>
-    <script src="faceoff.js?v=a8571e95c2e2" defer></script>
-    <script src="easter-eggs.js?v=a8571e95c2e2" defer></script>
-    <script src="leaderboard.js?v=a8571e95c2e2" defer></script>
-    <script src="version-check.js?v=a8571e95c2e2" defer></script>
-    <script src="visitor-counter.js?v=a8571e95c2e2" defer></script>
+    <script src="app.js?v=029ff79ed205" defer></script>
+    <script src="racer-charts.js?v=029ff79ed205" defer></script>
+    <script src="store.js?v=029ff79ed205" defer></script>
+    <script src="ui.js?v=029ff79ed205" defer></script>
+    <script src="top-rated.js?v=029ff79ed205" defer></script>
+    <script src="upcoming.js?v=029ff79ed205" defer></script>
+    <script src="feed.js?v=029ff79ed205" defer></script>
+    <script src="pool-room.js?v=029ff79ed205" defer></script>
+    <script src="records.js?v=029ff79ed205" defer></script>
+    <script src="racer-extras.js?v=029ff79ed205" defer></script>
+    <script src="share-card.js?v=029ff79ed205" defer></script>
+    <script src="faceoff.js?v=029ff79ed205" defer></script>
+    <script src="easter-eggs.js?v=029ff79ed205" defer></script>
+    <script src="leaderboard.js?v=029ff79ed205" defer></script>
+    <script src="version-check.js?v=029ff79ed205" defer></script>
+    <script src="visitor-counter.js?v=029ff79ed205" defer></script>
   </body>
 </html>

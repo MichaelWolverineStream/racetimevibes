@@ -219,30 +219,110 @@
   margin: 0 24px 16px;
 }
 
+/* The rating strip, in the top-rated banner's look (top-rated.css). The toggle reaches 13px below the
+   top rule and a tilted crown 13px above its tile, so tiles start 26px down: a crown in the column under
+   the toggle stays whole. */
 .player-ratings {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  position: relative;
   margin: 18px 24px 16px;
+  padding: 26px 0 14px;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
 }
 
-.player-ratings .summary-item {
-  padding: 15px 18px 14px;
+/* The period toggle rides the top rule at the right, as it rides the banner's top border. */
+.player-ratings__period {
+  position: absolute;
+  top: -13px;
+  right: 0;
+  z-index: 1;
+  padding: 2px;
 }
 
-.player-ratings .summary-item:first-child {
-  padding-left: 0;
+.player-ratings__period .mode-toggle__button {
+  min-height: 20px;
+  padding: 3px 10px;
 }
 
-.player-ratings .summary-label {
+/* The taller row gap leaves a wrapped row's crowns clear of the tiles above. */
+.player-ratings__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px 8px;
+}
+
+.player-rating {
+  --tile-bg: var(--paper);
+  position: relative;
+  min-width: 0;
+  padding: 10px 12px 9px;
+  border-left: 3px solid var(--tile-color);
+  border-radius: var(--radius);
+  background: var(--tile-bg);
+}
+
+.player-rating .summary-label {
   display: flex;
   gap: 6px;
   align-items: center;
 }
 
-.player-ratings .summary-item strong {
+.player-rating__value {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--display);
   font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Gold with one sheen, as on the banner's Overall tile; it crosses after the stats card's. */
+.player-rating--overall {
+  --tile-bg: color-mix(in srgb, var(--gold) 14%, var(--panel));
+  background:
+    linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--shine-color) 75%, transparent) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
+    var(--tile-bg);
+  animation: player-summary-shine 1200ms 900ms ease-out both;
+}
+
+.player-rating--overall .player-rating__value {
+  color: var(--gold-ink);
+}
+
+/* Tilted on the tile's corner, as the banner's crown sits on the leader's avatar. */
+.player-rating__crown {
+  position: absolute;
+  top: -10px;
+  left: -8px;
+  width: 20px;
+  height: 14px;
+  transform: rotate(-20deg);
+  pointer-events: none;
+}
+
+.player-rating__crown path {
+  fill: var(--gold);
+  stroke: var(--gold-ink);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.player-rating:hover .player-rating__crown,
+.player-rating:focus-within .player-rating__crown {
+  animation: player-rating-wiggle 600ms ease-in-out;
+}
+
+@keyframes player-rating-wiggle {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+  25% {
+    transform: rotate(-34deg);
+  }
+  75% {
+    transform: rotate(-8deg);
+  }
 }
 
 .rating-note {
@@ -346,8 +426,7 @@
   vector-effect: non-scaling-stroke;
 }
 
-/* Two columns, as the shared .summary-item rules at this width assume: the left column's tiles
-   drop their divider and indent, and every tile from the third on gets a top rule. */
+/* The heading stacks, and the rating strip goes two tiles to a row. */
 @media (max-width: 980px) {
   .chart-panel--player .panel-heading {
     grid-template-columns: minmax(0, 1fr);
@@ -359,12 +438,8 @@
       "stats";
   }
 
-  .player-ratings {
+  .player-ratings__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .player-ratings .summary-item:nth-child(odd) {
-    padding-left: 0;
   }
 }
 
@@ -397,5 +472,33 @@
   .player-stat--rival {
     grid-column: 1 / -1;
     border-left: 0;
+  }
+
+  /* As on the top-rated banner, the period toggle leaves the rule and sits in flow above the tiles,
+     with room for a thumb. */
+  .player-ratings {
+    padding-top: 12px;
+  }
+
+  .player-ratings__period {
+    position: static;
+    width: fit-content;
+    margin: 0 0 12px auto;
+  }
+
+  .player-ratings__period .mode-toggle__button {
+    min-height: 32px;
+  }
+}
+
+/* A touch screen wider than a phone keeps the toggle on the rule, at least 24px tall, so it reaches 17px
+   below the rule and the tiles start 4px lower to keep its column's crown whole. */
+@media (pointer: coarse) and (min-width: 621px) {
+  .player-ratings {
+    padding-top: 30px;
+  }
+
+  .player-ratings__period .mode-toggle__button {
+    min-height: 24px;
   }
 }
