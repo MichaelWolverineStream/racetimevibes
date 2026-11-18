@@ -16,3 +16,4 @@ paths:
 - `schedule_lab.py` uses worker processes; in a sandbox, run it with `--jobs 1`.
 - `rating_lab.py` tunes on races before 2026-01-01 only. Never tune on 2026 data.
 - Test with `python3 -m unittest discover -s tests/analyses`. The suite has no `__init__.py`, and its shared fixtures are in `tests/analyses/schedule_fixtures.py`.
+- `tests/analyses/test_rating_monitors.py` holds statistics over the growing archive. They fail the weekly run, never a deploy; never move them into `tests/`. Test placement follows `docs/testing.md`.

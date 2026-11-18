@@ -1,6 +1,7 @@
 name: Analysis tests
 
-# The standalone analyses' tests. They never gate a deploy: pages.yml runs only tests/.
+# The standalone analyses' tests and the rating monitors. They never gate a deploy: pages.yml
+# runs only tests/. A failed weekly run is how a monitor on the growing archive raises its alert.
 "on":
   push:
     branches:
@@ -35,4 +36,4 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run analysis tests
-        run: python -m unittest discover -s tests/analyses
+        run: python -m unittest discover -s tests/analyses --durations 10

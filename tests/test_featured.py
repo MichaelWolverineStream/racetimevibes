@@ -234,7 +234,7 @@ class ReplayTests(unittest.TestCase):
         self.assertTrue(all(row[4] is None for row in rows))
 
 
-class ArchiveInvariantTests(unittest.TestCase):
+class CommittedFeaturedTests(unittest.TestCase):
     """The whole archive's replay, from the committed dataset the rebuild test keeps fresh."""
 
     @classmethod

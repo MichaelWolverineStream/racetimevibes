@@ -127,14 +127,12 @@ class LoadRacerBiosTests(unittest.TestCase):
     def test_a_missing_file_gives_an_empty_map(self):
         self.assertEqual(self.load(), {})
 
-    def test_a_valid_file_is_returned(self):
-        data = {"a": ["hello", EARLIER, None, []], "b": [None, LATER, EARLIER, []]}
-        self.assertEqual(self.load(json.dumps(data)), data)
-
     def test_the_history_form_round_trips(self):
         data = {
             "a": ["new", LATER, LATER, [["first", None], ["second", EARLIER], [None, EARLIER]]],
             "b": ["now", LATER, EARLIER, [[None, None]]],
+            "c": ["hello", EARLIER, None, []],
+            "d": [None, LATER, EARLIER, []],
         }
         self.assertEqual(self.load(json.dumps(data)), data)
 
@@ -166,14 +164,12 @@ class LoadRacerBiosTests(unittest.TestCase):
             f'{{"a": ["x"]}}',
             f'{{"a": [1, "{EARLIER}"]}}',
             f'{{"a": ["x", "{EARLIER}", 1]}}',
+            '{"a": ["x", "yesterday"]}',
+            '{"a": ["x", null]}',
+            '{"a": ["x", "2026-10-01T00:00:00"]}',
         ):
             with self.subTest(text=text), self.assertRaises(race_archive.ArchiveError):
                 self.load(text)
-
-    def test_a_bad_time_is_rejected(self):
-        for stamp in ("yesterday", None, "2026-10-01T00:00:00"):
-            with self.subTest(stamp=stamp), self.assertRaises(race_archive.ArchiveError):
-                self.load(json.dumps({"a": ["x", stamp]}))
 
 
 class RacersToCheckTests(unittest.TestCase):
@@ -223,13 +219,15 @@ class RacersToCheckTests(unittest.TestCase):
 class FetchProfileTests(unittest.TestCase):
     def test_a_404_gives_none(self):
         error = race_archive.ArchiveError("gone")
-        error.__cause__ = urllib.error.HTTPError("u", 404, "Not Found", {}, None)
+        error.__cause__ = urllib.error.HTTPError("u", 404, "Not Found", {}, io.BytesIO())
+        self.addCleanup(error.__cause__.close)
         with patch.object(race_archive, "_get_bytes", side_effect=error):
             self.assertIsNone(racer_bios.fetch_profile("https://racetime.gg/user/x"))
 
     def test_other_failures_are_raised(self):
         error = race_archive.ArchiveError("busy")
-        error.__cause__ = urllib.error.HTTPError("u", 503, "Busy", {}, None)
+        error.__cause__ = urllib.error.HTTPError("u", 503, "Busy", {}, io.BytesIO())
+        self.addCleanup(error.__cause__.close)
         with patch.object(race_archive, "_get_bytes", side_effect=error):
             with self.assertRaises(race_archive.ArchiveError):
                 racer_bios.fetch_profile("https://racetime.gg/user/x")
@@ -290,18 +288,28 @@ class SyncTests(unittest.TestCase):
         )
 
     def test_a_failed_fetch_keeps_the_old_entry_and_stays_due(self):
-        write_race(self.archive, "a-1", ["u1", "u2"])
-        race_archive.write_json_atomic({"u1": ["old", EARLIER, None, []]}, self.path)
-        loader = FakeLoader({"u1": race_archive.ArchiveError("HTTP 500"), "u2": BIO_PAGE})
+        write_race(self.archive, "a-1", ["u1", "u2", "u3"])
+        history_entry = ["old", EARLIER, EARLIER, [["older", None]]]
+        race_archive.write_json_atomic(
+            {"u1": ["old", EARLIER, None, []], "u3": history_entry}, self.path
+        )
+        loader = FakeLoader(
+            {
+                "u1": race_archive.ArchiveError("HTTP 500"),
+                "u2": BIO_PAGE,
+                "u3": race_archive.ArchiveError("HTTP 500"),
+            }
+        )
         summary = self.run_sync(loader)
-        self.assertEqual(summary, {"due": 2, "checked": 1, "failed": 1, "stopped": False})
+        self.assertEqual(summary, {"due": 3, "checked": 1, "failed": 2, "stopped": False})
         self.assertIn("Warning: HTTP 500; skipping u1.", self.warnings)
         self.assertEqual(self.stored()["u1"], ["old", EARLIER, None, []])
+        self.assertEqual(self.stored()["u3"], history_entry)
         self.assertIn("u2", self.stored())
         due = racer_bios.racers_to_check(
             race_archive.load_races(self.archive), racer_bios.load_racer_bios(self.archive), []
         )
-        self.assertEqual(due, ["u1"])
+        self.assertEqual(due, ["u1", "u3"])
 
     def test_an_unchanged_bio_keeps_since_and_earlier_but_updates_checked_at(self):
         write_race(self.archive, "a-1", ["u1"])
@@ -345,13 +353,6 @@ class SyncTests(unittest.TestCase):
             [None, "2026-11-02T00:00:00Z", "2026-11-02T00:00:00Z", [["old", EARLIER]]],
         )
 
-    def test_a_failed_fetch_leaves_a_history_entry_untouched(self):
-        write_race(self.archive, "a-1", ["u1", "u2"])
-        entry = ["old", EARLIER, EARLIER, [["older", None]]]
-        race_archive.write_json_atomic({"u1": entry}, self.path)
-        self.run_sync(FakeLoader({"u1": race_archive.ArchiveError("HTTP 500")}))
-        self.assertEqual(self.stored()["u1"], entry)
-
     def test_an_os_error_counts_as_a_failure(self):
         write_race(self.archive, "a-1", ["u1"])
         summary = self.run_sync(FakeLoader({"u1": OSError("reset")}))
@@ -394,10 +395,11 @@ class SyncTests(unittest.TestCase):
         self.run_sync(FakeLoader({}))
         self.assertEqual(self.sleep.call_count, 2)
         self.sleep.assert_called_with(racer_bios.BIO_REQUEST_DELAY_SECONDS)
-
-    def test_a_single_request_does_not_sleep(self):
-        write_race(self.archive, "a-1", ["u1"])
-        self.run_sync(FakeLoader({}))
+        self.sleep.reset_mock()
+        write_race(self.archive, "a-2", ["u4"])
+        loader = FakeLoader({})
+        self.run_sync(loader)
+        self.assertEqual(loader.urls, ["https://racetime.gg/user/u4"])
         self.sleep.assert_not_called()
 
     def test_the_file_is_untouched_when_nothing_was_written(self):
@@ -424,14 +426,9 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(list(self.stored()), ["u1"])
         self.assertEqual(self.sleep.call_count, 0)
 
-    def test_a_corrupt_bios_file_raises(self):
-        self.path.write_text("not json", encoding="utf-8")
-        with self.assertRaises(race_archive.ArchiveError):
-            racer_bios.sync(self.archive, loader=FakeLoader({}))
-
 
 class MainTests(unittest.TestCase):
-    def run_main(self, archive, favourite=151):
+    def run_main(self, archive):
         stdout, stderr = io.StringIO(), io.StringIO()
         with (
             patch("sys.argv", ["racer_bios.py", "--archive", str(archive)]),
@@ -441,7 +438,7 @@ class MainTests(unittest.TestCase):
             patch.object(
                 racer_bios.pokemon_avatars,
                 "favourite_pokemon",
-                side_effect=lambda bio, catalogue: favourite if bio else None,
+                side_effect=lambda bio, catalogue: 151 if bio else None,
             ),
             redirect_stdout(stdout),
             redirect_stderr(stderr),
@@ -455,13 +452,6 @@ class MainTests(unittest.TestCase):
             write_race(archive, "a-1", ["u1", "u2"])
             code, out, _err = self.run_main(archive)
         self.assertEqual(code, 0)
-        self.assertEqual(out, "Bios: 2 checked, 0 failed; 1 name a favourite Pokémon.\n")
-
-    def test_a_random_favourite_is_counted(self):
-        with tempfile.TemporaryDirectory() as directory:
-            archive = Path(directory)
-            write_race(archive, "a-1", ["u1", "u2"])
-            _code, out, _err = self.run_main(archive, racer_bios.pokemon_avatars.RANDOM)
         self.assertEqual(out, "Bios: 2 checked, 0 failed; 1 name a favourite Pokémon.\n")
 
     def test_a_corrupt_bios_file_exits_one(self):

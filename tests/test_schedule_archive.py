@@ -142,7 +142,9 @@ class SyncTests(ScheduleTestCase):
 
 class FetchSeasonTests(unittest.TestCase):
     def http_error(self, code):
-        return urllib.error.HTTPError("https://x", code, "err", {}, io.BytesIO())
+        error = urllib.error.HTTPError("https://x", code, "err", {}, io.BytesIO())
+        self.addCleanup(error.close)
+        return error
 
     def failing_get(self, code):
         def get_bytes(url, label, accept, limit=None):
@@ -186,12 +188,8 @@ class LoaderTests(ScheduleTestCase):
         loaded = schedule_archive.load_schedule(self.archive)
         self.assertEqual([row["season"] for row in loaded], [n for n in range(1, 11) for _ in (0, 1)])
         self.assertEqual(loaded[2:4], seasons[2])
-
-    def test_orders_season_2_before_season_10(self):
-        self.write_season(10, [slot(100, 10)])
-        self.write_season(2, [slot(20, 2)])
-        ids = [row["id"] for row in schedule_archive.load_schedule(self.archive)]
-        self.assertEqual(ids, [20, 100])
+        ids = [row["id"] for row in loaded if row["season"] in (2, 10)]
+        self.assertEqual(ids, [20, 21, 100, 101])
 
     def test_identical_duplicate_ids_are_kept_once(self):
         self.write_season(1, [slot(1, 1), slot(1, 1)])
@@ -471,10 +469,6 @@ class SeasonTests(unittest.TestCase):
                 self.assertEqual(schedule_archive.season_of(started_at, spans), season)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class UpcomingSlotsTests(unittest.TestCase):
     def rows(self):
         return [
@@ -500,3 +494,7 @@ class UpcomingSlotsTests(unittest.TestCase):
     def test_capped_at_the_limit(self):
         result = schedule_archive.upcoming_slots(self.rows(), self.after(0), 2)
         self.assertEqual([row["id"] for row in result], [3, 1])
+
+
+if __name__ == "__main__":
+    unittest.main()

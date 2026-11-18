@@ -18,17 +18,15 @@ def png_header(width, height, colour_type, signature=None, chunk=b"IHDR"):
 
 
 class FrameTests(unittest.TestCase):
-    def test_small_sprite_gets_a_large_factor(self):
-        self.assertEqual(pokemon_images.frame(22, 22), (22, 12))
-
-    def test_wide_content_is_sized_by_its_longest_side(self):
-        self.assertEqual(pokemon_images.frame(62, 50), (62, 5))
-
-    def test_full_frame_sprite(self):
-        self.assertEqual(pokemon_images.frame(96, 95), (96, 3))
-
-    def test_converted_sprite_keeps_its_geometry(self):
-        self.assertEqual(pokemon_images.frame(288, 200), (288, 1))
+    def test_the_factor_follows_the_longest_side_of_the_content(self):
+        for size, expected in (
+            ((22, 22), (22, 12)),
+            ((62, 50), (62, 5)),
+            ((96, 95), (96, 3)),
+            ((288, 200), (288, 1)),
+        ):
+            with self.subTest(size=size):
+                self.assertEqual(pokemon_images.frame(*size), expected)
 
     def test_non_positive_input_raises(self):
         for size in ((0, 10), (10, 0), (-1, 5)):

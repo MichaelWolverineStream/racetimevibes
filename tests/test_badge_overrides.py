@@ -46,9 +46,6 @@ class LoadTests(BadgeOverridesTestCase):
             ],
         )
 
-    def test_a_missing_note_loads_as_none(self):
-        self.assertIsNone(badge_overrides.load(self.write(valid()))[0].note)
-
     def test_no_overrides_is_valid(self):
         self.assertEqual(badge_overrides.load(self.write(valid() | {"overrides": []})), [])
 

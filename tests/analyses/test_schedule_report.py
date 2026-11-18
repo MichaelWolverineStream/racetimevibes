@@ -384,8 +384,9 @@ class RenderHtmlTests(unittest.TestCase):
 
     def test_a_notice_and_the_shortfall_are_shown(self):
         result = fx.cached("notice", fx.LIMIT_COMPOSITION, events=fx.EVENTS)
+        self.assertTrue(any(proposal["notice"] for proposal in result["proposals"]))
+        page = sp.render_html(result)
         for proposal in result["proposals"]:
-            page = sp.render_html(result)
             if proposal["notice"]:
                 self.assertIn(escape(proposal["notice"]), page)
             if proposal["shortfall"]:
@@ -637,7 +638,7 @@ class EveryHourReportTests(unittest.TestCase):
             {"daily_max": 2, "weekly_max": None, "only_prime": True, "every_hour": True}),
             ["at most 2 a day", "prime time only", "every hour"])
 
-    def test_an_uncovered_hour_shows_a_zero_with_the_gap_class_and_title(self):
+    def test_an_uncovered_hour_shows_a_zero_with_the_gap_class_and_title_and_other_zeros_stay_blank(self):
         proposal = self.marked["proposals"][0]
         hour = 3
         edited = self.with_gap(proposal, "simple", hour)
@@ -656,12 +657,6 @@ class EveryHourReportTests(unittest.TestCase):
             for index, cell in enumerate(cells):
                 if (name, index) != ("simple", hour):
                     self.assertEqual(cell, plain_rows[name][index], (name, index))
-
-    def test_other_zero_cells_stay_blank(self):
-        proposal = self.marked["proposals"][0]
-        hour = 3
-        edited = self.with_gap(proposal, "simple", hour)
-        rows = HoursTableTests.rows(sp._hours_table(edited))
         for category in edited["categories"]:
             for other, count in enumerate(category["by_hour"]):
                 if not count and (category["category"], other) != ("simple", hour):

@@ -154,15 +154,6 @@ class CommittedSiteTests(unittest.TestCase):
             "site/index.html or site/version.json is stale; "
             "run python3 scripts/version_assets.py and commit the result",
         )
-
-    def test_every_stamped_reference_is_a_versioned_asset(self):
-        # A stamped file missing from VERSIONED_ASSETS keeps an old token, so browsers keep its stale copy.
-        html = (SITE_DIR / version_assets.INDEX_NAME).read_text(encoding="utf-8")
-        # Local paths only: an external link such as a YouTube watch?v= URL is not an asset.
-        stamped = set(re.findall(r'(?:href|src)="([^":?]+)\?v=', html))
-        self.assertEqual(stamped, set(version_assets.VERSIONED_ASSETS))
-
-    def test_every_versioned_asset_is_referenced_with_the_published_version(self):
         version = json.loads(
             (SITE_DIR / version_assets.VERSION_NAME).read_text(encoding="utf-8")
         )["version"]
@@ -171,6 +162,13 @@ class CommittedSiteTests(unittest.TestCase):
         for asset in version_assets.VERSIONED_ASSETS:
             with self.subTest(asset=asset):
                 self.assertIn(f'"{asset}?v={version}"', html)
+
+    def test_every_stamped_reference_is_a_versioned_asset(self):
+        # A stamped file missing from VERSIONED_ASSETS keeps an old token, so browsers keep its stale copy.
+        html = (SITE_DIR / version_assets.INDEX_NAME).read_text(encoding="utf-8")
+        # Local paths only: an external link such as a YouTube watch?v= URL is not an asset.
+        stamped = set(re.findall(r'(?:href|src)="([^":?]+)\?v=', html))
+        self.assertEqual(stamped, set(version_assets.VERSIONED_ASSETS))
 
 
 if __name__ == "__main__":

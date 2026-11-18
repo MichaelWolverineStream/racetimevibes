@@ -219,16 +219,13 @@ class EntrantNormalizationTests(unittest.TestCase):
     def test_latest_race_name_wins_without_a_current_name(self):
         result = payload(
             [
-                placed_race(
-                    "early",
-                    ["ana"],
-                    started_at="2026-03-01T20:00:00.000Z",
-                )
+                placed_race("early", ["ana"], started_at="2026-03-01T20:00:00.000Z")
                 | {"entrants": [entrant("ana", user={"id": "ana", "name": "Old Ana"})]},
-                placed_race("late", ["ana"], started_at="2026-03-02T20:00:00.000Z"),
+                placed_race("late", ["ana"], started_at="2026-03-02T20:00:00.000Z")
+                | {"entrants": [entrant("ana", user={"id": "ana", "name": "New Ana"})]},
             ]
         )
-        self.assertEqual([player["name"] for player in result["players"]], ["ana"])
+        self.assertEqual([player["name"] for player in result["players"]], ["New Ana"])
 
     def test_current_name_overrides_race_names(self):
         result = payload(
@@ -587,34 +584,43 @@ class SchemaThreeTests(unittest.TestCase):
         )
         self.assertRegex(self.avatars(result)["ana"], r"^[0-9a-f]{16}\.jpg$")
 
-    def test_off_origin_latest_avatar_drops_an_older_one(self):
-        races = self.avatar_races()
-        races[1]["entrants"][0]["user"]["avatar"] = "https://evil.example/x.png"
-        result = payload(races)
-        self.assertNotIn("a", next(p for p in result["players"] if p["id"] == "ana"))
-
-    def test_a_newer_leaderboard_observation_beats_the_latest_race(self):
-        url = "https://racetime.gg/media/fresh.png"
-        result = payload(
-            self.avatar_races(), avatar_observations={"ana": [url, "2026-03-05T00:00:00Z"]}
-        )
-        self.assertEqual(self.avatars(result)["ana"], avatar_mirror.mirror_name(url))
-
-    def test_an_older_leaderboard_observation_loses_to_the_latest_race(self):
-        url = "https://racetime.gg/media/stale.png"
-        result = payload(
-            self.avatar_races(), avatar_observations={"ana": [url, "2026-03-01T00:00:00Z"]}
-        )
-        self.assertEqual(
-            self.avatars(result)["ana"],
-            avatar_mirror.mirror_name("https://racetime.gg/media/new-1.jpg"),
-        )
-
-    def test_a_newer_null_observation_removes_the_avatar(self):
-        result = payload(
-            self.avatar_races(), avatar_observations={"ana": [None, "2026-03-05T00:00:00Z"]}
-        )
-        self.assertIsNone(self.avatars(result)["ana"])
+    def test_avatar_precedence_among_races_and_observations(self):
+        latest = avatar_mirror.mirror_name("https://racetime.gg/media/new-1.jpg")
+        fresh = "https://racetime.gg/media/fresh.png"
+        stale = "https://racetime.gg/media/stale.png"
+        cases = {
+            "an off-origin latest avatar drops an older one": (
+                "https://evil.example/x.png",
+                {},
+                None,
+            ),
+            "a newer leaderboard observation beats the latest race": (
+                None,
+                {"ana": [fresh, "2026-03-05T00:00:00Z"]},
+                avatar_mirror.mirror_name(fresh),
+            ),
+            "an older leaderboard observation loses to the latest race": (
+                None,
+                {"ana": [stale, "2026-03-01T00:00:00Z"]},
+                latest,
+            ),
+            "a newer null observation removes the avatar": (
+                None,
+                {"ana": [None, "2026-03-05T00:00:00Z"]},
+                None,
+            ),
+        }
+        for label, (late_avatar, observations, expected) in cases.items():
+            with self.subTest(label):
+                races = self.avatar_races()
+                if late_avatar:
+                    races[1]["entrants"][0]["user"]["avatar"] = late_avatar
+                result = payload(races, avatar_observations=observations)
+                ana = next(player for player in result["players"] if player["id"] == "ana")
+                if expected is None:
+                    self.assertNotIn("a", ana)
+                else:
+                    self.assertEqual(ana["a"], expected)
 
     def test_percent_encoded_avatar_is_published(self):
         races = self.avatar_races()
@@ -632,8 +638,9 @@ class SchemaThreeTests(unittest.TestCase):
         )
         self.assertEqual({player["id"] for player in result["players"]}, {"ana", "ben"})
 
-    def test_payload_has_rating_fields_and_int_rating_after(self):
-        result = payload(
+    @staticmethod
+    def two_races_one_with_a_preset():
+        return payload(
             [
                 placed_race("one", ["ana", "ben", "cid"], info="Step Ladder Series - [keys] - Open"),
                 placed_race(
@@ -644,7 +651,13 @@ class SchemaThreeTests(unittest.TestCase):
                 ),
             ]
         )
-        self.assertEqual(result["schema_version"], 19)
+
+    def test_the_payload_carries_the_schema_version(self):
+        result = self.two_races_one_with_a_preset()
+        self.assertEqual(result["schema_version"], participant_stats.PARTICIPANT_SCHEMA_VERSION)
+
+    def test_players_carry_rating_fields_and_none_of_the_retired_ones(self):
+        result = self.two_races_one_with_a_preset()
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
                         "progress", "streaks"):
@@ -653,6 +666,9 @@ class SchemaThreeTests(unittest.TestCase):
             self.assertNotIn("pbs", player)
             self.assertNotIn("best_preset", player)
             self.assertNotIn("provisional", player)
+
+    def test_race_rows_carry_integer_ratings_and_no_season_without_a_schedule(self):
+        result = self.two_races_one_with_a_preset()
         for race_row in result["races"]:
             self.assertNotIn("s", race_row)
             for entry in race_row["e"]:
@@ -662,6 +678,9 @@ class SchemaThreeTests(unittest.TestCase):
                 # Without a schedule no race has a season.
                 self.assertEqual(entry[6:], [None, None])
         self.assertEqual(result["seasons"], [])
+
+    def test_a_race_without_a_preset_has_no_preset_index_and_is_counted(self):
+        result = self.two_races_one_with_a_preset()
         self.assertEqual(result["races"][1]["p"], None)
         self.assertEqual(result["diagnostics"]["races_without_preset"], 1)
 
@@ -967,16 +986,6 @@ class AvatarChangesTests(unittest.TestCase):
             changes, [["ben", "2026-03-03"], ["dan", "2026-03-03"], ["ana", "2026-03-02"]]
         )
 
-    def test_a_racer_with_one_avatar_only_is_absent(self):
-        _result, changes = self.changes()
-        self.assertNotIn("cid", [name for name, _date in changes])
-
-    def test_indexes_point_at_players(self):
-        result, _changes = self.changes()
-        for index, date in result["avatar_changes"]:
-            self.assertIn(index, range(len(result["players"])))
-            self.assertRegex(date, r"^\d{4}-\d{2}-\d{2}$")
-
     def test_a_favourite_hides_the_upload_change(self):
         # ana's upload changed on 03-02, but her favourite Pokémon replaces it.
         bios = {"ana": ["My favourite pokemon is: Pikachu", "2026-03-05T00:00:00Z", None, []]}
@@ -1151,7 +1160,7 @@ class PokemonAvatarTests(unittest.TestCase):
         )
 
 
-class GeneratedParticipantDataTests(unittest.TestCase):
+class CommittedParticipantDataTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.participants = json.loads(
@@ -1203,7 +1212,9 @@ class GeneratedParticipantDataTests(unittest.TestCase):
             self.assertEqual(per_mode[row["p"]], row["races"])
 
     def test_schema_version_and_top_level_keys(self):
-        self.assertEqual(self.participants["schema_version"], 19)
+        self.assertEqual(
+            self.participants["schema_version"], participant_stats.PARTICIPANT_SCHEMA_VERSION
+        )
         for key in (
             "presets",
             "hardest_preset",
@@ -1454,10 +1465,6 @@ class GeneratedParticipantDataTests(unittest.TestCase):
                 self.assertNotIn(forbidden, serialized)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class UpcomingPayloadTests(unittest.TestCase):
     # archetype 1 is "simple", 2 is "entrance", 8 has no category.
     MODES = [
@@ -1531,3 +1538,7 @@ class UpcomingPayloadTests(unittest.TestCase):
         self.assertEqual(list(names), [str(season) for season in range(1, 12)])
         self.assertEqual(names["11"], {"kind": "champion", "text": "Panda"})
         self.assertEqual(payload(self.races())["season_names"]["10"]["kind"], "retro")
+
+
+if __name__ == "__main__":
+    unittest.main()

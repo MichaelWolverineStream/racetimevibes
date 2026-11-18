@@ -1,5 +1,3 @@
-import math
-import statistics
 import unittest
 from pathlib import Path
 
@@ -246,13 +244,9 @@ class ModeRatingTests(unittest.TestCase):
             self.assertEqual([by_mode.post[index] for index in indexes], alone.post)
             self.assertEqual([by_mode.pre[index] for index in indexes], alone.pre)
         self.assertEqual(by_mode.params, ladder_rating.rate(races, 4).params)
-
-    def test_a_race_in_one_mode_leaves_another_mode_untouched(self):
-        races = self.two_modes()
         before = ladder_rating.rate_by_mode(races[:6], 4)
-        after = ladder_rating.rate_by_mode(races, 4)
         self.assertEqual(list(before.players), [0])
-        self.assertEqual(before.players[0], after.players[0])
+        self.assertEqual(before.players[0], by_mode.players[0])
 
     def test_a_veteran_of_one_mode_debuts_at_1000_in_another(self):
         races = self.two_modes()
@@ -308,19 +302,15 @@ class SeasonRatingTests(unittest.TestCase):
             self.assertEqual([result.mode_pre[index] for index in indexes], by_mode.pre)
             self.assertEqual([result.mode_post[index] for index in indexes], by_mode.post)
         self.assertEqual(result.params, ladder_rating.rate(races, 4).params)
+        before = ladder_rating.rate_by_season(races[:7], 4, seasons[:7])
+        self.assertEqual(before.post[:7], result.post[:7])
+        self.assertEqual(before.mode_post[:7], result.mode_post[:7])
 
     def test_a_race_outside_every_season_has_no_season_state(self):
         races, seasons = self.two_seasons()
         result = ladder_rating.rate_by_season(races, 4, seasons)
         for states in (result.pre, result.post, result.mode_pre, result.mode_post):
             self.assertEqual(states[6], [])
-
-    def test_a_race_in_one_season_leaves_another_untouched(self):
-        races, seasons = self.two_seasons()
-        before = ladder_rating.rate_by_season(races[:7], 4, seasons[:7])
-        after = ladder_rating.rate_by_season(races, 4, seasons)
-        self.assertEqual(before.post[:7], after.post[:7])
-        self.assertEqual(before.mode_post[:7], after.mode_post[:7])
 
     def test_everyone_debuts_at_1000_every_season_and_in_every_mode_of_it(self):
         races, seasons = self.two_seasons()
@@ -338,7 +328,7 @@ class SeasonRatingTests(unittest.TestCase):
             ladder_rating.rate_by_season(races, 4, seasons[:-1])
 
 
-class ArchiveTests(unittest.TestCase):
+class CommittedArchiveRatingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.records, cls.player_count, cls.scores = ladder_rating._backtest_records(
@@ -384,33 +374,6 @@ class ArchiveTests(unittest.TestCase):
                 if player not in seen:
                     seen.add(player)
                     self.assertEqual(self.result.display(state), 1000)
-
-    def test_the_median_veteran_ends_above_their_first_race(self):
-        first = {}
-        count = {}
-        for race, post in zip(self.records, self.result.post):
-            for (player, *_rest), state in zip(race["e"], post):
-                first.setdefault(player, self.result.display(state))
-                count[player] = count.get(player, 0) + 1
-        gains = [
-            player_rating.rating - first[player]
-            for player, player_rating in enumerate(self.result.players)
-            if count.get(player, 0) >= 50
-        ]
-        self.assertGreater(len(gains), 10)
-        self.assertGreater(statistics.median(gains), 0)
-
-    def test_veterans_still_move(self):
-        self.assertIsNotNone(self.report.veteran_move)
-        self.assertGreater(self.report.veteran_move, 3)
-
-    def test_beats_racetime_on_2026_pairs(self):
-        ours, racetime = self.report.evaluation
-        self.assertEqual(ours.pairs, racetime.pairs)
-        self.assertGreater(ours.pairs, 40_000)
-        self.assertGreater(ours.accuracy, racetime.accuracy)
-        self.assertLess(ours.log_loss, racetime.log_loss)
-        self.assertTrue(math.isfinite(ours.log_loss))
 
 
 if __name__ == "__main__":

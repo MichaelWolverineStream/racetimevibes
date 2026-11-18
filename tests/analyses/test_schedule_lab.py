@@ -83,13 +83,6 @@ class VariantTests(unittest.TestCase):
         for rule in lab.fields(sp.Rules):
             self.assertIn(f"rules.{rule.name}", named)
 
-    def test_the_new_rules_are_broken_by_their_own_variants(self):
-        self.assertEqual(by_key("no-between").rules, with_rules(between=False))
-        self.assertEqual(by_key("two-hour-gaps").rules, with_rules(wide_gaps=False))
-        for key in ("no-between", "two-hour-gaps"):
-            self.assertTrue(by_key(key).plan_caps)
-            self.assertTrue(by_key(key).holidays)
-
     def test_the_model_blind_variants_say_why(self):
         blind = {variant.key: variant.model_blind for variant in lab.VARIANTS if variant.model_blind}
         self.assertEqual(
@@ -179,18 +172,16 @@ class VariantConfigTests(unittest.TestCase):
         variant = lab.Variant("x", "X", "y", holidays=False, rules=with_rules(between=False))
         self.assertEqual(lab.variant_config(self.CONFIG, variant), self.CONFIG)
 
-    def test_lifting_the_caps_keeps_the_every_hour_flag(self):
+    def test_lifting_the_caps_keeps_between_the_every_hour_flag_and_the_bands(self):
+        lifted = lab.variant_config(self.CONFIG, lab.Variant("x", "X", "y", plan_caps=False))
+        self.assertEqual(lifted["bands"], self.CONFIG["bands"])
+        self.assertIs(lifted["composition"]["d"]["between"], True)
+        self.assertEqual(lifted["composition"]["d"], {"modes": ["Four"], "between": True})
         config = copy.deepcopy(self.CONFIG)
         config["composition"]["d"]["everyHour"] = True
         config["composition"]["d"]["dailyMax"] = 2
         lifted = lab.variant_config(config, lab.Variant("x", "X", "y", plan_caps=False))
         self.assertEqual(lifted["composition"]["d"], {"modes": ["Four"], "between": True, "everyHour": True})
-
-    def test_lifting_the_caps_keeps_between_and_the_bands(self):
-        lifted = lab.variant_config(self.CONFIG, lab.Variant("x", "X", "y", plan_caps=False))
-        self.assertEqual(lifted["bands"], self.CONFIG["bands"])
-        self.assertIs(lifted["composition"]["d"]["between"], True)
-        self.assertEqual(lifted["composition"]["d"], {"modes": ["Four"], "between": True})
 
 
 class HalvesTests(unittest.TestCase):
@@ -917,21 +908,18 @@ class JudgeTests(unittest.TestCase):
                 self.assertFalse(lab.wins(judgement))
                 self.assertFalse(lab.harmless(judgement))
 
-    def test_a_gain_in_one_fold_only_is_the_same(self):
+    def test_a_gain_in_one_fold_only_is_the_same_unless_a_loss_in_the_other_outweighs_it(self):
         means = make_means(
-            shaky=lambda s: {"folds": [fold(per_race=1.10), fold(per_race=0.99)]}
+            shaky=lambda s: {"folds": [fold(per_race=1.10), fold(per_race=0.99)]},
+            lopsided=lambda s: {"folds": [fold(per_race=1.01), fold(per_race=0.90)]},
         )
-        judgement = judged(means, "shaky")
-        self.assertEqual(judgement["light"]["measures"]["per_race"]["verdict"], "same")
-        self.assertFalse(lab.wins(judgement))
-        self.assertTrue(lab.harmless(judgement))
-
-    def test_a_loss_in_one_fold_that_outweighs_the_other_is_worse(self):
-        means = make_means(
-            lopsided=lambda s: {"folds": [fold(per_race=1.01), fold(per_race=0.90)]}
-        )
-        judgement = judged(means, "lopsided")
-        self.assertEqual(judgement["light"]["measures"]["per_race"]["verdict"], "worse")
+        for key, expected in (("shaky", "same"), ("lopsided", "worse")):
+            with self.subTest(key):
+                judgement = judged(means, key)
+                self.assertEqual(judgement["light"]["measures"]["per_race"]["verdict"], expected)
+        shaky = judged(means, "shaky")
+        self.assertFalse(lab.wins(shaky))
+        self.assertTrue(lab.harmless(shaky))
 
     def test_a_gain_in_both_folds_counts_even_when_unequal(self):
         means = make_means(

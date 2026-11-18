@@ -14,7 +14,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - `assets/pokemon/*.png`: `python3 scripts/pokemon_images.py`, from the originals in `_tmp_assets/pokemon/`. Run `avatar_mirror.py` after.
    - The `?v=` stamps in `site/index.html` and `site/version.json`: `python3 scripts/version_assets.py`, after any change to `site/` HTML, CSS or JS. A test fails if a stamp is stale.
    - `season-ratings/season-N.json`: written once by `build_stats.py --lock-seasons`. Never edit or regenerate one. Deleting a ledger relocks that season with today's rating, so do it only on purpose.
-2. **A bot commits to `main` every two hours.** `update-data.yml` syncs the races and the schedule, builds with `--lock-seasons`, mirrors avatars, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. `update-bios.yml` calls it daily with `sync-bios`, which also runs `racer_bios.py`.
+2. **A bot commits to `main` every two hours.** `update-data.yml` syncs the races and the schedule, builds with `--lock-seasons`, mirrors avatars, runs the `Committed*` tests, and commits `archive/`, `season-ratings/`, `site/data` and `site/avatars` as `YYYY-MM-DD data`. A failed check commits nothing. `update-bios.yml` calls it daily with `sync-bios`, which also runs `racer_bios.py`.
    - Pull before you start.
    - Conflict in `archive/`: discard your archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
    - Conflict in `season-ratings/`: take upstream; the ledgers are deterministic. Build locally without `--lock-seasons`; only the bot locks.
@@ -53,6 +53,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 | `docs/dashboard.md` | Everything the page shows and does | `site/` |
 | `docs/operations.md` | Refresh steps and options, asset versioning, tests, workflows | `.github/workflows/`, `version_assets.py` |
 | `docs/analyses.md` | Mode overlap, schedule planner and lab, rating lab | `mode_overlap.py`, `schedule_planner.py`, `schedule_lab.py`, `rating_lab.py` |
+| `docs/testing.md` | Test tiers, where a new test goes, rules for every test, time budgets | `tests/`, `tests/analyses/` |
 
 Shared code:
 - `race_archive.py` holds the atomic writers, `write_json_atomic` (minified JSON) and `write_bytes_atomic`. Reuse them for archive and dataset files. Ledgers use `season_ratings.write_ledger`, which refuses to replace a file.
@@ -70,9 +71,14 @@ python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars par
 
 ## Tests
 
-- `python3 -m unittest discover -s tests`: the production suite, a few seconds. `pages.yml` runs it and gates deploys.
-- `python3 -m unittest discover -s tests/analyses`: the analysis suite, about half a minute. `analysis-tests.yml` runs it on pushes and pull requests that change `scripts/`, `tests/analyses/` or `schedule-plan.json`, weekly and on demand; it never gates deploys. `tests/analyses/` has no `__init__.py`, so the first command skips it.
-- Tests never use the network; API responses are mocked. After changing a build script, rebuild and commit `site/data` with the change.
+- `python3 -m unittest discover -s tests`: the production suite, about ten seconds. `pages.yml` runs it and gates deploys.
+  - Its `Committed*` classes check the archive and the published files.
+  - `update-data.yml` runs them alone (`-k Committed`) before it commits.
+- `python3 -m unittest discover -s tests/analyses`: the analysis suite, about a minute. It never gates deploys.
+  - `analysis-tests.yml` runs it on pushes and pull requests that change `scripts/`, `tests/analyses/` or `schedule-plan.json`, weekly and on demand.
+  - Its rating monitors (`test_rating_monitors.py`) fail the weekly run, not a deploy.
+  - `tests/analyses/` has no `__init__.py`, so the first command skips it.
+- Write and place tests by `docs/testing.md`. Tests never use the network; API responses are mocked. After changing a build script, rebuild and commit `site/data` with the change.
 
 ## Before handing work back
 

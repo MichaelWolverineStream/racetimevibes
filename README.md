@@ -33,9 +33,11 @@ python3 -m http.server 8000 -d site   # preview at http://localhost:8000; the pa
 Tests:
 
 ```bash
-python3 -m unittest discover -s tests             # production suite, a few seconds; gates every deploy
-python3 -m unittest discover -s tests/analyses    # analysis suite, about half a minute
+python3 -m unittest discover -s tests             # production suite, about ten seconds; gates every deploy
+python3 -m unittest discover -s tests/analyses    # analysis suite, about a minute
 ```
+
+How to write a test, and which suite it belongs to, is in [docs/testing.md](docs/testing.md).
 
 ## Deployment and data refresh
 

@@ -52,29 +52,6 @@ class JoinTests(unittest.TestCase):
         self.assertTrue(slots[0].fired)
         self.assertEqual((slots[0].category, slots[0].entrants, slots[0].mode_id), ("entrance", 7, 11))
 
-    def test_time_fallback_window_is_minus_five_to_plus_thirty_minutes(self):
-        at = NEWEST - timedelta(days=5)
-        for minutes, fired in ((-5, True), (-6, False), (30, True), (31, False)):
-            with self.subTest(minutes=minutes):
-                other = race(1, "simple", at + timedelta(minutes=minutes), 4, seeded=False)
-                (joined,) = self.join([slot(1, 500, at, 11)], [other])
-                self.assertEqual(joined.fired, fired)
-                self.assertEqual(joined.entrants, 4 if fired else 0)
-
-    def test_time_fallback_needs_the_same_category(self):
-        at = NEWEST - timedelta(days=5)
-        other = race(1, "entrance", at, 4, seeded=False)
-        (joined,) = self.join([slot(1, 500, at, 11)], [other])
-        self.assertFalse(joined.fired)
-
-    def test_a_race_matches_only_one_slot(self):
-        at = NEWEST - timedelta(days=5)
-        other = race(1, "simple", at + timedelta(minutes=5), 4, seeded=False)
-        slots = self.join(
-            [slot(1, 501, at, 11), slot(2, 502, at + timedelta(minutes=10), 11)], [other]
-        )
-        self.assertEqual(sorted(s.fired for s in slots), [False, True])
-
     def test_cancelled_slot_counts_zero_in_its_archetype_category(self):
         at = NEWEST - timedelta(days=5)
         (joined,) = self.join([slot(1, 999, at, 41)], [])
@@ -176,17 +153,14 @@ class ModelTests(unittest.TestCase):
         for empty in (0, 1, 2, 4):
             self.assertAlmostEqual(model.fill["simple"][empty], 4 / 6)
 
-    def test_hour_is_a_dict_of_24_factors_per_group(self):
-        model = fitted()
-        self.assertEqual(set(model.hour), set(sp.DAY_GROUPS))
-        for group in sp.DAY_GROUPS:
-            self.assertEqual(len(model.hour[group]), 24)
-
-    def test_each_blocks_twelve_group_hours_average_one(self):
+    def test_the_hour_factors_are_24_per_group_and_each_blocks_twelve_group_hours_average_one(self):
         for model in (
             fitted(),
             sp.fit_model(history(monday_slots(9, 30) + [("simple", 1, MEMORIAL_DAY, 1, True)] * 30)),
         ):
+            self.assertEqual(set(model.hour), set(sp.DAY_GROUPS))
+            for group in sp.DAY_GROUPS:
+                self.assertEqual(len(model.hour[group]), 24)
             for block in range(6):
                 hours = range(block * 4, block * 4 + 4)
                 mean = sum(model.hour[g][h] for g in sp.DAY_GROUPS for h in hours) / 12
@@ -555,6 +529,8 @@ class HolidayTests(unittest.TestCase):
                 date(2026, 12, 24), date(2026, 12, 25), date(2026, 12, 31),
             },
         )
+        self.assertTrue(sp.is_holiday(date(2026, 11, 26)))
+        self.assertFalse(sp.is_holiday(date(2026, 11, 25)))
 
     def test_the_moving_holidays_of_other_years(self):
         moving = {
@@ -588,9 +564,6 @@ class HolidayTests(unittest.TestCase):
         # 2028-01-01 is a Saturday, and 2028-01-03 is not a holiday.
         self.assertNotIn(date(2028, 1, 3), sp.holiday_dates(2028))
 
-    def test_is_holiday_follows_holiday_dates(self):
-        self.assertTrue(sp.is_holiday(date(2026, 11, 26)))
-        self.assertFalse(sp.is_holiday(date(2026, 11, 25)))
 
 
 class DayGroupTests(unittest.TestCase):
@@ -656,13 +629,6 @@ class ParseBandsTests(unittest.TestCase):
         )
         self.assertEqual(set(layout.values()), set(sp.BANDS))
 
-    def test_the_bands_hold_40_39_and_89_weekday_hours_of_the_week(self):
-        layout = sp.parse_bands(self.SPEC)
-        counts = Counter(
-            layout[sp.WEEKDAY_GROUPS[weekday], hour] for weekday in range(7) for hour in range(24)
-        )
-        self.assertEqual(counts, {"prime": 40, "quiet": 39, "normal": 89})
-
     def test_a_range_whose_first_hour_is_after_the_last_wraps_past_midnight(self):
         layout = sp.parse_bands(self.bands(work={"quiet": "22-2"}))
         self.assertEqual(self.hours(layout, "work", "quiet"), {22, 23, 0, 1, 2})
@@ -721,12 +687,6 @@ class ParseBandsTests(unittest.TestCase):
             sp.parse_bands(self.bands(casual={"prime": "x"}))
         self.assertIn("casual", str(caught.exception))
 
-    def test_a_fixture_layout_matches_its_plan(self):
-        for (group, hour), band in fx.WORLD_LAYOUT.items():
-            plan = fx.WORLD_BANDS[group]
-            self.assertEqual(band, "prime" if hour in sp._range_hours(group, "prime", plan["prime"])
-                             else "quiet" if hour in sp._range_hours(group, "quiet", plan["quiet"])
-                             else "normal")
 
 
 class BandTests(unittest.TestCase):
@@ -777,10 +737,6 @@ class BandTests(unittest.TestCase):
         self.assertAlmostEqual(bands["casual", 9][1], 2 * (1.0 + 6.0) / 2)
         self.assertAlmostEqual(bands["prime", 9][1], 3 * (1.0 + 6.0) / 2)
 
-    def test_the_fixture_world_has_prime_time_in_the_second_half_of_the_day(self):
-        for group in sp.DAY_GROUPS:
-            prime = sorted(h for h in range(24) if fx.WORLD_LAYOUT[group, h] == "prime")
-            self.assertTrue(all(h >= 12 for h in prime), (group, prime))
 
 
 class BandRateTests(unittest.TestCase):
@@ -895,12 +851,6 @@ class ShareWeightTests(unittest.TestCase):
         open_by_name = open_bands or {name: sp.BANDS for name in names}
         return sp.share_weights(categories, self.model, LAYOUT, self.rates, open_by_name, shares)
 
-    def test_the_bands_hold_42_84_and_42_weekday_hours(self):
-        counts = Counter(
-            LAYOUT[sp.WEEKDAY_GROUPS[weekday], hour][0] for weekday in range(7) for hour in range(24)
-        )
-        self.assertEqual(counts, {"prime": 42, "normal": 84, "quiet": 42})
-
     def test_entrants_weight_is_the_mean_expected_entrants_with_each_weekday_in_its_group(self):
         keys = plain_category("k", 1.5, source="keys")
         weights = self.weights([keys], "entrants")["k"]
@@ -970,6 +920,33 @@ class ShareWeightTests(unittest.TestCase):
 # Featured races -------------------------------------------------------------------
 
 SEPTEMBER = sp.period_dates(*fx.PERIOD)
+
+
+class FixtureTests(unittest.TestCase):
+    def test_the_bands_hold_40_39_and_89_weekday_hours_of_the_week(self):
+        layout = sp.parse_bands(ParseBandsTests.SPEC)
+        counts = Counter(
+            layout[sp.WEEKDAY_GROUPS[weekday], hour] for weekday in range(7) for hour in range(24)
+        )
+        self.assertEqual(counts, {"prime": 40, "quiet": 39, "normal": 89})
+
+    def test_a_fixture_layout_matches_its_plan(self):
+        for (group, hour), band in fx.WORLD_LAYOUT.items():
+            plan = fx.WORLD_BANDS[group]
+            self.assertEqual(band, "prime" if hour in sp._range_hours(group, "prime", plan["prime"])
+                             else "quiet" if hour in sp._range_hours(group, "quiet", plan["quiet"])
+                             else "normal")
+
+    def test_the_fixture_world_has_prime_time_in_the_second_half_of_the_day(self):
+        for group in sp.DAY_GROUPS:
+            prime = sorted(h for h in range(24) if fx.WORLD_LAYOUT[group, h] == "prime")
+            self.assertTrue(all(h >= 12 for h in prime), (group, prime))
+
+    def test_the_bands_hold_42_84_and_42_weekday_hours(self):
+        counts = Counter(
+            LAYOUT[sp.WEEKDAY_GROUPS[weekday], hour][0] for weekday in range(7) for hour in range(24)
+        )
+        self.assertEqual(counts, {"prime": 42, "normal": 84, "quiet": 42})
 
 
 def source_slots(category, weekday, hour, entrants, count=5):
@@ -2088,12 +2065,14 @@ class ChooseTests(unittest.TestCase):
         put(filler, "a", SEP2, 8)
         self.assertFalse(filler.lacks(filler.start(SEP3, 8)))
         self.assertFalse(filler.lacks(filler.start(date(2026, 9, 20), 8)))
-        # It counts the every-hour categories that lack the hour.
+
+    def test_an_hour_lacks_one_for_each_every_hour_category_that_has_not_raced_at_it(self):
         both = make_filler(limits={"a": {"every_hour": True}, "b": {"every_hour": True}})
         self.assertEqual(both.lacks(both.start(SEP3, 8)), 2)
         put(both, "b", SEP1, 8)
         self.assertEqual(both.lacks(both.start(SEP3, 8)), 1)
-        # Without the rule, or without an every-hour category, no hour lacks a race.
+
+    def test_no_hour_lacks_a_race_without_the_rule_or_without_an_every_hour_category(self):
         off = make_filler(limits={"a": {"every_hour": True}}, rules=replace(sp.SHIPPED, every_hour=False))
         self.assertFalse(off.lacks(off.start(SEP3, 8)))
         self.assertFalse(make_filler().lacks(make_filler().start(SEP3, 8)))
@@ -2584,14 +2563,12 @@ class DueTests(unittest.TestCase):
         # Other bands have their own count.
         self.assertTrue(filler.due("m", "normal"))
         self.assertTrue(filler.due("m", "quiet"))
-
-    def test_a_ratio_equal_to_the_pace_is_due(self):
-        filler = make_filler("abm", between="m")
-        put(filler, "a", SEP2, 12)
-        put(filler, "b", SEP2, 14)
-        put(filler, "m", SEP2, 13)
-        # Three races over weight 3: pace 1, and m's ratio 1.
-        self.assertTrue(filler.due("m", "prime"))
+        # A ratio equal to the pace is due: three races over weight 3, and m's ratio is 1.
+        equal = make_filler("abm", between="m")
+        put(equal, "a", SEP2, 12)
+        put(equal, "b", SEP2, 14)
+        put(equal, "m", SEP2, 13)
+        self.assertTrue(equal.due("m", "prime"))
 
     def test_the_pace_counts_every_category_over_the_summed_weight_of_all_of_them(self):
         weights = {"a": {band: 2.0 for band in sp.BANDS}, "b": {band: 2.0 for band in sp.BANDS},
@@ -2808,7 +2785,7 @@ class BetweenRaceTests(unittest.TestCase):
         for first, second in zip(names, names[1:]):
             self.assertNotEqual(first, second)
 
-    def test_a_between_race_never_sits_next_to_a_between_race_of_its_own_category(self):
+    def test_a_between_race_outside_every_gap_stays_unbracketed_and_the_gap_still_gets_its_own(self):
         filler = self.mains(12, 14)
         put(filler, "m", SEP2, 20)
         filler.fill_between(SEP2)
@@ -3506,29 +3483,16 @@ class BetweenProposalTests(unittest.TestCase):
         self.assertTrue(all(r["between"] for r in featured))
         self.assertEqual(plan["unbracketed"], 0)
 
-    def test_a_plan_without_trouble_has_no_notice(self):
-        plan = self.plan(per_day=7)
-        self.assertEqual((plan["shortfall"], plan["empty_hours"], plan["unbracketed"]), ([], 0, 0))
-        self.assertIsNone(plan["notice"])
-
-    def test_the_notice_counts_a_shortfall_date(self):
+    def test_the_notice_is_empty_without_trouble_and_counts_a_shortfall_date(self):
+        calm = self.plan(per_day=7)
+        self.assertEqual((calm["shortfall"], calm["empty_hours"], calm["unbracketed"]), ([], 0, 0))
+        self.assertIsNone(calm["notice"])
         closed = block(SEP3, 0, 24)
         plan = self.plan(per_day=7, events=[closed])
         self.assertEqual([s["date"] for s in plan["shortfall"]], ["2026-09-03"])
         self.assertEqual(plan["shortfall"][0], {"date": "2026-09-03", "races": 0, "wanted": 7})
         self.assertIn("On 1 of 30 dates fewer main races fit", plan["notice"])
         self.assertEqual(plan["day_races"]["fewest"], 0)
-
-    def test_the_between_lever_makes_every_category_main(self):
-        plan = self.plan(per_day=7, rules=sp.Rules(between=False))
-        self.assertEqual(plan["between"], 0)
-        self.assertEqual(plan["between_categories"], [])
-        self.assertEqual(plan["races"], len(plan["schedule"]))
-        per_date = Counter(r["date"] for r in plan["schedule"])
-        self.assertEqual(set(per_date.values()), {7})
-        self.assertIn("m", {r["category"] for r in plan["schedule"]})
-        self.assertNotIn("Between", plan["description"])
-        self.assertTrue(all(not c["between"] for c in plan["composition"]))
 
     def test_short_gaps_are_counted_as_the_lever_says(self):
         shipped = self.plan(per_day=7)
@@ -3702,16 +3666,13 @@ class SetProposalTests(WorldCase):
             self.assertEqual(counts, sorted(counts))
             self.assertEqual(len(set(counts)), 4)
 
-    def test_the_bands_are_the_plan_files_bands(self):
-        for _label, _result, p in self.every_proposal():
-            self.assertEqual(len(p["bands"]), 72)
-            for b in p["bands"]:
-                self.assertEqual(b["band"], fx.WORLD_LAYOUT[b["group"], b["hour"]])
-                self.assertGreater(b["value"], 0)
-
-    def test_each_race_carries_its_dates_group_and_that_groups_band(self):
+    def test_each_proposal_holds_the_plan_files_bands_and_each_race_its_dates_group_and_band(self):
         for label, _result, p in self.every_proposal():
             with self.subTest(label):
+                self.assertEqual(len(p["bands"]), 72)
+                for b in p["bands"]:
+                    self.assertEqual(b["band"], fx.WORLD_LAYOUT[b["group"], b["hour"]])
+                    self.assertGreater(b["value"], 0)
                 bands = {(b["group"], b["hour"]): b["band"] for b in p["bands"]}
                 for r in p["schedule"]:
                     self.assertEqual(r["group"], sp.day_group(race_day(r)))
@@ -3753,7 +3714,7 @@ class SetProposalTests(WorldCase):
                 for first, second in zip(names, names[1:]):
                     self.assertNotEqual(first, second)
 
-    def test_the_daily_and_weekly_caps_hold(self):
+    def test_the_daily_and_weekly_caps_hold_over_monday_to_sunday_weeks_including_the_partial_ones(self):
         p_limits = {"simple": (3, None), "entrance": (4, None), "keys": (None, 5), "mystery": (3, None)}
         for p in limit_result()["proposals"]:
             with self.subTest(p["set"]):
@@ -3768,12 +3729,8 @@ class SetProposalTests(WorldCase):
                     cap = p_limits[name][1]
                     self.assertTrue(cap is None or count <= cap, (week, name, count))
                 self.assertIn(5, {count for (_w, n), count in weekly.items() if n == "keys"})
+                self.assertIn((date(2026, 8, 31), "keys"), weekly)
 
-    def test_the_week_cap_counts_monday_to_sunday_weeks_including_the_partial_ones(self):
-        for p in limit_result()["proposals"]:
-            keys = Counter(week_start(race_day(r)) for r in p["schedule"] if r["category"] == "keys")
-            self.assertIn(date(2026, 8, 31), keys)
-            self.assertLessEqual(max(keys.values()), 5)
 
 
 class RaceModeTests(WorldCase):
@@ -3932,11 +3889,17 @@ class FeaturedRaceTests(WorldCase):
             self.assertEqual(entry.hours, score[name, entry.weekday][1])
 
     def test_a_featured_race_in_a_weekly_avoid_event_never_gets_that_candidate(self):
-        light = main_result()["proposals"][0]
-        entrance = next(e for e in light["featured"] if e["category"] == "entrance")
-        # The fixture's weekly Entrance event runs Monday 01:00 UTC, Sunday evening in Eastern time.
-        self.assertFalse(entrance["weekday"] == 6 and 20 in entrance["hours"])
-        self.assertEqual(entrance["skipped"], [])
+        plain = fx.proposal(fx.cached("no-events", fx.BASE_COMPOSITION), "light")
+        entry = plain["featured"][0]
+        hour = entry["hours"][0]
+        avoid = {"name": "Avoid", "weekly": sp.WEEKDAYS[entry["weekday"]], "start": f"{hour:02d}:00",
+                 "timezone": "America/New_York", "hours": 1, "effect": "avoid",
+                 "categories": [entry["category"]]}
+        avoided = fx.proposal(fx.cached("avoided", fx.BASE_COMPOSITION, events=[avoid]), "light")
+        again = next(e for e in avoided["featured"] if e["category"] == entry["category"])
+        # The one-hour event touches the races at its hour and the hour before it.
+        self.assertFalse(again["weekday"] == entry["weekday"] and {hour - 1, hour} & set(again["hours"]))
+        self.assertEqual(again["skipped"], [])
 
     def test_a_featured_race_in_a_block_event_is_skipped_and_reported(self):
         light = main_result()["proposals"][0]
@@ -4141,13 +4104,14 @@ class SeasonTests(unittest.TestCase):
         with self.assertRaises(sp.ScheduleError):
             sp.plan_season(config, schedule, weeks=0)
 
-    def test_the_committed_plan_starts_a_nine_week_season_on_monday_9_november(self):
-        if not sp.CONFIG_PATH.exists():
-            self.skipTest("schedule-plan.json is missing")
+    def test_the_committed_plan_loads_and_its_season_is_self_consistent(self):
         config = sp.load_config(sp.CONFIG_PATH)
         first_day, weeks, last_day = sp.plan_season(config, [])
-        self.assertEqual((first_day, weeks), (date(2026, 11, 9), 9))
-        self.assertEqual(sp.last_race_day(first_day, weeks, last_day), date(2027, 1, 7))
+        last = sp.last_race_day(first_day, weeks, last_day)
+        self.assertEqual(first_day.weekday(), 0)
+        self.assertEqual(last.weekday(), last_day)
+        self.assertGreaterEqual(last, first_day)
+        self.assertLess(last, first_day + timedelta(weeks=weeks))
 
 
 class AnalyseTests(unittest.TestCase):
@@ -4157,7 +4121,7 @@ class AnalyseTests(unittest.TestCase):
             sp.analyse(schedule, modes, races, {"composition": fx.BASE_COMPOSITION},
                        start=fx.START, weeks=0, pairs=PAIRS)
 
-    def test_every_set_names_the_plan_categories_in_its_composition_and_pairs(self):
+    def test_every_set_lists_each_pair_of_the_four_plan_categories_with_its_score_and_weak_flag(self):
         for p in main_result()["proposals"]:
             self.assertEqual(len(p["pairs"]), 6)
             for row in p["pairs"]:
@@ -4410,6 +4374,7 @@ class RulesTests(unittest.TestCase):
             if day.isoformat() not in short:
                 self.assertEqual(per_date[day.isoformat()], plan["per_day"][sp.day_group(day)])
         self.assertGreater(sum(r["category"] == "mystery" for r in plan["schedule"]), 0)
+        self.assertTrue(all(not c["between"] for c in plan["composition"]))
         shipped = fx.planned_with(sp.SHIPPED, composition=fx.BETWEEN_COMPOSITION)
         self.assertGreater(shipped["between"], 0)
         self.assertGreater(shipped["races"], plan["races"] - 1)

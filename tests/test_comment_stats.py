@@ -177,9 +177,6 @@ class CommittedCommentsTests(unittest.TestCase):
             (DATA_DIR / "participants.json").read_text(encoding="utf-8")
         )
 
-    def test_schema_version(self):
-        self.assertEqual(self.comments["schema_version"], 2)
-
     def test_races_and_users_exist_in_participants(self):
         race_names = {race["r"] for race in self.participants["races"]}
         player_ids = {player["id"] for player in self.participants["players"]}

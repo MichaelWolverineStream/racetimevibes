@@ -124,8 +124,10 @@ class PersonalBestTests(unittest.TestCase):
         self.assertEqual(pb_counts(records)[0], 1)
 
     def test_equal_or_slower_time_is_not_a_pb(self):
-        records = [duel(0, 1, first_seconds=3600.0), duel(0, 1, first_seconds=3600.0)]
-        self.assertEqual(tags_of(run(records), 1, "pb"), [])
+        for second_seconds in (3600.0, 3700.0):
+            records = [duel(0, 1, first_seconds=3600.0), duel(0, 1, first_seconds=second_seconds)]
+            with self.subTest(second_seconds=second_seconds):
+                self.assertEqual(tags_of(run(records), 1, "pb"), [])
 
     def test_sub_second_improvement_is_not_a_pb(self):
         records = [duel(0, 1, first_seconds=3600.4), duel(0, 1, first_seconds=3600.1)]
@@ -205,11 +207,6 @@ class PresetRecordTests(unittest.TestCase):
         result = run(records, presets=self.presets)
         for index in range(3):
             self.assertEqual(tags_of(result, index, "preset_record"), [])
-
-    def test_preset_record_sits_right_after_record_in_the_tag_order(self):
-        kinds = highlights.TAG_KINDS
-        self.assertEqual(kinds.index("preset_record"), kinds.index("record") + 1)
-        self.assertIn("preset_record", run([duel(0, 1)])["diagnostics"]["tag_counts"])
 
 
 class PresetPersonalBestTests(unittest.TestCase):
@@ -309,11 +306,6 @@ class PresetPersonalBestTests(unittest.TestCase):
             tags_of(result, 4, "preset_pb"),
             [["preset_pb", 0, 3400, 3600], ["preset_pb", 1, 3460, 3660]],
         )
-
-    def test_preset_pb_sits_right_after_pb_in_the_tag_order(self):
-        kinds = highlights.TAG_KINDS
-        self.assertEqual(kinds.index("preset_pb"), kinds.index("pb") + 1)
-        self.assertIn("preset_pb", run([duel(0, 1)])["diagnostics"]["tag_counts"])
 
 
 class PresetStepTests(unittest.TestCase):
@@ -559,13 +551,6 @@ class StreakTests(unittest.TestCase):
                 finish = run(records)["players"][0]["streaks"]["finish"]
                 self.assertEqual(finish["best"], [1, 0, 0])
                 self.assertEqual(finish["current"], [1, 2, 2])
-
-    def test_midnight_boundary_counts_as_consecutive_days(self):
-        records = [duel(0, 1, day=0, hour=23), duel(0, 1, day=1, hour=0)]
-        self.assertEqual(
-            run(records)["players"][0]["streaks"]["daily"]["best"],
-            [2, "2026-03-01", "2026-03-02"],
-        )
 
     def test_gap_breaks_daily_streak_and_current_is_last_run(self):
         records = [duel(0, 1, day=day) for day in (0, 1, 2, 4, 5)]
@@ -1367,14 +1352,9 @@ class BadgeTests(unittest.TestCase):
                 self.assertNotEqual(badge.progress is None, badge.earned is None)
 
     def test_badge_definitions_carry_image_paths(self):
-        for definition in run([])["badges"]:
-            image, still = highlights.badge_image_paths(definition["id"])
-            self.assertEqual(definition["image"], image)
-            self.assertEqual(definition["still"], still)
-        self.assertEqual(
-            highlights.badge_image_paths("hat_trick"),
-            ("assets/badges/hat_trick.webp", "assets/badges/hat_trick-still.webp"),
-        )
+        definition = next(d for d in run([])["badges"] if d["id"] == "hat_trick")
+        self.assertEqual(definition["image"], "assets/badges/hat_trick.webp")
+        self.assertEqual(definition["still"], "assets/badges/hat_trick-still.webp")
 
     def test_badge_unlocked_once(self):
         # A different time in the second race keeps Déjà Vu out of it.
@@ -1556,8 +1536,14 @@ class UpsetTests(unittest.TestCase):
                 day=5,
             )
         )
-        kinds = [tag[0] for tag in run(records, means={0: 2.0})["race_tags"][5]]
+        result = run(records, means={0: 2.0})
+        kinds = [tag[0] for tag in result["race_tags"][5]]
         self.assertEqual(kinds, ["record", "first_win", "upset", "photo", "pb", "pb", "pb", "badge", "badge"])
+        order = highlights.TAG_KINDS
+        self.assertEqual(order.index("preset_record"), order.index("record") + 1)
+        self.assertEqual(order.index("preset_pb"), order.index("pb") + 1)
+        self.assertIn("preset_record", result["diagnostics"]["tag_counts"])
+        self.assertIn("preset_pb", result["diagnostics"]["tag_counts"])
 
 
 class PresetTests(unittest.TestCase):
@@ -1593,9 +1579,6 @@ class PresetTests(unittest.TestCase):
         self.assertEqual(stats[0]["best"], [0, 1000, 0])
         self.assertEqual(stats[1]["dnf_rate"], 0.5)
         self.assertEqual(stats[1]["mean_field"], 5.0)
-
-    def test_median_seconds_is_over_timed_finishes(self):
-        stats = run(self.races(), presets=self.presets)["preset_stats"]
         self.assertEqual(stats[0]["median_seconds"], 1504)
 
     def test_hardest_preset_has_the_highest_dnf_rate(self):

@@ -8,7 +8,7 @@ SITE_DIR = Path(__file__).resolve().parents[1] / "site"
 BADGE_DIR = SITE_DIR / "assets" / "badges"
 
 
-class BadgeAssetTests(unittest.TestCase):
+class CommittedBadgeAssetTests(unittest.TestCase):
     def test_every_badge_has_standard_image_and_still(self):
         for badge in highlights.BADGES:
             image, still = (SITE_DIR / p for p in highlights.badge_image_paths(badge.id))

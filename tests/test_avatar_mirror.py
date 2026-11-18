@@ -397,6 +397,12 @@ class MirrorTests(unittest.TestCase):
         self.assertTrue((self.output_dir / "folder" / "inner.png").exists())
         self.assertEqual(outside.read_bytes(), PNG)
 
+        self.publish({"u1": None})
+        summary, _ = self.run_mirror()
+
+        self.assertEqual(summary, {"downloaded": 0, "copied": 0, "removed": 1, "failed": 0})
+        self.assertEqual(self.files(), ["folder"])
+
     def test_a_changed_avatar_replaces_the_old_file(self):
         self.archive({"u1": self.URL_A})
         self.publish({"u1": self.URL_A})
@@ -408,17 +414,6 @@ class MirrorTests(unittest.TestCase):
 
         self.assertEqual(summary, {"downloaded": 1, "copied": 0, "removed": 1, "failed": 0})
         self.assertEqual(self.files(), [avatar_mirror.mirror_name(self.URL_B)])
-
-    def test_a_removed_avatar_is_pruned(self):
-        self.archive({"u1": self.URL_A})
-        self.publish({"u1": self.URL_A})
-        self.run_mirror()
-
-        self.publish({"u1": None})
-        summary, _ = self.run_mirror()
-
-        self.assertEqual(summary, {"downloaded": 0, "copied": 0, "removed": 1, "failed": 0})
-        self.assertEqual(self.files(), [])
 
     def test_rejects_files_that_are_not_the_claimed_image(self):
         self.archive({"u1": self.URL_A, "u2": self.URL_B, "u3": self.URL_C})
@@ -586,8 +581,7 @@ class MirrorTests(unittest.TestCase):
 class CommittedAvatarTests(unittest.TestCase):
     def test_every_mirrored_file_is_published_and_a_raster_image(self):
         avatar_dir = REPO_ROOT / "site" / "avatars"
-        if not avatar_dir.exists():
-            self.skipTest("no avatars are mirrored yet")
+        self.assertTrue(avatar_dir.is_dir(), "site/avatars/ is missing")
         participants = json.loads(
             (REPO_ROOT / "site" / "data" / "participants.json").read_text(encoding="utf-8")
         )
@@ -603,8 +597,7 @@ class CommittedAvatarTests(unittest.TestCase):
 
     def test_every_mirrored_pokemon_is_a_copy_of_its_sprite(self):
         avatar_dir = REPO_ROOT / "site" / "avatars"
-        if not avatar_dir.exists():
-            self.skipTest("no avatars are mirrored yet")
+        self.assertTrue(avatar_dir.is_dir(), "site/avatars/ is missing")
         for path in avatar_dir.glob(f"{pokemon_avatars.AVATAR_PREFIX}*"):
             with self.subTest(file=path.name):
                 sprite = pokemon_avatars.sprite_path(path.name)

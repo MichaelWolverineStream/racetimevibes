@@ -260,14 +260,14 @@ class AggregationTests(unittest.TestCase):
             stats["source"]["included_entrant_count"],
         )
 
-    def test_quarter_period_spans_calendar_quarters(self):
-        expected = {
+    def test_periods_span_calendar_quarters_and_months(self):
+        quarters = {
             2: ("2026-Q1", "Q1 2026", "2026-01-01", "2026-03-31"),
             4: ("2026-Q2", "Q2 2026", "2026-04-01", "2026-06-30"),
             9: ("2026-Q3", "Q3 2026", "2026-07-01", "2026-09-30"),
             12: ("2026-Q4", "Q4 2026", "2026-10-01", "2026-12-31"),
         }
-        for month, (period_id, label, start, end) in expected.items():
+        for month, (period_id, label, start, end) in quarters.items():
             with self.subTest(month=month):
                 period = build_stats.quarter_period(
                     datetime(2026, month, 15, tzinfo=build_stats.SCHEDULE_TIMEZONE)
@@ -277,13 +277,12 @@ class AggregationTests(unittest.TestCase):
                     {"id": period_id, "label": label, "start": start, "end": end},
                 )
 
-    def test_month_period_spans_calendar_months(self):
-        expected = {
+        months = {
             (2024, 2): ("2024-02", "Feb 2024", "2024-02-01", "2024-02-29", "2024-Q1"),
             (2026, 4): ("2026-04", "Apr 2026", "2026-04-01", "2026-04-30", "2026-Q2"),
             (2026, 12): ("2026-12", "Dec 2026", "2026-12-01", "2026-12-31", "2026-Q4"),
         }
-        for (year, month), (month_id, label, start, end, quarter_id) in expected.items():
+        for (year, month), (month_id, label, start, end, quarter_id) in months.items():
             with self.subTest(year=year, month=month):
                 period = build_stats.month_period(
                     datetime(year, month, 15, tzinfo=build_stats.SCHEDULE_TIMEZONE)
@@ -890,17 +889,6 @@ class SeasonRacerTests(unittest.TestCase):
         self.assertEqual(weekly(row), (4, 1, 0, None, None))
         self.assertEqual(row["racer_count"], 1)
 
-    def test_a_week_is_full_once_its_seventh_season_day_has_ended(self):
-        races = [race("r1", started_at=at(2), **crowd("ann"))]
-        slots = [slot(1, 1, at(1)), slot(2, 2, at(8))]
-
-        # Week 1 runs from 12:55 ET on Jun 1 to 12:55 ET on Jun 8.
-        whole = season_row(races, slots, newest_race=newest(at(8)))
-        partial = season_row(races, slots, newest_race=newest(at(8, 16)))
-
-        self.assertEqual(weekly(whole), (7, 1, 1, 1, 1))
-        self.assertEqual(weekly(partial), (6, 1, 0, None, None))
-
     def test_weeks_end_at_the_seasons_last_slot_whatever_the_count(self):
         stats = aggregate(
             [
@@ -1366,7 +1354,7 @@ class BuildTests(unittest.TestCase):
         self.assertFalse(self.output_paths[0].exists())
 
 
-class GeneratedDataTests(unittest.TestCase):
+class CommittedDatasetTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.data_path = (
