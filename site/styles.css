@@ -528,7 +528,6 @@ summary:focus-visible {
 /* Section nav */
 .section-nav {
   --nav-divider: color-mix(in srgb, var(--on-brand) 28%, transparent);
-  position: relative;
   display: flex;
   justify-content: center;
   padding: 16px 24px;
@@ -662,19 +661,17 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
-/* The viewer's own racer page ("This is me"): their avatar at the band's far left, out of the groups' flow so the
-   centred groups keep their tuned widths. At 981px it clears the first link by about 4px. The size must match
-   NAV_ME_AVATAR_SIZE in leaderboard.js. */
+/* The viewer's own racer page ("This is me"): their avatar as the first item in the Racing group's row, just
+   before Latest, so it moves with that group at every width. It is no taller than the links' line (24px at
+   1365px and below), so the row keeps its height. The groups have room for its width down to 981px. The size
+   must match NAV_ME_AVATAR_SIZE in leaderboard.js. */
 .section-nav__me {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 12px;
   display: block;
-  width: 32px;
-  height: 32px;
-  margin-block: auto;
-  border-radius: 4px;
+  flex: none;
+  align-self: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
   box-shadow: 0 0 0 2px var(--on-brand);
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
@@ -1951,14 +1948,6 @@ footer p {
   .section-nav {
     flex-direction: column;
     gap: 12px;
-  }
-
-  /* The groups stack and may wrap their links to the band's edge, so the avatar joins the flow above them. */
-  .section-nav__me {
-    position: static;
-    align-self: flex-start;
-    flex: none;
-    margin-block: 0;
   }
 
   .section-nav__group + .section-nav__group {

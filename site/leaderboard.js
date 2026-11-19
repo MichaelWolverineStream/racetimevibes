@@ -19,7 +19,7 @@ const RACE_ROOT = "https://racetime.gg/";
 const BASE_TITLE = document.title;
 const SEASON_ALL_VALUE = "all";
 // Must match .section-nav__me in styles.css.
-const NAV_ME_AVATAR_SIZE = 32;
+const NAV_ME_AVATAR_SIZE = 24;
 const JUMP_ME_AVATAR_SIZE = 18;
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -1657,7 +1657,7 @@ function openBoard(event, { toTop }) {
   route(false, { toTop });
 }
 
-// The nav's shortcut to the viewer's own racer page: their avatar at the band's far left, shown once they
+// The nav's shortcut to the viewer's own racer page: their avatar just before Latest, shown once they
 // have said who they are. The nav is hidden on racer pages, so the link never points at the page it is on.
 function renderNavMe() {
   const link = document.querySelector("#nav-me");
