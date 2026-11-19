@@ -83,8 +83,10 @@ function niceScale(value) {
 }
 
 // The bounding width keeps its fraction. clientWidth rounds, and rounding up drew a chart up to half a
-// pixel wider than its host, which then showed a scrollbar. Hidden hosts measure 0.
+// pixel wider than its host, which then showed a scrollbar. Hidden and detached hosts measure 0: a
+// detached host's computed padding is empty, which would make its width NaN.
 function hostWidth(host) {
+  if (!host.isConnected) return 0;
   const style = getComputedStyle(host);
   return host.getBoundingClientRect().width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
 }
@@ -92,7 +94,7 @@ function hostWidth(host) {
 // Charts draw at their host's pixel width so SVG text keeps its stated size in every panel.
 function drawChart(host) {
   const available = hostWidth(host);
-  if (available <= 0) return; // Hidden; the resize observer draws it once it is shown.
+  if (available <= 0) return; // Hidden or not in the page yet; the resize observer draws it once it is shown.
   const { build, minWidth } = chartBuilders.get(host);
   const width = Math.max(minWidth, Math.floor(available));
   if (chartWidths.get(host) === width) return;
