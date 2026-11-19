@@ -51,6 +51,14 @@ TEXT_PAIRS = (
             "--positive", "--negative", "--retro-link", "--retro-link-visited",
         )
     ]
+    # Text inside a row marked as the viewer's own ("This is me"), where --negative-on-me stands in for --negative.
+    + [
+        (fg, "--me-wash")
+        for fg in (
+            "--ink", "--muted", "--accent", "--positive", "--negative-on-me",
+            "--gold-ink", "--silver-ink", "--bronze-ink", "--diamond-ink",
+        )
+    ]
 )
 # Gold on the nav band is 3.28:1 in light by existing design, so it is held to 3:1.
 NON_TEXT_PAIRS = [
@@ -62,6 +70,8 @@ NON_TEXT_PAIRS = [
     ("--ladder-series", "--panel"),
     ("--corner-a", "--panel"),
     ("--corner-b", "--panel"),
+    ("--me", "--panel"),
+    ("--me", "--me-wash"),
 ]
 TEXT_RATIO = 4.5
 NON_TEXT_RATIO = 3.0

@@ -3,6 +3,8 @@ const STORAGE_PREFIX = "racetimevibes:";
 const FOLLOWING_KEY = "following";
 const FOLLOWING_LIMIT = 50;
 const FOLLOWING_EVENT = "racetimevibes:following";
+const ME_KEY = "me";
+const ME_EVENT = "racetimevibes:me";
 
 function sameShape(value, fallback) {
   if (fallback === null || fallback === undefined) {
@@ -124,4 +126,50 @@ const Following = (() => {
   });
 
   return { ids, has, toggle };
+})();
+
+// The one racer this browser says it is ("This is me"). Kept only here, never published.
+const Me = (() => {
+  // undefined until read; null when nobody is set.
+  let cached;
+
+  function id() {
+    if (cached === undefined) {
+      const stored = Store.get(ME_KEY, "");
+      cached = stored ? stored : null;
+    }
+    return cached;
+  }
+
+  function is(userId) {
+    return userId !== null && userId !== undefined && id() === userId;
+  }
+
+  function announce() {
+    document.dispatchEvent(new CustomEvent(ME_EVENT, { detail: { current: id() } }));
+  }
+
+  // Sets the racer, or clears them when they are already set. Returns both ids so the
+  // caller can say what changed.
+  function toggle(userId) {
+    const previous = id();
+    cached = previous === userId ? null : userId;
+    if (cached === null) {
+      Store.remove(ME_KEY);
+    } else {
+      Store.set(ME_KEY, cached);
+    }
+    announce();
+    return { previous, current: cached };
+  }
+
+  // Another tab changed it.
+  window.addEventListener("storage", (event) => {
+    if (event.key === STORAGE_PREFIX + ME_KEY || event.key === null) {
+      cached = undefined;
+      announce();
+    }
+  });
+
+  return { id, is, toggle };
 })();

@@ -22,6 +22,7 @@ const MONOGRAM_TINTS = 6;
 const UI = (() => {
   let commentsPromise = null;
   let followListenerBound = false;
+  let meListenerBound = false;
   let openDialog = null;
   const shareFormatter = new Intl.NumberFormat("en-US", { style: "percent", maximumSignificantDigits: 2 });
 
@@ -188,6 +189,50 @@ const UI = (() => {
     watchFollowing();
     syncFollowStar(button);
     return button;
+  }
+
+  // "This is me" marks: a node showing racers carries their indexes in data-racers, and data-me
+  // while the viewer's own racer is among them. Marks follow a change by this sync, never by a re-render.
+  function syncMark(node, me) {
+    node.toggleAttribute("data-me", me !== null && node.dataset.racers.split(" ").includes(String(me)));
+  }
+
+  // Re-syncs a subtree; cached nodes that were off the page when the racer changed call this when re-attached.
+  function syncMarks(root = document) {
+    const me = meIndex();
+    root.querySelectorAll("[data-racers]").forEach((node) => syncMark(node, me));
+  }
+
+  // One listener for every mark on the page, like the follow stars'.
+  function watchMe() {
+    if (meListenerBound) {
+      return;
+    }
+    meListenerBound = true;
+    document.addEventListener(ME_EVENT, () => syncMarks());
+  }
+
+  function markRacers(node, playerIndexes) {
+    node.dataset.racers = playerIndexes.join(" ");
+    syncMark(node, meIndex());
+    watchMe();
+    return node;
+  }
+
+  // The locked counter badge the racer is closest to finishing; table order breaks ties.
+  function nextBadge(player) {
+    let best = null;
+    participants.badges.forEach((definition) => {
+      const progress = player.progress[definition.id];
+      if (!progress || !definition.target) {
+        return;
+      }
+      const share = progress / definition.target;
+      if (!best || share > best.share) {
+        best = { definition, progress, share };
+      }
+    });
+    return best;
   }
 
 
@@ -455,7 +500,7 @@ const UI = (() => {
     if (holders.length) {
       body = element("div", "ui-badge-panel__holders");
       holders.forEach(({ player, playerIndex }) => {
-        const link = element("a", "ui-badge-panel__holder");
+        const link = markRacers(element("a", "ui-badge-panel__holder"), [playerIndex]);
         link.href = playerHash(player.id, ALL_MODES);
         link.setAttribute("aria-label", player.name);
         link.appendChild(avatar(playerIndex, 40));
@@ -560,5 +605,5 @@ const UI = (() => {
     return `${days} days ago`;
   }
 
-  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, crown, followStar, isPalindromeTime, time, badge, badgePanel, badgeShare, badgeRarity, modalPanel, dialogBox, comments, chestPace, relativeDay };
+  return { avatarUrl, avatar, monogramLetter, monogramTint, speech, tag, modeDot, crown, followStar, markRacers, syncMarks, nextBadge, isPalindromeTime, time, badge, badgePanel, badgeShare, badgeRarity, modalPanel, dialogBox, comments, chestPace, relativeDay };
 })();

@@ -15,7 +15,7 @@ const PoolRoom = (() => {
 
   // `season` is a season number, or null for all time.
   const state = { season: null };
-  const parts = {};
+  const parts = { you: [] };
 
   function element(tag, className, text = null) {
     const node = document.createElement(tag);
@@ -70,8 +70,8 @@ const PoolRoom = (() => {
   }
 
   // One list row: rank, racer, optional muted suffix, value, then a mode dot, a live pip or nothing.
-  function listRow(rank, playerIndex, { suffix = null, value, tip = null, modeIndex = null, live = false }) {
-    const row = element("li", "pool-row");
+  function listRow(rank, playerIndex, { suffix = null, value, tip = null, modeIndex = null, live = false, others = [] }) {
+    const row = UI.markRacers(element("li", "pool-row"), [playerIndex, ...others]);
     row.appendChild(element("span", "pool-row__rank", String(rank)));
     const who = racerCell(playerIndex, 22);
     if (suffix) {
@@ -180,7 +180,7 @@ const PoolRoom = (() => {
     block.appendChild(element("span", "pool-season__role", season.ended ? "Podium" : "Leading"));
     const list = element("ol", "pool-podium__list");
     list.append(...places.map(([rank, playerIndex]) => {
-      const row = element("li", `pool-podium__row pool-podium__row--${rank}`);
+      const row = UI.markRacers(element("li", `pool-podium__row pool-podium__row--${rank}`), [playerIndex]);
       const pip = element("span", "pool-podium__pip", String(rank));
       pip.setAttribute("aria-hidden", "true");
       bindTooltip(pip, roles[rank]);
@@ -198,7 +198,7 @@ const PoolRoom = (() => {
     }
     const line = element("div", "pool-season__people");
     line.appendChild(element("span", "pool-season__role", "Named by"));
-    line.append(...namers.map((playerIndex) => racerCell(playerIndex, 18)));
+    line.append(...namers.map((playerIndex) => UI.markRacers(racerCell(playerIndex, 18), [playerIndex])));
     return [line];
   }
 
@@ -218,7 +218,31 @@ const PoolRoom = (() => {
       node.append(...podiumBlock(season));
     }
     node.append(...namedBy(season));
+    if (!season.upcoming) {
+      const host = element("span", "pool-season__you");
+      parts.you.push({ host, season });
+      fillYou(host, season);
+      node.appendChild(host);
+    }
     return node;
+  }
+
+  // "You · #14" in a season card; "so far" while it runs. Empty without a viewer, a rating that season, or when the
+  // viewer is on the podium, whose row is marked already. Filled in place, so the timeline is never rebuilt.
+  function fillYou(host, season) {
+    const me = meIndex();
+    const rank = me === null ? undefined : ratingRank(me, ALL_MODES, season.n);
+    if (rank === undefined || rank <= 3) {
+      host.replaceChildren();
+      return;
+    }
+    const rating = ratingFor(participants.players[me], ALL_MODES, season.n);
+    const note = rating && rating.finishes < participants.rating.provisional_finishes ? " · provisional" : "";
+    host.replaceChildren(element("span", "pool-season__you-name", "You"), ` · #${rank}${season.ended ? "" : " so far"}${note}`);
+  }
+
+  function syncYou() {
+    parts.you.forEach(({ host, season }) => fillYou(host, season));
   }
 
   function seasonTimeline() {
@@ -235,6 +259,7 @@ const PoolRoom = (() => {
         suffix: raceLink(raceIndex, `over ${participants.players[runnerUp].name}`),
         value: `${margin.toFixed(2)}s`,
         modeIndex: participants.races[raceIndex].m,
+        others: [runnerUp],
       })
     ));
     const node = card("Photo finishes");
@@ -248,6 +273,7 @@ const PoolRoom = (() => {
         suffix: raceLink(raceIndex, `over ${participants.players[runnerUp].name}`),
         value: formatDuration(margin),
         modeIndex: participants.races[raceIndex].m,
+        others: [runnerUp],
       })
     ));
     const node = card(`Biggest wins · ${participants.blowout_min_field}+ racers`);
@@ -282,7 +308,7 @@ const PoolRoom = (() => {
       const partner = participants.players[second];
       const link = element("a", "pool-muted-link", `& ${partner.name}`);
       link.href = playerHash(partner.id, ALL_MODES);
-      return listRow(index + 1, first, { suffix: link, value: plural(count, ["race", "races"]) });
+      return listRow(index + 1, first, { suffix: link, value: plural(count, ["race", "races"]), others: [second] });
     });
     const node = card("Most-met rivals");
     node.appendChild(rankedList(rows));
@@ -393,6 +419,7 @@ const PoolRoom = (() => {
     );
     section.hidden = false;
     renderAwards();
+    document.addEventListener(ME_EVENT, syncYou);
   }
 
   return { init };

@@ -40,6 +40,7 @@ const TopRated = (() => {
       link.href = playerHash(player.id, modeId);
       link.setAttribute("aria-label", text);
       link.append(UI.avatar(playerIndex, RUNNER_UP_AVATAR_SIZE));
+      UI.markRacers(link, [playerIndex]);
       bindTooltip(link, text);
       strip.append(link);
     }
@@ -73,7 +74,7 @@ const TopRated = (() => {
 
     const avatars = element("span", "top-rated__avatars");
     leaders.slice(0, MAX_AVATARS).forEach((playerIndex) => {
-      avatars.append(UI.avatar(playerIndex, AVATAR_SIZE));
+      avatars.append(UI.markRacers(UI.avatar(playerIndex, AVATAR_SIZE), [playerIndex]));
     });
     avatars.append(UI.crown("top-rated__crown"));
 

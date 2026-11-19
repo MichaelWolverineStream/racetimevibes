@@ -76,6 +76,152 @@
   visibility: hidden;
 }
 
+/* "This is me": a retro player-one chip, outlined until pressed and then filled in --me. The text never
+   changes, so the visible label stays the button's accessible name. */
+.player-me {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: 800 var(--text-xs)/1.2 var(--body);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.player-me__chip {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 18px;
+  padding-inline: 3px;
+  border: 2px solid var(--me);
+  border-radius: 3px;
+  color: var(--me);
+  font: 700 var(--text-sm)/1 var(--display);
+  letter-spacing: 0;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.player-me:hover .player-me__chip {
+  background: color-mix(in srgb, var(--me) 14%, transparent);
+}
+
+.player-me[aria-pressed="true"] .player-me__chip {
+  background: var(--me);
+  color: var(--on-fill);
+}
+
+.player-me:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* You vs them: the viewer against the racer whose page this is, between the heading and the rating strip.
+   --corner-a and --corner-b (Face Off's corners) fill the bar and never colour text. */
+.player-versus {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "title duel"
+    ".     meta";
+  gap: 4px 20px;
+  align-items: center;
+  margin: 18px 24px 0;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--me);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.player-versus__title {
+  grid-area: title;
+  color: var(--accent);
+  font: 800 var(--text-xs)/1.2 var(--body);
+  letter-spacing: var(--label-tracking);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.player-versus__title:hover {
+  text-decoration: underline;
+}
+
+.player-versus__title:focus-visible,
+.player-versus__last:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.player-versus__duel {
+  display: flex;
+  grid-area: duel;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.player-versus__count {
+  min-width: 1.5ch;
+  color: var(--ink);
+  font: 700 var(--text-md)/1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+
+.player-versus__bar {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 3px;
+  height: 12px;
+  min-width: 0;
+  transform-origin: left center;
+  animation: player-versus-grow 500ms ease-out;
+}
+
+.player-versus__fill {
+  min-width: 0;
+  border-radius: 2px;
+}
+
+.player-versus__fill--you {
+  background: var(--corner-a);
+}
+
+.player-versus__fill--them {
+  background: var(--corner-b);
+}
+
+.player-versus__meta {
+  grid-area: meta;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+/* With no duel the note takes the duel's place beside the title. */
+.player-versus__title + .player-versus__meta {
+  grid-area: duel;
+}
+
+.player-versus__last {
+  color: var(--accent);
+}
+
+@keyframes player-versus-grow {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 .player-quote {
   min-width: 0;
 }
@@ -444,6 +590,21 @@
 }
 
 @media (max-width: 620px) {
+  /* The strip stacks: title, duel, note. */
+  .player-versus {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "duel"
+      "meta";
+    margin-inline: 18px;
+    padding: 12px;
+  }
+
+  .player-versus__title + .player-versus__meta {
+    grid-area: meta;
+  }
+
   .heatmap-heading .rating-standing {
     margin-top: 0;
   }
@@ -500,5 +661,18 @@
 
   .player-ratings__period .mode-toggle__button {
     min-height: 24px;
+  }
+}
+
+/* Touch: This is me meets the 24px target. */
+@media (pointer: coarse) {
+  .player-me {
+    min-height: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-versus__bar {
+    animation: none;
   }
 }

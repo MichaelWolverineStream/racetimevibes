@@ -62,22 +62,6 @@ const ShareCard = (() => {
     return { url: UI.avatarUrl(playerIndex), letter: UI.monogramLetter(name), tint: UI.monogramTint(name) };
   }
 
-  // The locked counter badge the racer is closest to finishing; table order breaks ties.
-  function nextBadge(player) {
-    let best = null;
-    participants.badges.forEach((definition) => {
-      const progress = player.progress[definition.id];
-      if (!progress || !definition.target) {
-        return;
-      }
-      const share = progress / definition.target;
-      if (!best || share > best.share) {
-        best = { definition, progress, share };
-      }
-    });
-    return best;
-  }
-
   function dateInZone(timestamp) {
     const timeZone = (participants.timezone && participants.timezone.name) || DEFAULT_TIMEZONE;
     return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(timestamp));
@@ -118,7 +102,7 @@ const ShareCard = (() => {
       ],
       badges,
       badgeTotal: participants.badges.length,
-      nextBadge: badges.length ? null : nextBadge(player),
+      nextBadge: badges.length ? null : UI.nextBadge(player),
       nemesis: nemesis
         ? { ...avatarParts(nemesis.opponent), name: participants.players[nemesis.opponent].name, record: `${nemesis.wins}–${nemesis.losses}` }
         : null,

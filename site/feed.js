@@ -49,6 +49,14 @@ const Feed = (() => {
   let firstNewIndex = 0;
   let racerShown = null;
   const raceIndexByName = new Map();
+  // The race each YOU chip host belongs to, so a racer change refills the chips in place.
+  const youRaces = new WeakMap();
+  const CELEBRATION_DELAY_MS = 800;
+  const CELEBRATION_MS = 5000;
+  const RECAP_PLACES_SHOWN = 6;
+  const RECAP_TIP_RACES = 8;
+  // Race-tag order (docs/highlights.md): the order a celebration is picked in.
+  const CELEBRATION_KINDS = ["record", "preset_record", "first_win", "upset", "photo", "pb", "preset_pb", "milestone", "badge"];
 
   function element(tag, className, text = null) {
     const node = document.createElement(tag);
@@ -148,6 +156,86 @@ const Feed = (() => {
         host.appendChild(UI.tag(kind, count > 1 ? `${label} ×${count}` : label));
       }
     });
+    const you = element("span", "feed-new-you");
+    host.appendChild(you);
+    fillRecap(you);
+    document.addEventListener(ME_EVENT, () => fillRecap(you));
+  }
+
+  // A points change in the overall season rating: a true minus sign, ±0 when flat.
+  function pointsText(delta) {
+    const rounded = Math.round(delta);
+    return rounded === 0 ? "\u00B10" : `${rounded > 0 ? "+" : "\u2212"}${Math.abs(rounded)}`;
+  }
+
+  function resultPlaceText(entry) {
+    const [, place, status] = entry;
+    return status === 0 && place !== null ? ordinal(place) : status === STATUS_DQ ? "DQ" : "DNF";
+  }
+
+  // The viewer's new races, oldest first, each with its result and its overall season rating change.
+  function recapRaces(me) {
+    const season = currentSeason();
+    const own = raceIndexesByPlayer[me] || [];
+    let before = participants.rating.base;
+    own.forEach((raceIndex) => {
+      const race = participants.races[raceIndex];
+      const points = race.e.find((entry) => entry[0] === me)[6];
+      if (raceIndex < firstNewIndex && season !== null && race.s === season && points !== null && points !== undefined) {
+        before = points;
+      }
+    });
+    const rows = [];
+    let previous = before;
+    own.filter((raceIndex) => raceIndex >= firstNewIndex).forEach((raceIndex) => {
+      const race = participants.races[raceIndex];
+      const entry = race.e.find((candidate) => candidate[0] === me);
+      const points = season !== null && race.s === season ? entry[6] : null;
+      let delta = null;
+      if (points !== null && points !== undefined) {
+        delta = points - previous;
+        previous = points;
+      }
+      rows.push({ race, entry, delta, points });
+    });
+    return { rows, before, total: previous };
+  }
+
+  // The recap pill: the viewer's results in the races new since their last visit. Empty (and so
+  // hidden) when they are not set or had no new race. Refilled in place when the racer changes.
+  function fillRecap(host) {
+    host.replaceChildren();
+    const me = meIndex();
+    if (me === null) {
+      return;
+    }
+    const { rows, before, total } = recapRaces(me);
+    if (!rows.length) {
+      return;
+    }
+    const places = rows.slice(0, RECAP_PLACES_SHOWN).map(({ entry }) => resultPlaceText(entry));
+    if (rows.length > RECAP_PLACES_SHOWN) {
+      places.push("\u2026");
+    }
+    const parts = [`YOU: ${rows.length} ${rows.length === 1 ? "race" : "races"}`, places.join(", ")];
+    if (rows.some(({ delta }) => delta !== null)) {
+      parts.push(pointsText(total - before));
+    }
+    const pill = element("span", "feed-new-you__pill", parts.join(" \u00B7 "));
+    pill.tabIndex = 0;
+    const lines = rows.slice(0, RECAP_TIP_RACES).map(({ race, entry, delta }) => {
+      const preset = race.p === null || race.p === undefined ? null : participants.presets[race.p].n;
+      const bits = [modeLabel(modeName(race)), preset, placeText(race, entry)];
+      if (delta !== null) {
+        bits.push(`${pointsText(delta)} points`);
+      }
+      return bits.filter(Boolean).join(" \u00B7 ");
+    });
+    if (rows.length > RECAP_TIP_RACES) {
+      lines.push(`and ${rows.length - RECAP_TIP_RACES} more`);
+    }
+    bindTooltip(pill, lines.join("; "));
+    host.appendChild(pill);
   }
 
   // ---- Feed rows ----
@@ -314,12 +402,40 @@ const Feed = (() => {
   function winnerCell(race) {
     const cell = element("span", "feed-row__winner");
     const winner = race.e.find((entry) => entry[1] === 1 && entry[2] === 0);
+    // The viewer's own result when they did not win; filled in place, so it follows a racer change.
+    const you = element("span", "feed-row__you");
+    youRaces.set(you, race);
+    fillYou(you, race);
     if (!winner) {
-      cell.textContent = "—";
+      cell.append(document.createTextNode("—"), you);
       return { cell, winner: null };
     }
-    cell.append(placePill(1, race.n), UI.avatar(winner[0], 24), playerLink(winner[0], "racer-link"));
+    cell.append(placePill(1, race.n), UI.avatar(winner[0], 24), playerLink(winner[0], "racer-link"), you);
     return { cell, winner };
+  }
+
+  // "YOU" and the viewer's place on a race they entered and did not win; empty otherwise.
+  function fillYou(host, race) {
+    host.replaceChildren();
+    const me = meIndex();
+    const entry = me === null ? undefined : race.e.find((candidate) => candidate[0] === me);
+    if (!entry || (entry[1] === 1 && entry[2] === 0)) {
+      return;
+    }
+    const finished = entry[2] === 0 && entry[1] !== null;
+    const chip = element("span", "feed-you-chip");
+    chip.setAttribute("role", "img");
+    chip.setAttribute("aria-label", `You: ${placeText(race, entry)}`);
+    chip.append(element("span", "feed-you-chip__label", finished ? "YOU" : `YOU ${placeText(race, entry)}`));
+    if (finished) {
+      chip.appendChild(placePill(entry[1], race.n));
+    }
+    bindTooltip(chip, `You: ${placeText(race, entry)}`);
+    host.appendChild(chip);
+  }
+
+  function refillYouChips() {
+    document.querySelectorAll("#latest-feed .feed-row__you").forEach((host) => fillYou(host, youRaces.get(host)));
   }
 
   // A finisher's time, or why there is none.
@@ -352,7 +468,7 @@ const Feed = (() => {
 
   function entrantRow(race, raceIndex, entry, entryIndex) {
     const [playerIndex, place, status, seconds] = entry;
-    const row = element("li", "feed-entrant");
+    const row = UI.markRacers(element("li", "feed-entrant"), [playerIndex]);
     const placeCell = element("span", "feed-entrant__place");
     if (status === 0 && place !== null) {
       placeCell.appendChild(placePill(place, race.n));
@@ -535,6 +651,8 @@ const Feed = (() => {
   // each row shows. The prefix keeps detail ids unique when one race is on both lists.
   function raceRow(race, raceIndex, { idPrefix, focus }) {
     const wrapper = element("div", focus === null ? "feed-row" : "feed-row feed-row--racer");
+    // Every entrant but the page's racer: a racer's page marks the races the viewer shared with them.
+    UI.markRacers(wrapper, race.e.map((entry) => entry[0]).filter((playerIndex) => playerIndex !== focus));
     const line = element("div", "feed-row__line");
     const detailId = `${idPrefix}-detail-${raceIndex}`;
 
@@ -770,7 +888,7 @@ const Feed = (() => {
 
   function racerCard(playerIndex, deltas) {
     const season = currentSeason();
-    const card = element("div", "feed-racer");
+    const card = UI.markRacers(element("div", "feed-racer"), [playerIndex]);
     card.appendChild(UI.avatar(playerIndex, 32));
     const body = element("div", "feed-racer__body");
     const head = element("div", "feed-racer__head");
@@ -802,6 +920,195 @@ const Feed = (() => {
       indexes.forEach((playerIndex) => section.appendChild(racerCard(playerIndex, deltas)));
     }
     host.replaceChildren(section);
+  }
+
+  // ---- Your card ----
+
+  function dailyStreakSuffix(playerIndex) {
+    const daily = participants.players[playerIndex].streaks?.daily?.current;
+    if (!daily || daily[0] < 2) {
+      return null;
+    }
+    const today = todayInZone();
+    if (daily[2] === today) {
+      return " · raced today ✓";
+    }
+    return daily[2] === shiftIsoDate(today, -1) ? " · race today to keep it" : null;
+  }
+
+  function youStandingText(player, season) {
+    const rating = ratingFor(player, ALL_MODES, season);
+    if (rating === null) {
+      return season === null ? "Unrated" : `No races in ${seasonLabel(season)} yet`;
+    }
+    const rank = ratingRank(participants.players.indexOf(player), ALL_MODES, season);
+    const parts = [`#${integerFormatter.format(rank)}`, integerFormatter.format(Math.round(rating.rating))];
+    if (season !== null) {
+      parts.push(seasonLabel(season));
+    }
+    if (rating.finishes < participants.rating.provisional_finishes) {
+      parts.push("provisional");
+    }
+    return parts.join(" · ");
+  }
+
+  // The racer one rank step above the viewer: the largest rank number below theirs, name order on a tie.
+  function nextRankLine(me, season) {
+    const ranks = ratingRanks(ALL_MODES, season);
+    const myRank = ranks.get(me);
+    if (myRank === undefined) {
+      return null;
+    }
+    const line = element("p", "feed-you__next");
+    if (myRank === 1) {
+      line.append(UI.crown("feed-you__crown"), document.createTextNode(season === null ? "You lead all time" : `You lead ${seasonLabel(season)}`));
+      return line;
+    }
+    let target = null;
+    ranks.forEach((rank, playerIndex) => {
+      if (rank >= myRank) {
+        return;
+      }
+      if (target === null || rank > target.rank || (rank === target.rank && playerName(playerIndex).localeCompare(playerName(target.playerIndex)) < 0)) {
+        target = { rank, playerIndex };
+      }
+    });
+    const mine = Math.round(ratingFor(participants.players[me], ALL_MODES, season).rating);
+    const theirs = Math.round(ratingFor(participants.players[target.playerIndex], ALL_MODES, season).rating);
+    const gap = Math.max(1, theirs - mine);
+    line.append(
+      document.createTextNode(`${integerFormatter.format(gap)} ${gap === 1 ? "point" : "points"} behind `),
+      playerLink(target.playerIndex, "racer-link"),
+      document.createTextNode(` for #${integerFormatter.format(target.rank)}`),
+    );
+    return line;
+  }
+
+  // The first sidebar section: the viewer's standing, streak, next rank and closest badge. It fills its own
+  // host, so a racer change never re-renders the sidebar; hidden while nobody is set.
+  function renderYouCard(host) {
+    const me = meIndex();
+    host.hidden = me === null;
+    host.replaceChildren();
+    if (me === null) {
+      return;
+    }
+    const player = participants.players[me];
+    const season = currentSeason();
+    const section = sidebarSection("You");
+    const card = element("article", "feed-you");
+
+    const face = element("a", "feed-you__face");
+    face.href = playerHash(player.id, ALL_MODES);
+    face.tabIndex = -1;
+    face.setAttribute("aria-hidden", "true");
+    face.appendChild(UI.avatar(me, 48));
+    const head = element("div", "feed-you__head");
+    head.appendChild(playerLink(me, "racer-link feed-you__name"));
+    const movement = rankMovementNode(sidebarRankDeltas(), me, season);
+    if (movement) {
+      head.appendChild(movement);
+    }
+    const body = element("div", "feed-you__body");
+    body.append(head, element("p", "feed-you__standing", youStandingText(player, season)));
+    const hero = element("div", "feed-you__hero");
+    hero.append(face, body);
+    card.appendChild(hero);
+
+    const streaks = activeStreakTexts(me);
+    if (streaks.length) {
+      const suffix = dailyStreakSuffix(me) ?? "";
+      card.appendChild(element("p", "feed-you__streak", streaks.map((text) => (text.endsWith("-day streak") ? text + suffix : text)).join(" · ")));
+    }
+    const next = nextRankLine(me, season);
+    if (next) {
+      card.appendChild(next);
+    }
+    const upcoming = UI.nextBadge(player);
+    if (upcoming) {
+      const row = element("div", "feed-you__badge");
+      row.append(
+        UI.badge(upcoming.definition, { progress: upcoming.progress, compact: true }),
+        element("span", "feed-you__badge-text", `${upcoming.definition.label} · ${upcoming.progress} of ${upcoming.definition.target}`),
+      );
+      card.appendChild(row);
+    }
+    section.appendChild(card);
+    host.appendChild(section);
+  }
+
+  // ---- Welcome-back celebration ----
+
+  // The viewer's moments in the new races, as [text], best first: race-tag order, newest first within a kind.
+  function celebrationMoments(me, afterIndex) {
+    const found = [];
+    for (let raceIndex = participants.races.length - 1; raceIndex >= Math.max(firstNewIndex, afterIndex + 1); raceIndex -= 1) {
+      const race = participants.races[raceIndex];
+      (race.t || []).forEach((tag) => {
+        if (tag[1] !== me || !CELEBRATION_KINDS.includes(tag[0])) {
+          return;
+        }
+        const text = celebrationText(tag, race);
+        if (text) {
+          found.push({ order: CELEBRATION_KINDS.indexOf(tag[0]), text });
+        }
+      });
+    }
+    // Array.sort is stable, so the newest-first order within a kind survives.
+    return found.sort((a, b) => a.order - b.order).map((moment) => moment.text);
+  }
+
+  function celebrationText(tag, race) {
+    const [kind, , a, b] = tag;
+    const mode = modeLabel(modeName(race));
+    const preset = race.p === null || race.p === undefined ? "preset" : participants.presets[race.p].n;
+    switch (kind) {
+      case "record":
+        return `You got the ${mode} record! ${formatDuration(a)}`;
+      case "preset_record":
+        return `You got the ${preset} record! ${formatDuration(a)}`;
+      case "first_win":
+        return "You got your first win!";
+      case "upset":
+        return `Upset! You beat ${playerName(a)}.`;
+      case "photo":
+        return `Photo finish! You beat ${playerName(a)} by ${Number(b).toFixed(2)}s.`;
+      case "pb":
+        return `New ${mode} PB! ${formatDuration(a)}`;
+      case "preset_pb":
+        return `New ${preset} PB! ${formatDuration(a)}`;
+      case "milestone":
+        return `Your ${ordinal(a)} race!`;
+      case "badge":
+        return `You got the ${badgeDefinition(a).label} badge!`;
+      default:
+        return null;
+    }
+  }
+
+  // One non-modal dialog for the viewer's best new moment. A reload repeats the session's "new" set, so the
+  // stored newest race and featured date keep a moment from showing twice.
+  function celebrate() {
+    const me = meIndex();
+    if (me === null || document.querySelector(".ui-dialog, .ui-badge-panel")) {
+      return;
+    }
+    const stored = Store.get("celebrated", null) || {};
+    const afterIndex = stored.race ? (raceIndexByName.get(stored.race) ?? -1) : -1;
+    const moments = celebrationMoments(me, afterIndex);
+    const today = todayInZone();
+    const featured = featuredToday();
+    const featuredNow = featured !== null && featured.playerIndex === me && stored.featured !== today;
+    if (featuredNow) {
+      moments.push("You're today's featured racer!");
+    }
+    if (!moments.length) {
+      return;
+    }
+    const extra = moments.length - 1;
+    UI.dialogBox(extra > 0 ? `${moments[0]} (+${extra} more)` : moments[0], { duration: CELEBRATION_MS });
+    const newest = participants.races.length > firstNewIndex ? participants.races.at(-1).r : (stored.race ?? null);
+    Store.set("celebrated", { race: newest, featured: featuredNow ? today : (stored.featured ?? null) });
   }
 
   // ---- Featured daily racer ----
@@ -1033,7 +1340,7 @@ const Feed = (() => {
     const race = participants.races[raceIndex];
     const description = tagDescription(tag) ?? { kind: "badge", detail: null, rarity: "common" };
     const kind = TAG_KINDS.has(tag[0]) ? tag[0] : "badge";
-    const card = element("article", "feed-spotlight");
+    const card = UI.markRacers(element("article", "feed-spotlight"), [playerIndex]);
     card.style.setProperty("--spot", `var(--tag-${kind.replaceAll("_", "-")})`);
 
     // The face repeats the name link for the pointer only, so it adds no tab stop.
@@ -1173,7 +1480,7 @@ const Feed = (() => {
     const section = sidebarSection("Latest badges");
     const grid = element("div", "feed-badges");
     unlocks.forEach(({ playerIndex, badgeId, raceIndex }) => {
-      const cell = element("div", "feed-badges__item");
+      const cell = UI.markRacers(element("div", "feed-badges__item"), [playerIndex]);
       const note = participants.players[playerIndex].badge_notes?.[badgeId] ?? null;
       cell.append(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, note }), playerLink(playerIndex, "racer-link"));
       grid.appendChild(cell);
@@ -1191,7 +1498,7 @@ const Feed = (() => {
     const section = sidebarSection("Latest avatars");
     const grid = element("div", "feed-avatars");
     changes.forEach(([playerIndex, isoDate]) => {
-      const cell = element("div", "feed-avatars__item");
+      const cell = UI.markRacers(element("div", "feed-avatars__item"), [playerIndex]);
       const when = element("span", "feed-avatars__when", UI.relativeDay(isoDate));
       when.tabIndex = 0;
       bindTooltip(when, `First seen ${formatRaceDate(isoDate)}`);
@@ -1204,6 +1511,10 @@ const Feed = (() => {
 
   function renderSidebar() {
     const sidebar = document.getElementById("updates-sidebar-body");
+    const youHost = element("div", "feed-side-you");
+    sidebar.appendChild(youHost);
+    renderYouCard(youHost);
+    document.addEventListener(ME_EVENT, () => renderYouCard(youHost));
     renderFeatured(sidebar);
     const racersHost = element("div", "feed-side-racers");
     sidebar.appendChild(racersHost);
@@ -1239,6 +1550,8 @@ const Feed = (() => {
     renderSidebar();
     bindSidebarToggle();
     renderHero();
+    document.addEventListener(ME_EVENT, refillYouChips);
+    setTimeout(celebrate, CELEBRATION_DELAY_MS);
   }
 
   return { init, racerResults };

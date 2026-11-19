@@ -172,6 +172,8 @@ const Records = (() => {
       return row;
     }
     const [raceIndex, holder, seconds] = steps.at(-1);
+    // The global marked-row rule for tables (styles.css) does the rest.
+    UI.markRacers(row, [holder]);
     const breaks = steps.length - 1;
     const broken = element("span", "records-board__breaks", `×${breaks}`);
     broken.tabIndex = 0;
@@ -254,9 +256,9 @@ const Records = (() => {
       clipPath,
     });
     svg.append(wash, line);
-    steps.forEach(([, , seconds], index) => {
+    steps.forEach(([, holder, seconds], index) => {
       const kind = index === steps.length - 1 ? "current" : index === 0 ? "first" : "break";
-      svg.appendChild(stepMark({ cx: x(days[index]), cy: y(seconds), kind, label: stepLabel(steps, index), at: at[index] }));
+      svg.appendChild(stepMark({ cx: x(days[index]), cy: y(seconds), kind, label: stepLabel(steps, index), at: at[index], holder }));
     });
     return svg;
   }
@@ -308,6 +310,8 @@ const Records = (() => {
       reveal(panels);
     } else {
       parts.progress.replaceChildren(...progressPanels.get(state.mode));
+      // A cached panel may have been off the page when the viewer's racer changed.
+      UI.syncMarks(parts.progress);
     }
     parts.progress.hidden = !charted.length;
     const left = presetIndexes.filter((index) => !isCharted(index)).map((index) => participants.presets[index].n);
@@ -342,8 +346,16 @@ const Records = (() => {
 
   function violinLegend() {
     const legend = element("p", "violin-legend violin-legend--standalone");
-    legend.append(element("span", "line-key"), "Median ", element("span", "line-key line-key--gold"), "Gold median");
+    // The viewer's own key, shown in place while a racer is set: the highlighted dots' outline, as on a racer page.
+    parts.youKey = element("span");
+    parts.youKey.append(element("span", "racer-key"), "You ");
+    syncYouKey();
+    legend.append(parts.youKey, element("span", "line-key"), "Median ", element("span", "line-key line-key--gold"), "Gold median");
     return legend;
+  }
+
+  function syncYouKey() {
+    parts.youKey.hidden = meIndex() === null;
   }
 
   // The mode's most-raced presets, one violin each; the presets table below lists them all.
@@ -358,7 +370,9 @@ const Records = (() => {
     const modeName = modeLabel(participants.modes[state.mode]);
     renderPresetViolins(parts.violin, charted, {
       id: "records-violin",
-      highlightPlayer: null,
+      // The viewer's dots are drawn on top; the field stays at full strength (fadeOthers false).
+      highlightPlayer: meIndex(),
+      fadeOthers: false,
       title: `${modeName} finish times by preset`,
       description: "One violin per preset: each dot is one finish, the shape shows where finishes cluster, the bold line marks the median, and the gold line marks the median winning time.",
       emptyText: `No preset in this mode has ${VIOLIN_MIN_PRESET_RACES}+ races.`,
@@ -417,6 +431,11 @@ const Records = (() => {
     layout.append(parts.rail, main);
     body.replaceChildren(sectionHeading("Hall of Records", "Fastest time on every preset"), layout);
     renderModeScoped();
+    // The marks follow by UI.markRacers; the violins and their key change with the viewer's racer, in place.
+    document.addEventListener(ME_EVENT, () => {
+      syncYouKey();
+      renderFinishTimes();
+    });
   }
 
   return { init };

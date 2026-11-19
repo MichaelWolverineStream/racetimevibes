@@ -222,3 +222,28 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* "This is me": a record the viewer holds gets a --me ring outside its dot, so the dot keeps its hollow-first and
+   halo-current styling. Only charts given a holder (the Hall of Records) carry the ring node. It pops in with its dot. */
+.step-chart__me {
+  display: none;
+  fill: none;
+  stroke: var(--me);
+  stroke-width: 2;
+  pointer-events: none;
+  transition: opacity 240ms ease-out calc(var(--i, 0) * 60ms + var(--at, 0) * var(--draw));
+}
+
+.chart-mark[data-me] .step-chart__me {
+  display: inline;
+}
+
+.step-chart-host--pending .step-chart__me {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-chart__me {
+    transition: none;
+  }
+}

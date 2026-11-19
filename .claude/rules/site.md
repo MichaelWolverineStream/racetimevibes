@@ -13,12 +13,12 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 
 **Load order and module shape**
 - Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras`/`FaceOff` checks in `leaderboard.js` would take down `loadParticipants`.
-- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `FaceOff`, `EasterEggs`, `Store`, `Following`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
+- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `FaceOff`, `EasterEggs`, `Store`, `Following`, `Me`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
 - Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
 **Shared helpers: reuse, don't rebuild**
 - `app.js` is the base layer: `svgElement`, `mountChart`, `bindTooltip`/`showTooltip`/`hideTooltip`, the touch helpers `isTouchPointer`, `tapEchoing` and `showTouchTooltip`, and formatters such as `formatModeName`.
-- `leaderboard.js` owns data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`.
+- `leaderboard.js` owns data and routing: `participants`, `playerHash`, `modeLabel`, `formatDuration`, `formatRaceDate`, `meIndex()` (the viewer's player index or null; an id the data lacks counts as nobody).
   - **Viewer time zone:** start times shown to the viewer (Upcoming races, Latest results rows and their date headings) go through `viewerTimeZone()` and `viewerDateHour(seconds)`. Everything else stays in the data's timezone (`todayInZone`, `race.d`).
   - **Routes and views:** it owns the route formats (`playerHash`, `faceoffHash`, `parseRoute`) and the views (`showPlayer`, `showFaceOff`, `showLeaderboard`). Every other view calls `leaveFaceOff`. A feature module such as `FaceOff` is called by the view, and changes its pair by replacing the hash, so the router stays the one path that renders.
   - **The board without a hash:** `openBoard` is the one way there, for the masthead's mark and Face Off's ← Back when it has nothing to step back to. A link to `./` would reload the page, so it pushes the bare address and calls `route` itself. Never send the board to the top with a hash route or `href="#"`: Back to an empty-hash entry must keep returning to where the board was left.
@@ -27,13 +27,19 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
   - `ratingCategories()` is the page's one definition of a rating category (overall plus every mode but `unknown`), used by the top-rated banner and the racer page's rating strip. `scripts/featured.py` mirrors it for the top 3s the featured racer avoids.
   - `currentSeason()` returns the newest season or null. A season is a number; `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rank helpers take an optional `season`, so callers passing nothing stay all-time. Predictions (`hasRating`, `winChance`), the racer page's rating chart and the player card never pass one. The racer page's rating strip passes the current season unless its toggle is on All time.
   - ▲/▼ is for rank movement only. A points change shows as +N, −N or ±0.
-- `ui.js` exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `crown`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`.
+- `ui.js` exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `crown`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`, `markRacers`, `syncMarks`, `nextBadge`.
 - The private `element(tag, className, text)` copies in `ui.js`, `feed.js`, `records.js`, `racer-extras.js`, `share-card.js` and `faceoff.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
 
 **Modals and events**
 - Modals use `holdModal(close)` in `ui.js`: it makes `main` and `footer` inert, closes on Escape and restores focus. A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`, which returns `{ panel, close }`.
 - Close a modal in exactly this order: remove its nodes, clear `openDialog`, call `release()` (lifts `inert`, then restores focus), call `onClose`. Focus can't move into an inert page, and an `onClose` that opens a dialog must find `openDialog` cleared.
-- Non-modal toasts never touch `inert`. Custom event names are constants, such as `FOLLOWING_EVENT` in `store.js`.
+- Non-modal toasts never touch `inert`. Custom event names are constants, such as `FOLLOWING_EVENT` and `ME_EVENT` in `store.js`.
+
+**This is me**
+- Mark any node that shows racers with `UI.markRacers(node, playerIndexes)`. It sets `data-racers` and the boolean `data-me`. One `ME_EVENT` listener re-syncs every mark, so nothing re-renders for a highlight. A cached node that was detached when the event fired calls `UI.syncMarks(root)` when it is re-attached.
+- Content that exists only because a racer is set (the nav avatar, the YOU chip, the You card, the recap, the versus strip, Jump to me, the violin highlight) refills its own small host in place on `ME_EVENT`, never by re-rendering a list, so pages, open rows, focus and scroll survive.
+- Style a mark per component with the row recipe (wash, 3px bar, bold name) or the avatar ring.
+- `renderSortableTable` takes an optional `rowRacers(row)` that marks each row; a marked row in any `.table-wrap` table gets the recipe from `styles.css`.
 
 **Tooltips and touch**
 - Information goes in a tooltip through `bindTooltip`, never in `title=`, which never shows on a touch screen.
@@ -65,6 +71,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
   - A dark mode or tag hue keeps its light hue and lightness order. It needs 3:1 against `--panel`, and its colour-blind separation from the others must stay at least that of the light set. Check both before changing one.
   - The LCD hit counter, the Zelda dialog (`--zelda-*`), the easter-egg glow and the nav band's white sheen are the same in both themes on purpose.
   - `theme.js` mirrors `--brand-fill` for the browser toolbar and spells out `STORAGE_PREFIX`. `tests/test_site_theme.py` checks both.
+- `--me` (alias of `--accent`), `--me-wash` and `--negative-on-me` are the "This is me" role. `--me-wash` is a literal per theme, and hover keeps it because a deeper wash fails `--muted`. `[data-me]` swaps `--negative-on-me` in for `--negative`, so red text inside a marked row keeps 4.5:1; rules that colour text with `var(--red)` directly would miss it. `tests/test_site_theme.py` pairs text on `--me-wash` and checks `--me` against `--panel` and the wash.
 - `--corner-a` and `--corner-b` are Face Off's red and blue corner data role, with their own values, so a corner never reads as a mode. They colour fills, rings and bars, never text, and `tests/test_site_theme.py` checks both at 3:1 against the panel. `faceoff.css` sets `--corner` and `--lean` per side, and its rules use only those two.
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - `--ladder-series` and `--ladder-series-muted` mean the Ladder Data season bars, the season in progress and the two Ladder Data panels' top rules.

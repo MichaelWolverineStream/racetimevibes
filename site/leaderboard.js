@@ -18,6 +18,9 @@ const DEFAULT_TIMEZONE = "America/New_York";
 const RACE_ROOT = "https://racetime.gg/";
 const BASE_TITLE = document.title;
 const SEASON_ALL_VALUE = "all";
+// Must match .section-nav__me in styles.css.
+const NAV_ME_AVATAR_SIZE = 32;
+const JUMP_ME_AVATAR_SIZE = 18;
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -390,6 +393,13 @@ function computeBoardRows(modeIndex, season) {
 
 function playerIndexFor(userId) {
   return playerIndexById.get(userId);
+}
+
+// The viewer's own racer ("This is me") as a player index, or null. A stored id the data no longer
+// holds stays stored but marks nobody.
+function meIndex() {
+  const userId = Me.id();
+  return userId === null ? null : playerIndexFor(userId) ?? null;
 }
 
 // Competition ranks: one more than the number of racers rated strictly higher, so ties share a rank.
@@ -876,7 +886,8 @@ function nextSort(state, column) {
   return { key: column.key, direction: column.defaultDirection || "desc" };
 }
 
-function renderSortableTable(container, columns, rows, state, onSort) {
+// rowRacers, when given, returns the player indexes a row shows, so the viewer's own row is marked.
+function renderSortableTable(container, columns, rows, state, onSort, { rowRacers = null } = {}) {
   const table = document.createElement("table");
   const head = document.createElement("thead");
   const headRow = document.createElement("tr");
@@ -915,6 +926,9 @@ function renderSortableTable(container, columns, rows, state, onSort) {
   const body = document.createElement("tbody");
   rows.forEach((row, rowIndex) => {
     const bodyRow = document.createElement("tr");
+    if (rowRacers) {
+      UI.markRacers(bodyRow, rowRacers(row));
+    }
     columns.forEach((column) => {
       const cell = document.createElement("td");
       cell.classList.add(`align-${column.align || "right"}`);
@@ -1156,7 +1170,7 @@ function renderLeaderboard() {
     renderSortableTable(container, columns, sortRows(visible, columns, leaderboardState.sort), leaderboardState, (column) => {
       leaderboardState.sort = nextSort(leaderboardState, column);
       renderLeaderboard();
-    });
+    }, { rowRacers: (row) => [row.p] });
   }
 
   const sortLabel = leaderboardState.sort
@@ -1359,7 +1373,7 @@ function renderPlayerView(playerIndex) {
     renderSortableTable(container, columns, sortRows(visible, columns, playerState.sort), playerState, (column) => {
       playerState.sort = nextSort(playerState, column);
       renderPlayerView(playerIndex);
-    });
+    }, { rowRacers: (row) => [row.opponent] });
   }
 
   announce(
@@ -1643,6 +1657,72 @@ function openBoard(event, { toTop }) {
   route(false, { toTop });
 }
 
+// The nav's shortcut to the viewer's own racer page: their avatar at the band's far left, shown once they
+// have said who they are. The nav is hidden on racer pages, so the link never points at the page it is on.
+function renderNavMe() {
+  const link = document.querySelector("#nav-me");
+  const index = meIndex();
+  if (index === null || typeof UI === "undefined") {
+    link.hidden = true;
+    link.replaceChildren();
+    link.removeAttribute("href");
+    return;
+  }
+  const player = participants.players[index];
+  link.href = playerHash(player.id, ALL_MODES);
+  link.setAttribute("aria-label", `Your racer page: ${player.name}`);
+  link.replaceChildren(UI.avatar(index, NAV_ME_AVATAR_SIZE));
+  link.hidden = false;
+}
+
+// "Jump to me" sits with the board's filters once the viewer has said who they are.
+function renderJumpToMe() {
+  const button = document.querySelector("#leaderboard-me");
+  const index = meIndex();
+  if (index === null || typeof UI === "undefined") {
+    button.hidden = true;
+    button.replaceChildren();
+    return;
+  }
+  const label = document.createElement("span");
+  label.textContent = "Jump to me";
+  button.replaceChildren(UI.avatar(index, JUMP_ME_AVATAR_SIZE), label);
+  button.hidden = false;
+}
+
+// Centres the viewer's row in the part of the board below its sticky header. The board scrolls itself
+// (not scrollIntoView, which would also scroll the page and could leave the row under the header), and the
+// page only moves far enough to bring the board into view.
+function jumpToMe() {
+  const container = document.querySelector("#leaderboard-table");
+  const row = container.querySelector("tbody tr[data-me]");
+  if (!row) {
+    const message = "You're not on this board with these filters.";
+    announce("#leaderboard-announcer", message);
+    UI.dialogBox(message);
+    return;
+  }
+  const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  const headHeight = container.querySelector("thead").offsetHeight;
+  const rowBox = row.getBoundingClientRect();
+  const rowTop = rowBox.top - (container.getBoundingClientRect().top + container.clientTop) + container.scrollTop;
+  const visibleHeight = container.clientHeight - headHeight;
+  const top = rowTop + rowBox.height / 2 - (headHeight + visibleHeight / 2);
+  container.scrollTo({ top: Math.max(0, top), behavior });
+  container.scrollIntoView({ block: "nearest", behavior });
+  const link = row.querySelector("a");
+  if (link) {
+    link.focus({ preventScroll: true });
+  }
+  if (behavior === "smooth") {
+    row.classList.remove("leaderboard-row--flash");
+    // Reading a layout property restarts the animation when the row is already flashing.
+    void row.offsetWidth;
+    row.classList.add("leaderboard-row--flash");
+    row.addEventListener("animationend", () => row.classList.remove("leaderboard-row--flash"), { once: true });
+  }
+}
+
 function bindFilter(inputSelector, state, rerender) {
   document.querySelector(inputSelector).addEventListener("input", (event) => {
     state.query = event.target.value.trim().toLowerCase();
@@ -1693,6 +1773,12 @@ async function loadParticipants() {
       }
     });
     bindSeasonControl();
+    renderNavMe();
+    document.addEventListener(ME_EVENT, renderNavMe);
+    renderJumpToMe();
+    document.addEventListener(ME_EVENT, renderJumpToMe);
+    document.querySelector("#leaderboard-me").addEventListener("click", jumpToMe);
+    bindTooltip(document.querySelector("#nav-me"), "Your racer page");
 
     renderLeaderboard();
     status.hidden = true;

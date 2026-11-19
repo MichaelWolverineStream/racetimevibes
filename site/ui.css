@@ -642,6 +642,13 @@ tr:focus-within .follow-star--row,
   outline-offset: 2px;
 }
 
+/* The viewer's own racer ("This is me"): an inset ring on the wash, inside the cell, so the scrolling list
+   never clips it. */
+.ui-badge-panel__holder[data-me] {
+  background: var(--me-wash);
+  box-shadow: inset 0 0 0 2px var(--me);
+}
+
 /* A fade at the bottom of the holder list while more is hidden: the cover gradient matches the
    panel's --panel ground and scrolls with the content, the shadow stays put. */
 @media (max-width: 980px) {

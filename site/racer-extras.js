@@ -7,10 +7,20 @@ const RacerExtras = (() => {
   const RATING_CHART_ID = "player-rating";
   // Keeps the heading's bubble to about two lines; the whole comment shows on hover.
   const QUOTE_MAX_LENGTH = 80;
+  const ME_DIALOG_MS = 4000;
+  const VERSUS_AVATAR_SIZE = 28;
+  const VERSUS_DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   let renderedPlayer = null;
   let quoteToken = 0;
   let followListening = false;
+  let meListening = false;
   let ratingObserver = null;
   // The rating strip's period: the current season (false) or all time (true). It holds from racer to racer
   // while the page is open, and a reload starts on the season again, like Face Off's tale of the tape.
@@ -56,6 +66,123 @@ const RacerExtras = (() => {
 
   function syncFollowLabel(label) {
     label.dataset.following = String(Following.has(label.dataset.playerId));
+  }
+
+  // "This is me": one racer per browser (Me in store.js). The visible text never changes, so it stays the
+  // button's accessible name; aria-pressed and the filled 1P chip say whether this racer is you.
+  function renderMe(playerIndex) {
+    const player = participants.players[playerIndex];
+    const button = element("button", "player-me");
+    button.type = "button";
+    button.dataset.playerId = player.id;
+    const chip = element("span", "player-me__chip", "1P");
+    chip.setAttribute("aria-hidden", "true");
+    button.append(chip, element("span", "player-me__label", "This is me"));
+    syncMeButton(button);
+    button.addEventListener("click", () => {
+      const { previous, current } = Me.toggle(player.id);
+      UI.dialogBox(meChangeText(previous, current), { duration: ME_DIALOG_MS });
+    });
+    document.querySelector("#player-me").replaceChildren(button);
+    if (!meListening) {
+      meListening = true;
+      document.addEventListener(ME_EVENT, () => {
+        const current = document.querySelector("#player-me .player-me");
+        if (current) {
+          syncMeButton(current);
+        }
+        if (renderedPlayer !== null) {
+          renderVersus(renderedPlayer);
+        }
+      });
+    }
+  }
+
+  function syncMeButton(button) {
+    button.setAttribute("aria-pressed", String(Me.is(button.dataset.playerId)));
+  }
+
+  // A racer the data no longer holds counts as nobody.
+  function meChangeText(previous, current) {
+    const nameOf = (userId) => {
+      const index = userId === null ? undefined : playerIndexFor(userId);
+      return index === undefined ? null : participants.players[index].name;
+    };
+    if (current === null) {
+      return "This page has forgotten who you are.";
+    }
+    const name = nameOf(current);
+    const before = nameOf(previous);
+    return before === null
+      ? `You got the Moon Pearl! This page will remember you as ${name}.`
+      : `${name} it is! ${before} is just another racer again.`;
+  }
+
+  // "You vs them", on another racer's page once the viewer has said who they are: the all-modes head-to-head
+  // as a split bar, the last meeting and the chance of winning the next race (the overall all-time rating,
+  // like every prediction). Hidden on the viewer's own page and with nobody set.
+  function renderVersus(playerIndex) {
+    const host = document.querySelector("#player-versus");
+    const me = meIndex();
+    if (me === null || me === playerIndex) {
+      host.hidden = true;
+      host.replaceChildren();
+      return;
+    }
+    const them = participants.players[playerIndex];
+    const record = computeHeadToHead(me, ALL_MODES).find((matchup) => matchup.opponent === playerIndex);
+    const chance = winChance(participants.players[me], them);
+    const chanceText = chance === null ? null : `your win chance next race ${Math.round(chance * 100)}%`;
+
+    const title = element("a", "player-versus__title", `You vs ${them.name} \u2192`);
+    title.href = faceoffHash(participants.players[me].id, them.id);
+    const children = [title];
+    if (record === undefined) {
+      children.push(element("p", "player-versus__meta", [`You've never raced ${them.name}`, chanceText].filter(Boolean).join(" \u00B7 ")));
+    } else {
+      children.push(versusDuel(me, playerIndex, record), versusMeta(record, chanceText));
+    }
+    host.replaceChildren(...children);
+    host.hidden = false;
+  }
+
+  function versusDuel(me, them, record) {
+    const names = [participants.players[me].name, participants.players[them].name];
+    const detail = `${record.wins} ${record.wins === 1 ? "win" : "wins"} for ${names[0]}, ${record.losses} for ${names[1]}${record.draws ? `, ${pluralize(record.draws, "draw")}` : ""}`;
+    const count = (value) => {
+      const node = element("strong", "player-versus__count", String(value));
+      bindTooltip(node, detail);
+      return node;
+    };
+    // Only draws, or nothing decided, splits the bar evenly.
+    const decided = record.wins + record.losses > 0;
+    const share = (value) => (decided ? value : 1);
+    const bar = element("div", "player-versus__bar");
+    bar.setAttribute("role", "img");
+    bar.setAttribute("aria-label", detail);
+    const mine = element("span", "player-versus__fill player-versus__fill--you");
+    const theirs = element("span", "player-versus__fill player-versus__fill--them");
+    mine.style.flexGrow = String(share(record.wins));
+    theirs.style.flexGrow = String(share(record.losses));
+    bar.append(mine, theirs);
+    const duel = element("div", "player-versus__duel");
+    duel.append(UI.avatar(me, VERSUS_AVATAR_SIZE), count(record.wins), bar, count(record.losses), UI.avatar(them, VERSUS_AVATAR_SIZE));
+    return duel;
+  }
+
+  function versusMeta(record, chanceText) {
+    const race = participants.races[record.lastRaceIndex];
+    const meta = element("p", "player-versus__meta");
+    const date = element("a", "player-versus__last", formatRaceDate(race.d));
+    date.href = RACE_ROOT + race.r;
+    date.target = "_blank";
+    date.rel = "noopener noreferrer";
+    bindTooltip(date, VERSUS_DATE_FORMAT.format(new Date(`${race.d}T00:00:00Z`)));
+    meta.append("last met ", date);
+    if (chanceText !== null) {
+      meta.append(` \u00B7 ${chanceText}`);
+    }
+    return meta;
   }
 
   function commentsFor(data, playerIndex) {
@@ -133,6 +260,7 @@ const RacerExtras = (() => {
   function renderHeading(playerIndex) {
     document.querySelector("#player-avatar").replaceChildren(UI.avatar(playerIndex, 64));
     renderFollow(playerIndex);
+    renderMe(playerIndex);
     document.querySelector("#player-share").replaceChildren(ShareCard.button(playerIndex));
     renderQuote(playerIndex);
   }
@@ -568,6 +696,7 @@ const RacerExtras = (() => {
     if (renderedPlayer !== playerIndex) {
       renderedPlayer = playerIndex;
       renderHeading(playerIndex);
+      renderVersus(playerIndex);
       renderSummary(playerIndex);
       renderBadges(playerIndex);
       renderRatings(playerIndex);

@@ -93,6 +93,12 @@
      passes colour-blind separation (CVD ΔE 21.6 light, 19.2 dark) and 3:1 on the panel in both themes. */
   --corner-a: #e34948;
   --corner-b: #2a78d6;
+  /* "This is me": the viewer's own racer, in the brand's green (Link's). The wash keeps --ink, --muted, --accent,
+     the medal inks and --positive at 4.5:1, but light --negative falls under it, so a marked row swaps in
+     --negative-on-me (see This is me). Hover keeps the wash: any deeper and --muted falls under 4.5:1. */
+  --me: var(--accent);
+  --me-wash: #e9f1ee;
+  --negative-on-me: #b8443a;
   /* One hue per race-tag kind, in race-tag order with Hardest last; every pair stays apart under colour-blind simulation.
      The record kinds share PB's green on purpose: a record is a PB for the whole ladder. Their shine (ui.css) and labels tell them apart.
      Preset PB shares PB's green on purpose too: its label tells them apart.
@@ -199,6 +205,8 @@
   --mode-8: #fe706a;
   --corner-a: #e66767;
   --corner-b: #3987e5;
+  --me-wash: #24352e;
+  --negative-on-me: #fe7365;
   --tag-first-win: #b14f9f;
   --tag-photo: #5c82da;
   --tag-pb: #66ceac;
@@ -510,9 +518,17 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
+/* This is me */
+/* A node showing the viewer's own racer carries data-me (UI.markRacers in ui.js); each component styles its own
+   mark. Red text inside one sits on --me-wash, where light --negative falls under 4.5:1. */
+[data-me] {
+  --negative: var(--negative-on-me);
+}
+
 /* Section nav */
 .section-nav {
   --nav-divider: color-mix(in srgb, var(--on-brand) 28%, transparent);
+  position: relative;
   display: flex;
   justify-content: center;
   padding: 16px 24px;
@@ -644,6 +660,37 @@ summary:focus-visible {
 .section-nav__link:focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 2px;
+}
+
+/* The viewer's own racer page ("This is me"): their avatar at the band's far left, out of the groups' flow so the
+   centred groups keep their tuned widths. At 981px it clears the first link by about 4px. The size must match
+   NAV_ME_AVATAR_SIZE in leaderboard.js. */
+.section-nav__me {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12px;
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin-block: auto;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px var(--on-brand);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.section-nav__me .ui-avatar {
+  display: block;
+}
+
+.section-nav__me:hover {
+  box-shadow: 0 0 0 2px var(--gold);
+  transform: translateY(-1px);
+}
+
+.section-nav__me:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
 
 /* Summary strip */
@@ -1367,6 +1414,21 @@ th {
   }
 }
 
+/* The viewer's own row (rows marked by UI.markRacers): the wash, a 3px bar in --me on the first cell and the
+   racer link at weight 800. Four classes of specificity beat both the row hover above and the sticky first
+   column's --panel ground at 980px and below, so hover keeps the same wash (a deeper one fails contrast). */
+.table-wrap tbody tr[data-me] td {
+  background: var(--me-wash);
+}
+
+.table-wrap tbody tr[data-me] td:first-child {
+  box-shadow: inset 3px 0 0 var(--me);
+}
+
+.table-wrap tbody tr[data-me] .racer-link {
+  font-weight: 800;
+}
+
 td.align-left,
 th.align-left {
   text-align: left;
@@ -1523,6 +1585,39 @@ body.viewing-faceoff #leaderboard {
   border-bottom: 0;
   background: var(--panel);
   box-shadow: inset 0 -1px 0 var(--line);
+}
+
+/* Jump to me: the filter buttons' neighbour, an outlined pill as tall as the search field beside it. */
+.leaderboard-me {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--accent);
+}
+
+.leaderboard-me:hover {
+  color: var(--accent);
+  background: var(--me-wash);
+}
+
+/* The row pulses once from a stronger --me tint back to its wash. */
+.leaderboard-row--flash td {
+  animation: leaderboard-row-flash 900ms ease-out;
+}
+
+@keyframes leaderboard-row-flash {
+  from {
+    background-color: color-mix(in srgb, var(--me) 30%, var(--me-wash));
+  }
+
+  to {
+    background-color: var(--me-wash);
+  }
 }
 
 .sort-button {
@@ -1858,6 +1953,14 @@ footer p {
     gap: 12px;
   }
 
+  /* The groups stack and may wrap their links to the band's edge, so the avatar joins the flow above them. */
+  .section-nav__me {
+    position: static;
+    align-self: flex-start;
+    flex: none;
+    margin-block: 0;
+  }
+
   .section-nav__group + .section-nav__group {
     padding-top: 12px;
     border-top: 1px solid var(--nav-divider);
@@ -1891,6 +1994,11 @@ footer p {
     left: -24px;
     background: var(--panel);
     box-shadow: inset -1px 0 0 var(--grid);
+  }
+
+  /* Keeps the sticky column's grid line beside the bar. */
+  .table-wrap--leaderboard tbody tr[data-me] td:first-child {
+    box-shadow: inset 3px 0 0 var(--me), inset -1px 0 0 var(--grid);
   }
 
   .table-wrap--leaderboard thead th:first-child {
@@ -2144,6 +2252,16 @@ footer p {
   }
 
   .section-nav__faceoff:not([aria-current="page"]):hover {
+    transform: none;
+  }
+
+  /* Jump to me scrolls instantly and does not flash. */
+  .leaderboard-row--flash td {
+    animation: none;
+  }
+
+  /* The nav avatar keeps still. */
+  .section-nav__me:hover {
     transform: none;
   }
 }

@@ -100,6 +100,13 @@
   box-shadow: 0 0 0 2px var(--tile-bg), 0 0 0 4px var(--tile-color);
 }
 
+/* "This is me": the viewer's leader avatar rings in --me, not the tile colour, and sits above its overlapping neighbours. */
+.top-rated__avatars .ui-avatar[data-me] {
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 2px var(--tile-bg), 0 0 0 4px var(--me);
+}
+
 .top-rated__avatars .ui-avatar + .ui-avatar {
   margin-left: -12px;
 }
@@ -207,6 +214,11 @@
 
 .top-rated__runner-up:hover .ui-avatar {
   box-shadow: 0 0 0 2px var(--tile-color);
+}
+
+.top-rated__runner-up[data-me] .ui-avatar,
+.top-rated__runner-up[data-me]:hover .ui-avatar {
+  box-shadow: 0 0 0 2px var(--me);
 }
 
 /* With the highlight 2.5 times the tile's width, 200% parks it off the left edge and -100% off the right. */

@@ -104,6 +104,18 @@
   font-size: var(--text-sm);
 }
 
+/* The viewer's row: the recipe's wash and bar. Negative margin and equal padding keep the content where it was. */
+.pool-row[data-me] {
+  margin-inline: -8px;
+  padding-inline: 8px;
+  background: var(--me-wash);
+  box-shadow: inset 3px 0 0 var(--me);
+}
+
+.pool-row[data-me] .racer-link {
+  font-weight: 800;
+}
+
 .pool-row:last-child {
   border-bottom: 0;
 }
@@ -326,6 +338,36 @@ button.pool-season__title:focus-visible {
   font-size: var(--text-xs);
   font-weight: 700;
   line-height: 1;
+}
+
+/* Inline padding only, so a marked card stays as tall as its neighbours. */
+.pool-podium__row[data-me],
+.pool-season__people .pool-racer[data-me] {
+  margin-inline: -6px;
+  padding-inline: 6px;
+  background: var(--me-wash);
+  box-shadow: inset 3px 0 0 var(--me);
+}
+
+.pool-podium__row[data-me] .racer-link,
+.pool-racer[data-me] .racer-link {
+  font-weight: 800;
+}
+
+/* Empty (and so out of the flow) until the viewer is rated that season and off the podium. */
+.pool-season__you {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.pool-season__you:empty {
+  display: none;
+}
+
+.pool-season__you-name {
+  color: var(--me);
+  font-weight: 800;
 }
 
 .pool-podium__row--1 {

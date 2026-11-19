@@ -318,10 +318,21 @@ function stepLine(defs, { id, points, endX, plotBottom, clipPath }) {
 }
 
 // A focusable marker on a step chart. kind is "first" (hollow), "break" or "current" (with a halo).
-function stepMark({ cx, cy, kind, label, at }) {
+// holder is optional: the Hall of Records passes the record holder's player index, which marks the node for
+// "This is me" and adds a ring that shows only while the holder is the viewer. Racer-page charts omit it.
+function stepMark({ cx, cy, kind, label, at, holder }) {
   const isCurrent = kind === "current";
   const mark = svgElement("g", { class: "chart-mark", tabindex: 0, role: "img", "aria-label": label });
   mark.style.setProperty("--at", at.toFixed(3));
+  if (holder !== undefined) {
+    UI.markRacers(mark, [holder]);
+    mark.appendChild(svgElement("circle", {
+      class: "step-chart__me",
+      cx,
+      cy,
+      r: (isCurrent ? STEP_CURRENT_RADIUS : STEP_DOT_RADIUS) + 4,
+    }));
+  }
   if (isCurrent) {
     mark.appendChild(svgElement("circle", { class: "step-chart__halo", cx, cy, r: STEP_HALO_RADIUS }));
   }
@@ -422,7 +433,7 @@ function violinMark({ center, halfLength, level, className, label }) {
 // and the median winning time as a gold line. The groups sit centred in VIOLIN_SLOTS equal slots.
 // Each group is { label, name, modeLine, color, indexes, median, gold }: indexes point into finishes,
 // gold is { median, wins } or null, and modeLine is null unless the chart mixes modes.
-function violinChart(finishes, groups, { id, highlightPlayer, title, description }, width) {
+function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true, title, description }, width) {
   const height = VIOLIN_CHART_HEIGHT;
   const margin = VIOLIN_CHART_MARGIN;
   const plotWidth = width - margin.left - margin.right;
@@ -441,7 +452,7 @@ function violinChart(finishes, groups, { id, highlightPlayer, title, description
   const labelRow = (row) => plotBottom + 32 + row * VIOLIN_LABEL_LINE_HEIGHT;
 
   const svg = svgElement("svg", {
-    class: highlightPlayer === null ? "chart-svg" : "chart-svg chart-svg--faded",
+    class: highlightPlayer === null || !fadeOthers ? "chart-svg" : "chart-svg chart-svg--faded",
     width,
     height,
     viewBox: `0 0 ${width} ${height}`,
@@ -609,8 +620,9 @@ function chartedPresets(presetIndexes, compare) {
 
 // One violin per charted preset, from every timed finish in the archive. The median and gold lines use
 // the published preset statistics, which come from exact times, so they match the presets table.
-function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, title, description, emptyText }) {
-  const key = [highlightPlayer, title, ...presetIndexes].join("|");
+// fadeOthers false keeps the field at full strength under a highlighted racer: their dots are only drawn on top.
+function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, fadeOthers = true, title, description, emptyText }) {
+  const key = [highlightPlayer, fadeOthers, title, ...presetIndexes].join("|");
   if (isChartCurrent(host, key)) {
     return;
   }
@@ -639,7 +651,7 @@ function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, title, 
     };
   });
   const draw = () =>
-    mountChart(host, (width) => violinChart(finishes, groups, { id, highlightPlayer, title, description }, width), VIOLIN_MIN_WIDTH);
+    mountChart(host, (width) => violinChart(finishes, groups, { id, highlightPlayer, fadeOthers, title, description }, width), VIOLIN_MIN_WIDTH);
   draw();
   // The labels are measured on a canvas, which measures a fallback font until the page font has loaded.
   const font = axisLabelFont();
