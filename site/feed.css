@@ -7,21 +7,42 @@
   min-width: 0;
 }
 
-/* A fixed-width speech track keeps the refresh button in one spot, whatever the comment's size.
-   520px is the hero speech's max-width in ui.css: the 56px avatar, its 14px gap and the 450px bubble. */
+/* The avatar and ↻ stack in a column beside the bubble, so the button keeps one spot whatever the comment's
+   size. The hero speech's box steps aside (display: contents) so its avatar and body join this grid. The
+   14px column gap is .ui-speech's gap and the 450px track the hero bubble's max-width, both in ui.css. The
+   1fr row takes a tall comment's extra height, so ↻ stays right under the avatar. */
 .comment-hero__stage {
   display: grid;
-  grid-template-columns: minmax(0, 520px) auto;
+  grid-template-columns: auto minmax(0, 450px);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "avatar speech"
+    "refresh speech";
+  gap: 10px 14px;
   align-items: start;
-  gap: 12px;
   max-width: 100%;
   animation: feed-fade-in 400ms ease-out both;
 }
 
-/* Centred on the 56px hero avatar. */
+.comment-hero__stage .ui-speech {
+  display: contents;
+}
+
+.comment-hero__stage .ui-avatar {
+  grid-area: avatar;
+}
+
+/* Start, not stretch, so a short comment's bubble hugs its text as it does in .ui-speech's flex row. */
+.comment-hero__stage .ui-speech__body {
+  grid-area: speech;
+  justify-self: start;
+}
+
+/* Centred under the hero avatar. */
 .comment-hero__refresh {
+  grid-area: refresh;
+  justify-self: center;
   width: 28px;
-  margin-top: 14px;
   height: 28px;
   padding: 0;
   border: 1px solid var(--line);
