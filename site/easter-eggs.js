@@ -14,6 +14,7 @@ const EasterEggs = (() => {
   ];
 
   let started = false;
+  let hudTooltipBound = false;
   let konamiStep = 0;
   let overlayOpen = false;
   let railTimer = null;
@@ -84,7 +85,10 @@ const EasterEggs = (() => {
     hud.classList.toggle("heart-hud--complete", complete);
     hud.setAttribute("role", "img");
     hud.setAttribute("aria-label", label);
-    hud.title = label;
+    if (!hudTooltipBound) {
+      bindTooltip(hud, () => hud.getAttribute("aria-label") || "");
+      hudTooltipBound = true;
+    }
     hud.replaceChildren(svg);
     hud.hidden = false;
   }
@@ -227,7 +231,7 @@ const EasterEggs = (() => {
           awardWithToast("credit");
         }
       }));
-      document.addEventListener("racetimevibes:palindrome", guarded(() => awardWithToast("palindrome")));
+      document.addEventListener(PALINDROME_EVENT, guarded(() => awardWithToast("palindrome")));
       watchSearch("leaderboard-search");
       watchSearch("player-search");
     })();

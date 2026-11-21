@@ -203,9 +203,10 @@ document.addEventListener("scroll", () => {
 }, { capture: true, passive: true });
 
 function bindTooltip(target, text) {
+  const resolveText = typeof text === "function" ? text : () => text;
   target.addEventListener("mouseenter", (event) => {
     if (!tapEchoing()) {
-      showTooltip(target, text, event);
+      showTooltip(target, resolveText(), event);
     }
   });
   target.addEventListener("mousemove", (event) => {
@@ -220,7 +221,7 @@ function bindTooltip(target, text) {
   });
   target.addEventListener("focus", () => {
     if (!tapEchoing()) {
-      showTooltip(target, text);
+      showTooltip(target, resolveText());
     }
   });
   target.addEventListener("blur", () => {
@@ -237,7 +238,7 @@ function bindTooltip(target, text) {
     if (touchTooltipOwner === target && !tooltip.hidden) {
       hideTooltip();
     } else {
-      showTouchTooltip(target, text);
+      showTouchTooltip(target, resolveText());
     }
   });
 }
@@ -399,7 +400,6 @@ function seasonBarChart(seasons, options, width) {
         }),
       );
     }
-    group.append(svgElement("title", {}, label));
     bindTooltip(group, label);
     svg.append(group);
     svg.append(svgElement(

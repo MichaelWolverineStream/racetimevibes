@@ -405,7 +405,7 @@ const RacerExtras = (() => {
   }
 
   function ratingDayLabel(day) {
-    const change = day.delta ? ` ${day.delta > 0 ? "▲" : "▼"}${Math.abs(day.delta)}` : "";
+    const change = day.delta ? ` ${day.delta > 0 ? "+" : "\u2212"}${Math.abs(day.delta)}` : "";
     const modes = day.modes.map((mode) => modeLabel(participants.modes[mode])).join(", ");
     const races = day.races === 1 ? modes : `${day.races} races (${modes})`;
     return `${formatRaceDate(day.date)} · ${day.rating}${change} · ${races}`;

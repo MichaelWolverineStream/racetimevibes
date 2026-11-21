@@ -13,7 +13,7 @@ This README covers the project, the [ladder rating](#ladder-rating) and [privacy
 
 ## Requirements
 
-- Python 3.11 or newer, standard library only. The site is plain HTML, CSS and JavaScript with no build step.
+- Python 3.12 or newer, standard library only. The site is plain HTML, CSS and JavaScript with no build step.
 - A network connection for the syncs and the avatar mirror.
 - ImageMagick 7, only for `scripts/badge_images.py` (badge art) and `scripts/pokemon_images.py` (sprite framing).
 
@@ -183,6 +183,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 | [docs/dashboard.md](docs/dashboard.md) | What the page shows and does, section by section | Changing `site/` |
 | [docs/operations.md](docs/operations.md) | The refresh steps and options, asset versioning, tests, workflows and the bot | Running the pipeline by hand or changing a workflow |
 | [docs/analyses.md](docs/analyses.md) | Mode overlap, schedule proposals, the schedule strategy comparison and the rating comparison | Changing a standalone analysis or `schedule-plan.json` |
+| [docs/testing.md](docs/testing.md) | Test tiers, where a new test goes, rules for every test, time budgets | Adding, moving, merging or deleting a test |
 | [.claude/skills/badges/SKILL.md](.claude/skills/badges/SKILL.md) | The checklist to add, remove or change a badge | Touching a badge |
 | [CLAUDE.md](CLAUDE.md) | The rules for coding agents, with area rules in `.claude/rules/` | Working with an agent |
 

@@ -176,10 +176,47 @@ class SiteThemeTests(unittest.TestCase):
         return match
 
     def test_theme_key_uses_the_store_prefix(self):
-        # theme.js runs before store.js, so it spells out the key Store would build.
+        # theme.js runs before store.js, and the self-running scripts spell out their own keys.
         prefix = self.search(r'^const STORAGE_PREFIX = "([^"]+)";', "store.js").group(1)
-        key = self.search(r'const STORAGE_KEY = "([^"]+)";', "theme.js").group(1)
-        self.assertEqual(key, prefix + "theme")
+        for path, constant, suffix in (
+            ("theme.js", "STORAGE_KEY", "theme"),
+            ("version-check.js", "RELOAD_FLAG", "reloaded-for"),
+            ("visitor-counter.js", "VISIT_KEY", "visits"),
+        ):
+            with self.subTest(path=path):
+                key = self.search(rf'\bconst {constant} = "([^"]+)";', path).group(1)
+                self.assertEqual(key, prefix + suffix)
+
+    def test_mirrored_css_dimensions(self):
+        tile = self.search(
+            r"^\.ui-badge__tile\s*\{[^}]*?"
+            r"width:\s*(\d+)px;\s*height:\s*(\d+)px;\s*"
+            r"border:\s*(\d+)px\s+solid[^;]+;\s*border-radius:\s*(\d+)px;",
+            "ui.css",
+        )
+        tile_size = int(self.search(r"^const BADGE_TILE_SIZE = (\d+);", "ui.js").group(1))
+        tile_border = int(self.search(r"^const BADGE_TILE_BORDER = (\d+);", "ui.js").group(1))
+        tile_radius = int(self.search(r"^const BADGE_TILE_RADIUS = (\d+);", "ui.js").group(1))
+        self.assertEqual(
+            (int(tile.group(1)), int(tile.group(2)), int(tile.group(3)), int(tile.group(4))),
+            (tile_size, tile_size, tile_border, tile_radius),
+        )
+        tints = int(self.search(r"^const MONOGRAM_TINTS = (\d+);", "ui.js").group(1))
+        ui_css = (SITE_DIR / "ui.css").read_text(encoding="utf-8")
+        self.assertEqual(
+            sorted(int(n) for n in re.findall(r"^\.ui-avatar__monogram--tint-(\d+)\s*\{", ui_css, re.MULTILINE)),
+            list(range(1, tints + 1)),
+        )
+        chart_height = int(self.search(r"^\s*height:\s*(\d+),", "records.js").group(1))
+        host_height = int(
+            self.search(r"^\.records-chart-host\s*\{[^}]*?min-height:\s*(\d+)px;", "records.css").group(1)
+        )
+        self.assertEqual(chart_height, host_height)
+        nav_me_size = int(self.search(r"^const NAV_ME_AVATAR_SIZE = (\d+);", "leaderboard.js").group(1))
+        nav_me_css = self.search(
+            r"^\.section-nav__me\s*\{[^}]*?width:\s*(\d+)px;\s*height:\s*(\d+)px;", "styles.css"
+        )
+        self.assertEqual((int(nav_me_css.group(1)), int(nav_me_css.group(2))), (nav_me_size, nav_me_size))
 
     def test_browser_chrome_matches_the_brand_fill(self):
         # theme.js tints the browser toolbar before the stylesheets load, so it can't read --brand-fill.

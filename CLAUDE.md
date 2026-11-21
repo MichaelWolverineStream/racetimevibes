@@ -28,9 +28,10 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - Never publish any bio but a featured racer's current one, nor bio history (`since`, `earlier`), full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
 5. **Schema versions are set in Python and checked in JS. Bump both together**, or the page shows "could not be loaded".
    - `participants.json`: `PARTICIPANT_SCHEMA_VERSION` in `participant_stats.py` and `leaderboard.js`.
-   - `race-stats.json`: `"schema_version"` in `build_stats.py` and `validateData` in `app.js`.
+   - `race-stats.json`: `SCHEMA_VERSION` in `build_stats.py` and `validateData` in `app.js`.
+   - `comments.json`: `COMMENTS_SCHEMA_VERSION` in `comment_stats.py` and `ui.js`.
 6. **The README and `docs/` are the spec.** Update the matching doc in the same change as any behaviour change. Badges follow the `badges` skill (`.claude/skills/badges/SKILL.md`).
-7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.11+. The site is plain files. ImageMagick 7 is needed only by `badge_images.py` and `pokemon_images.py`.
+7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.12+. The site is plain files. ImageMagick 7 is needed only by `badge_images.py` and `pokemon_images.py`.
 8. **Ladder rating invariants are tested across the whole archive**, for the overall, every mode, and every season and season-mode track:
    - A winner's points never fall. Finish times never affect the rating.
    - Mode and season ratings use the overall parameters, untuned; every racer debuts at 1000 in every season. A locked season's ledger wins over what the rating computes today.

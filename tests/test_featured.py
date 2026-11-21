@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from datetime import date, timedelta
 from pathlib import Path
@@ -294,6 +295,29 @@ class CommittedFeaturedTests(unittest.TestCase):
         self.assertEqual([row[:4] for row in self.data["featured"]], expected)
         for row in self.data["featured"]:
             self.assertTrue(row[4] is None or (isinstance(row[4], str) and len(row[4]) <= featured.BIO_MAX_LENGTH))
+
+    def test_mirrored_site_constants(self):
+        site_dir = PARTICIPANTS_PATH.parent.parent
+        leaderboard_js = (site_dir / "leaderboard.js").read_text(encoding="utf-8")
+        bio_cap = re.search(
+            r"^const FEATURED_BIO_MAX_LENGTH = (\d+);", leaderboard_js, re.MULTILINE
+        )
+        self.assertIsNotNone(bio_cap)
+        self.assertEqual(int(bio_cap.group(1)), featured.BIO_MAX_LENGTH)
+        ui_js = (site_dir / "ui.js").read_text(encoding="utf-8")
+        rarities = re.search(
+            r"^const BADGE_RARITIES = (\[\s*\[.*?\],\s*\]);",
+            ui_js,
+            re.MULTILINE | re.DOTALL,
+        )
+        self.assertIsNotNone(rarities)
+        self.assertEqual(
+            [
+                (name, float(limit))
+                for name, limit in re.findall(r'\["(\w+)",\s*([0-9.]+)\]', rarities.group(1))
+            ],
+            [("legendary", featured.LEGENDARY_SHARE), ("rare", featured.RARE_SHARE)],
+        )
 
 
 if __name__ == "__main__":

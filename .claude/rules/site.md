@@ -13,7 +13,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 
 **Load order and module shape**
 - Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras`/`FaceOff` checks in `leaderboard.js` would take down `loadParticipants`.
-- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Records`, `RacerExtras`, `FaceOff`, `EasterEggs`, `Store`, `Following`, `Me`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
+- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Upcoming`, `PoolRoom`, `Records`, `RacerExtras`, `ShareCard`, `FaceOff`, `EasterEggs`, `Store`, `Following`, `Me`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
 - Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
 **Shared helpers: reuse, don't rebuild**
@@ -27,8 +27,8 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
   - `ratingCategories()` is the page's one definition of a rating category (overall plus every mode but `unknown`), used by the top-rated banner and the racer page's rating strip. `scripts/featured.py` mirrors it for the top 3s the featured racer avoids.
   - `currentSeason()` returns the newest season or null. A season is a number; `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rank helpers take an optional `season`, so callers passing nothing stay all-time. Predictions (`hasRating`, `winChance`), the racer page's rating chart and the player card never pass one. The racer page's rating strip passes the current season unless its toggle is on All time.
   - ▲/▼ is for rank movement only. A points change shows as +N, −N or ±0.
-- `ui.js` exposes `UI`: `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `crown`, `badge`, `badgePanel`, `modalPanel`, `dialogBox`, `time`, `comments`, `markRacers`, `syncMarks`, `nextBadge`.
-- The private `element(tag, className, text)` copies in `ui.js`, `feed.js`, `records.js`, `racer-extras.js`, `share-card.js` and `faceoff.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
+- `ui.js` exposes `UI`: `avatarUrl`, `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `crown`, `followStar`, `markRacers`, `syncMarks`, `nextBadge`, `isPalindromeTime`, `time`, `badge`, `badgePanel`, `badgeShare`, `badgeRarity`, `modalPanel`, `dialogBox`, `comments`, `chestPace`, `relativeDay`.
+- The private `element(tag, className, text)` copies in `ui.js`, `top-rated.js`, `upcoming.js`, `feed.js`, `pool-room.js`, `records.js`, `racer-extras.js`, `share-card.js` and `faceoff.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
 
 **Modals and events**
 - Modals use `holdModal(close)` in `ui.js`: it makes `main` and `footer` inert, closes on Escape and restores focus. A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`, which returns `{ panel, close }`.
@@ -55,7 +55,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - Mode labels (`modeLabel`, `formatModeName`) are display only. Lookups take the raw mode id: `modeColor`, `participants.modes`, hash routes.
 - A new race mode needs a colour slot in `MODE_COLOR_SLOTS` (`racer-charts.js`), or it falls back to grey. Don't reorder `--mode-1..8`: the order keeps neighbouring violins distinguishable for colour-blind viewers.
 - No `innerHTML`: build the DOM with `element`/`svgElement` and `textContent`, because names and comments are user data.
-- Values JS mirrors from CSS carry a "must match" comment (`BADGE_TILE_*`, `MONOGRAM_TINTS` in `ui.js`). Change both sides together.
+- Values JS mirrors from CSS or Python carry a "must match" comment (`BADGE_TILE_*`, `MONOGRAM_TINTS` in `ui.js`) and are checked by tests (`test_site_theme.py`, `test_build_stats.py`, `test_participant_stats.py`, `test_comment_stats.py`, `test_featured.py`). Change both sides together.
 
 ## CSS (`site/*.css`)
 
@@ -76,7 +76,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - `--ladder-series` and `--ladder-series-muted` mean the Ladder Data season bars, the season in progress and the two Ladder Data panels' top rules.
 - `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
-- `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. Reduced motion is handled at the end of `styles.css`.
+- `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. The global reduced-motion rule is at the end of `styles.css`, and component stylesheets add their own reduced-motion overrides where needed.
 - Desktop-first, and good on phones. Desktop (1024px and up, with a mouse) must not change when you work on phones.
   - Narrow-screen layout goes in the `980px` and `620px` blocks (the feed also has `@container feed` tiers).
   - Input-method changes go in `@media (hover: none)` or `(pointer: coarse)`: showing what hover reveals, bigger hit areas, scroll containment.

@@ -153,7 +153,7 @@ The browser computes these from `participants.json`. The leaderboard, the racer 
 
 ## Racer leaderboard
 
-- **Season:** a **Season** select above the table picks the scope: every season, newest first and the current one by default, then **All seasons**. Options read like "Season 10 · TR" (see [Season names](#season-names)), with the full name as tooltip. With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
+- **Season:** a **Season** select above the table picks the scope: every season, newest first and the current one by default, then **All seasons**. Options read like "Season 10 · TR" (see [Season names](#season-names)). With no seasons the select is hidden and the board covers the whole archive. Changing it resets the sort to the default.
   - Under a season, every column except Badges is calculated from the races of that season, and of the selected mode when one is picked, with the rules under [Racer statistics](#racer-statistics). That includes H2H win %.
   - Under **All seasons**, every column covers the whole archive.
   - A racer with no race in the scope has no row. The table's status text names the season.
@@ -389,7 +389,7 @@ A page that sets two racers on one mirrored card. It computes everything in the 
 ## Dialogs, keyboard and touch
 
 - Escape closes an open tooltip or dialog. In a Face Off picker, the first Escape closes its option list and the next puts the picked name back. A modal dialog makes the rest of the page inert while it is open and gives focus back when it closes.
-- Status toasts close by themselves after 3 seconds, or when clicked.
+- Status toasts close by themselves after 3 seconds by default, or when clicked.
 - **Tap:** on a touch screen, a tap shows the tooltip a mouse would show on hover, above what was tapped. A second tap on it, a touch anywhere else or a scroll closes it.
   - Links and buttons keep their own action on tap and show no tooltip. That covers a sort header's medal rule, a top-rated runner-up's rank and a badge's share, which show only on hover or focus.
   - A tag or comment inside a race row both opens the race and shows its tooltip.

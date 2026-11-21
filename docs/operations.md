@@ -55,20 +55,20 @@ The production suite's `Committed*` classes check the committed files.
 
 ## Deployment
 
-- `.github/workflows/pages.yml` runs the production suite and deploys `site/` whenever `main` is pushed, or from **Actions › Deploy GitHub Pages**. Pages must be set to deploy from GitHub Actions.
+- `.github/workflows/pages.yml` runs the production suite and `node --check` on `site/*.js`, then deploys `site/` whenever `main` is pushed, or from **Actions › Deploy GitHub Pages**. Pages must be set to deploy from GitHub Actions.
 - After the tests pass, their job uploads the Pages artifact; a separate deploy job waits for it, avoiding an immediate artifact lookup that can race the upload.
 - `.github/workflows/analysis-tests.yml` runs the analysis suite on pushes to `main` and on pull requests that change `scripts/`, `tests/analyses/`, `schedule-plan.json` or the workflow itself, weekly against the newest archive (the run that carries the rating monitors), and on demand. It never blocks a deploy.
 
 ### Scheduled data refresh
 
-`.github/workflows/update-data.yml` runs `race_archive.py`, `schedule_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py`, then the production suite's `Committed*` tests (`-k Committed`), the deploy's checks on the archive and the published files. An outside trigger starts it through `workflow_dispatch` about every two hours, a scheduled run at 10:17 UTC is the daily backup, and **Actions › Update race data** starts it by hand. One input, `sync-bios`, off by default and not offered on a manual run, also runs `racer_bios.py` between the race and schedule syncs.
+`.github/workflows/update-data.yml` runs `race_archive.py`, `schedule_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py`, then the production suite's `Committed*` tests (`-k Committed`), the deploy's checks on the archive and the published files. An outside trigger starts it through `workflow_dispatch` about every two hours, a scheduled run at 00:17 UTC is the daily backup, and **Actions › Update race data** starts it by hand. One input, `sync-bios`, off by default and not offered on a manual run, also runs `racer_bios.py` between the race and schedule syncs.
 
 - When a sync added or refreshed a race or schedule file, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`.
 - When the datasets changed beyond `generated_at`, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow starts **Deploy GitHub Pages** explicitly, because pushes made with `GITHUB_TOKEN` trigger no workflows.
 - A failed schedule sync does not stop the run: the step is `continue-on-error`, so it shows as failed while the rest goes on. The sync writes nothing when it fails, so the build uses the mirror of the last good sync, which can only hold back the newest slots (see **Counted through** under [Schedule](definitions.md#schedule)) and delay a season lock.
 - A run that finds nothing new, or whose race sync, bio sync, build, mirror or committed-data check fails, commits nothing. `main` therefore never holds data that the deploy would refuse.
 
-`.github/workflows/update-bios.yml` runs daily at 05:47 UTC and only calls `update-data.yml` with `sync-bios` on. A manual **Update racer bios** run is how to sync bios on demand.
+`.github/workflows/update-bios.yml` runs daily at 01:47 UTC and only calls `update-data.yml` with `sync-bios` on. A manual **Update racer bios** run is how to sync bios on demand.
 
 - It sets no `concurrency` group on purpose: the callee's `update-data` group already queues it behind a running data run, and the same group on the caller would deadlock.
 - GitHub keeps one waiting run per group, so a data run can cancel a waiting bio run. Nothing is lost: a racer stays due until checked.

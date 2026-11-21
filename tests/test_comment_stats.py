@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from datetime import UTC, datetime
 from pathlib import Path
@@ -98,6 +99,11 @@ class ParseChestCountTests(unittest.TestCase):
     def test_without_a_finish_time_there_is_no_count(self):
         self.assertIsNone(comment_stats.parse_chest_count("164/216", None))
 
+    def test_non_positive_finish_time_has_no_count(self):
+        for seconds in (0, 0.0, -10.0):
+            with self.subTest(seconds=seconds):
+                self.assertIsNone(comment_stats.parse_chest_count("164/216", seconds))
+
 
 class BuildCommentsPayloadTests(unittest.TestCase):
     def build(self, contexts):
@@ -176,6 +182,20 @@ class CommittedCommentsTests(unittest.TestCase):
         cls.participants = json.loads(
             (DATA_DIR / "participants.json").read_text(encoding="utf-8")
         )
+
+    def test_schema_version_and_top_level_keys(self):
+        self.assertEqual(
+            set(self.comments), {"schema_version", "generated_at", "races"}
+        )
+        self.assertEqual(
+            self.comments["schema_version"], comment_stats.COMMENTS_SCHEMA_VERSION
+        )
+        ui_source = (DATA_DIR.parent / "ui.js").read_text(encoding="utf-8")
+        match = re.search(
+            r"^const COMMENTS_SCHEMA_VERSION = (\d+);", ui_source, re.MULTILINE
+        )
+        self.assertIsNotNone(match)
+        self.assertEqual(int(match.group(1)), comment_stats.COMMENTS_SCHEMA_VERSION)
 
     def test_races_and_users_exist_in_participants(self):
         race_names = {race["r"] for race in self.participants["races"]}

@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import unittest
 from datetime import UTC, date, datetime
@@ -1369,7 +1370,7 @@ class CommittedDatasetTests(unittest.TestCase):
     def test_generated_schema_reconciles(self):
         data = self.data
         source = data["source"]
-        self.assertEqual(data["schema_version"], 14)
+        self.assertEqual(data["schema_version"], build_stats.SCHEMA_VERSION)
         self.assertRegex(source["data_start_local"], r"^\d{4}-\d{2}-\d{2}$")
         self.assertEqual(
             source["archived_race_count"],
@@ -1491,27 +1492,149 @@ class CommittedDatasetTests(unittest.TestCase):
                 self.assertIsNone(month["entries_per_day"])
 
     def test_generated_schema_contains_no_participant_details(self):
-        forbidden_keys = {
-            "entrants",
-            "user",
-            "full_name",
-            "twitch_name",
-            "twitch_channel",
-            "profile",
-            "avatar",
-            "pronouns",
+        data = self.data
+        self.assertEqual(
+            set(data),
+            {
+                "schema_version",
+                "generated_at",
+                "source_url",
+                "timezone",
+                "source",
+                "weekday_hourly",
+                "seasons",
+                "periods",
+                "monthly",
+                "diagnostics",
+            },
+        )
+        self.assertEqual(set(data["timezone"]), {"label", "name"})
+        self.assertEqual(
+            set(data["source"]),
+            {
+                "data_start_local",
+                "archived_race_count",
+                "included_race_count",
+                "included_entrant_count",
+                "excluded_archived_race_count",
+                "included_date_range",
+                "schedule_counted_through",
+            },
+        )
+        cell_keys = {
+            "weekday",
+            "weekday_label",
+            "hour",
+            "scheduled_count",
+            "started_count",
+            "entrant_total",
+            "average_racers",
+            "band",
         }
+        entry_summary_keys = {
+            "race_count",
+            "entrant_total",
+            "average_racers",
+            "median_racers",
+            "q1_racers",
+            "q3_racers",
+            "standard_deviation",
+            "ci95_low",
+            "ci95_high",
+        }
+        for selection in [data, *data["periods"]]:
+            for cell in selection["weekday_hourly"]:
+                self.assertEqual(set(cell), cell_keys)
+        period_keys = entry_summary_keys | {
+            "id",
+            "label",
+            "start",
+            "end",
+            "is_complete",
+            "completeness",
+            "observed_local_date_range",
+            "included_date_range",
+            "weekday_hourly",
+        }
+        for period in data["periods"]:
+            self.assertEqual(set(period), period_keys)
+        month_keys = entry_summary_keys | {
+            "id",
+            "label",
+            "start",
+            "end",
+            "quarter_id",
+            "is_complete",
+            "scheduled_day_count",
+            "fired_race_count",
+            "scheduled_day_entrant_total",
+            "fired_per_day",
+            "entries_per_day",
+        }
+        for month in data["monthly"]:
+            self.assertEqual(set(month), month_keys)
+        season_keys = {
+            "season",
+            "is_complete",
+            "scheduled_count",
+            "started_count",
+            "real_field_count",
+            "race_count",
+            "entrant_total",
+            "scheduled_day_count",
+            "scheduled_day_entrant_total",
+            "fired_race_count",
+            "fired_entrant_total",
+            "racer_count",
+            "season_day_count",
+            "racer_week_total",
+            "full_week_count",
+            "weekly_racers_min",
+            "weekly_racers_max",
+            "previous_racer_count",
+            "returning_count",
+            "newcomer_count",
+            "newcomer_matured_count",
+            "newcomer_retained_count",
+        }
+        for row in data["seasons"]:
+            self.assertEqual(set(row), season_keys)
+        self.assertEqual(
+            set(data["diagnostics"]),
+            {
+                "excluded_by_status",
+                "excluded_by_mode",
+                "excluded_in_season_breaks",
+                "invalid_records",
+                "unknown_mode_count",
+                "schedule",
+                "seasons",
+            },
+        )
 
-        def visit(value):
-            if isinstance(value, dict):
-                self.assertTrue(forbidden_keys.isdisjoint(value))
-                for child in value.values():
-                    visit(child)
-            elif isinstance(value, list):
-                for child in value:
-                    visit(child)
-
-        visit(self.data)
+    def test_mirrored_app_constants(self):
+        site_dir = self.data_path.parent.parent
+        app_js = (site_dir / "app.js").read_text(encoding="utf-8")
+        index_html = (site_dir / "index.html").read_text(encoding="utf-8")
+        schema = re.search(r"\bdata\.schema_version !== (\d+)\b", app_js)
+        self.assertIsNotNone(schema)
+        self.assertEqual(int(schema.group(1)), build_stats.SCHEMA_VERSION)
+        for name, expected in (
+            ("BAND_MIN_SCHEDULED", build_stats.BAND_MIN_SCHEDULED),
+            ("REAL_FIELD_MIN", build_stats.REAL_FIELD_MIN),
+            ("NEWCOMER_WINDOW_DAYS", build_stats.NEWCOMER_WINDOW_DAYS),
+            ("SEASON_WEEK_DAYS", build_stats.SEASON_WEEK_DAYS),
+        ):
+            with self.subTest(constant=name):
+                match = re.search(rf"^const {name} = (\d+);", app_js, re.MULTILINE)
+                self.assertIsNotNone(match)
+                self.assertEqual(int(match.group(1)), expected)
+        legend = re.search(r"Fewer than (\d+) scheduled races", index_html)
+        self.assertIsNotNone(legend)
+        self.assertEqual(int(legend.group(1)), build_stats.BAND_MIN_SCHEDULED)
+        real_field = re.search(r"<h4>Races with (\d+)\+ racers</h4>", index_html)
+        self.assertIsNotNone(real_field)
+        self.assertEqual(int(real_field.group(1)), build_stats.REAL_FIELD_MIN)
 
     def test_matches_a_rebuild_from_the_archive(self):
         committed_paths = (

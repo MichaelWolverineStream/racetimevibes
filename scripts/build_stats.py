@@ -44,6 +44,7 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
 OUTPUT_PATH = DATA_DIR / "race-stats.json"
 PARTICIPANTS_OUTPUT_PATH = DATA_DIR / "participants.json"
 COMMENTS_OUTPUT_PATH = DATA_DIR / "comments.json"
+SCHEMA_VERSION = 14
 
 SCHEDULE_TIMEZONE_NAME = "America/New_York"
 SCHEDULE_TIMEZONE = ZoneInfo(SCHEDULE_TIMEZONE_NAME)
@@ -819,7 +820,7 @@ def aggregate_races(
     included_count = overall["race_count"]
 
     return {
-        "schema_version": 14,
+        "schema_version": SCHEMA_VERSION,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
         "timezone": {

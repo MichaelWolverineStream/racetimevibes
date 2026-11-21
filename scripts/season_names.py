@@ -3,9 +3,10 @@
 
 Seasons 1 to 10 carry fixed retro names: the short and full name of an ALTTP
 dungeon, in order. From season 11 on, a season is named after an animal that the
-previous season's champion chose. The animals are the one hand-maintained input,
-`season-names.json` at the repository root; `load` validates it and
-`published_names` gives the names `participants.json` publishes.
+previous season's champion chose. The animals live in a hand-maintained input,
+`season-names.json` at the repository root (alongside `badge-overrides.json`);
+`load` validates it and `published_names` gives the names `participants.json`
+publishes.
 """
 
 from __future__ import annotations

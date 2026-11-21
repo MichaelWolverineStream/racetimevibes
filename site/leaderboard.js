@@ -836,11 +836,10 @@ function appendTrend(cell, trend) {
     return;
   }
   const points = Math.round(Math.abs(trend.delta) * 100);
-  const glyph = trend.direction === "up" ? "\u25B2" : trend.direction === "down" ? "\u25BC" : "\u25AC";
-  const sign = trend.direction === "up" ? "+" : trend.direction === "down" ? "-" : "\u00B1";
+  const sign = trend.direction === "up" ? "+" : trend.direction === "down" ? "\u2212" : "\u00B1";
   const span = document.createElement("span");
   span.className = `trend trend--${trend.direction}`;
-  span.textContent = `${glyph} ${sign}${points}%`;
+  span.textContent = `${sign}${points}%`;
   cell.appendChild(span);
   const wording =
     trend.direction === "up"
@@ -1211,7 +1210,6 @@ function bindSeasonControl() {
     const option = document.createElement("option");
     option.value = String(season.n);
     option.textContent = seasonLabel(season.n);
-    option.title = seasonFullLabel(season.n);
     return option;
   });
   const all = document.createElement("option");

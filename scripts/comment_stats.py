@@ -67,7 +67,7 @@ def parse_chest_count(text: str, finish_seconds: float | None) -> int | None:
     A count is plausible when chests per hour, at the given finish time, falls
     inside CHESTS_PER_HOUR_RANGE. Without a finish time there is no count.
     """
-    if finish_seconds is None:
+    if finish_seconds is None or finish_seconds <= 0:
         return None
     low, high = CHESTS_PER_HOUR_RANGE
     for match in CHEST_CANDIDATE.finditer(text):

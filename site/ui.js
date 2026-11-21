@@ -1,6 +1,8 @@
 // Mirrored from racetime.gg by scripts/avatar_mirror.py, so canvases can draw them.
 const AVATAR_BASE_URL = "avatars/";
 const COMMENTS_URL = "data/comments.json";
+const COMMENTS_SCHEMA_VERSION = 2;
+const PALINDROME_EVENT = "racetimevibes:palindrome";
 const DIALOG_DEFAULT_MS = 3000;
 const SPEECH_AVATAR_SIZES = { hero: 56, compact: 28 };
 const TAG_KINDS = new Set(["pb", "preset_pb", "record", "preset_record", "first_win", "photo", "upset", "hardest", "milestone", "badge", "new"]);
@@ -263,7 +265,7 @@ const UI = (() => {
       spark.classList.remove("palindrome-spark--twinkle");
       void spark.offsetWidth;
       spark.classList.add("palindrome-spark--twinkle");
-      document.dispatchEvent(new CustomEvent("racetimevibes:palindrome", { detail: { seconds } }));
+      document.dispatchEvent(new CustomEvent(PALINDROME_EVENT, { detail: { seconds } }));
     });
     span.appendChild(spark);
     return span;
@@ -579,6 +581,18 @@ const UI = (() => {
             throw new Error(`${COMMENTS_URL} returned ${response.status}`);
           }
           return response.json();
+        })
+        .then((payload) => {
+          if (
+            !payload ||
+            payload.schema_version !== COMMENTS_SCHEMA_VERSION ||
+            !payload.races ||
+            typeof payload.races !== "object" ||
+            Array.isArray(payload.races)
+          ) {
+            throw new Error(`Unexpected ${COMMENTS_URL} schema version.`);
+          }
+          return payload;
         })
         .catch((error) => {
           console.error("Could not load comments.", error);

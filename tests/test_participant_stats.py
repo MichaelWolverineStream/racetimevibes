@@ -1449,20 +1449,115 @@ class CommittedParticipantDataTests(unittest.TestCase):
             total = sum(fields["finishes"] for fields in player["mode_ratings"].values())
             self.assertEqual(total, player["finishes"])
 
-    def test_contains_no_sensitive_racetime_fields(self):
-        serialized = (REPO_ROOT / "site" / "data" / "participants.json").read_text(
-            encoding="utf-8"
+    def test_published_keys_match_privacy_allowlist(self):
+        self.assertEqual(
+            set(self.participants),
+            {
+                "schema_version",
+                "generated_at",
+                "source_url",
+                "timezone",
+                "modes",
+                "presets",
+                "hardest_preset",
+                "preset_min_races",
+                "blowout_min_field",
+                "medal_tiers",
+                "players",
+                "avatar_changes",
+                "races",
+                "leaderboards",
+                "badges",
+                "records",
+                "facts",
+                "featured",
+                "rating",
+                "seasons",
+                "season_names",
+                "upcoming",
+                "diagnostics",
+            },
         )
-        for forbidden in (
-            "full_name",
-            "discriminator",
-            "pronouns",
-            "twitch_name",
-            "twitch_channel",
-            "score_change",
-        ):
-            with self.subTest(forbidden=forbidden):
-                self.assertNotIn(forbidden, serialized)
+        self.assertEqual(set(self.participants["timezone"]), {"label", "name"})
+        preset_keys = {
+            "m",
+            "n",
+            "races",
+            "entries",
+            "dnf_rate",
+            "median_seconds",
+            "median_win_seconds",
+            "mean_field",
+            "best",
+        }
+        for preset in self.participants["presets"]:
+            self.assertEqual(set(preset), preset_keys)
+        required_player_keys = {
+            "id",
+            "name",
+            "rating",
+            "mu",
+            "sigma",
+            "finishes",
+            "mode_ratings",
+            "badges",
+            "progress",
+            "streaks",
+            "claim",
+        }
+        allowed_player_keys = required_player_keys | {"a", "badge_notes"}
+        rating_keys = {"rating", "mu", "sigma", "finishes"}
+        for player in self.participants["players"]:
+            self.assertTrue(required_player_keys <= set(player) <= allowed_player_keys)
+            for fields in player["mode_ratings"].values():
+                self.assertEqual(set(fields), rating_keys)
+        required_race_keys = {"r", "m", "d", "u", "n", "p", "e"}
+        allowed_race_keys = required_race_keys | {"s", "t"}
+        for race_row in self.participants["races"]:
+            self.assertTrue(required_race_keys <= set(race_row) <= allowed_race_keys)
+        leaderboard_row_keys = {
+            "p",
+            "races",
+            "finishes",
+            "wins",
+            "diamond",
+            "gold",
+            "silver",
+            "bronze",
+            "podiums",
+            "dnf",
+            "dq",
+            "best_place",
+            "median_place",
+            "median_seconds",
+            "min_seconds",
+            "max_seconds",
+        }
+        for board in self.participants["leaderboards"]:
+            self.assertEqual(set(board), {"mode", "rows"})
+            for row in board["rows"]:
+                self.assertEqual(set(row), leaderboard_row_keys)
+        for badge in self.participants["badges"]:
+            self.assertEqual(
+                set(badge), {"id", "label", "description", "target", "image", "still"}
+            )
+        for season in self.participants["seasons"]:
+            self.assertEqual(set(season), {"n", "first", "last", "ended"})
+        for entry in self.participants["season_names"].values():
+            self.assertTrue({"kind", "text"} <= set(entry) <= {"kind", "text", "full"})
+
+    def test_mirrored_leaderboard_constants(self):
+        source = (REPO_ROOT / "site" / "leaderboard.js").read_text(encoding="utf-8")
+        version = re.search(
+            r"^const PARTICIPANT_SCHEMA_VERSION = (\d+);", source, re.MULTILINE
+        )
+        self.assertIsNotNone(version)
+        self.assertEqual(
+            int(version.group(1)), participant_stats.PARTICIPANT_SCHEMA_VERSION
+        )
+        medals = re.search(r"^const MEDALS = (\[[^\]]+\]);", source, re.MULTILINE)
+        self.assertIsNotNone(medals)
+        self.assertEqual(tuple(json.loads(medals.group(1))), highlights.MEDALS)
 
 
 class UpcomingPayloadTests(unittest.TestCase):
