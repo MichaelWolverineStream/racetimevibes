@@ -237,6 +237,8 @@ class _Player:
         "best_by_preset",
         "pbs",
         "badges",
+        "badge_counts",
+        "badge_marks",
         "runs",
         "season_runs",
         "season_dates",
@@ -269,6 +271,9 @@ class _Player:
         self.best_by_preset: dict[int, int] = {}
         self.pbs: dict[int, list[list[int]]] = {}
         self.badges: dict[str, int] = {}
+        self.badge_counts: Counter[str] = Counter()
+        # The last progress value seen for each repeatable counter badge.
+        self.badge_marks: dict[str, int] = {}
         self.runs = {kind: _Run() for kind in STREAK_KINDS}
         # The same streaks and race dates, counted within one season at a time.
         self.season_runs: dict[int, dict[str, _Run]] = {}
@@ -315,6 +320,17 @@ class Badge(NamedTuple):
     A counter badge has a `progress` rule, the value so far: a running count, or for an
     "in a row" badge the current run. It unlocks when that reaches the target and drives
     the progress border. A one-race badge has an `earned` rule on that race alone.
+
+    A repeatable badge can be earned again, and the racer's count of it is published. The
+    first time is the unlock; the count never changes what unlocks or when.
+    - A one-race badge fires on every race where its rule holds.
+    - A counter badge fires each time its progress moves to a new positive multiple of its
+      target: a run of 6 wins fires Hat Trick twice (target 3) and Hummers once (target 6).
+      It fires only when the value changed since the racer's last race, so a race that
+      leaves a run alone, such as an excused DNF in a field of two, never repeats a badge.
+    - A badge given by hand counts once, because its rule is never checked for that racer.
+    A badge is repeatable only when its rule can fire again on a later race. Lifetime counts
+    never do, and neither does a rule that reads a flag that stays set.
     """
 
     id: str
@@ -323,6 +339,7 @@ class Badge(NamedTuple):
     target: int = 1
     progress: Callable[[_Player], int] | None = None
     earned: Callable[[_Moment], bool] | None = None
+    repeatable: bool = False
 
 
 def medal(place: int, field: int) -> str | None:
@@ -388,6 +405,7 @@ BADGES = (
         f"Win {HAT_TRICK_WINS} races in a row.",
         HAT_TRICK_WINS,
         progress=_current_run("win"),
+        repeatable=True,
     ),
     Badge(
         "hummers",
@@ -395,6 +413,7 @@ BADGES = (
         f"Win {HUMMERS_WINS} races in a row.",
         HUMMERS_WINS,
         progress=_current_run("win"),
+        repeatable=True,
     ),
     Badge(
         "ok_dude_lucksack",
@@ -402,6 +421,7 @@ BADGES = (
         f"Win {LUCKSACK_WINS} races in a row.",
         LUCKSACK_WINS,
         progress=_current_run("win"),
+        repeatable=True,
     ),
     Badge(
         "doubled",
@@ -430,6 +450,7 @@ BADGES = (
         f"Finish on the podium in {PODIUM_RUNS[0]} races in a row.",
         PODIUM_RUNS[0],
         progress=_current_run("podium"),
+        repeatable=True,
     ),
     Badge(
         "ped_regular",
@@ -437,6 +458,7 @@ BADGES = (
         f"Finish on the podium in {PODIUM_RUNS[1]} races in a row.",
         PODIUM_RUNS[1],
         progress=_current_run("podium"),
+        repeatable=True,
     ),
     Badge(
         "bridesmaid",
@@ -444,6 +466,7 @@ BADGES = (
         f"Finish 2nd in {BRIDESMAID_RUN} races in a row.",
         BRIDESMAID_RUN,
         progress=lambda s: s.second_streak,
+        repeatable=True,
     ),
     Badge(
         "no_dodge",
@@ -451,6 +474,7 @@ BADGES = (
         f"Finish {NO_DODGE_FINISHES} races in a row.",
         NO_DODGE_FINISHES,
         progress=_current_run("finish"),
+        repeatable=True,
     ),
     Badge(
         "more_no_dodge",
@@ -458,6 +482,7 @@ BADGES = (
         f"Finish {MORE_NO_DODGE_FINISHES} races in a row.",
         MORE_NO_DODGE_FINISHES,
         progress=_current_run("finish"),
+        repeatable=True,
     ),
     Badge(
         "nice",
@@ -465,6 +490,7 @@ BADGES = (
         f"Finish {NICE_FINISHES} races in a row.",
         NICE_FINISHES,
         progress=_current_run("finish"),
+        repeatable=True,
     ),
     Badge(
         "centurian_v",
@@ -520,30 +546,35 @@ BADGES = (
         "Sniper",
         f"Win by less than {PHOTO_MAX_MARGIN:g} seconds.",
         earned=lambda m: m.player in m.snipers,
+        repeatable=True,
     ),
     Badge(
         "sniped",
         "Sniped!",
         f"Finish 2nd, less than {PHOTO_MAX_MARGIN:g} seconds behind the winner.",
         earned=lambda m: m.player in m.sniped,
+        repeatable=True,
     ),
     Badge(
         "retime",
         "RETIME",
         f"Finish less than {RETIME_MAX_GAP:g} second from another racer.",
         earned=lambda m: m.player in m.retimed,
+        repeatable=True,
     ),
     Badge(
         "palindrome",
         "Palindrome",
         "Finish with a time that reads the same both ways.",
         earned=lambda m: m.palindrome,
+        repeatable=True,
     ),
     Badge(
         "dejavu",
         "Déjà Vu",
         "Finish two races with exactly the same time.",
         earned=lambda m: m.deja_vu,
+        repeatable=True,
     ),
     Badge(
         "god_route",
@@ -551,6 +582,7 @@ BADGES = (
         f"Win by more than {GOD_ROUTE_MIN_MARGIN // 60} minutes in a field of "
         f"{GOD_ROUTE_MIN_FIELD} or more while not its top-rated racer.",
         earned=lambda m: m.player in m.god_route,
+        repeatable=True,
     ),
     Badge(
         "big_routing",
@@ -558,6 +590,7 @@ BADGES = (
         f"Win by more than {BIG_ROUTING_MIN_MARGIN // 60} minutes in a field of "
         f"{BIG_ROUTING_MIN_FIELD} or more as its top-rated racer.",
         earned=lambda m: m.player in m.big_routing,
+        repeatable=True,
     ),
     Badge(
         "upsetti",
@@ -565,6 +598,7 @@ BADGES = (
         f"Finish 2nd, {UPSETTI_MIN_MARGIN // 60} minutes or more behind the winner, in a field of "
         f"{UPSETTI_MIN_FIELD} or more as its top-rated racer.",
         earned=lambda m: m.player in m.upsetti,
+        repeatable=True,
     ),
     Badge(
         "big_brain",
@@ -572,12 +606,14 @@ BADGES = (
         f"Win by {BIG_BRAIN_MIN_MARGIN // 60} minutes or more in a field of "
         f"{BIG_BRAIN_MIN_FIELD} or more.",
         earned=lambda m: m.player in m.big_brain,
+        repeatable=True,
     ),
     Badge(
         "big_game_hunter",
         "Big Game Hunter",
         f"Win a race with {BIG_FIELD_SIZE} or more entrants.",
         earned=lambda m: m.won and m.n >= BIG_FIELD_SIZE,
+        repeatable=True,
     ),
     Badge(
         "glitched",
@@ -668,12 +704,14 @@ BADGES = (
         "Jet Seed",
         f"Finish a {CASUAL_BOOTS_PRESET} race in under {JET_SEED_MAX_SECONDS // 60} minutes.",
         earned=_jet_seed,
+        repeatable=True,
     ),
     Badge(
         "jet_lag",
         "Jet Lag",
         f"Win a {CASUAL_BOOTS_PRESET} race in {JET_LAG_MIN_SECONDS // 60} minutes or more.",
         earned=_jet_lag,
+        repeatable=True,
     ),
     Badge(
         "driving_lesson",
@@ -699,6 +737,7 @@ BADGES = (
         f"Enter an {ENTRANCE_MODE} race on {ENTRANCED_DAYS} days in a row.",
         ENTRANCED_DAYS,
         progress=lambda s: s.entrance_days.length,
+        repeatable=True,
     ),
     Badge(
         "entranced_weeks",
@@ -706,6 +745,7 @@ BADGES = (
         f"Enter an {ENTRANCE_MODE} race in {ENTRANCED_WEEKS} weeks in a row.",
         ENTRANCED_WEEKS,
         progress=lambda s: s.entrance_weeks.length,
+        repeatable=True,
     ),
     Badge(
         "what",
@@ -739,12 +779,14 @@ BADGES = (
         "Grocery Stick",
         f"Finish in the exact middle of an odd field of {MIDDLE_MIN_FIELD} or more entrants.",
         earned=lambda m: m.player in m.middle,
+        repeatable=True,
     ),
     Badge(
         "lanterne_rouge",
         "Lanterne Rouge",
         f"Finish last in a field of {LANTERNE_ROUGE_MIN_FIELD} or more where everyone finished.",
         earned=lambda m: m.player in m.lanterne_rouge,
+        repeatable=True,
     ),
     Badge(
         "rando_sicko",
@@ -759,6 +801,7 @@ BADGES = (
         f"Enter a race after {TOUCHED_GRASS_DAYS} or more days away, "
         f"counting from {TOUCHED_GRASS_FROM.isoformat()}.",
         earned=_touched_grass,
+        repeatable=True,
     ),
     Badge(
         "yap",
@@ -766,6 +809,7 @@ BADGES = (
         f"Comment on {YAP_COMMENTS} races in a row.",
         YAP_COMMENTS,
         progress=lambda s: s.comment_streak,
+        repeatable=True,
     ),
     Badge(
         "step_letter",
@@ -773,6 +817,7 @@ BADGES = (
         f"Be in a race of {STEP_LETTER_MIN_FIELD} or more where everyone finished "
         "in alphabetical order.",
         earned=lambda m: m.player in m.step_letter,
+        repeatable=True,
     ),
     Badge(
         "rettel_pets",
@@ -780,6 +825,7 @@ BADGES = (
         f"Be in a race of {STEP_LETTER_MIN_FIELD} or more where everyone finished "
         "in reverse alphabetical order.",
         earned=lambda m: m.player in m.rettel_pets,
+        repeatable=True,
     ),
     Badge(
         "pandamonium",
@@ -1198,15 +1244,27 @@ def compute(
                 retimed,
             )
             for badge in BADGES:
-                if badge.id in state.badges:
+                held = badge.id in state.badges
+                if held and not badge.repeatable:
                     continue
                 if (player, badge.id) in granted:
-                    unlocked = granted[(player, badge.id)] == ri
+                    fired = granted[(player, badge.id)] == ri  # rule never checked: fires once
                 elif badge.progress is not None:
-                    unlocked = badge.progress(state) >= targets[badge.id]
+                    value = badge.progress(state)
+                    if badge.repeatable:
+                        # A repeat is a changed value on a new positive multiple of the target.
+                        target = targets[badge.id]
+                        fired = value != state.badge_marks.get(badge.id, 0) and value > 0 and value % target == 0
+                        state.badge_marks[badge.id] = value
+                    else:
+                        fired = value >= targets[badge.id]
                 else:
-                    unlocked = badge.earned(moment)
-                if unlocked:
+                    fired = badge.earned(moment)
+                if not fired:
+                    continue
+                if badge.repeatable:
+                    state.badge_counts[badge.id] += 1
+                if not held:
                     state.badges[badge.id] = ri
                     if badge.id != "first_blood":
                         tags["badge"].append(["badge", player, badge.id])
@@ -1291,6 +1349,7 @@ def compute(
         player_out.append(
             {
                 "badges": dict(state.badges),
+                "badge_counts": {b.id: state.badge_counts[b.id] for b in BADGES if state.badge_counts[b.id]},
                 "progress": _progress(state, targets),
                 "streaks": {
                     "daily": {"best": daily[index][0], "current": daily[index][1]},
@@ -1349,6 +1408,7 @@ def compute(
                 "label": badge.label,
                 "description": badge.description,
                 "target": targets[badge.id],
+                "repeatable": badge.repeatable,
                 "image": badge_image_paths(badge.id)[0],
                 "still": badge_image_paths(badge.id)[1],
             }
@@ -1388,6 +1448,7 @@ def _empty_player() -> JsonObject:
     empty = {"best": None, "current": None}
     return {
         "badges": {},
+        "badge_counts": {},
         "progress": {},
         "streaks": {
             "daily": dict(empty),

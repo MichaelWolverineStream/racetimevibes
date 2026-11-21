@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 19;
+const PARTICIPANT_SCHEMA_VERSION = 20;
 // Must match BIO_MAX_LENGTH in scripts/featured.py, in code points as Python counts them.
 const FEATURED_BIO_MAX_LENGTH = 160;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
@@ -101,10 +101,14 @@ function validateParticipants(data) {
   }
   if (
     !Array.isArray(data.badges) ||
-    !data.badges.every((badge) => ["id", "label", "image", "still"].every((key) => typeof badge[key] === "string"))
+    !data.badges.every((badge) => (
+      ["id", "label", "image", "still"].every((key) => typeof badge[key] === "string") &&
+      typeof badge.repeatable === "boolean"
+    ))
   ) {
     throw new Error("Racer data contains an invalid badge definition.");
   }
+  const repeatableBadges = new Set(data.badges.filter((badge) => badge.repeatable).map((badge) => badge.id));
   if (
     !Array.isArray(data.seasons) ||
     !data.seasons.every((season, index) => (
@@ -186,6 +190,19 @@ function validateParticipants(data) {
       (notes === null || typeof notes !== "object" || Array.isArray(notes) || !Object.values(notes).every(isText))
     ) {
       throw new Error("Racer data contains an invalid badge note.");
+    }
+    // {badge id: times earned}, for exactly the repeatable badges the racer holds.
+    const counts = player.badge_counts;
+    if (
+      counts === null ||
+      typeof counts !== "object" ||
+      Array.isArray(counts) ||
+      !Object.entries(counts).every(([badgeId, count]) => (
+        repeatableBadges.has(badgeId) && player.badges[badgeId] !== undefined && Number.isInteger(count) && count >= 1
+      )) ||
+      !Object.keys(player.badges).every((badgeId) => !repeatableBadges.has(badgeId) || Object.hasOwn(counts, badgeId))
+    ) {
+      throw new Error("Racer data contains an invalid badge count.");
     }
   });
   data.races.forEach((race) => {

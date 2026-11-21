@@ -660,7 +660,7 @@ class SchemaThreeTests(unittest.TestCase):
         result = self.two_races_one_with_a_preset()
         for player in result["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
-                        "progress", "streaks"):
+                        "badge_counts", "progress", "streaks"):
                 self.assertIn(key, player)
             self.assertNotIn("rd", player)
             self.assertNotIn("pbs", player)
@@ -1400,7 +1400,7 @@ class CommittedParticipantDataTests(unittest.TestCase):
     def test_every_player_has_the_rating_fields(self):
         for player in self.participants["players"]:
             for key in ("rating", "mu", "sigma", "finishes", "mode_ratings", "badges",
-                        "progress", "streaks"):
+                        "badge_counts", "progress", "streaks"):
                 self.assertIn(key, player)
             self.assertNotIn("rd", player)
             self.assertNotIn("pbs", player)
@@ -1501,6 +1501,7 @@ class CommittedParticipantDataTests(unittest.TestCase):
             "finishes",
             "mode_ratings",
             "badges",
+            "badge_counts",
             "progress",
             "streaks",
             "claim",
@@ -1539,12 +1540,25 @@ class CommittedParticipantDataTests(unittest.TestCase):
                 self.assertEqual(set(row), leaderboard_row_keys)
         for badge in self.participants["badges"]:
             self.assertEqual(
-                set(badge), {"id", "label", "description", "target", "image", "still"}
+                set(badge),
+                {"id", "label", "description", "target", "repeatable", "image", "still"},
             )
+            self.assertIsInstance(badge["repeatable"], bool)
         for season in self.participants["seasons"]:
             self.assertEqual(set(season), {"n", "first", "last", "ended"})
         for entry in self.participants["season_names"].values():
             self.assertTrue({"kind", "text"} <= set(entry) <= {"kind", "text", "full"})
+
+    def test_badge_counts_cover_exactly_the_repeatable_badges_a_racer_holds(self):
+        repeatable = {badge["id"] for badge in self.participants["badges"] if badge["repeatable"]}
+        self.assertTrue(repeatable)
+        for player in self.participants["players"]:
+            counts = player["badge_counts"]
+            self.assertEqual(set(counts), repeatable & set(player["badges"]))
+            for badge_id, times in counts.items():
+                with self.subTest(player=player["id"], badge=badge_id):
+                    self.assertIs(type(times), int)
+                    self.assertGreaterEqual(times, 1)
 
     def test_mirrored_leaderboard_constants(self):
         source = (REPO_ROOT / "site" / "leaderboard.js").read_text(encoding="utf-8")

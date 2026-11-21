@@ -56,6 +56,8 @@
   --diamond-ink: #0f6f8f;
   --gold: #dca629;
   --gold-ink: #8a6200;
+  /* The highlight on a polished badge frame and its gem (repeat tiers in ui.css). */
+  --gold-shine: #f9e3a1;
   --silver: #c3ccc8;
   --silver-ink: #5b6e7d;
   --bronze: #d49a68;
@@ -179,6 +181,7 @@
   --diamond-ink: #86d2e5;
   --gold: #e8b54a;
   --gold-ink: #f0c464;
+  --gold-shine: #ffe9ad;
   --silver: #bac3bf;
   --silver-ink: #b0c1c9;
   --bronze: #d79d6c;

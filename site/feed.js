@@ -1322,7 +1322,13 @@ const Feed = (() => {
     }
     const shelf = element("div", "feed-spotlight__shelf");
     earned.slice(0, SHELF_BADGES).forEach(([badgeId, raceIndex]) => {
-      shelf.appendChild(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, note: player.badge_notes?.[badgeId] ?? null, compact: true }));
+      shelf.appendChild(UI.badge(badgeDefinition(badgeId), {
+        earnedRaceIndex: raceIndex,
+        note: player.badge_notes?.[badgeId] ?? null,
+        count: player.badge_counts[badgeId] ?? null,
+        holder: playerIndex,
+        compact: true,
+      }));
     });
     const rest = earned.length - SHELF_BADGES;
     if (rest > 0) {
@@ -1481,8 +1487,10 @@ const Feed = (() => {
     const grid = element("div", "feed-badges");
     unlocks.forEach(({ playerIndex, badgeId, raceIndex }) => {
       const cell = UI.markRacers(element("div", "feed-badges__item"), [playerIndex]);
-      const note = participants.players[playerIndex].badge_notes?.[badgeId] ?? null;
-      cell.append(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, note }), playerLink(playerIndex, "racer-link"));
+      const holder = participants.players[playerIndex];
+      const note = holder.badge_notes?.[badgeId] ?? null;
+      const count = holder.badge_counts[badgeId] ?? null;
+      cell.append(UI.badge(badgeDefinition(badgeId), { earnedRaceIndex: raceIndex, note, count, holder: playerIndex }), playerLink(playerIndex, "racer-link"));
       grid.appendChild(cell);
     });
     section.appendChild(grid);

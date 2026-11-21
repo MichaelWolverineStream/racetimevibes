@@ -473,6 +473,125 @@ tr:focus-within .follow-star--row,
   border-radius: 4px;
 }
 
+/* Repeatable badges: gem and polish. An earned repeatable tile carries one gem, set into the middle
+   of the frame's bottom edge, and its frame grows richer with the count. The tier classes come from
+   BADGE_REPEAT_TIERS in ui.js: ×1 shows the gem unlit; ×2 lights it and polishes the frame; ×5 adds
+   a warm fill and a glow; ×10 sets a diamond, the leaderboard's top medal, with a stronger glow, and
+   UI.badge adds --glint on arrival and on hover, so light runs across the tile and the diamond
+   twinkles. Nothing is drawn beside the tile. */
+.ui-badge {
+  --gem-size: 8px;
+  /* The bottom border's midline, measured from the padding box. */
+  --gem-drop: -1.5px;
+  --gold-deep: color-mix(in srgb, var(--gold) 66%, var(--shadow-color));
+  --tile-fill: var(--panel);
+  --polish: linear-gradient(135deg, var(--gold-shine), var(--gold) 30%, var(--gold-deep) 52%, var(--gold) 74%, var(--gold-shine));
+}
+
+.ui-badge--compact {
+  --gem-size: 6px;
+  --gem-drop: -1px;
+}
+
+.ui-badge--repeat-1 .ui-badge__tile::after,
+.ui-badge--repeat-2 .ui-badge__tile::after,
+.ui-badge--repeat-5 .ui-badge__tile::after,
+.ui-badge--repeat-10 .ui-badge__tile::after {
+  position: absolute;
+  bottom: var(--gem-drop);
+  left: 50%;
+  width: var(--gem-size);
+  height: var(--gem-size);
+  border-radius: 1.5px;
+  content: "";
+  transform: translate(-50%, 50%) rotate(45deg);
+}
+
+.ui-badge--repeat-1 .ui-badge__tile::after {
+  background: var(--panel);
+  box-shadow: 0 0 0 1.5px var(--gold-ink);
+}
+
+.ui-badge--repeat-2 .ui-badge__tile::after,
+.ui-badge--repeat-5 .ui-badge__tile::after {
+  background: linear-gradient(135deg, var(--gold-shine) 20%, var(--gold) 55%, var(--gold-deep));
+  box-shadow: 0 0 0 1.5px var(--panel), 0 0 0 2.5px var(--gold-deep);
+}
+
+/* The polished frame: a transparent border over a gradient painted on the border box, so it keeps
+   the radius, which border-image can't. */
+.ui-badge--repeat-2 .ui-badge__tile,
+.ui-badge--repeat-5 .ui-badge__tile,
+.ui-badge--repeat-10 .ui-badge__tile {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--tile-fill), var(--tile-fill)) padding-box,
+    var(--polish) border-box;
+}
+
+.ui-badge--repeat-5,
+.ui-badge--repeat-10 {
+  --tile-fill: color-mix(in srgb, var(--gold) 12%, var(--panel));
+}
+
+.ui-badge--repeat-5 .ui-badge__tile {
+  box-shadow:
+    0 0 0 1px var(--gold-ink) inset,
+    0 0 10px color-mix(in srgb, var(--gold) 45%, transparent);
+}
+
+/* The glint is a bright band laid over the frame and the fill, behind the art. With the band 2.5
+   times the tile's width, 200% parks it off the left edge and -100% off the right. */
+.ui-badge--repeat-10 .ui-badge__tile {
+  background:
+    linear-gradient(110deg, transparent 38%, var(--gold-shine) 50%, transparent 62%) border-box no-repeat 200% 0 / 250% 100%,
+    linear-gradient(var(--tile-fill), var(--tile-fill)) padding-box,
+    var(--polish) border-box;
+  box-shadow:
+    0 0 0 1px var(--gold-ink) inset,
+    0 0 14px 1px color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+/* The diamond: a little larger than the gold gem, with a facet of light and a halo. */
+.ui-badge--repeat-10 .ui-badge__tile::after {
+  width: calc(var(--gem-size) * 1.2);
+  height: calc(var(--gem-size) * 1.2);
+  background:
+    linear-gradient(135deg, var(--shine-color) 0 22%, transparent 24%),
+    linear-gradient(135deg, var(--diamond) 35%, var(--diamond-ink));
+  box-shadow:
+    0 0 0 1.5px var(--panel),
+    0 0 0 2.5px var(--diamond-ink),
+    0 0 7px 2px color-mix(in srgb, var(--diamond) 75%, transparent);
+}
+
+.ui-badge--glint .ui-badge__tile {
+  animation: ui-badge-glint 900ms ease-in-out;
+}
+
+.ui-badge--glint .ui-badge__tile::after {
+  animation: ui-badge-twinkle 900ms ease-out;
+}
+
+@keyframes ui-badge-glint {
+  from {
+    background-position: 200% 0, 0 0, 0 0;
+  }
+  to {
+    background-position: -100% 0, 0 0, 0 0;
+  }
+}
+
+@keyframes ui-badge-twinkle {
+  0%,
+  100% {
+    transform: translate(-50%, 50%) rotate(45deg) scale(1);
+  }
+  45% {
+    transform: translate(-50%, 50%) rotate(135deg) scale(1.3);
+  }
+}
+
 .ui-dialog,
 .ui-dialog-backdrop {
   --zelda-box: #1b2470;
@@ -683,6 +802,8 @@ tr:focus-within .follow-star--row,
 
   .ui-badge-panel,
   .ui-dialog,
+  .ui-badge--glint .ui-badge__tile,
+  .ui-badge--glint .ui-badge__tile::after,
   .palindrome-spark--twinkle,
   .ui-tag--record,
   .ui-tag--preset_record,

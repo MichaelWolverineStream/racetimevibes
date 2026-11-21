@@ -20,6 +20,8 @@ Each badge is one row in `BADGES` in `scripts/highlights.py` plus two images. Th
 
 **Two kinds.** A row has exactly one rule. A **counter** badge has `progress=`, which takes a `_Player` and returns the value so far, a running count or, for an "in a row" badge, the current run; it unlocks at `target`, and a target above 1 shows a progress border until then. A **one-race** badge has `earned=`, which takes a `_Moment` and returns `True` when that result earns it.
 
+**Repeatable.** A row can also be marked `repeatable=True`, so the racer's count of it is published as `badge_counts`. A one-race badge fires in every race where its rule holds; a counter badge fires each time its progress moves to a new positive multiple of its target, and only when the value changed since the racer's last race. The first time is still the unlock. Mark a badge only when its rule can fire again on a later race, a one-race feat or an "in a row" run, never a lifetime count or a rule that reads a flag that stays set. The rules are in the `Badge` docstring.
+
 Badges are recomputed from the whole archive on every build and never taken away, so a new badge goes to every racer who already qualifies. "Latest badges" lists the 12 newest unlocks, so old unlocks of a new badge show there only if they are among them.
 
 ## Add a badge
@@ -32,13 +34,13 @@ Badges are recomputed from the whole archive on every build and never taken away
    - A new per-racer count is a `_Player` field (`__slots__` and `__init__`), updated in the per-entry loop before the badge loop.
    - A fact about the whole race is a set of players computed next to `snipers` and `middle`, added to `_Moment`.
 3. **A rule that names a mode or preset** adds its constant to `test_badge_rules_use_names_that_exist_in_the_data` (`tests/test_participant_stats.py`), which fails if racetime renames it.
-4. **Tests** in `BadgeTests`: one just below the target and one at it, plus the id in `test_badge_table_order`. `duel()` and `solo_finishes()` use fixed times; for a time-based rule build races with `record()`, `done(player, place, seconds)` and `dnf(player)`.
+4. **Tests** in `BadgeTests`: one just below the target and one at it, plus the id in `test_badge_table_order`. A repeatable badge also goes in `test_repeatable_badges`. `duel()` and `solo_finishes()` use fixed times; for a time-based rule build races with `record()`, `done(player, place, seconds)` and `dnf(player)`.
 5. **Rebuild and check:** `build_stats.py`, `version_assets.py`, `python3 -m unittest discover -s tests`, then look at a racer page with `python3 -m http.server 8000 -d site`.
-6. **Docs:** a row in the Badges table in `docs/highlights.md`, plus a note under it if the rule needs explaining.
+6. **Docs:** a row in the Badges table in `docs/highlights.md` (Yes in its Repeats column if repeatable), plus a note under it if the rule needs explaining.
 
 ## Remove a badge
 
-1. Delete its `BADGES` row, its two images, its tests, its id in `test_badge_table_order`, its row and note in `docs/highlights.md`, and any entry for it in `badge-overrides.json` (the build fails on an unknown id).
+1. Delete its `BADGES` row, its two images, its tests, its id in `test_badge_table_order` and `test_repeatable_badges`, its row and note in `docs/highlights.md`, and any entry for it in `badge-overrides.json` (the build fails on an unknown id).
 2. Delete any constant or `_Player` field only it used, with the lines in `compute()` that update it (check with `grep`).
 3. If the art was Twemoji, update the README credit, and remove the footer credit in `site/index.html` once no Twemoji art remains.
 4. Rebuild and test as above. `test_badge_assets.py` fails on any leftover image.

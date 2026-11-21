@@ -763,6 +763,7 @@ const FaceOff = (() => {
     const definitions = new Map(participants.badges.map((definition) => [definition.id, definition]));
     const held = { a: player(a).badges, b: player(b).badges };
     const notes = { a: player(a).badge_notes ?? {}, b: player(b).badge_notes ?? {} };
+    const counts = { a: player(a).badge_counts, b: player(b).badge_counts };
     const only = (side) => Object.keys(held[side])
       .filter((id) => !(id in held[other(side)]) && definitions.has(id))
       .sort((left, right) => (badgeHolderCounts.get(left) ?? 0) - (badgeHolderCounts.get(right) ?? 0) || held[side][left] - held[side][right]);
@@ -789,7 +790,12 @@ const FaceOff = (() => {
       }
       const tiles = element("div", "faceoff-badges__tiles");
       lists[side].forEach((id) => {
-        const tile = UI.badge(definitions.get(id), { earnedRaceIndex: held[side][id], note: notes[side][id] ?? null });
+        const tile = UI.badge(definitions.get(id), {
+          earnedRaceIndex: held[side][id],
+          note: notes[side][id] ?? null,
+          count: counts[side][id] ?? null,
+          holder: side === "a" ? a : b,
+        });
         tile.style.setProperty("--i", String(order));
         order += 1;
         tiles.append(tile);

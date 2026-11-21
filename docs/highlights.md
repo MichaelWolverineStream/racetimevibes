@@ -36,76 +36,81 @@ The Badge count in the *New since your last visit* header stands for several bad
 
 ## Badges
 
-Each badge records the index of the race that unlocked it.
+Each badge records the index of the race that unlocked it. A repeatable badge also records how many times the racer earned it.
 
-| Badge | Rule |
-|---|---|
-| First Blood | Win a race. |
-| Hat Trick | Win 3 races in a row, in the racer's own sequence. |
-| Hummers | Win 6 races in a row. |
-| OkDudeLucksack | Win 9 races in a row. |
-| Double D | Win 10 races. |
-| Quarter Pounder | Win 25 races. |
-| Full Pounder | Win 50 races. |
-| On the Ped | Finish on the podium in 5 races in a row. |
-| Ped Regular | Finish on the podium in 10 races in a row. |
-| Bridesmaid | Finish 2nd in 3 races in a row. |
-| No Dodge | Finish 10 races in a row. |
-| More No Dodge | Finish 40 races in a row. |
-| Nice | Finish 69 races in a row. |
-| CenturianV | Finish 105 races. |
-| BlazeIt | Finish 420 races. |
-| >174 | Enter 175 races you don't win. |
-| Omnivore | Finish a race in 7 different modes. |
-| Apex Predator | Win a race in 7 different modes. |
-| Connoisseur | Finish 20 different seed presets. |
-| Rival | Finish ahead of the same opponent 20 times. |
-| Sniper | Win by less than 5 seconds. |
-| Sniped! | Finish 2nd, less than 5 seconds behind the winner. |
-| RETIME | Finish less than 1 second from another racer. |
-| Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. |
-| Déjà Vu | Finish two races with exactly the same time. |
-| God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. |
-| Big Routing | Win by more than 10 minutes in a field of 7 or more as its top-rated racer. |
-| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. |
-| BigBrain | Win by 15 minutes or more in a field of 9 or more. |
-| Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. |
-| Glitched | Finish a glitched race. |
-| Glitched! | Finish 10 glitched races. |
-| G1!tch3d!!! | Finish 30 glitched races. |
-| G%!#ch@d!#? | Finish 100 glitched races. |
-| The Upside Down | Finish an inverted race. |
-| Mirror Universe | Finish 30 inverted races. |
-| Keys | Finish a keys race. |
-| Locksmith | Finish 30 keys races. |
-| Simpler Times | Finish 10 simple races. |
-| Simpler Life | Finish 30 simple races. |
-| Had Fun | Finish a fun race. |
-| Kept Having Fun | Finish 10 fun races. |
-| Jet Seed | Finish a Casual Boots race in under 70 minutes. |
-| Jet Lag | Win a Casual Boots race in 100 minutes or more. |
-| Driving Lesson | Finish a spoiler race. |
-| Cruisin' | Win a spoiler race. |
-| Entrance | Finish an entrance race. |
-| Entranced | Enter an entrance race on 5 days in a row. |
-| Entranced! | Enter an entrance race in 20 weeks in a row. |
-| What? | Enter a mystery race. |
-| I Like It Here | Finish 10 mystery races. |
-| BUSTIN' | Finish 30 mystery races. |
-| Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. |
-| Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. |
-| Lanterne Rouge | Finish last in a field of 10 or more where everyone finished. |
-| Rando Sicko | Finish 5 races in a 24-hour period. |
-| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. |
-| Yap | Comment on 11 races in a row. |
-| Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. |
-| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. |
-| Pandamonium | Finish one race in Season 11. |
-| Badger | Collect 30 badges. |
+| Badge | Rule | Repeats |
+|---|---|---|
+| First Blood | Win a race. | |
+| Hat Trick | Win 3 races in a row, in the racer's own sequence. | Yes |
+| Hummers | Win 6 races in a row. | Yes |
+| OkDudeLucksack | Win 9 races in a row. | Yes |
+| Double D | Win 10 races. | |
+| Quarter Pounder | Win 25 races. | |
+| Full Pounder | Win 50 races. | |
+| On the Ped | Finish on the podium in 5 races in a row. | Yes |
+| Ped Regular | Finish on the podium in 10 races in a row. | Yes |
+| Bridesmaid | Finish 2nd in 3 races in a row. | Yes |
+| No Dodge | Finish 10 races in a row. | Yes |
+| More No Dodge | Finish 40 races in a row. | Yes |
+| Nice | Finish 69 races in a row. | Yes |
+| CenturianV | Finish 105 races. | |
+| BlazeIt | Finish 420 races. | |
+| >174 | Enter 175 races you don't win. | |
+| Omnivore | Finish a race in 7 different modes. | |
+| Apex Predator | Win a race in 7 different modes. | |
+| Connoisseur | Finish 20 different seed presets. | |
+| Rival | Finish ahead of the same opponent 20 times. | |
+| Sniper | Win by less than 5 seconds. | Yes |
+| Sniped! | Finish 2nd, less than 5 seconds behind the winner. | Yes |
+| RETIME | Finish less than 1 second from another racer. | Yes |
+| Palindrome | Finish with a time whose H:MM:SS digits, hour unpadded and colons removed, read the same both ways. | Yes |
+| Déjà Vu | Finish two races with exactly the same time. | Yes |
+| God Route | Win by more than 10 minutes in a field of 7 or more while not its top-rated racer. | Yes |
+| Big Routing | Win by more than 10 minutes in a field of 7 or more as its top-rated racer. | Yes |
+| Upsetti | Finish 2nd, 10 minutes or more behind the winner, in a field of 7 or more as its top-rated racer. | Yes |
+| BigBrain | Win by 15 minutes or more in a field of 9 or more. | Yes |
+| Big Game Hunter | Win a race with 16 or more entrants, anonymous entrants included. | Yes |
+| Glitched | Finish a glitched race. | |
+| Glitched! | Finish 10 glitched races. | |
+| G1!tch3d!!! | Finish 30 glitched races. | |
+| G%!#ch@d!#? | Finish 100 glitched races. | |
+| The Upside Down | Finish an inverted race. | |
+| Mirror Universe | Finish 30 inverted races. | |
+| Keys | Finish a keys race. | |
+| Locksmith | Finish 30 keys races. | |
+| Simpler Times | Finish 10 simple races. | |
+| Simpler Life | Finish 30 simple races. | |
+| Had Fun | Finish a fun race. | |
+| Kept Having Fun | Finish 10 fun races. | |
+| Jet Seed | Finish a Casual Boots race in under 70 minutes. | Yes |
+| Jet Lag | Win a Casual Boots race in 100 minutes or more. | Yes |
+| Driving Lesson | Finish a spoiler race. | |
+| Cruisin' | Win a spoiler race. | |
+| Entrance | Finish an entrance race. | |
+| Entranced | Enter an entrance race on 5 days in a row. | Yes |
+| Entranced! | Enter an entrance race in 20 weeks in a row. | Yes |
+| What? | Enter a mystery race. | |
+| I Like It Here | Finish 10 mystery races. | |
+| BUSTIN' | Finish 30 mystery races. | |
+| Both Ends | Finish a mystery race in under 30 minutes, and another in over 130 minutes. | |
+| Grocery Stick | Finish in the exact middle of an odd field of 5 or more entrants. | Yes |
+| Lanterne Rouge | Finish last in a field of 10 or more where everyone finished. | Yes |
+| Rando Sicko | Finish 5 races in a 24-hour period. | |
+| Touched Grass | Enter a race after 30 or more days away, counting from 2026-08-01. | Yes |
+| Yap | Comment on 11 races in a row. | Yes |
+| Step Letter | Be in a race of 5 or more where everyone finished in alphabetical order. | Yes |
+| Rettel Pets | Be in a race of 5 or more where everyone finished in reverse alphabetical order. | Yes |
+| Pandamonium | Finish one race in Season 11. | |
+| Badger | Collect 30 badges. | |
 
 A badge is either a counter, which unlocks when a count reaches its target, or a one-race badge, which unlocks on a single result. In the notes below, a **finish** is a finisher's result, and **day**, **week** and **field** are as defined in [definitions.md](definitions.md). Each badge ships an animated image and a still under `site/assets/badges/`; how the page shows them is under [Racer pages](dashboard.md#racer-pages).
 
 - **Streak and count badges:** win and finish runs follow the racer's own race sequence across all modes, and a DNF or DQ ends a finish run. The one exception is a DNF in a field of two whose other racer finished: it neither ends the finish run nor counts toward it. A DNF still ends the run when both racers DNF or the other was DQ'd. CenturianV and BlazeIt count finishes. Double D, Quarter Pounder and Full Pounder count wins, in a row or not. On the Ped and Ped Regular use the podium run (finishes that earn a [medal](definitions.md#entrants)), which, unlike the finish run, has no DNF exception. >174 counts every race entered and not won, DNFs included. A mode's count badges count finishes in that mode.
+- **Repeatable badges:** the Repeats column marks the badges a racer can earn again, and the racer's count of each is published. The first time is the unlock, so the recorded race is unchanged. Everything else counts a badge once: Badger, holder counts and rarity, claims to fame, Badge tags (only the first unlock adds one), Latest badges and the facts.
+  - A one-race badge is earned again in every race where its rule holds, so two photo-finish wins make Sniper ×2.
+  - A counter badge is earned again each time its progress moves to a new positive multiple of its target. A run of 6 wins makes Hat Trick ×2 and Hummers ×1. A run of 3 wins, a loss and another run of 3 makes Hat Trick ×2. A run of 5 makes it ×1.
+  - A counter badge is earned again only when its value changed since the racer's last race. An excused DNF in a field of two leaves the finish run alone, and a second entrance race on one Eastern day leaves Entranced alone, so neither earns a badge again.
+  - Never repeatable: lifetime counts (wins, finishes, mode counts, Omnivore, Apex Predator, Connoisseur, Rival and >174), because a count only grows; first-time badges (First Blood, Driving Lesson, Cruisin', Entrance, What? and Pandamonium); Rando Sicko, whose progress is a best-ever value; and Both Ends, whose rule reads flags that stay set, so it would fire in every later race.
 - **Progress:** each locked counter badge with a target above 1 publishes its progress for the border on the racer page. For an "in a row" badge that is the current run, not the best, so it drops to 0 when the run ends. A race run ends only on the racer's next race. An Entranced or Entranced! run also ends once the newest race in the data falls past the day or week after its last one. Rando Sicko is a rolling window, not a run, so it publishes its best 24-hour count.
 - **Bridesmaid:** 2nd places in a row in the racer's own race sequence. Any other result ends the run, a DNF included, even in a field of two.
 - **Connoisseur:** distinct seed presets finished. A preset is one row of the published preset list, so a name that two modes share, such as MMMM (Not Slow), counts twice.
@@ -153,6 +158,7 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 - **The date wins over the rule.** The badge's rule is never checked for that racer, so the badge unlocks on the given date even when the rule would unlock it on another.
 - **Note:** optional text. The badge's tooltip shows it after the date the badge was earned (see [Racer pages](dashboard.md#racer-pages)), and `participants.json` publishes it as `badge_notes`.
 - Badges are recomputed on every build, so deleting an entry takes the badge back, unless its rule unlocks it.
+- A repeatable badge given by hand counts once and never repeats for that racer, because its rule is never checked for them.
 
 `badge_overrides.load` and `badge_overrides.resolve` raise `BadgeOverridesError`, failing the build and naming the entry, unless:
 

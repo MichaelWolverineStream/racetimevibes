@@ -1270,6 +1270,115 @@ class BadgeTests(unittest.TestCase):
         self.assertEqual(result["players"][1]["badges"]["badger"], 2)
         self.assertIn(["badge", 1, "badger"], tags_of(result, 2, "badge"))
 
+    def counts(self, records, player=0, **kwargs):
+        return run(records, **kwargs)["players"][player]["badge_counts"]
+
+    def test_a_one_race_badge_repeats_with_its_unlock_in_the_first_race(self):
+        result = run([duel(0, 1, margin=1.0), duel(1, 0), duel(0, 1, margin=1.0)])
+        self.assertEqual(result["players"][0]["badges"]["sniper"], 0)
+        self.assertEqual(result["players"][0]["badge_counts"]["sniper"], 2)
+        self.assertEqual(
+            [index for index in range(3) if ["badge", 0, "sniper"] in tags_of(result, index, "badge")],
+            [0],
+        )
+
+    def test_a_run_of_six_wins_repeats_hat_trick_and_earns_hummers_once(self):
+        counts = self.counts([duel(0, 1)] * 6)
+        self.assertEqual(counts["hat_trick"], 2)
+        self.assertEqual(counts["hummers"], 1)
+
+    def test_a_repeating_counter_badge_unlocks_where_its_target_is_first_reached(self):
+        result = run([duel(0, 1)] * 6)
+        self.assertEqual(result["players"][0]["badges"]["hat_trick"], highlights.HAT_TRICK_WINS - 1)
+        self.assertEqual(result["players"][0]["badges"]["hummers"], highlights.HUMMERS_WINS - 1)
+        self.assertEqual(
+            [index for index in range(6) if ["badge", 0, "hat_trick"] in tags_of(result, index, "badge")],
+            [highlights.HAT_TRICK_WINS - 1],
+        )
+
+    def test_a_counter_badge_repeats_after_a_broken_run_and_not_on_a_partial_one(self):
+        self.assertEqual(
+            self.counts([duel(0, 1)] * 3 + [duel(1, 0)] + [duel(0, 1)] * 3)["hat_trick"], 2
+        )
+        self.assertEqual(self.counts([duel(0, 1)] * 5)["hat_trick"], 1)
+
+    def test_an_excused_dnf_in_a_field_of_two_never_repeats_no_dodge(self):
+        excused = record([dnf(0), done(1, 1, 3000.0)])
+        self.assertEqual(self.counts(solo_finishes(10) + [excused])["no_dodge"], 1)
+        self.assertEqual(self.counts(solo_finishes(10) + [excused] + solo_finishes(10))["no_dodge"], 2)
+
+    def test_a_second_entrance_race_on_one_day_counts_once_toward_entranced(self):
+        records = [record([done(0, 1, 3000.0)], mode=1, day=day) for day in range(5)]
+        records.append(record([done(0, 1, 3000.0)], mode=1, day=4))
+        self.assertEqual(self.counts(records, modes=ENTRANCE_MODES)["entranced"], 1)
+
+    def test_three_equal_finish_times_give_deja_vu_twice(self):
+        self.assertEqual(self.counts(solo_finishes(3))["dejavu"], 2)
+
+    def test_a_badge_that_is_not_repeatable_has_no_count(self):
+        result = run([duel(0, 1)] * 20)["players"][0]
+        self.assertIn("doubled", result["badges"])
+        self.assertNotIn("doubled", result["badge_counts"])
+        self.assertIn("hat_trick", result["badge_counts"])
+
+    def test_a_repeatable_badge_given_by_hand_counts_once(self):
+        records = [duel(0, 1, margin=1.0)] * 3
+        result = run(records, granted={(0, "sniper"): 0})
+        self.assertEqual(result["players"][0]["badges"]["sniper"], 0)
+        self.assertEqual(result["players"][0]["badge_counts"]["sniper"], 1)
+
+    def test_badger_and_holders_count_a_repeated_badge_once(self):
+        records = [duel(0, 1, margin=1.0)] * 3
+        result = run(records)
+        distinct = len(result["players"][0]["badges"])
+        self.assertGreater(result["players"][0]["badge_counts"]["sniper"], 1)
+        self.assertEqual(result["diagnostics"]["badge_holders"]["sniper"], 1)
+        for target, expected in ((distinct, True), (distinct + 1, False)):
+            with self.subTest(target=target):
+                table = tuple(
+                    badge._replace(target=target) if badge.id == "badger" else badge
+                    for badge in highlights.BADGES
+                )
+                with mock.patch.object(highlights, "BADGES", table):
+                    badges = run(records)["players"][0]["badges"]
+                self.assertEqual("badger" in badges, expected)
+
+    def test_repeatable_badges(self):
+        self.assertEqual(
+            {badge.id for badge in highlights.BADGES if badge.repeatable},
+            {
+                "sniper",
+                "sniped",
+                "retime",
+                "palindrome",
+                "dejavu",
+                "god_route",
+                "big_routing",
+                "upsetti",
+                "big_brain",
+                "big_game_hunter",
+                "jet_seed",
+                "jet_lag",
+                "grocery_stick",
+                "lanterne_rouge",
+                "touched_grass",
+                "step_letter",
+                "rettel_pets",
+                "hat_trick",
+                "hummers",
+                "ok_dude_lucksack",
+                "on_the_ped",
+                "ped_regular",
+                "bridesmaid",
+                "no_dodge",
+                "more_no_dodge",
+                "nice",
+                "entranced",
+                "entranced_weeks",
+                "yap",
+            },
+        )
+
     def test_badge_table_order(self):
         ids = [badge["id"] for badge in run([])["badges"]]
         self.assertEqual(

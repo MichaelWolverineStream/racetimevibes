@@ -218,6 +218,14 @@ class SiteThemeTests(unittest.TestCase):
         )
         self.assertEqual((int(nav_me_css.group(1)), int(nav_me_css.group(2))), (nav_me_size, nav_me_size))
 
+    def test_badge_repeat_tiers_start_at_one_and_match_the_css(self):
+        tiers = self.search(r"^const BADGE_REPEAT_TIERS = \[([\d, ]+)\];", "ui.js").group(1)
+        floors = sorted(int(floor) for floor in tiers.split(","))
+        ui_css = (SITE_DIR / "ui.css").read_text(encoding="utf-8")
+        styled = sorted({int(n) for n in re.findall(r"\.ui-badge--repeat-(\d+)\b", ui_css)})
+        self.assertEqual(floors, styled)
+        self.assertEqual(floors[0], 1, "a repeatable badge earned once needs a tier")
+
     def test_browser_chrome_matches_the_brand_fill(self):
         # theme.js tints the browser toolbar before the stylesheets load, so it can't read --brand-fill.
         chrome = self.search(

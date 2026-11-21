@@ -13,6 +13,9 @@ const BADGE_RARITIES = [
   ["legendary", 0.02],
   ["rare", 0.1],
 ];
+// The look of an earned repeatable badge, by how many times it was earned: the highest floor at or
+// under the count names its tier. Must match the .ui-badge--repeat-N rules in ui.css.
+const BADGE_REPEAT_TIERS = [10, 5, 2, 1];
 // Size, radius and border must match .ui-badge__tile in ui.css.
 const BADGE_TILE_SIZE = 60;
 const BADGE_TILE_RADIUS = 12;
@@ -334,17 +337,66 @@ const UI = (() => {
     return rarity ? rarity[0] : "common";
   }
 
+  // "once" or "7 times", for a repeatable badge's count.
+  function timesText(count) {
+    return count === 1 ? "once" : `${count} times`;
+  }
+
+  // The repeat tier class of an earned repeatable badge earned `count` times (see BADGE_REPEAT_TIERS).
+  function repeatClass(count) {
+    const floor = BADGE_REPEAT_TIERS.find((tier) => count >= tier) ?? 1;
+    return `ui-badge--repeat-${floor}`;
+  }
+
   // `note` is the text a badge given by hand may carry (the racer's badge_notes); it follows the date.
-  function badgeTooltip(definition, earnedRaceIndex, progress, note) {
+  // A repeatable badge adds how many times it was earned, or "Repeatable" while it is locked.
+  function badgeTooltip(definition, earnedRaceIndex, progress, note, count) {
     const description = definition.description || "";
+    const earned = earnedRaceIndex !== null && earnedRaceIndex !== undefined;
     let status = "";
-    if (earnedRaceIndex !== null && earnedRaceIndex !== undefined) {
-      const date = participants.races[earnedRaceIndex].d;
-      status = `Earned ${formatRaceDate(date)}`;
-    } else if (definition.target && progress !== null && progress !== undefined) {
-      status = `${progress} / ${definition.target}`;
+    let repeats = "";
+    if (earned) {
+      const date = formatRaceDate(participants.races[earnedRaceIndex].d);
+      const many = definition.repeatable && count > 1;
+      status = many ? `First earned ${date}` : `Earned ${date}`;
+      if (definition.repeatable) {
+        repeats = many ? timesText(count) : "Once so far";
+      }
+    } else {
+      if (definition.target && progress !== null && progress !== undefined) {
+        status = `${progress} / ${definition.target}`;
+      }
+      if (definition.repeatable) {
+        repeats = "Repeatable";
+      }
     }
-    return [description, status, note, badgeShare(definition.id)].filter(Boolean).join(" · ");
+    return [description, status, repeats, note, badgeShare(definition.id)].filter(Boolean).join(" · ");
+  }
+
+  // A ×10 tile's glint: light runs across it and its diamond twinkles, once on arrival and again on
+  // hover or keyboard focus. Restarting means removing the class and forcing a reflow before adding it.
+  function bindGlint(root, tile) {
+    const glint = () => {
+      root.classList.remove("ui-badge--glint");
+      void tile.offsetWidth;
+      root.classList.add("ui-badge--glint");
+    };
+    tile.addEventListener("animationend", (event) => {
+      if (event.animationName === "ui-badge-glint") {
+        root.classList.remove("ui-badge--glint");
+      }
+    });
+    root.addEventListener("pointerenter", (event) => {
+      if (!isTouchPointer(event)) {
+        glint();
+      }
+    });
+    root.addEventListener("focus", () => {
+      if (root.matches(":focus-visible")) {
+        glint();
+      }
+    });
+    root.classList.add("ui-badge--glint");
   }
 
   // A compact tile's art: the still frame, animated only while a mouse hovers the tile or it has
@@ -369,10 +421,19 @@ const UI = (() => {
   }
 
   // `compact` draws an earned badge as a small tile with no label: its name leads the tooltip
-  // and names the button instead.
-  function badge(definition, { earnedRaceIndex = null, progress = null, note = null, compact = false } = {}) {
+  // and names the button instead. `count` is how many times the racer earned a repeatable badge
+  // (their badge_counts), and `holder` is the racer's player index, which the holders panel names.
+  function badge(definition, { earnedRaceIndex = null, progress = null, note = null, compact = false, count = null, holder = null } = {}) {
     const earned = earnedRaceIndex !== null && earnedRaceIndex !== undefined;
-    const root = element("button", `ui-badge ui-badge--${earned ? "earned" : "locked"}${compact ? " ui-badge--compact" : ""}`);
+    const repeats = earned && definition.repeatable ? (count ?? 1) : null;
+    const classes = ["ui-badge", `ui-badge--${earned ? "earned" : "locked"}`];
+    if (compact) {
+      classes.push("ui-badge--compact");
+    }
+    if (repeats !== null) {
+      classes.push(repeatClass(repeats));
+    }
+    const root = element("button", classes.join(" "));
     root.type = "button";
     root.setAttribute("aria-haspopup", "dialog");
     const tile = element("span", "ui-badge__tile");
@@ -381,17 +442,23 @@ const UI = (() => {
     }
     tile.appendChild(compact && earned ? compactArt(definition, root) : badgeArt(definition, earned));
     root.appendChild(tile);
-    let tooltipText = badgeTooltip(definition, earnedRaceIndex, progress, note);
+    let tooltipText = badgeTooltip(definition, earnedRaceIndex, progress, note, repeats);
     if (compact) {
-      root.setAttribute("aria-label", definition.label);
       tooltipText = [definition.label, tooltipText].filter(Boolean).join(" · ");
     } else {
       root.appendChild(element("span", "ui-badge__label", definition.label));
     }
+    const many = repeats !== null && repeats > 1;
+    if (compact || many) {
+      root.setAttribute("aria-label", many ? `${definition.label}, ${timesText(repeats)}` : definition.label);
+    }
     if (tooltipText) {
       bindTooltip(root, tooltipText);
     }
-    root.addEventListener("click", () => badgePanel(definition));
+    if (repeats !== null && repeats >= BADGE_REPEAT_TIERS[0]) {
+      bindGlint(root, tile);
+    }
+    root.addEventListener("click", () => badgePanel(definition, { holder }));
     return root;
   }
 
@@ -472,9 +539,12 @@ const UI = (() => {
     return { panel, close };
   }
 
-  function badgePanel(definition) {
+  // `holder` is the player index of the racer whose tile opened the panel: for a repeatable badge
+  // they hold, a line under the count says how many times they earned it.
+  function badgePanel(definition, { holder = null } = {}) {
     const titleId = `ui-badge-panel-title-${definition.id}`;
     const { panel, close } = modalPanel({ labelledBy: titleId });
+    const timesEarned = (player) => player.badge_counts[definition.id] ?? 1;
 
     const holders = [];
     participants.players.forEach((player, playerIndex) => {
@@ -486,15 +556,27 @@ const UI = (() => {
 
     const tile = element("span", "ui-badge__tile");
     tile.appendChild(badgeArt(definition, true));
-    const art = element("span", "ui-badge ui-badge--earned ui-badge-panel__art");
+    const artClasses = ["ui-badge", "ui-badge--earned", "ui-badge-panel__art"];
+    if (definition.repeatable) {
+      artClasses.push(repeatClass(1));
+    }
+    const art = element("span", artClasses.join(" "));
     art.appendChild(tile);
 
     const title = element("h2", "ui-badge-panel__title", definition.label);
     title.id = titleId;
     const share = shareFormatter.format(holders.length / participants.players.length);
-    const count = `${holders.length} ${holders.length === 1 ? "racer" : "racers"} · ${share}`;
+    const countParts = [`${holders.length} ${holders.length === 1 ? "racer" : "racers"}`, share];
+    if (definition.repeatable && holders.length) {
+      const total = holders.reduce((sum, { player }) => sum + timesEarned(player), 0);
+      countParts.push(total === 1 ? "earned once" : `earned ${total} times in all`);
+    }
     const text = element("div", "ui-badge-panel__text");
-    text.append(title, element("p", "ui-badge-panel__description", definition.description || ""), element("p", "ui-badge-panel__count", count));
+    text.append(title, element("p", "ui-badge-panel__description", definition.description || ""), element("p", "ui-badge-panel__count", countParts.join(" · ")));
+    const opener = holder === null ? null : participants.players[holder];
+    if (definition.repeatable && opener && opener.badges[definition.id] !== undefined) {
+      text.append(element("p", "ui-badge-panel__count", `${opener.name} · ${timesText(timesEarned(opener))}`));
+    }
     const header = element("div", "ui-badge-panel__header");
     header.append(art, text);
 
@@ -502,12 +584,13 @@ const UI = (() => {
     if (holders.length) {
       body = element("div", "ui-badge-panel__holders");
       holders.forEach(({ player, playerIndex }) => {
+        const label = definition.repeatable ? `${player.name} · ${timesText(timesEarned(player))}` : player.name;
         const link = markRacers(element("a", "ui-badge-panel__holder"), [playerIndex]);
         link.href = playerHash(player.id, ALL_MODES);
-        link.setAttribute("aria-label", player.name);
+        link.setAttribute("aria-label", label);
         link.appendChild(avatar(playerIndex, 40));
         link.addEventListener("click", close);
-        bindTooltip(link, player.name);
+        bindTooltip(link, label);
         body.appendChild(link);
       });
     } else {
