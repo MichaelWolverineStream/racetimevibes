@@ -1823,7 +1823,7 @@ function bindFilter(inputSelector, state, rerender) {
 async function loadParticipants() {
   const status = document.querySelector("#leaderboard-status");
   try {
-    const response = await fetch("data/participants.json", { cache: "no-store" });
+    const response = await fetch("data/participants.json", { cache: "no-cache" });
     if (!response.ok) {
       throw new Error(`Racer data request failed with HTTP ${response.status}.`);
     }

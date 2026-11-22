@@ -4,7 +4,7 @@
 - **Read before:** changing anything a visitor sees. The code conventions for `site/` are in [.claude/rules/site.md](../.claude/rules/site.md).
 - **Code:** `site/index.html`, `site/*.js`, `site/*.css`. The datasets it reads are in [datasets.md](datasets.md).
 
-Everything here happens in the browser: the scripts in `site/` read the datasets and compute the rest on the page. Data freshness is build-time: the dashboard trails racetime.gg by up to about two hours, the interval of the [scheduled data refresh](operations.md#scheduled-data-refresh). The browser reads the local data files and never contacts racetime.gg.
+Everything here happens in the browser: the scripts in `site/` read the datasets and compute the rest on the page. Data freshness is build-time: the dashboard trails racetime.gg by up to about two hours, the interval of the [scheduled data refresh](operations.md#scheduled-data-refresh). The browser reads the local data files and never contacts racetime.gg. It revalidates them on every load and downloads them again only when a deploy changed them (see [Browser caching](operations.md#browser-caching)).
 
 ## Page layout and navigation
 

@@ -52,7 +52,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 | `docs/highlights.md` | Tags, badges, badges given by hand, streaks, presets, records, claims, facts, featured racer | `highlights.py`, `badge_images.py`, `badge_overrides.py`, `featured.py` |
 | `docs/avatars.md` | Avatar mirror, Pokémon avatars, sprites, avatar changes | `avatar_mirror.py`, `pokemon_avatars.py`, `pokemon_images.py` |
 | `docs/dashboard.md` | Everything the page shows and does | `site/` |
-| `docs/operations.md` | Refresh steps and options, asset versioning, tests, workflows | `.github/workflows/`, `version_assets.py` |
+| `docs/operations.md` | Refresh steps and options, asset versioning, browser caching, tests, workflows | `.github/workflows/`, `version_assets.py` |
 | `docs/analyses.md` | Mode overlap, schedule planner and lab, rating lab | `mode_overlap.py`, `schedule_planner.py`, `schedule_lab.py`, `rating_lab.py` |
 | `docs/testing.md` | Test tiers, where a new test goes, rules for every test, time budgets | `tests/`, `tests/analyses/` |
 

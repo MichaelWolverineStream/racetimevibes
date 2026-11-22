@@ -658,7 +658,7 @@ const UI = (() => {
 
   function comments() {
     if (!commentsPromise) {
-      commentsPromise = fetch(COMMENTS_URL, { cache: "no-store" })
+      commentsPromise = fetch(COMMENTS_URL, { cache: "no-cache" })
         .then((response) => {
           if (!response.ok) {
             throw new Error(`${COMMENTS_URL} returned ${response.status}`);

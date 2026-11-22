@@ -31,6 +31,54 @@ Run `python3 scripts/version_assets.py` after editing `site/index.html` or any f
 - A new stamped site file goes into `VERSIONED_ASSETS`; a test fails when `index.html` references a local stamped file that is not listed.
 - The Barlow fonts in `site/assets/fonts/` are not stamped: replace one by adding a file under a new name.
 
+## Browser caching
+
+GitHub Pages sends `Cache-Control: max-age=600` on every file and cannot be configured. Its ETag and Last-Modified also change on every deploy, even for files the deploy did not change. The page is served as `climbers.alttpr.racing` through Cloudflare, so browser lifetimes are set there. Chrome's [Cache insight](https://developer.chrome.com/docs/performance/insights/cache) asks for at least 30 days on scripts, stylesheets, fonts and images.
+
+| Tier | Files | `Cache-Control` | Why it is safe |
+|---|---|---|---|
+| Immutable | `*.js` and `*.css` requested with `?v=`; `assets/fonts/*` | `public, max-age=31536000, immutable` | A stamped URL never changes content (see [Versioning static assets](#versioning-static-assets)). A font is replaced under a new name. |
+| 30 days | `avatars/*`, `assets/badges/*`, `assets/alttpr-ladder.png` | `public, max-age=2592000` | A new racetime.gg upload gets a new name. Badge art redrawn in place and reprocessed Pokémon sprites can show the old image for up to 30 days. |
+| Revalidate | `/`, `index.html`, `version.json`, `data/*` | `no-cache` | The browser checks every time and gets a 304 when nothing changed. |
+
+- **`index.html` must stay `no-cache`.** A year-long stamped URL is safe only while the page that names it is always current.
+- **The page fetches the datasets with `cache: "no-cache"`.** A reload in the same deploy costs a 304, not the files. `version.json` is fetched with `no-store`.
+- **Edge caching is untouched.** The rules set only the header the browser gets, so a deploy never needs a Cloudflare purge.
+- **An unstamped `app.js` (no `?v=`) is not matched** and keeps Cloudflare's default browser TTL.
+
+### The Cloudflare rules
+
+They live on the `alttpr.racing` zone, outside this repo. Only the zone owner can change them. They are three Response Header Transform Rules (Rules › Transform Rules › Modify Response Header), each setting the static header `Cache-Control`. Each one names the host, so the zone's other subdomains are untouched. The response-code clause keeps a 404, such as a removed avatar, from being cached.
+
+1. **Immutable**, value `public, max-age=31536000, immutable`:
+   ```
+   (http.host eq "climbers.alttpr.racing" and http.response.code in {200 304} and
+    ((http.request.uri.query wildcard "v=*" and (http.request.uri.path wildcard "*.js" or http.request.uri.path wildcard "*.css"))
+     or http.request.uri.path wildcard "/assets/fonts/*"))
+   ```
+2. **30 days**, value `public, max-age=2592000`:
+   ```
+   (http.host eq "climbers.alttpr.racing" and http.response.code in {200 304} and
+    (http.request.uri.path wildcard "/avatars/*" or http.request.uri.path wildcard "/assets/badges/*"
+     or http.request.uri.path eq "/assets/alttpr-ladder.png"))
+   ```
+3. **Revalidate**, value `no-cache`:
+   ```
+   (http.host eq "climbers.alttpr.racing" and
+    (http.request.uri.path in {"/" "/index.html" "/version.json"} or http.request.uri.path wildcard "/data/*"))
+   ```
+
+Check them from the repo root. Each line prints the header its tier sets, and a bare `/app.js` prints Cloudflare's default:
+
+```bash
+B=https://climbers.alttpr.racing; V=$(curl -s $B/version.json | sed 's/.*"version":"\([^"]*\)".*/\1/')
+for p in "/app.js?v=$V" "/styles.css?v=$V" /assets/fonts/barlow-400.woff2 \
+         /assets/alttpr-ladder.png "/assets/badges/$(ls site/assets/badges | head -1)" "/avatars/$(ls site/avatars | head -1)" \
+         / /index.html /version.json /data/race-stats.json /app.js; do
+  printf '%-48s %s\n' "$p" "$(curl -sI "$B$p" | tr -d '\r' | awk -F': ' 'tolower($1)=="cache-control"{print $2}')"
+done
+```
+
 ## Tests
 
 ```bash

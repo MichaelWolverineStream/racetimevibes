@@ -841,7 +841,7 @@ async function load() {
   const status = document.querySelector("#load-status");
   const dashboard = document.querySelector("#dashboard");
   try {
-    const response = await fetch("data/race-stats.json", { cache: "no-store" });
+    const response = await fetch("data/race-stats.json", { cache: "no-cache" });
     if (!response.ok) {
       throw new Error(`Race data request failed with HTTP ${response.status}.`);
     }
