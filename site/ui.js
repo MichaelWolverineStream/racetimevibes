@@ -131,7 +131,11 @@ const UI = (() => {
       wrapper.appendChild(avatar(playerIndex, SPEECH_AVATAR_SIZES[size] ?? SPEECH_AVATAR_SIZES.compact));
     }
     const body = element("div", "ui-speech__body");
-    body.appendChild(element("p", "ui-speech__bubble", text));
+    // The text has a span of its own, so a line clamp (the hero's on phones, feed.css) can hide its overflow
+    // without clipping the bubble's tail.
+    const bubble = element("p", "ui-speech__bubble");
+    bubble.appendChild(element("span", "ui-speech__text", text));
+    body.appendChild(bubble);
     if (context.length) {
       const attribution = element("p", "ui-speech__attribution");
       context.forEach((part, index) => {

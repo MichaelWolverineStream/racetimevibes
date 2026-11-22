@@ -58,6 +58,10 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - Mode labels (`modeLabel`, `formatModeName`) are display only. Lookups take the raw mode id: `modeColor`, `participants.modes`, hash routes.
 - A new race mode needs a colour slot in `MODE_COLOR_SLOTS` (`racer-charts.js`), or it falls back to grey. Don't reorder `--mode-1..8`: the order keeps neighbouring violins distinguishable for colour-blind viewers.
 - No `innerHTML`: build the DOM with `element`/`svgElement` and `textContent`, because names and comments are user data.
+- Arriving data never moves what is already on screen (Cumulative Layout Shift):
+  - Every `<section>` in `<main>` starts `hidden` and shows once its data renders. The racer sections all show in one task, in `loadParticipants`. `tests/test_site_markup.py` checks the markup.
+  - `#racer-load-status` stands in for them under the nav and reaches past the fold (`.load-status--page`), so nothing visible while loading sits where a section will appear.
+  - A slot filled after the sections show, like the masthead comment, gets a size its content can't outgrow.
 - A value mirrored between JS, CSS and Python carries a "must match" comment (`BADGE_TILE_*`, `MONOGRAM_TINTS` in `ui.js`) and a test that parses both sides (`test_site_theme.py` for JS and CSS; `test_build_stats.py`, `test_participant_stats.py`, `test_comment_stats.py`, `test_featured.py` for Python). A new mirror gets its test in the same change. Change both sides together.
 - The one mirror without a test is logic, not a value: `formatModeName` (`app.js`) and `mode_label` (`scripts/highlights.py`) must turn a mode id into the same label. Change both together.
 

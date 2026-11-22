@@ -708,6 +708,18 @@ summary:focus-visible {
   color: var(--red);
 }
 
+/* The racer data's status sits under the nav and stands in for every section that waits for that data (they
+   all start hidden). It reaches past the bottom of the screen, so everything after it (the race statistics'
+   status or panels, and the footer) starts below the fold. When the sections appear in its place, nothing on
+   screen moves, which is what Cumulative Layout Shift counts. Its text sits at the top, where a phone can see
+   it: centred in a box this tall, it would fall below the fold. */
+.load-status--page {
+  min-height: 100vh;
+  min-height: 100svh;
+  align-items: start;
+  padding-top: 48px;
+}
+
 .dashboard {
   margin-top: 32px;
 }

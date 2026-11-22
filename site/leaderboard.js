@@ -1821,7 +1821,7 @@ function bindFilter(inputSelector, state, rerender) {
 }
 
 async function loadParticipants() {
-  const status = document.querySelector("#leaderboard-status");
+  const status = document.querySelector("#racer-load-status");
   try {
     const response = await fetch("data/participants.json", { cache: "no-cache" });
     if (!response.ok) {
@@ -1873,9 +1873,11 @@ async function loadParticipants() {
     document.querySelector("#leaderboard-me").addEventListener("click", jumpToMe);
     bindTooltip(document.querySelector("#nav-me"), "Your racer page");
 
+    // The status stands in for every section that waits for this data, and they all appear in this one task,
+    // so nothing already on screen moves (see .load-status--page in styles.css).
     renderLeaderboard();
     status.hidden = true;
-    document.querySelector("#leaderboard-controls").hidden = false;
+    document.querySelector("#leaderboard").hidden = false;
     route(true);
     window.addEventListener("hashchange", () => route(false));
     // Until the data loads, the mark is a plain link to the page, which reloads it.

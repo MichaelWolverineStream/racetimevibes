@@ -19,12 +19,14 @@ The page runs top to bottom:
 
 Each racer also has a page with their ratings, badges, latest results, and charts (see [Racer pages](#racer-pages)). [Face Off](#face-off) is a page of its own that sets two racers side by side.
 
+**While the data loads**, a panel reading "Loading racer statistics..." sits under the nav, its text near the top, and reaches past the bottom of the screen. Every section stays hidden until its data has rendered. The sections from the Top-rated banner to The Pool Room then appear together in the panel's place, so nothing already on screen moves (no layout shift). The Ladder Data panels have their own data: if it arrives first, they render below the panel, out of sight. If the racer data cannot be loaded, the panel shows the error and those sections stay hidden.
+
 The masthead holds the category artwork, the title block, a racer comment, the visitor counter and the theme toggle, with their tops aligned.
 
 - **The category artwork links home**, on every page. A click shows the board from the top of the page, from any view and without reloading, and leaves focus on the artwork. The address loses its hash, and the browser's Back returns to the page you were on. Back or Forward to that home entry later lands where the board was left, like any return to the board, not at the top. A click that opens a new tab, or one before the data has loaded, loads the page afresh. On hover its edge turns green and it lifts slightly.
 
 - **Data snapshot** ends the title block: the age of the published data, "just now" under a minute, then whole minutes, hours or days, counted from when the data was last built and updated every minute. Hovering or tapping it shows the exact UTC time.
-- **The racer comment** is a random comment of at least 12 characters from the last 30 days, or from any time when those 30 days hold fewer than 20. It is cut at 180 characters, and the bubble is at most 450px wide. **↻** (Another comment), under the avatar, picks another.
+- **The racer comment** is a random comment of at least 12 characters from the last 30 days, or from any time when those 30 days hold fewer than 20. It is cut at 180 characters, and the bubble is at most 450px wide. **↻** (Another comment), under the avatar, picks another. The comment loads after the sections, so its slot never grows: at 620px and below the bubble shows at most three lines, ending in "…", in a row tall enough for three.
 - The visitor counter hides at 1199px and below, and at 980px and below the comment moves to a row of its own under the artwork and title.
 - **The theme toggle** ends the masthead on every page and at every width. It is a button labelled "Dark mode", pressed in the dark theme, and shows a moon in the light theme and a sun in the dark one. Once a Piece of Heart is found, the heart sits above it (see [Easter eggs](#easter-eggs)).
   - A first visit follows the system's light or dark setting, and keeps following it until the toggle is used.

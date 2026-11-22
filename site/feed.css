@@ -1284,6 +1284,22 @@
 }
 
 @media (max-width: 620px) {
+  /* The comment loads last (comments.json), after the sections under the masthead have appeared, so it must
+     never outgrow its slot: a taller masthead would push the nav and every section down, a layout shift. On
+     a phone the comment has a row of its own and a narrow bubble, so the text keeps to three lines, and the
+     slot is the height of the tallest such comment, its attribution wrapped to three lines at 320px. Wider
+     screens need neither: there the 120px slot already holds the 180-character cut. */
+  .comment-hero {
+    min-height: 140px;
+  }
+
+  .comment-hero__stage .ui-speech__text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
   .updates-layout {
     padding-inline: 16px;
   }
