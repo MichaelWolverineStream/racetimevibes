@@ -14,8 +14,6 @@ paths:
 
 # Highlights and badges
 
-- **Spec:** `docs/highlights.md` (race tags, badges, streaks, presets, records, claims to fame). Update it in the same change.
-- To add, remove or change a badge, follow the `badges` skill (`.claude/skills/badges/SKILL.md`).
+- **Spec:** `docs/highlights.md` (race tags, badges, badges given by hand, streaks, presets, records, claims to fame, facts and the featured racer). Update it in the same change.
 - Thresholds are constants at the top of `highlights.py`, and descriptions are built from them.
 - Every tag and badge that reads a rating reads the overall rating.
-- After a change, rebuild `site/data` with `python3 scripts/build_stats.py` and commit it with the change.

@@ -38,14 +38,15 @@ jobs:
           python-version: "3.12"
       - name: Sync race archive
         run: python3 scripts/race_archive.py
-      - name: Sync racer bios
-        if: inputs.sync-bios
-        run: python3 scripts/racer_bios.py
       - name: Sync ladder schedule
         # A failed sync writes nothing, and the build copes with an older mirror, so an
         # alttpr.racing outage must not hold back the race data.
         continue-on-error: true
         run: python3 scripts/schedule_archive.py
+      - name: Sync racer bios
+        # After the schedule: the bio sync reads its season spans to leave out season-break races.
+        if: inputs.sync-bios
+        run: python3 scripts/racer_bios.py
       - name: Build data
         # --lock-seasons writes a ledger for every season that has ended and settled.
         run: python3 scripts/build_stats.py --lock-seasons

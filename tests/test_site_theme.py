@@ -226,6 +226,53 @@ class SiteThemeTests(unittest.TestCase):
         self.assertEqual(floors, styled)
         self.assertEqual(floors[0], 1, "a repeatable badge earned once needs a tier")
 
+    def test_monogram_fills_match_the_tint_rules_in_order_and_count(self):
+        fills_source = self.search(r"^\s*const MONOGRAM_FILLS = \[([^\]]*)\];", "share-card.js").group(1)
+        fills = re.findall(r'"(--[\w-]+)"', fills_source)
+        ui_css = (SITE_DIR / "ui.css").read_text(encoding="utf-8")
+        rules = sorted(
+            (int(n), token)
+            for n, token in re.findall(
+                r"^\.ui-avatar__monogram--tint-(\d+)\s*\{\s*background:\s*var\((--[\w-]+)\);", ui_css, re.MULTILINE
+            )
+        )
+        tints = int(self.search(r"^const MONOGRAM_TINTS = (\d+);", "ui.js").group(1))
+        self.assertEqual([n for n, _ in rules], list(range(1, tints + 1)))
+        self.assertEqual(fills, [token for _, token in rules])
+        self.assertEqual(len(fills), tints)
+
+    def test_violin_label_font_matches_the_mode_axis_label_css(self):
+        weight, size = self.search(
+            r'^const VIOLIN_LABEL_FONT_SIZE = "(\d+) (\d+)px";', "racer-charts.js"
+        ).groups()
+        rule = self.search(r"^\.axis-label--mode\s*\{([^}]*)\}", "styles.css").group(1)
+        css_weight = re.search(r"font-weight:\s*(\d+);", rule)
+        css_size = re.search(r"font-size:\s*(\d+)px;", rule)
+        self.assertIsNotNone(css_weight, ".axis-label--mode has no numeric font-weight")
+        self.assertIsNotNone(css_size, ".axis-label--mode has no px font-size")
+        self.assertEqual((weight, size), (css_weight.group(1), css_size.group(1)))
+
+    def test_hall_of_fame_rows_match_between_the_feed_and_the_pool_room(self):
+        feed_rows = int(self.search(r"^\s*const HALL_ROWS = (\d+);", "feed.js").group(1))
+        card_rows = int(self.search(r"^\s*const CARD_ROWS = (\d+);", "pool-room.js").group(1))
+        self.assertEqual(feed_rows, card_rows)
+
+    def test_every_medal_has_its_count_and_rank_badge_styles(self):
+        medals = re.findall(r'"(\w+)"', self.search(r"^const MEDALS = \[([^\]]*)\];", "leaderboard.js").group(1))
+        self.assertTrue(medals)
+        for medal in medals:
+            for rule in (f"medal-count--{medal}", f"rank-badge--{medal}"):
+                with self.subTest(rule=rule):
+                    self.search(rf"^\.{rule}\s*\{{", "styles.css")
+
+    def test_every_badge_rarity_has_its_tag_style(self):
+        block = self.search(r"^const BADGE_RARITIES = \[([\s\S]*?)^\];", "ui.js")
+        rarities = re.findall(r'\["(\w+)",', block.group(1))
+        self.assertTrue(rarities)
+        for rarity in rarities:
+            with self.subTest(rarity=rarity):
+                self.search(rf"^\.ui-tag--{rarity}\b", "ui.css")
+
     def test_browser_chrome_matches_the_brand_fill(self):
         # theme.js tints the browser toolbar before the stylesheets load, so it can't read --brand-fill.
         chrome = self.search(

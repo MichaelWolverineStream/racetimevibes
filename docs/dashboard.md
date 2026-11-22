@@ -97,9 +97,9 @@ A strip between the top-rated banner and Latest results, hidden on racer pages a
 The Latest sidebar's first section, titled "You", is a card in the featured card's family with a 3px green top border and a pale green wash. It is hidden until a racer is set (see [This is me](#this-is-me)) and refills in place when the racer changes, so the page and the feed keep their state.
 
 - **Header:** your avatar, ringed and linking to your racer page; your name; your 7-day rank movement, as on the **Your racers** cards.
-- **Standing:** "#12 · 1534 · Season 11 · Panda", your rank and overall rating in the current season, with " · provisional" below 5 finishes there. With no seasons it is the all-time standing, "#12 · 1534". With no race in the season it reads "No races in Season 11 yet", and with no rating at all "Unrated".
+- **Standing:** "#12 · 1534 · Season 11 · Panda", your rank and overall rating in the current season, with " · provisional" below 5 finishes there. With no seasons it is the all-time standing, "#12 · 1534". With no race in the season it reads "No races in Season 11 · Panda yet", and with no rating at all "Unrated".
 - **Streak:** your active streaks, as on the **Your racers** cards. A daily streak of 2 or more ends " · raced today ✓" once you have raced today, or " · race today to keep it" when its last day was yesterday.
-- **Next rank:** "9 points behind Bob for #11", the racer one rank step above you, name order on a tie, from the rounded ratings and at least 1. At #1 it shows a crown and "You lead Season 11", or "You lead all time" with no seasons. An unrated racer has no line.
+- **Next rank:** "9 points behind Bob for #11", the racer one rank step above you, name order on a tie, from the rounded ratings and at least 1. At #1 it shows a crown and "You lead Season 11 · Panda", or "You lead all time" with no seasons. An unrated racer has no line.
 - **Next badge:** the locked counter badge you are closest to finishing, with its tile and "Hat Trick · 2 of 3". It is the badge the [player card](#player-card) shows when a racer has none.
 
 ### Featured daily racer
@@ -144,7 +144,7 @@ The Latest sidebar's **Fact of the day**, between **Your racers** and **Latest b
 The browser computes these from `participants.json`. The leaderboard, the racer pages and the player card all use these definitions.
 
 - A racer counts as finishing a race only when they are a [finisher](definitions.md#entrants): their entrant `status.value` is `done` **and** the API reports a `place`. Everything else counts toward DNF, except `dq`, which is tracked separately on the racer page.
-- **Diamond, Gold, Silver and Bronze** count [medals](definitions.md#entrants), which depend on the field size: a field of 10 or more gives diamond to first and gold, silver and bronze to second to fourth, a field of 6 to 9 gives gold, silver and bronze to the top three, a field of 4 or 5 gives gold and silver, and a field of 2 or 3 gives gold to the winner. A field of 1 earns none. Each column header's tooltip states the rule.
+- **Diamond, Gold, Silver and Bronze** count [medals](definitions.md#entrants), which depend on the field size. Each column header's tooltip states the rule.
 - **Median time** covers finished races only and comes from `finish_time`, rounded to whole seconds (the rating, tags and records use the exact fractional time). With an even number of finishes it is the mean of the middle two. Racers with no finishes show `--` rather than zero.
 - **Win %** is the share of races won outright: first places in any field divided by races entered. A race that ended in a DNF still counts in the denominator.
 - **Head-to-head** pairs every racer in a race against every other racer in that same race. The lower `place` wins. Any finisher beats any non-finisher. Two non-finishers draw.
@@ -316,7 +316,7 @@ Sections 04-05 chart `race-stats.json`. [Schedule and participation metrics](dat
 
 ### Player card
 
-The **Create player card** button beside **Follow** on a racer page opens the **Player card** panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. It takes the page's colours when the panel opens, so a card made in the dark theme is dark. The panel offers up to four actions:
+The **Create player card** button, last in a racer page's heading actions after **Face off**, opens the **Player card** panel with a 600 × 300 PNG of the racer's standing. The browser draws it from the loaded data, and nothing is uploaded. It takes the page's colours when the panel opens, so a card made in the dark theme is dark. The panel offers up to four actions:
 
 - **Copy image**, only where the page is a secure context and the browser can write images to the clipboard (`ClipboardItem` and `navigator.clipboard.write`).
 - **Download**, always. The file is named `<name>-step-ladder-<data date>.png`. `<name>` is the racer's name lowercased, with accents dropped and every other run of characters that are not letters or digits turned into one `-`, or `racer` if nothing is left.

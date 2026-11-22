@@ -1,83 +1,26 @@
 #!/usr/bin/env python3
 """Rate ladder racers from who beat whom, and backtest it against racetime.gg.
 
-The model in plain words
-------------------------
-Only placement counts. Finish times are never read, so a win by one second and
-a win by an hour are worth the same. Every racer has a skill estimate (a mean
-mu) and an uncertainty (sigma). A newcomer starts at mu 25, sigma 12. The overall
-rating covers every mode. Each mode also has its own rating (`rate_by_mode`):
-the same model and parameters on that mode's races alone, so a racer debuts at
-the starting rating in every mode. Each ladder season also has its own ratings
-(`rate_by_season`), overall and per mode, on that season's races alone, so
-everyone restarts at the starting rating every season. Predictions use the
-overall rating, which predicts results inside a mode better than the mode's own
-rating does.
+The spec is README.md, under "Ladder rating": the model (the Bayesian
+Bradley-Terry "full pair" model of Weng and Lin, 2011), recency, the parameters
+and their tuning, the points scale, the guarantee that a winner's points never
+fall, the mode and season ratings, and the backtest. Change that section with
+any behaviour change here. This docstring only maps the spec onto the code.
 
-Within a race, every pair of entrants is a small match. A finisher with a
-better place beats one with a worse place, and any finisher beats a DNF, DQ or
-other non-finisher. Two non-finishers are skipped, and so are equal places,
-so a shared win is still a win against everyone else. Each racer's rating moves by how much better or worse they did than their
-skill predicted against each opponent, scaled by their own uncertainty, so
-upsets and newcomers move the most. This is the Bayesian Bradley-Terry
-"full pair" model of Weng and Lin (2011), the method behind OpenSkill. All
-racers in a race are updated at once from their pre-race states.
-
-A race's pairs share their racers, so they are not independent results. The
-whole update of a race is damped by (entrants - 1) ** -ALPHA: with ALPHA 0.5 a
-32-racer race counts about as much as 6 independent results, not 31.
-
-Recency comes from race count, not the calendar. Uncertainty shrinks with every
-race but never below SIGMA_FLOOR, which keeps every race's update above a
-minimum. For a racer at the floor against evenly matched opponents, a race's
-weight halves after about ln 2 / g later races, where g = (n - 1) ** (1 - ALPHA)
-* floor^2 / (4 (2 floor^2 + 2 BETA^2)) for races of n entrants: about 14 races
-of 5 entrants, 28 of 2 and 5 of 32. Nothing decays while a racer is away.
-
-The displayed points are BASE + SCALE * (mu - K * sigma), the "conservative
-rating" of TrueSkill and Xbox levels. K is MU0 / SIGMA0, so every newcomer
-shows exactly BASE and climbs as the ladder learns about them. SCALE makes 400
-points about 10:1 odds between established racers, as in Elo. The win chance of
-racer a over b is 1 / (1 + exp(-(mu_a - mu_b) / sqrt(s_a^2 + s_b^2 + 2 BETA^2))).
-Points are never used to predict.
-
-The guarantee
--------------
-A winner's points never fall. Every pair a winner is in is decided in their
-favour, so their mean rises, and damping scales that rise by a positive number;
-sigma never rises, so mu - K * sigma rises too, and rounding is monotone. Finish
-times have no effect at all. Tests enforce both.
-
-Why not racetime.gg's rating
-----------------------------
-racetime.gg (`racetime/rating.py`, `models/user.py`) runs TrueSkill with default
-parameters on finishing order only, ties every DNF and DQ behind the last
-finisher, and shows max(0, round((mu - 2 sigma) * 100)), so newcomers start at
-833 and the score climbs with volume as sigma shrinks. It keeps one leaderboard
-per goal. This model also reads placement only, but it shows a different
-scale, rates all modes together as well as each mode alone, and never lets a
-winner lose points.
-
-Backtest and tuning
--------------------
-`python3 scripts/ladder_rating.py --backtest` replays the archive in order and,
-before each race, predicts every decisive entrant pair: finishers by place, and
-a finisher beats a non-finisher; two non-finishers are skipped. racetime.gg is
-scored from the pre-race `score` each entrant carried, which the archive stores
-(833 when missing). Its log loss uses the best-fit logistic curve on the score
-gap, fitted on the same pairs, which flatters it. The mode ratings are scored on
-the same pairs, each predicted from the two racers' ratings in the race's mode.
-The report also counts winners whose displayed points fell, overall and in
-their race's mode (the guarantee says none), and the median points a veteran
-(past their 50th race) moves per race.
+- `rate` is the overall rating. `rate_by_mode` runs the same model and
+  parameters on each mode's races alone, and `rate_by_season` on each season's
+  races, overall and per mode.
+- `_update_race` updates every entrant of a race at once from their pre-race
+  states, scaled by `_damping`, (entrants - 1) ** -ALPHA.
+- `_win_chance` reads mu and sigma, never the displayed points.
+- `backtest` replays the archive and scores the pairs from OUT_OF_SAMPLE_START
+  apart from the tuning period. racetime.gg's own rating (`racetime/rating.py`
+  and `models/user.py` in its source) is scored from each entrant's stored
+  `score`.
 
 BETA, SIGMA0 and ALPHA were picked by `rating_lab.py` from races before
-OUT_OF_SAMPLE_START only (the archive starts 2025-04-20), among settings whose
-veterans move at least as much as the previous rating's (BETA 12, SIGMA0 8, no
-damping), and then compared with four other algorithms on 2026 races, once.
-SIGMA_FLOOR was not tuned for accuracy: the user chose a "livelier" ladder over
-a calmer floor that predicts a little better. A veteran's median win is worth
-+10 points, finishing last in a race without DNFs -9, and a DNF -12.
+OUT_OF_SAMPLE_START only. Never retune on later races. A veteran's median win
+is worth +10 points, finishing last in a race without DNFs -9, and a DNF -12.
 
 Result on the archive as of 2026-11-01:
 

@@ -1,18 +1,21 @@
 ---
 paths:
-  - "site/**"
+  - "site/*.html"
+  - "site/*.js"
+  - "site/*.css"
+  - "tests/test_site_*.py"
 ---
 
 # Site: frontend scripts and CSS
 
-What the page shows and does is specified in `docs/dashboard.md`. Update it in the same change as any visible behaviour change, then run `python3 scripts/version_assets.py`.
+What the page shows and does is specified in `docs/dashboard.md`. Update it in the same change as any visible behaviour change.
 
 ## Frontend scripts (`site/*.js`)
 
 Classic `<script defer>` files sharing one global scope, loaded in `index.html` order. The one exception is `theme.js`: it loads blocking in `<head>`, before the stylesheets, so the theme is set before the first paint. `Store` doesn't exist yet at that point, so `theme.js` reads its own storage key, whose prefix must match `STORAGE_PREFIX`. It declares no globals.
 
 **Load order and module shape**
-- Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and the `typeof Feed`/`Records`/`RacerExtras`/`FaceOff` checks in `leaderboard.js` would take down `loadParticipants`.
+- Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and every `typeof` guard in `leaderboard.js` that names `X` would take the page down with it (for example `typeof Feed` in `loadParticipants`).
 - A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Upcoming`, `PoolRoom`, `Records`, `RacerExtras`, `ShareCard`, `FaceOff`, `EasterEggs`, `Store`, `Following`, `Me`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
 - Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
@@ -55,7 +58,8 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - Mode labels (`modeLabel`, `formatModeName`) are display only. Lookups take the raw mode id: `modeColor`, `participants.modes`, hash routes.
 - A new race mode needs a colour slot in `MODE_COLOR_SLOTS` (`racer-charts.js`), or it falls back to grey. Don't reorder `--mode-1..8`: the order keeps neighbouring violins distinguishable for colour-blind viewers.
 - No `innerHTML`: build the DOM with `element`/`svgElement` and `textContent`, because names and comments are user data.
-- Values JS mirrors from CSS or Python carry a "must match" comment (`BADGE_TILE_*`, `MONOGRAM_TINTS` in `ui.js`) and are checked by tests (`test_site_theme.py`, `test_build_stats.py`, `test_participant_stats.py`, `test_comment_stats.py`, `test_featured.py`). Change both sides together.
+- A value mirrored between JS, CSS and Python carries a "must match" comment (`BADGE_TILE_*`, `MONOGRAM_TINTS` in `ui.js`) and a test that parses both sides (`test_site_theme.py` for JS and CSS; `test_build_stats.py`, `test_participant_stats.py`, `test_comment_stats.py`, `test_featured.py` for Python). A new mirror gets its test in the same change. Change both sides together.
+- The one mirror without a test is logic, not a value: `formatModeName` (`app.js`) and `mode_label` (`scripts/highlights.py`) must turn a mode id into the same label. Change both together.
 
 ## CSS (`site/*.css`)
 
@@ -68,14 +72,13 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
     - Text on medal fills uses `--on-medal`.
     - The tooltip uses `--tooltip-*`.
     - Shadows and sheens mix `--shadow-color` and `--shine-color` with their own alpha.
-  - A dark mode or tag hue keeps its light hue and lightness order. It needs 3:1 against `--panel`, and its colour-blind separation from the others must stay at least that of the light set. Check both before changing one.
   - The LCD hit counter, the Zelda dialog (`--zelda-*`), the easter-egg glow and the nav band's white sheen are the same in both themes on purpose.
   - `theme.js` mirrors `--brand-fill` for the browser toolbar and spells out `STORAGE_PREFIX`. `tests/test_site_theme.py` checks both.
 - `--me` (alias of `--accent`), `--me-wash` and `--negative-on-me` are the "This is me" role. `--me-wash` is a literal per theme, and hover keeps it because a deeper wash fails `--muted`. `[data-me]` swaps `--negative-on-me` in for `--negative`, so red text inside a marked row keeps 4.5:1; rules that colour text with `var(--red)` directly would miss it. `tests/test_site_theme.py` pairs text on `--me-wash` and checks `--me` against `--panel` and the wash.
 - `--corner-a` and `--corner-b` are Face Off's red and blue corner data role, with their own values, so a corner never reads as a mode. They colour fills, rings and bars, never text, and `tests/test_site_theme.py` checks both at 3:1 against the panel. `faceoff.css` sets `--corner` and `--lean` per side, and its rules use only those two.
 - `--radius` is for surfaces and controls only. Avatars, the category artwork and the retro `.ui-dialog` keep a literal `4px` on purpose.
 - `--ladder-series` and `--ladder-series-muted` mean the Ladder Data season bars, the season in progress and the two Ladder Data panels' top rules.
-- `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token. A new tag kind needs its own token, checked for colour-blind separation. `--tag-record` and `--tag-preset-record` alias `--tag-pb` on purpose; the record shine in `ui.css` sets them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
+- `--mode-*` means modes, `--band-*` means schedule bands (Primetime heatmap only), and each kind in `TAG_KINDS` (`ui.js`) has one `--tag-*` token, except `new`, which `ui.css` fills with `--accent` (no data tag or caller uses it today). A new tag kind needs its own token, checked for colour-blind separation. `--tag-record`, `--tag-preset-record` and `--tag-preset-pb` alias `--tag-pb` on purpose; the record shine in `ui.css` and the tag labels set them apart. `ui-tag--rare` and `ui-tag--legendary` are badge rarity modifiers that `UI.tag` adds from `BADGE_RARITIES` (`ui.js`), not tag kinds, so they need no token.
 - `[hidden]` is globally `display: none !important`; don't add per-component `[hidden]` rules. `a` and `summary` get a global `:focus-visible` ring, and every new interactive element needs a visible focus state. The global reduced-motion rule is at the end of `styles.css`, and component stylesheets add their own reduced-motion overrides where needed.
 - Desktop-first, and good on phones. Desktop (1024px and up, with a mouse) must not change when you work on phones.
   - Narrow-screen layout goes in the `980px` and `620px` blocks (the feed also has `@container feed` tiers).
@@ -88,5 +91,4 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 
 ## Checking the page
 
-- `for f in site/*.js; do node --check "$f"; done`, then `python3 -m http.server 8000 -d site`: the page needs HTTP, not `file://`.
 - Visual checks with headless Chrome: Chrome won't go below a window about 500px wide, so test phone widths with a 390px iframe in a wrapper page. Tall windows inflate `vh` containers (the leaderboard is `max-height: 70vh`). In a sandboxed session, headless Chrome must run outside the sandbox.

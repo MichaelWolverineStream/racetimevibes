@@ -29,7 +29,7 @@ Badges are recomputed from the whole archive on every build and never taken away
 1. **Art:** `python3 scripts/badge_images.py path/to/art.webp my_badge [--pixel-art] [--still-frame N]`
    - Point it at the original art, never at an earlier output.
    - `--pixel-art` for drawn sprites under 128 px (the script can't tell). `--still-frame` when frame 0 is blank. 128×128 WebPs that are static or loop forever are copied unchanged.
-   - Check both files at 40 px, the size the page shows. Art that needs credit (Twemoji) goes in the Twemoji line under [Credits](../../../README.md#credits) in the README.
+   - Check both files at 46 px and 30 px, the art sizes of the page's standard and compact badge tiles. Art that needs credit (Twemoji) goes in the Twemoji line under [Credits](../../../README.md#credits) in the README.
 2. **Rule** in `highlights.py`: a threshold constant, then a `Badge(...)` row where it should sit among locked badges, with its description built from the constant.
    - A new per-racer count is a `_Player` field (`__slots__` and `__init__`), updated in the per-entry loop before the badge loop.
    - A fact about the whole race is a set of players computed next to `snipers` and `middle`, added to `_Moment`.

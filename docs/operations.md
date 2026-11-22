@@ -9,8 +9,8 @@
 Run the steps in the quick-start order:
 
 1. `race_archive.py` saves new races, racer names and avatar observations into `archive/` (see [archive.md](archive.md)).
-2. `racer_bios.py` saves the bios of racers who raced since their last check (see [Bios](archive.md#bios)). It reads the races just synced, and the build turns bios into [Pokémon avatars](avatars.md#pokémon-avatars).
-3. `schedule_archive.py` mirrors the ladder schedule (see [Ladder schedule mirror](archive.md#ladder-schedule-mirror)). The build joins every slot to its race, so it refuses an archive without a mirror.
+2. `schedule_archive.py` mirrors the ladder schedule (see [Ladder schedule mirror](archive.md#ladder-schedule-mirror)). The build joins every slot to its race, so it refuses an archive without a mirror.
+3. `racer_bios.py` saves the bios of racers who raced since their last check (see [Bios](archive.md#bios)). It reads the races just synced and the schedule's season spans, which leave out season-break races, and the build turns bios into [Pokémon avatars](avatars.md#pokémon-avatars).
 4. `build_stats.py` builds the [published datasets](datasets.md) from the archive alone. `--lock-seasons` also writes the ledger of every ended, settled season into `season-ratings/` (see [Season locking](datasets.md#season-locking)); only the scheduled job passes it.
 5. `avatar_mirror.py` runs last, because it reads the file names `build_stats.py` wrote to `participants.json` (see [Avatar mirror](avatars.md#avatar-mirror)).
 
@@ -49,9 +49,7 @@ The production suite's `Committed*` classes check the committed files.
   - `assets/pokemon/` holds one square palette PNG of at least 256 pixels for every species from 1 to 1025.
 - A published avatar whose file is missing does not fail, so a vanished upload cannot block a deploy. A missing `site/avatars/` folder does fail.
 
-`tests/analyses/` covers the standalone analyses in [analyses.md](analyses.md). It has no `__init__.py`, so the production discovery skips it.
-- `test_rating_monitors.py` holds the rating monitors: statistics over the growing archive, such as the rating beating racetime.gg on 2026 pairs.
-- A monitor fails the weekly run instead of blocking a deploy. A failure is a prompt to look at the numbers with `ladder_rating.py --backtest`, never a reason to retune on 2026 races.
+`tests/analyses/` has no `__init__.py`, so the production discovery skips it. What it holds, including the rating monitors, is under Tiers in [testing.md](testing.md#tiers). A monitor failure is a prompt to look at the numbers with `ladder_rating.py --backtest`, never a reason to retune on 2026 races.
 
 ## Deployment
 
@@ -61,10 +59,10 @@ The production suite's `Committed*` classes check the committed files.
 
 ### Scheduled data refresh
 
-`.github/workflows/update-data.yml` runs `race_archive.py`, `schedule_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py`, then the production suite's `Committed*` tests (`-k Committed`), the deploy's checks on the archive and the published files. An outside trigger starts it through `workflow_dispatch` about every two hours, a scheduled run at 00:17 UTC is the daily backup, and **Actions › Update race data** starts it by hand. One input, `sync-bios`, off by default and not offered on a manual run, also runs `racer_bios.py` between the race and schedule syncs.
+`.github/workflows/update-data.yml` runs `race_archive.py`, `schedule_archive.py`, `build_stats.py --lock-seasons` and `avatar_mirror.py`, then the production suite's `Committed*` tests (`-k Committed`), the deploy's checks on the archive and the published files. An outside trigger starts it through `workflow_dispatch` about every two hours, a scheduled run at 00:17 UTC is the daily backup, and **Actions › Update race data** starts it by hand. One input, `sync-bios`, off by default and not offered on a manual run, also runs `racer_bios.py` right after the schedule sync.
 
-- When a sync added or refreshed a race or schedule file, or the build locked a season, it commits `archive/` and `season-ratings/` to `main` as `YYYY-MM-DD data`.
-- When the datasets changed beyond `generated_at`, or `site/avatars/` changed, the same commit includes `site/data` and `site/avatars`, and the workflow starts **Deploy GitHub Pages** explicitly, because pushes made with `GITHUB_TOKEN` trigger no workflows.
+- It commits to `main` as `YYYY-MM-DD data` when anything under `archive/` or `season-ratings/` changed (a race, schedule, name, avatar or bio file, or a newly locked ledger), or when the site changed.
+- The site changed when the datasets changed beyond `generated_at`, or `site/avatars/` changed, even with no archive change, such as an avatar download that failed last run. The commit then includes `site/data` and `site/avatars`, and the workflow starts **Deploy GitHub Pages** explicitly, because pushes made with `GITHUB_TOKEN` trigger no workflows.
 - A failed schedule sync does not stop the run: the step is `continue-on-error`, so it shows as failed while the rest goes on. The sync writes nothing when it fails, so the build uses the mirror of the last good sync, which can only hold back the newest slots (see **Counted through** under [Schedule](definitions.md#schedule)) and delay a season lock.
 - A run that finds nothing new, or whose race sync, bio sync, build, mirror or committed-data check fails, commits nothing. `main` therefore never holds data that the deploy would refuse.
 

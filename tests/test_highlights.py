@@ -1914,6 +1914,14 @@ class OutputTests(unittest.TestCase):
         facts = run([duel(0, 1, day=i) for i in range(3)])["facts"]
         self.assertIn(["P0 won ", "3", " races in a row."], facts)
 
+    def test_win_podium_and_finish_streak_facts_need_a_run_of_two(self):
+        one = run([duel(0, 1, day=0)])["facts"]
+        two = run([duel(0, 1, day=0), duel(0, 1, day=1)])["facts"]
+        for before in ("P0 won ", "P0 finished on the podium ", "P0 finished "):
+            with self.subTest(before=before):
+                self.assertNotIn([before, "1", " race in a row."], one)
+                self.assertIn([before, "2", " races in a row."], two)
+
     def test_comeback_fact_needs_a_long_enough_break(self):
         long_break = run([duel(0, 1, day=0), duel(0, 1, day=40)])["facts"]
         self.assertIn(["P0 came back after ", "40", " days away."], long_break)

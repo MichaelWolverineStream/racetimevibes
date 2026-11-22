@@ -14,7 +14,7 @@
 {"schema_version": 1, "fetched_at": "2026-10-27T10:59:46Z", "race": {"name": "alttpr-ladder/dazzling-matt-4030", "...": "..."}}
 ```
 
-- The archive covers every race in the category from 2025-04-20; which races the builder includes is defined under [Included races](definitions.md#included-races).
+- The archive covers every race in the category from 2025-04-20; which races the builder includes is defined under [Races](definitions.md#races).
 - `archive/racer-names.json` maps each racer's stable user ID to their current display name.
 - `archive/racer-avatars.json` maps it to the avatar URL (or `null`) the category leaderboards last showed for them, with the time the sync first saw that value.
 - `archive/racer-bios.json` maps it to their bio and its history, written by `racer_bios.py`, not by the race sync (see [Bios](#bios)).

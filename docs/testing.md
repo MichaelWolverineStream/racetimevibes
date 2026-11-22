@@ -24,7 +24,7 @@
 ## Rules for every test
 
 1. **One behaviour, named.** The name is a sentence that states the behaviour, and the body proves all of it: "equal or slower" runs both cases.
-2. **Assert the rule, not the value.** Compare with the constant, the docs table or a property. A literal belongs only where it is the contract itself, such as the badge table's order.
+2. **Assert the rule, not the value.** Compare with the constant or a property. A literal belongs only where it is the contract itself, such as the badge table's order.
 3. **Test through public functions.** A private helper gets its own test only when a failure through the public path would be hard to diagnose. The same goes for an oracle written in a test file, such as the contrast checker in `test_site_theme.py`.
 4. **One fact, once, at the lowest level.** Don't re-assert what a lower-level test already pins. Near-identical cases become one `subTest` table.
 5. **Read mirrored values on both sides.** When Python, JS or CSS each spell out the same value, a test parses both copies. A "must match" comment is not a check.

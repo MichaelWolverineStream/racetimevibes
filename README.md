@@ -21,8 +21,8 @@ This README covers the project, the [ladder rating](#ladder-rating) and [privacy
 
 ```bash
 python3 scripts/race_archive.py       # sync new races from racetime.gg into archive/ (network)
-python3 scripts/racer_bios.py         # optional: mirror racers' profile bios into archive/ (network)
 python3 scripts/schedule_archive.py   # mirror the alttpr.racing ladder schedule into archive/ (network); the build needs it
+python3 scripts/racer_bios.py         # optional: mirror racers' profile bios into archive/ (network)
 python3 scripts/build_stats.py        # build site/data/*.json from archive/ (offline)
 python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/ (network)
 python3 scripts/version_assets.py     # restamp the asset URLs after editing site/
@@ -152,7 +152,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 - **`participants.json`** publishes each racer's public display name and stable user ID, because a leaderboard requires them, plus the file name of their mirrored avatar.
   - That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus the URL's lowercase extension, for example `3f9ac01d2e7b8a64.jpg`. It carries nothing from the upload's own file name.
   - A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and `%`, as in percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`.
-  - The avatar follows the racer's most recently observed profile: the category leaderboards each sync, or their latest race file among the races the dashboard includes, so never a `ladder_test` race, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none, unless a Pokémon fills in (see [Pokémon avatars](docs/avatars.md#pokémon-avatars)).
+  - The avatar follows the racer's most recently observed profile: the category leaderboards each sync, or their latest race file among the races the dashboard includes, so never a `ladder_test` race or one in a season break, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none, unless a Pokémon fills in (see [Pokémon avatars](docs/avatars.md#pokémon-avatars)).
   - A Pokémon avatar's name is `pokemon-` plus a sprite file name, `pokemon-<pokédex number>[-<variant>].png`, for example `pokemon-201-b.png`. It reveals only which Pokémon the racer has, which comes from their public bio or from a random pick. A bio itself is published only as `featured` describes below.
   - `avatar_changes` adds, for racers whose avatar changed while the archive was watching, the Eastern Time date the archive first saw the change (see [Avatar changes](docs/avatars.md#avatar-changes)). It reveals nothing about the old avatar, which is neither named nor mirrored, and nothing from the bio beyond the date the favourite Pokémon changed.
   - `featured` lists the coming days' [featured racers](docs/highlights.md#featured-racer), at most 16 at a time, and each one's current bio. A later day's pick can still change as races arrive, so a racer can be listed, bio included, and then replaced before their day. Each bio is the one their public racetime.gg profile shows, or `null`. Whitespace runs become single spaces, and a bio over 160 characters is cut to fit with "…", at its last word break if that keeps at least half of it. No other racer's bio is published, and never an earlier bio or when a bio was seen or changed.
@@ -178,7 +178,7 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 | [docs/archive.md](docs/archive.md) | The archive files, how a sync works, names, avatars, bios and the schedule mirror | Changing a sync script or reading `archive/` |
 | [docs/racetime-api.md](docs/racetime-api.md) | The racetime.gg endpoints and fields the scripts read | Reading a new endpoint or field |
 | [docs/datasets.md](docs/datasets.md) | The three published datasets, the schedule metrics, season locking and ledgers, chest counts | Changing a field in `site/data/` or the season lock |
-| [docs/highlights.md](docs/highlights.md) | Race tags, badges, streaks, presets, records and claims to fame | Changing `highlights.py` |
+| [docs/highlights.md](docs/highlights.md) | Race tags, badges, badges given by hand, streaks, presets, records, claims to fame, facts and the featured racer | Changing `highlights.py` |
 | [docs/avatars.md](docs/avatars.md) | The avatar mirror, Pokémon avatars, sprites and avatar changes | Changing an avatar script or `assets/pokemon/` |
 | [docs/dashboard.md](docs/dashboard.md) | What the page shows and does, section by section | Changing `site/` |
 | [docs/operations.md](docs/operations.md) | The refresh steps and options, asset versioning, tests, workflows and the bot | Running the pipeline by hand or changing a workflow |

@@ -11,10 +11,24 @@
 | File | Contents |
 |---|---|
 | `site/data/race-stats.json` | The anonymous aggregate behind the Ladder data panels (see [Schedule and participation metrics](#schedule-and-participation-metrics)). |
-| `site/data/participants.json` | The per-racer dataset. Each race carries its Eastern Time date `d`, its start time `u` in Unix seconds, its seed preset, its derived tags and its season (see [Season fields](#season-fields)). Each badge definition carries `repeatable`. Each racer carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame, plus `badge_counts`, `{badge id: times earned}`, for every [repeatable badge](highlights.md#badges) they hold, plus `badge_notes`, `{badge id: note}`, when a [badge given by hand](highlights.md#badges-given-by-hand) has a note. `avatar_changes` lists the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)). `featured` lists the coming [featured racers](highlights.md#featured-racer), one per Eastern date from the newest race's date through 15 days after it that has a pick, each as `[date, player, race, tag, bio]`: `races[race].t[tag]` is their best highlight, and `bio` is their current racetime.gg bio or `null`, with whitespace runs collapsed to single spaces and cut to 160 characters with "…", at its last word break if that keeps at least half of it. `medal_tiers` publishes the [medal](definitions.md#entrants) rule, and each leaderboard row carries `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total). |
+| `site/data/participants.json` | The per-racer dataset: races, racers, ratings, highlights and the season fields, listed below. |
 | `site/data/comments.json` | The racers' post-race comments, each with the chest count parsed from it (see [Chest counts](#chest-counts-cr-and-cph)). The page fetches it after its first render, so it never delays the board. |
 
-`race-stats.json`, `participants.json` and `comments.json` each carry a `schema_version`, and the page refuses data whose version it does not expect. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](avatars.md#avatar-mirror)). What each of these may contain is fixed by [Privacy](../README.md#privacy).
+`participants.json` holds:
+
+- **Races:** each carries its Eastern Time date `d`, its start time `u` in Unix seconds, its seed preset, its derived tags and its season (see [Season fields](#season-fields)).
+- **Badge definitions:** each carries `repeatable`.
+- **Racers:** each carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame, plus:
+  - `badge_counts`, `{badge id: times earned}`, for every [repeatable badge](highlights.md#badges) they hold;
+  - `badge_notes`, `{badge id: note}`, when a [badge given by hand](highlights.md#badges-given-by-hand) has a note;
+  - on their leaderboard row, `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total).
+- **`medal_tiers`:** the [medal](definitions.md#entrants) rule.
+- **`avatar_changes`:** the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)).
+- **`featured`:** the coming [featured racers](highlights.md#featured-racer), one per Eastern date from the newest race's date through 15 days after it that has a pick, each as `[date, player, race, tag, bio]`.
+  - `races[race].t[tag]` is their best highlight.
+  - `bio` is their current racetime.gg bio or `null`, with whitespace runs collapsed to single spaces and cut to 160 characters with "…", at its last word break if that keeps at least half of it.
+
+`race-stats.json`, `participants.json` and `comments.json` each carry a `schema_version`, and the page refuses data whose version it does not expect: it shows "could not be loaded" for the first two, and leaves out the comments and chest counts for `comments.json`. `site/avatars/` holds the mirrored avatar images (see [Avatar mirror](avatars.md#avatar-mirror)). What each of these may contain is fixed by [Privacy](../README.md#privacy).
 
 ### Season fields
 
@@ -63,7 +77,7 @@ The season fields of `participants.json`:
   - `REAL_FIELD_MIN` (4), `SEASON_WEEK_DAYS` (7) and `NEWCOMER_WINDOW_DAYS` (28) are set in `build_stats.py`, and all three are mirrored in `site/app.js`.
 - **Weekday-hour cells** hold, for each of the 168 weekday and Eastern Time hour combinations, in the overall data and in each period: the counted slots that are scheduled races (`scheduled_count`), how many started (`started_count`), `entrant_total` and `average_racers`, which is `entrant_total / scheduled_count`, or null when nothing was scheduled.
 - **Bands** colour the weekday-hour cells, computed separately for all data and for each quarter:
-  - Only cells with at least 5 scheduled races (`BAND_MIN_SCHEDULED`) are banded and count toward the quartiles.
+  - Only cells with at least 5 scheduled races (`BAND_MIN_SCHEDULED`, mirrored in `site/app.js` and the heatmap legend in `site/index.html`) are banded and count toward the quartiles.
   - `q1` and `q3` are the quartiles of those cells' `average_racers`.
   - A cell is `prime` if its `average_racers` is at least `q3`, else `quiet` if it is at most `q1`, else `normal`. A tie at a quartile goes to `prime` or `quiet`.
   - A cell with fewer than 5 scheduled races has no band, and when no cell qualifies none has one.

@@ -8,7 +8,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 ## The most important rules
 
 1. **Never hand-edit generated files. Regenerate them; the tests check.**
-   - `site/data/*.json`: `python3 scripts/build_stats.py`. `test_matches_a_rebuild_from_the_archive` rebuilds them from `archive/` and fails on any difference but `generated_at`.
+   - `site/data/*.json`: `python3 scripts/build_stats.py`. `test_matches_a_rebuild_from_the_archive` rebuilds them from the committed inputs (`archive/`, `season-ratings/`, `season-names.json`, `badge-overrides.json`, `assets/pokemon/`) and fails on any difference but `generated_at`.
    - `site/avatars/`: `python3 scripts/avatar_mirror.py`, after `build_stats.py`. It downloads racetime.gg avatars and copies Pokémon sprites from `assets/pokemon/`. Never add, edit, delete or hand-pick a file there.
    - `assets/pokemon/pokedex.json`: `python3 scripts/pokemon_avatars.py --refresh-pokedex`.
    - `assets/pokemon/*.png`: `python3 scripts/pokemon_images.py`, from the originals in `_tmp_assets/pokemon/`. Run `avatar_mirror.py` after.
@@ -26,7 +26,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - `comments.json` carries comments capped at 500 characters.
    - `season-ratings/` (user IDs and season points) sits beside `archive/` and is never deployed.
    - Never publish any bio but a featured racer's current one, nor bio history (`since`, `earlier`), full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
-5. **Schema versions are set in Python and checked in JS. Bump both together**, or the page shows "could not be loaded".
+5. **Schema versions are set in Python and checked in JS. Bump both together.** A mismatch in `race-stats.json` or `participants.json` makes the page show "could not be loaded". One in `comments.json` fails silently: `UI.comments()` logs it and returns `null`, so comments and chest counts just vanish.
    - `participants.json`: `PARTICIPANT_SCHEMA_VERSION` in `participant_stats.py` and `leaderboard.js`.
    - `race-stats.json`: `SCHEMA_VERSION` in `build_stats.py` and `validateData` in `app.js`.
    - `comments.json`: `COMMENTS_SCHEMA_VERSION` in `comment_stats.py` and `ui.js`.
@@ -64,8 +64,8 @@ Shared code:
 
 ```bash
 python3 scripts/race_archive.py     # network: incremental sync into archive/
+python3 scripts/schedule_archive.py # network, every CI run: archive/ladder-schedule/; the build and the bio sync need it
 python3 scripts/racer_bios.py       # network, daily in CI: bios into archive/racer-bios.json
-python3 scripts/schedule_archive.py # network, every CI run: archive/ladder-schedule/; the build needs it
 python3 scripts/build_stats.py      # offline: archive/ → site/data/{race-stats,participants,comments}.json
 python3 scripts/avatar_mirror.py    # network: site/avatars/ ⇄ the avatars participants.json names
 ```

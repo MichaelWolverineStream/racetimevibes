@@ -1697,7 +1697,7 @@ def _facts(
             )
 
     finish_board = result["records"]["streaks"]["finish"]["best"]
-    if finish_board:
+    if finish_board and finish_board[0][1] >= 2:
         index, length, *_rest = finish_board[0]
         facts.append(
             [f"{name(index)} finished ", count(length), f" {noun(length, 'race')} in a row."]

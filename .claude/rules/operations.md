@@ -8,8 +8,8 @@ paths:
 # Workflows and asset versioning
 
 - **Spec:** `docs/operations.md` (refresh steps, options, versioning, tests, deployment, the scheduled refresh). Update it in the same change as any trigger, schedule, input or commit rule.
-- `pages.yml` gates every deploy on the production suite. `analysis-tests.yml` never blocks a deploy.
-- `update-data.yml` runs the `Committed*` tests (`-k Committed`) after the avatar mirror and before it commits; a failure commits nothing. Keep that step without `continue-on-error`.
+- Keep `update-data.yml`'s `Committed*` check step (after the avatar mirror, before the commit) without `continue-on-error`: a failure must commit nothing.
+- In `update-data.yml` the bio sync runs after the schedule sync, because it reads the schedule's season spans.
 - `update-data.yml` is the only caller of `build_stats.py --lock-seasons`. Its pushes use `GITHUB_TOKEN`, which triggers no workflow, so it starts **Deploy GitHub Pages** itself.
 - `update-bios.yml` has no `concurrency` group on purpose: the same group as its callee would deadlock.
 - `version_assets.py` hashes `site/index.html` and `VERSIONED_ASSETS` into one token, rewrites every asset reference to `?v=<token>` and writes `site/version.json`. The Barlow fonts are not stamped.
