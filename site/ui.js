@@ -1,5 +1,11 @@
 // Mirrored from racetime.gg by scripts/avatar_mirror.py, so canvases can draw them.
 const AVATAR_BASE_URL = "avatars/";
+// A racetime.gg avatar `<hash>.webp` is 128 px; the face-off's 256 px copy is `<hash>-256.webp`.
+// Must match FACEOFF_SUFFIX in avatar_mirror.py.
+const FACEOFF_AVATAR_SUFFIX = "-256";
+// A Pokémon avatar is one 256 px sprite, the face-off's included. Must match AVATAR_PREFIX in
+// pokemon_avatars.py.
+const POKEMON_AVATAR_PREFIX = "pokemon-";
 const COMMENTS_URL = "data/comments.json";
 const COMMENTS_SCHEMA_VERSION = 2;
 const PALINDROME_EVENT = "racetimevibes:palindrome";
@@ -42,9 +48,18 @@ const UI = (() => {
     return node;
   }
 
-  function avatarUrl(playerIndex) {
+  // The published file everywhere but the face-off, which takes a racetime.gg avatar's larger copy.
+  function avatarFile(name, faceoff) {
+    if (!faceoff || name.startsWith(POKEMON_AVATAR_PREFIX)) {
+      return name;
+    }
+    const dot = name.lastIndexOf(".");
+    return name.slice(0, dot) + FACEOFF_AVATAR_SUFFIX + name.slice(dot);
+  }
+
+  function avatarUrl(playerIndex, { faceoff = false } = {}) {
     const player = participants.players[playerIndex];
-    return player && player.a ? AVATAR_BASE_URL + encodeURIComponent(player.a) : null;
+    return player && player.a ? AVATAR_BASE_URL + encodeURIComponent(avatarFile(player.a, faceoff)) : null;
   }
 
   // The same name always gets the same tint, so neighbouring monograms stay distinct.
@@ -68,13 +83,13 @@ const UI = (() => {
     return tile;
   }
 
-  function avatar(playerIndex, size) {
+  function avatar(playerIndex, size, { faceoff = false } = {}) {
     const player = participants.players[playerIndex];
     const name = player ? player.name : "";
     const wrapper = element("span", "ui-avatar");
     wrapper.style.width = `${size}px`;
     wrapper.style.height = `${size}px`;
-    const url = avatarUrl(playerIndex);
+    const url = avatarUrl(playerIndex, { faceoff });
     if (!url) {
       wrapper.appendChild(monogram(name, size));
       return wrapper;

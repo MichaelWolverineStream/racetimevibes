@@ -12,13 +12,13 @@ Run the steps in the quick-start order:
 2. `schedule_archive.py` mirrors the ladder schedule (see [Ladder schedule mirror](archive.md#ladder-schedule-mirror)). The build joins every slot to its race, so it refuses an archive without a mirror.
 3. `racer_bios.py` saves the bios of racers who raced since their last check (see [Bios](archive.md#bios)). It reads the races just synced and the schedule's season spans, which leave out season-break races, and the build turns bios into [Pokémon avatars](avatars.md#pokémon-avatars).
 4. `build_stats.py` builds the [published datasets](datasets.md) from the archive alone. `--lock-seasons` also writes the ledger of every ended, settled season into `season-ratings/` (see [Season locking](datasets.md#season-locking)); only the scheduled job passes it.
-5. `avatar_mirror.py` runs last, because it reads the file names `build_stats.py` wrote to `participants.json` (see [Avatar mirror](avatars.md#avatar-mirror)).
+5. `avatar_mirror.py` runs last, because it reads the file names `build_stats.py` wrote to `participants.json`. It converts new racetime.gg avatars to WebP, which needs ImageMagick (see [Avatar mirror](avatars.md#avatar-mirror)).
 
 Options:
 
 - `--archive` points the syncs, the build, `avatar_mirror.py` and `ladder_rating.py` at another archive.
 - `--output`, `--participants-output` and `--comments-output` redirect each dataset of `build_stats.py`.
-- `avatar_mirror.py` takes `--participants` and `--output`.
+- `avatar_mirror.py` takes `--participants` and `--output`, and `--pending`, which prints how many racetime.gg avatars a run would download and does nothing else.
 - `--pokemon` on `build_stats.py`, `avatar_mirror.py` and `pokemon_avatars.py` points at another sprite directory, and `pokemon_avatars.py --refresh-pokedex` rewrites the pokédex.
 - `ladder_rating.py --backtest` replays the archive and scores the rating's predictions (see [Backtest](../README.md#backtest)).
 
@@ -92,10 +92,12 @@ How to write a test, and which suite and tier it belongs to, is in [testing.md](
 The production suite's `Committed*` classes check the committed files.
 - They rebuild all three datasets from the committed `archive/` and `season-ratings/`, and fail on any difference from `site/data` other than `generated_at`. Commit a rebuild with every build change.
 - They check the avatar files:
-  - every file in `site/avatars/` is named by `participants.json` and is a valid raster image;
-  - every `pokemon-*` avatar is a byte copy of its sprite;
+  - every file in `site/avatars/` is a name `participants.json` gives, or the `-256` copy of one;
+  - a racetime.gg file is a square WebP of at most 128 px (256 px for the copy), read with the stdlib `webp_info`, so the check needs no ImageMagick;
+  - a Pokémon file is a PNG, and every `pokemon-*` avatar is a byte copy of its sprite;
   - `assets/pokemon/` holds one square palette PNG of at least 256 pixels for every species from 1 to 1025.
 - A published avatar whose file is missing does not fail, so a vanished upload cannot block a deploy. A missing `site/avatars/` folder does fail.
+- `ConvertAvatarTests` runs the converter on the real ImageMagick and is skipped when neither `magick` nor `convert` is installed. `pages.yml` has none, so they skip there. The bot runs them before it converts.
 
 `tests/analyses/` has no `__init__.py`, so the production discovery skips it. What it holds, including the rating monitors, is under Tiers in [testing.md](testing.md#tiers). A monitor failure is a prompt to look at the numbers with `ladder_rating.py --backtest`, never a reason to retune on 2026 races.
 
@@ -111,6 +113,9 @@ The production suite's `Committed*` classes check the committed files.
 
 - It commits to `main` as `YYYY-MM-DD data` when anything under `archive/` or `season-ratings/` changed (a race, schedule, name, avatar or bio file, or a newly locked ledger), or when the site changed.
 - The site changed when the datasets changed beyond `generated_at`, or `site/avatars/` changed, even with no archive change, such as an avatar download that failed last run. The commit then includes `site/data` and `site/avatars`, and the workflow starts **Deploy GitHub Pages** explicitly, because pushes made with `GITHUB_TOKEN` trigger no workflows.
+- The step "Install ImageMagick for new avatars" runs after the build and before the mirror, with `continue-on-error`. It runs `avatar_mirror.py --pending`, and only when the count is not 0 it installs ImageMagick with apt, checks that `convert -list format` lists WEBP as `rw+` (read, write, multi-frame), and runs the `ConvertAvatar` tests on ImageMagick 6. Most runs have nothing pending and skip the install.
+  - A failure there never holds back race data: the mirror skips the downloads with a warning and the next run retries them.
+  - A download that fails for good keeps the count above 0, so every run installs ImageMagick again until the avatar changes or the download works.
 - A failed schedule sync does not stop the run: the step is `continue-on-error`, so it shows as failed while the rest goes on. The sync writes nothing when it fails, so the build uses the mirror of the last good sync, which can only hold back the newest slots (see **Counted through** under [Schedule](definitions.md#schedule)) and delay a season lock.
 - A run that finds nothing new, or whose race sync, bio sync, build, mirror or committed-data check fails, commits nothing. `main` therefore never holds data that the deploy would refuse.
 
@@ -133,3 +138,4 @@ Pull first, because the bot may have pushed since your last sync. Run the refres
 
 - If a pull conflicts in `archive/`, discard your archive changes, pull, and rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
 - If it conflicts in `season-ratings/`, take upstream: ledgers are deterministic.
+- If it conflicts in `site/avatars/`, take upstream: the bot converts with ImageMagick 6 and a local run with 7, so the same name can hold different bytes.

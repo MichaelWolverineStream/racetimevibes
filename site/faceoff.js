@@ -95,8 +95,9 @@ const FaceOff = (() => {
   }
 
   // An avatar sized by --faceoff-avatar instead of UI.avatar's fixed pixels, monogram letter included.
+  // It is the one place that loads a racetime.gg avatar's 256 px copy.
   function bigAvatar(playerIndex) {
-    const node = UI.avatar(playerIndex, AVATAR_SIZE);
+    const node = UI.avatar(playerIndex, AVATAR_SIZE, { faceoff: true });
     node.style.width = "var(--faceoff-avatar)";
     node.style.height = "var(--faceoff-avatar)";
     const monogram = node.querySelector(".ui-avatar__monogram");

@@ -50,6 +50,22 @@ jobs:
       - name: Build data
         # --lock-seasons writes a ledger for every season that has ended and settled.
         run: python3 scripts/build_stats.py --lock-seasons
+      - name: Install ImageMagick for new avatars
+        # Only a racetime.gg download needs ImageMagick, to convert it to WebP, so most runs
+        # skip the install. Like the schedule sync, a failure here must not hold back race
+        # data: the mirror then skips the downloads with a warning and the next run retries.
+        continue-on-error: true
+        run: |
+          pending=$(python3 scripts/avatar_mirror.py --pending)
+          echo "Avatars to download: $pending"
+          if [ "$pending" != 0 ]; then
+            sudo apt-get update
+            sudo apt-get install --yes --no-install-recommends imagemagick
+            # Ubuntu ships ImageMagick 6 (`convert`). rw+ reads and writes WebP, animation included.
+            convert -list format | grep -Eq 'WEBP\*? +WEBP +rw\+'
+            # The converter's real ImageMagick tests, on the version the mirror is about to use.
+            python3 -m unittest discover -s tests -k ConvertAvatar
+          fi
       - name: Mirror avatars
         run: python3 scripts/avatar_mirror.py
       - name: Check committed data

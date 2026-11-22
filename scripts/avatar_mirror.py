@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Mirror the racer avatars that participants.json names into site/avatars/.
 
-racetime.gg avatars are downloaded; Pokémon avatars are copied from assets/pokemon/.
+racetime.gg avatars are downloaded and converted into two square WebP files; Pokémon
+avatars are copied from assets/pokemon/.
 """
 
 from __future__ import annotations
@@ -10,9 +11,13 @@ import argparse
 import hashlib
 import json
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 import time
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -27,7 +32,9 @@ except ImportError:
 
 
 AVATAR_ORIGIN = "https://racetime.gg/media/"
-RASTER_EXTENSIONS = frozenset({"png", "jpg", "jpeg", "gif", "webp"})
+# The ImageMagick coder that reads each extension, named so ImageMagick never guesses.
+CODERS = {"png": "png", "jpg": "jpeg", "jpeg": "jpeg", "gif": "gif", "webp": "webp"}
+RASTER_EXTENSIONS = frozenset(CODERS)
 # Chosen generously above the sizes observed on racetime.gg, to stop only runaway files.
 MAX_AVATAR_BYTES = 2_000_000
 IMAGE_ACCEPT = "image/png,image/jpeg,image/gif,image/webp"
@@ -37,31 +44,60 @@ SITE_DIR = Path(__file__).resolve().parents[1] / "site"
 PARTICIPANTS_PATH = SITE_DIR / "data" / "participants.json"
 OUTPUT_DIR = SITE_DIR / "avatars"
 
+# Twice the largest normal display, the 64 px racer-page avatar, for 2x screens.
+AVATAR_SIDE = 128
+# Twice the face-off's 128 px avatar (--faceoff-avatar in faceoff.css). Only it uses this file.
+FACEOFF_SIDE = 256
+# `<hash>.webp` has its face-off copy at `<hash>-256.webp`. Must match FACEOFF_AVATAR_SUFFIX in ui.js.
+FACEOFF_SUFFIX = f"-{FACEOFF_SIDE}"
+WEBP_QUALITY = 90
+# Applied after shrinking only. Resizing alone came out 13-22% softer than a browser's own
+# downscale of the upload (edge contrast on 12 large uploads against Chrome); this light
+# unsharp mask restores it to within about 5%. RGB only, so ImageMagick 6 and 7 agree.
+SHARPEN = ["-channel", "RGB", "-unsharp", "0x0.5+0.5+0", "+channel"]
+# A conversion takes well under a second; this only stops a pathological image hanging the run.
+IMAGEMAGICK_TIMEOUT_SECONDS = 60
+
 JsonObject = dict[str, Any]
 Loader = Callable[[str], bytes]
+# (image bytes, source extension) -> {AVATAR_SIDE: WebP bytes, FACEOFF_SIDE: WebP bytes}
+Converter = Callable[[bytes, str], Mapping[int, bytes]]
 
 
 class AvatarMirrorError(RuntimeError):
     """Raised when the mirror cannot tell which avatars to hold."""
 
 
+class AvatarConvertError(RuntimeError):
+    """Raised when an avatar cannot be turned into valid WebP files."""
+
+
+def _url_extension(url: str) -> str:
+    remainder = url.removeprefix(AVATAR_ORIGIN)
+    return remainder.rpartition(".")[2].lower() if "." in remainder else ""
+
+
 def mirror_name(url: Any) -> str | None:
     """Return the file name that mirrors an avatar URL, or None if it can't be mirrored.
 
     Only a raster image directly under racetime.gg/media/, named in URL-safe ASCII, is
-    mirrored. The name is a
-    hash of the whole URL, so it is plain ASCII and a new picture always has a new name.
+    mirrored. The name is a hash of the whole URL plus `.webp`, the format every mirrored
+    upload is converted to, so it is plain ASCII and a new picture always has a new name.
     """
     if not isinstance(url, str) or not url.startswith(AVATAR_ORIGIN):
         return None
-    remainder = url.removeprefix(AVATAR_ORIGIN)
-    if not URL_SAFE_NAME.fullmatch(remainder):
+    if not URL_SAFE_NAME.fullmatch(url.removeprefix(AVATAR_ORIGIN)):
         return None
-    extension = remainder.rpartition(".")[2].lower() if "." in remainder else ""
-    if extension not in RASTER_EXTENSIONS:
+    if _url_extension(url) not in RASTER_EXTENSIONS:
         return None
     digest = hashlib.sha256(url.encode()).hexdigest()[:16]
-    return f"{digest}.{extension}"
+    return f"{digest}.webp"
+
+
+def faceoff_name(name: str) -> str:
+    """Return the file name of the face-off's larger copy of a mirrored avatar."""
+    stem, _, extension = name.rpartition(".")
+    return f"{stem}{FACEOFF_SUFFIX}.{extension}"
 
 
 def _race_start(race: JsonObject) -> datetime:
@@ -163,6 +199,168 @@ def is_raster(data: bytes, extension: str) -> bool:
     return False
 
 
+@dataclass(frozen=True)
+class WebpInfo:
+    width: int
+    height: int
+    animated: bool
+    # The sum of the frame durations of an animated image; 0 for a still one.
+    duration_ms: int
+
+
+def _riff_chunks(data: bytes, start: int, end: int):
+    """Yield (tag, body) for each RIFF chunk between start and end."""
+    offset = start
+    while offset < end:
+        if offset + 8 > end:
+            raise ValueError("truncated WebP chunk header")
+        tag = data[offset : offset + 4]
+        size = int.from_bytes(data[offset + 4 : offset + 8], "little")
+        body_end = offset + 8 + size
+        if body_end > end:
+            raise ValueError(f"truncated WebP {tag!r} chunk")
+        yield tag, data[offset + 8 : body_end]
+        offset = body_end + (size & 1)  # Chunks are padded to an even length.
+
+
+def webp_info(data: bytes) -> WebpInfo:
+    """Return a WebP file's canvas size, whether it is animated, and its total duration.
+
+    Reads a simple lossy (`VP8 `), simple lossless (`VP8L`) or extended (`VP8X`) file, and
+    sums the ANMF frame durations of an animated one. Raises ValueError for anything else.
+    """
+    if len(data) < 12 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+        raise ValueError("not a RIFF WebP file")
+    end = 8 + int.from_bytes(data[4:8], "little")
+    if end > len(data):
+        raise ValueError("truncated WebP file")
+    chunks = list(_riff_chunks(data, 12, end))
+    if not chunks:
+        raise ValueError("WebP file has no chunks")
+    tag, body = chunks[0]
+    if tag == b"VP8 " and len(body) >= 10 and body[3:6] == b"\x9d\x01\x2a":
+        width = int.from_bytes(body[6:8], "little") & 0x3FFF
+        height = int.from_bytes(body[8:10], "little") & 0x3FFF
+        return WebpInfo(width, height, False, 0)
+    if tag == b"VP8L" and len(body) >= 5 and body[0] == 0x2F:
+        bits = int.from_bytes(body[1:5], "little")
+        return WebpInfo((bits & 0x3FFF) + 1, ((bits >> 14) & 0x3FFF) + 1, False, 0)
+    if tag == b"VP8X" and len(body) >= 10:
+        width = int.from_bytes(body[4:7], "little") + 1
+        height = int.from_bytes(body[7:10], "little") + 1
+        if not body[0] & 0x02:
+            return WebpInfo(width, height, False, 0)
+        frames = [frame for frame_tag, frame in chunks if frame_tag == b"ANMF"]
+        if not frames or any(len(frame) < 16 for frame in frames):
+            raise ValueError("animated WebP file has no well-formed frames")
+        duration = sum(int.from_bytes(frame[12:15], "little") for frame in frames)
+        return WebpInfo(width, height, True, duration)
+    raise ValueError(f"unrecognised WebP {tag!r} chunk")
+
+
+def imagemagick() -> str | None:
+    """Return ImageMagick 7's `magick`, else ImageMagick 6's `convert` (as Ubuntu's apt ships)."""
+    return shutil.which("magick") or shutil.which("convert")
+
+
+def _run_imagemagick(tool: str, arguments: list[str], directory: Path) -> str:
+    try:
+        result = subprocess.run(
+            [tool, *arguments],
+            cwd=directory,
+            capture_output=True,
+            text=True,
+            timeout=IMAGEMAGICK_TIMEOUT_SECONDS,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise AvatarConvertError(f"ImageMagick could not run: {error}") from error
+    if result.returncode != 0:
+        raise AvatarConvertError(f"ImageMagick failed: {result.stderr.strip()}")
+    return result.stdout
+
+
+def _check_webp(data: bytes, side: int, moving: bool) -> None:
+    """Raise unless data is a square WebP of the given side, animated if the source moves.
+
+    A source whose frames are all the same may come out still: libwebp merges identical
+    frames, and a still image looks the same.
+    """
+    try:
+        info = webp_info(data)
+    except ValueError as error:
+        raise AvatarConvertError(f"ImageMagick wrote no valid WebP: {error}") from error
+    if (info.width, info.height) != (side, side):
+        raise AvatarConvertError(
+            f"expected a {side} x {side} WebP, got {info.width} x {info.height}"
+        )
+    if moving and not info.animated:
+        raise AvatarConvertError("an animation came out still")
+
+
+def convert_avatar(data: bytes, extension: str, tool: str) -> dict[int, bytes]:
+    """Return the avatar as square WebP files of at most AVATAR_SIDE and FACEOFF_SIDE.
+
+    The image is turned upright by its EXIF orientation, centre-cropped to a square,
+    shrunk to each side and lightly sharpened (SHARPEN), or left at its size when it
+    is no larger. An sRGB image keeps its ICC colour profile and loses every other
+    profile; any other image is converted to sRGB and loses them all, so no CMYK or gray
+    profile is left on RGB pixels. Each file is the smaller of a lossy encoding at
+    WEBP_QUALITY and a lossless one. An animation whose frames differ stays animated.
+    Raises AvatarConvertError when ImageMagick fails or writes anything else.
+    """
+    coder = CODERS[extension.lower()]
+    with tempfile.TemporaryDirectory() as name:
+        directory = Path(name)
+        (directory / "source").write_bytes(data)
+        # The explicit coder keeps ImageMagick from sniffing the bytes for another format.
+        # One line per frame: size, colourspace and a hash of the pixels (%#).
+        frames = [
+            line.split()
+            for line in _run_imagemagick(
+                tool,
+                [f"{coder}:source", "-coalesce", "-auto-orient",
+                 "-format", "%w %h %[colorspace] %#\n", "info:"],
+                directory,
+            ).splitlines()
+            if line.strip()
+        ]
+        try:
+            width, height, colourspace = int(frames[0][0]), int(frames[0][1]), frames[0][2]
+            moving = len({frame[3] for frame in frames}) > 1
+        except (IndexError, ValueError) as error:
+            raise AvatarConvertError(f"ImageMagick could not measure it: {error}") from error
+        source_side = min(width, height)
+        if colourspace == "sRGB":
+            colours = ["+profile", "!icc,*"]
+        else:
+            colours = ["-colorspace", "sRGB", "+profile", "*"]
+        square = [
+            f"{coder}:source", "-coalesce", "-auto-orient",
+            "-gravity", "center", "-crop", f"{source_side}x{source_side}+0+0", "+repage",
+        ]
+        encodings = {
+            "lossy.webp": ["-quality", str(WEBP_QUALITY), "-define", "webp:use-sharp-yuv=true"],
+            "lossless.webp": ["-define", "webp:lossless=true"],
+        }
+
+        files: dict[int, bytes] = {}
+        for side in (AVATAR_SIDE, FACEOFF_SIDE):
+            # A square no larger than the side is kept as it is, pixel for pixel.
+            shrink = ["-resize", f"{side}x{side}", *SHARPEN] if source_side > side else []
+            resized = [*square, *shrink, *colours]
+            encoded = []
+            for output, encoding in encodings.items():
+                _run_imagemagick(tool, [*resized, *encoding, f"webp:{output}"], directory)
+                try:
+                    encoded.append((directory / output).read_bytes())
+                except OSError as error:
+                    raise AvatarConvertError(f"ImageMagick wrote no file: {error}") from error
+            smallest = min(encoded, key=len)
+            _check_webp(smallest, min(source_side, side), moving)
+            files[side] = smallest
+        return files
+
+
 def _fetch_avatar(url: str) -> bytes:
     return race_archive._get_bytes(
         url, f"Avatar {url}", IMAGE_ACCEPT, limit=MAX_AVATAR_BYTES
@@ -179,20 +377,23 @@ def _published_avatars(participants_path: Path) -> dict[str, str]:
         raise AvatarMirrorError(f"{participants_path} could not be read: {error}") from error
 
 
-def mirror(
+@dataclass(frozen=True)
+class MirrorPlan:
+    # Each published racetime.gg avatar name and the URL it mirrors.
+    downloads: dict[str, str]
+    # Each published Pokémon avatar name and the sprite it copies.
+    sprites: dict[str, Path]
+
+
+def mirror_plan(
     participants_path: Path = PARTICIPANTS_PATH,
     archive_dir: Path = race_archive.ARCHIVE_DIR,
-    output_dir: Path = OUTPUT_DIR,
-    *,
-    loader: Loader | None = None,
     pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
-) -> dict[str, int]:
-    """Make output_dir hold exactly the avatar files participants.json names.
+) -> MirrorPlan:
+    """Work out what each avatar name in participants.json mirrors.
 
-    A Pokémon avatar is copied from its sprite in pokemon_dir when the copy is missing
-    or differs; any other avatar is downloaded only when missing. A file that fails to
-    download or validate is skipped with a warning and retried on the next run. Returns
-    the counts of files downloaded, copied, removed and failed.
+    Raises AvatarMirrorError if participants.json is unreadable, or names a file the
+    archive does not explain or a sprite that does not exist.
     """
     # build_stats imports this module via participant_stats, so import it at call time.
     try:
@@ -200,13 +401,12 @@ def mirror(
     except ImportError:
         import build_stats
 
-    load = loader or _fetch_avatar
     published = _published_avatars(participants_path)
     spans = schedule_archive.season_spans(schedule_archive.load_schedule(archive_dir))
     envelopes = build_stats.included_envelopes(race_archive.load_races(archive_dir), spans)
     urls = current_avatar_urls(envelopes, race_archive.load_racer_avatars(archive_dir))
 
-    wanted: dict[str, str] = {}
+    downloads: dict[str, str] = {}
     sprites: dict[str, Path] = {}
     for user_id, name in published.items():
         # A Pokémon avatar's name says which sprite it is; the archive need not explain it.
@@ -219,28 +419,93 @@ def mirror(
             raise AvatarMirrorError(
                 "participants.json is stale; run python3 scripts/build_stats.py"
             )
-        wanted[name] = url
+        downloads[name] = url
+    return MirrorPlan(downloads, sprites)
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    present = {
+
+def _present_files(output_dir: Path) -> set[str]:
+    if not output_dir.is_dir():
+        return set()
+    return {
         path.name
         for path in output_dir.iterdir()
         if path.is_file() and not path.is_symlink()
     }
 
-    downloaded = failed = 0
-    for name, url in sorted(wanted.items()):
-        if name in present:
-            continue
-        if downloaded or failed:
+
+def _missing_downloads(plan: MirrorPlan, present: set[str]) -> list[str]:
+    """Return the racetime.gg avatar names missing either of their two files."""
+    return [
+        name
+        for name in sorted(plan.downloads)
+        if name not in present or faceoff_name(name) not in present
+    ]
+
+
+def pending(
+    participants_path: Path = PARTICIPANTS_PATH,
+    archive_dir: Path = race_archive.ARCHIVE_DIR,
+    output_dir: Path = OUTPUT_DIR,
+    *,
+    pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
+) -> int:
+    """Return how many racetime.gg avatars the next mirror run would download."""
+    plan = mirror_plan(participants_path, archive_dir, pokemon_dir)
+    return len(_missing_downloads(plan, _present_files(output_dir)))
+
+
+def mirror(
+    participants_path: Path = PARTICIPANTS_PATH,
+    archive_dir: Path = race_archive.ARCHIVE_DIR,
+    output_dir: Path = OUTPUT_DIR,
+    *,
+    loader: Loader | None = None,
+    converter: Converter | None = None,
+    pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
+) -> dict[str, int]:
+    """Make output_dir hold exactly the avatar files participants.json names.
+
+    A racetime.gg avatar `<hash>.webp` is downloaded when it or its face-off copy
+    (`faceoff_name`) is missing, and converted into both (see `convert_avatar`). A
+    Pokémon avatar is copied from its sprite in pokemon_dir when the copy is missing or
+    differs. An avatar that fails to download, validate or convert is skipped with a
+    warning and retried on the next run; with no ImageMagick, every download is. Returns
+    the counts of avatars downloaded, copied, removed and failed.
+    """
+    load = loader or _fetch_avatar
+    plan = mirror_plan(participants_path, archive_dir, pokemon_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    present = _present_files(output_dir)
+    missing = _missing_downloads(plan, present)
+
+    downloaded = failed = requests = 0
+    convert = converter
+    if missing and convert is None:
+        tool = imagemagick()
+        if tool is None:
+            print(
+                "Warning: ImageMagick (magick or convert) is not on PATH; skipping "
+                f"{len(missing)} racetime.gg avatar(s).",
+                file=sys.stderr,
+            )
+            failed, missing = len(missing), []
+        else:
+            def convert(data: bytes, extension: str) -> Mapping[int, bytes]:
+                return convert_avatar(data, extension, tool)
+
+    for name in missing:
+        url = plan.downloads[name]
+        if requests:
             time.sleep(race_archive.REQUEST_DELAY_SECONDS)
+        requests += 1
         try:
             data = load(url)
         except (race_archive.ArchiveError, OSError) as error:
             print(f"Warning: {error}; skipping {name}.", file=sys.stderr)
             failed += 1
             continue
-        if not is_raster(data, name.rpartition(".")[2]):
+        extension = _url_extension(url)
+        if not is_raster(data, extension):
             print(
                 f"Warning: {url} is not a raster image within {MAX_AVATAR_BYTES} bytes; "
                 f"skipping {name}.",
@@ -248,11 +513,21 @@ def mirror(
             )
             failed += 1
             continue
-        race_archive.write_bytes_atomic(data, output_dir / name)
+        try:
+            files = convert(data, extension)
+        except AvatarConvertError as error:
+            print(
+                f"Warning: {url} could not be converted: {error}; skipping {name}.",
+                file=sys.stderr,
+            )
+            failed += 1
+            continue
+        race_archive.write_bytes_atomic(files[AVATAR_SIDE], output_dir / name)
+        race_archive.write_bytes_atomic(files[FACEOFF_SIDE], output_dir / faceoff_name(name))
         downloaded += 1
 
     copied = 0
-    for name, sprite in sorted(sprites.items()):
+    for name, sprite in sorted(plan.sprites.items()):
         try:
             data = sprite.read_bytes()
             # A local read is cheap, so a copy is replaced whenever its sprite changed.
@@ -274,11 +549,10 @@ def mirror(
         race_archive.write_bytes_atomic(data, output_dir / name)
         copied += 1
 
+    kept = {*plan.downloads, *map(faceoff_name, plan.downloads), *plan.sprites}
     removed = 0
     for path in output_dir.iterdir():
-        if path.name not in wanted and path.name not in sprites and (
-            path.is_symlink() or path.is_file()
-        ):
+        if path.name not in kept and (path.is_symlink() or path.is_file()):
             path.unlink()
             removed += 1
 
@@ -316,12 +590,21 @@ def parse_args() -> argparse.Namespace:
         default=pokemon_avatars.POKEMON_DIR,
         help=f"Pokémon sprite directory (default: {pokemon_avatars.POKEMON_DIR})",
     )
+    parser.add_argument(
+        "--pending",
+        action="store_true",
+        help="only print how many racetime.gg avatars a run would download, which "
+        "tells whether it needs ImageMagick",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     try:
+        if args.pending:
+            print(pending(args.participants, args.archive, args.output, pokemon_dir=args.pokemon))
+            return 0
         summary = mirror(
             args.participants, args.archive, args.output, pokemon_dir=args.pokemon
         )

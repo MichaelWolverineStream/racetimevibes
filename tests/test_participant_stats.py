@@ -572,7 +572,7 @@ class SchemaThreeTests(unittest.TestCase):
                 "ben": None,
             },
         )
-        self.assertRegex(self.avatars(result)["ana"], r"^[0-9a-f]{16}\.jpg$")
+        self.assertRegex(self.avatars(result)["ana"], r"^[0-9a-f]{16}\.webp$")
 
     def test_avatar_precedence_among_races_and_observations(self):
         latest = avatar_mirror.mirror_name("https://racetime.gg/media/new-1.jpg")
@@ -617,7 +617,7 @@ class SchemaThreeTests(unittest.TestCase):
         races[1]["entrants"][1]["user"]["avatar"] = (
             "https://racetime.gg/media/Petit_chat_pott%C3%A9.jpg"
         )
-        self.assertRegex(self.avatars(payload(races))["ben"], r"^[0-9a-f]{16}\.jpg$")
+        self.assertRegex(self.avatars(payload(races))["ben"], r"^[0-9a-f]{16}\.webp$")
 
     def test_observations_for_unknown_racers_add_no_player(self):
         result = payload(
@@ -1242,7 +1242,7 @@ class CommittedParticipantDataTests(unittest.TestCase):
         self.assertIn(highlights.PANDAMONIUM_SEASON, season_numbers)
 
     def test_avatars_are_mirror_names_or_sprites(self):
-        pattern = re.compile(r"^[0-9a-f]{16}\.(png|jpg|jpeg|gif|webp)$")
+        pattern = re.compile(r"^[0-9a-f]{16}\.webp$")
         for player in self.participants["players"]:
             if "a" in player and pokemon_avatars.sprite_path(player["a"]) is None:
                 self.assertRegex(player["a"], pattern)

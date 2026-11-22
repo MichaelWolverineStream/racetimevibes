@@ -16,6 +16,7 @@ This README covers the project, the [ladder rating](#ladder-rating) and [privacy
 - Python 3.12 or newer, standard library only. The site is plain HTML, CSS and JavaScript with no build step.
 - A network connection for the syncs and the avatar mirror.
 - ImageMagick 7, only for `scripts/badge_images.py` (badge art) and `scripts/pokemon_images.py` (sprite framing).
+- ImageMagick 6 or 7, for `scripts/avatar_mirror.py`, only when it has a racetime.gg avatar to download. It converts each one to WebP.
 
 ## Quick start
 
@@ -24,7 +25,7 @@ python3 scripts/race_archive.py       # sync new races from racetime.gg into arc
 python3 scripts/schedule_archive.py   # mirror the alttpr.racing ladder schedule into archive/ (network); the build needs it
 python3 scripts/racer_bios.py         # optional: mirror racers' profile bios into archive/ (network)
 python3 scripts/build_stats.py        # build site/data/*.json from archive/ (offline)
-python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/ (network)
+python3 scripts/avatar_mirror.py      # mirror the avatars participants.json names into site/avatars/, as WebP (network)
 python3 scripts/version_assets.py     # restamp the asset URLs after editing site/
 python3 -m unittest discover -s tests
 python3 -m http.server 8000 -d site   # preview at http://localhost:8000; the page needs HTTP, not file://
@@ -150,15 +151,16 @@ A **season** is one run of the ladder, as the alttpr.racing schedule numbers the
 
 - **`race-stats.json`** is anonymous. It holds slot and race counts, distributions and bands, and counts of distinct racers per season, never entrant arrays, IDs, names, profile links, or Twitch fields. The schedule's slot and race ids, and the racers' user IDs, are used only inside the build, and only counts are published. The racer counts could be derived from `participants.json`, which already publishes every race's entries.
 - **`participants.json`** publishes each racer's public display name and stable user ID, because a leaderboard requires them, plus the file name of their mirrored avatar.
-  - That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus the URL's lowercase extension, for example `3f9ac01d2e7b8a64.jpg`. It carries nothing from the upload's own file name.
+  - That name is the first 16 hex digits of the SHA-256 of the avatar's racetime.gg URL, plus `.webp`, for example `3f9ac01d2e7b8a64.webp`. It carries nothing from the upload's own file name.
   - A racer has one only if the URL is directly under `https://racetime.gg/media/`, names the file in URL-safe ASCII (letters, digits, `.`, `_`, `~`, `-` and `%`, as in percent escapes), and ends in `png`, `jpg`, `jpeg`, `gif` or `webp`.
   - The avatar follows the racer's most recently observed profile: the category leaderboards each sync, or their latest race file among the races the dashboard includes, so never a `ladder_test` race or one in a season break, whichever is newer, and the leaderboards win a tie. A racer whose latest observation has no avatar has none, unless a Pokémon fills in (see [Pokémon avatars](docs/avatars.md#pokémon-avatars)).
   - A Pokémon avatar's name is `pokemon-` plus a sprite file name, `pokemon-<pokédex number>[-<variant>].png`, for example `pokemon-201-b.png`. It reveals only which Pokémon the racer has, which comes from their public bio or from a random pick. A bio itself is published only as `featured` describes below.
   - `avatar_changes` adds, for racers whose avatar changed while the archive was watching, the Eastern Time date the archive first saw the change (see [Avatar changes](docs/avatars.md#avatar-changes)). It reveals nothing about the old avatar, which is neither named nor mirrored, and nothing from the bio beyond the date the favourite Pokémon changed.
   - `featured` lists the coming days' [featured racers](docs/highlights.md#featured-racer), at most 16 at a time, and each one's current bio. A later day's pick can still change as races arrive, so a racer can be listed, bio included, and then replaced before their day. Each bio is the one their public racetime.gg profile shows, or `null`. Whitespace runs become single spaces, and a bio over 160 characters is cut to fit with "…", at its last word break if that keeps at least half of it. No other racer's bio is published, and never an earlier bio or when a bio was seen or changed.
 - **`comments.json`** publishes the raw post-race comments of included races, stripped and capped at 500 characters, keyed by race name and user ID, each with the chest count parsed from it, or `null`.
-- **`site/avatars/`** holds copies of exactly the files `participants.json` names, raster images only. The page serves avatars from there, so a viewer's browser never contacts racetime.gg for them.
-  - The copies are byte for byte, so any metadata an upload carries, such as a JPEG's EXIF block, is served as racetime.gg serves it.
+- **`site/avatars/`** holds exactly the files `participants.json` names, each racetime.gg one with its `-256` copy (`3f9ac01d2e7b8a64-256.webp`), as valid images only. The page serves avatars from there, so a viewer's browser never contacts racetime.gg for them.
+  - A racetime.gg avatar is a WebP conversion of the upload with every embedded profile but the colour profile removed, so no EXIF or XMP is published.
+  - A Pokémon avatar is a copy of its sprite.
   - A replaced or removed avatar leaves `site/avatars/` but stays in the repository's git history.
 - **Season fields** in `participants.json` are integers, dates and flags tied to the racers' published IDs. They add no field the contract above excludes.
 - **Season names and upcoming slots** in `participants.json` hold no racer data: a season name is a fixed retro name or the animal the previous season's champion chose, and an upcoming slot is a time, a schedule mode name and a season number.

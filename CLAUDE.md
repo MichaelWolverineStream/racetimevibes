@@ -9,7 +9,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 
 1. **Never hand-edit generated files. Regenerate them; the tests check.**
    - `site/data/*.json`: `python3 scripts/build_stats.py`. `test_matches_a_rebuild_from_the_archive` rebuilds them from the committed inputs (`archive/`, `season-ratings/`, `season-names.json`, `badge-overrides.json`, `assets/pokemon/`) and fails on any difference but `generated_at`.
-   - `site/avatars/`: `python3 scripts/avatar_mirror.py`, after `build_stats.py`. It downloads racetime.gg avatars and copies Pokémon sprites from `assets/pokemon/`. Never add, edit, delete or hand-pick a file there.
+   - `site/avatars/`: `python3 scripts/avatar_mirror.py`, after `build_stats.py`. It downloads racetime.gg avatars, converts them to WebP (128 px, plus a 256 px face-off copy), and copies Pokémon sprites from `assets/pokemon/`. Never add, edit, delete or hand-pick a file there.
    - `assets/pokemon/pokedex.json`: `python3 scripts/pokemon_avatars.py --refresh-pokedex`.
    - `assets/pokemon/*.png`: `python3 scripts/pokemon_images.py`, from the originals in `_tmp_assets/pokemon/`. Run `avatar_mirror.py` after.
    - The `?v=` stamps in `site/index.html` and `site/version.json`: `python3 scripts/version_assets.py`, after any change to `site/` HTML, CSS or JS. A test fails if a stamp is stale.
@@ -18,11 +18,12 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - Pull before you start.
    - Conflict in `archive/`: discard your archive changes, pull, then rerun `race_archive.py`, `schedule_archive.py`, `build_stats.py` and `avatar_mirror.py`.
    - Conflict in `season-ratings/`: take upstream; the ledgers are deterministic. Build locally without `--lock-seasons`; only the bot locks.
+   - Conflict in `site/avatars/`: take upstream; the bot converts with ImageMagick 6, you with 7, so one name can hold different bytes.
 3. **`archive/` is a verbatim mirror of the racetime.gg API, plus the alttpr.racing schedule in `archive/ladder-schedule/`.** Never edit it, and never move or copy any of it into `site/`: it holds full profiles, comments and verbatim bios with their history, and is never deployed.
 4. **Publish only what the privacy contract allows** ([README › Privacy](README.md#privacy)). Any new published field must fit it.
    - `race-stats.json` is anonymous: no IDs, names or entrant arrays.
-   - `participants.json` carries only display names, stable user IDs and mirrored avatar file names: the hash of a `racetime.gg/media/` raster URL plus its extension, or `pokemon-` plus a sprite file name. Plus `avatar_changes`, the Eastern date an avatar change (upload or bio favourite) was first seen, never the old avatar. Plus `featured`, the coming featured racers (later days' picks can still change), each with their current bio, whitespace collapsed and capped at 160 characters. Plus `badge_notes`, the maintainers' one-line notes (at most 160 characters) on badges given by hand in `badge-overrides.json`.
-   - `site/avatars/` holds exactly the files `participants.json` names, as validated raster images.
+   - `participants.json` carries only display names, stable user IDs and mirrored avatar file names: the hash of a `racetime.gg/media/` raster URL plus `.webp`, or `pokemon-` plus a sprite file name. Plus `avatar_changes`, the Eastern date an avatar change (upload or bio favourite) was first seen, never the old avatar. Plus `featured`, the coming featured racers (later days' picks can still change), each with their current bio, whitespace collapsed and capped at 160 characters. Plus `badge_notes`, the maintainers' one-line notes (at most 160 characters) on badges given by hand in `badge-overrides.json`.
+   - `site/avatars/` holds exactly the files `participants.json` names plus each racetime.gg one's `-256` copy, as validated WebP (Pokémon copies are PNG).
    - `comments.json` carries comments capped at 500 characters.
    - `season-ratings/` (user IDs and season points) sits beside `archive/` and is never deployed.
    - Never publish any bio but a featured racer's current one, nor bio history (`since`, `earlier`), full names, discriminators, pronouns, Twitch fields or racetime.gg score fields.
@@ -31,7 +32,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - `race-stats.json`: `SCHEMA_VERSION` in `build_stats.py` and `validateData` in `app.js`.
    - `comments.json`: `COMMENTS_SCHEMA_VERSION` in `comment_stats.py` and `ui.js`.
 6. **The README and `docs/` are the spec.** Update the matching doc in the same change as any behaviour change. Badges follow the `badges` skill (`.claude/skills/badges/SKILL.md`).
-7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.12+. The site is plain files. ImageMagick 7 is needed only by `badge_images.py` and `pokemon_images.py`.
+7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.12+. The site is plain files. ImageMagick is needed only by `badge_images.py` and `pokemon_images.py` (7), and by `avatar_mirror.py` when it downloads (6 or 7; the bot installs 6 only then).
 8. **Ladder rating invariants are tested across the whole archive**, for the overall, every mode, and every season and season-mode track:
    - A winner's points never fall. Finish times never affect the rating.
    - Mode and season ratings use the overall parameters, untuned; every racer debuts at 1000 in every season. A locked season's ledger wins over what the rating computes today.

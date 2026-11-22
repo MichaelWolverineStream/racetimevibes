@@ -9,12 +9,35 @@
 `avatar_mirror.py` makes `site/avatars/` hold exactly the files `participants.json` names, so the page serves every avatar from its own origin.
 
 - For each racer it works out the URL behind the published file name from `archive/`.
-- It downloads only the files the directory is missing, pausing 0.2 seconds between requests. A normal run makes no requests; the first run makes one per racer with an avatar.
-- It checks each download before keeping it: the first bytes must match a PNG, JPEG, GIF or WebP image that agrees with the file extension, and the file must be at most 2,000,000 bytes.
-- It deletes every file or symlink in `site/avatars/` that `participants.json` does not name, so a racer's old picture goes when a new one arrives.
-- It copies a Pokémon avatar from `assets/pokemon/` instead, with no request (see [Pokémon avatars](#pokémon-avatars)). The sprite `pokemon-201-b.png` comes from `201-b.png`. A file is copied only if the directory is missing it or holds a copy that differs from the sprite, and only if the sprite is a PNG image. A local read is cheap, so every run compares the copies, and a replaced sprite reaches `site/avatars/` on the next run.
-- A download or check that fails prints a `Warning:` line and the run continues; the file is tried again on the next run, and meanwhile the page shows the racer's monogram. A sprite that cannot be read or is not a PNG fails the same way.
-- The script ends with `Avatars: N downloaded, C copied, M removed, K failed.` It exits with 1 only if the archive cannot be read, or if `participants.json` is unreadable or names a file the archive does not explain, in which case it asks you to run `build_stats.py` first. A `pokemon-` name with no sprite in `assets/pokemon/` counts as such a file, so it is treated like a stale `participants.json`.
+- It downloads a racetime.gg avatar only when the directory is missing either of its two files, pausing 0.2 seconds between requests. A normal run makes no requests; the first run makes one per racer with an avatar.
+- It checks each download before converting it: the first bytes must match a PNG, JPEG, GIF or WebP image that agrees with the file extension, and the file must be at most 2,000,000 bytes.
+- It converts every upload to WebP, whatever its source format, and writes two files per racetime.gg avatar:
+  - `<hash>.webp`, at most 128 px. That is twice the largest normal display, the 64 px racer-page avatar, so it stays sharp on 2× screens. Every normal use loads it.
+  - `<hash>-256.webp`, at most 256 px. That is twice the face-off's 128 px avatar. Only the face-off loads it, through `UI.avatar(..., { faceoff: true })` in `bigAvatar` (`faceoff.js`).
+  - `participants.json` names only the first file. The page derives the second by inserting `-256` before the extension. `FACEOFF_AVATAR_SUFFIX` in `ui.js` must match `FACEOFF_SUFFIX` in `avatar_mirror.py`, and a test compares them.
+- It deletes every file or symlink in `site/avatars/` that is not a name `participants.json` gives, the `-256` copy of a racetime.gg name, or a Pokémon copy, so a racer's old picture goes when a new one arrives.
+- It copies a Pokémon avatar from `assets/pokemon/` instead, with no request (see [Pokémon avatars](#pokémon-avatars)). The sprite `pokemon-201-b.png` comes from `201-b.png`. A file is copied only if the directory is missing it or holds a copy that differs from the sprite, and only if the sprite is a PNG image. A local read is cheap, so every run compares the copies, and a replaced sprite reaches `site/avatars/` on the next run. A Pokémon avatar is a 256 px palette PNG, so it stays one byte copy that every use loads, the face-off included. `ui.js` tells it apart by `POKEMON_AVATAR_PREFIX`, which must match `AVATAR_PREFIX` in `pokemon_avatars.py`.
+- A download, check or conversion that fails prints a `Warning:` line and the run continues; the avatar counts as failed and is tried again on the next run, and meanwhile the page shows the racer's monogram. A sprite that cannot be read or is not a PNG fails the same way.
+- `--pending` prints how many racetime.gg avatars a run would download and does nothing else. It exits with 1 on unreadable or stale input, as a run does.
+- The script ends with `Avatars: N downloaded, C copied, M removed, K failed.` "Downloaded" and "failed" count avatars, so a racetime.gg avatar is one although it is two files, while "removed" counts files. It exits with 1 only if the archive cannot be read, or if `participants.json` is unreadable or names a file the archive does not explain, in which case it asks you to run `build_stats.py` first. A `pokemon-` name with no sprite in `assets/pokemon/` counts as such a file, so it is treated like a stale `participants.json`.
+
+### Conversion
+
+`convert_avatar` runs ImageMagick, which is `magick` (ImageMagick 7) if it is on `PATH`, else `convert` (ImageMagick 6, as Ubuntu's apt ships). Only a racetime.gg avatar that must be downloaded needs it. Without it the mirror prints one warning, makes no requests, counts those avatars as failed and retries them next run, and still exits with 0.
+
+1. It reads the source with an explicit coder chosen from the URL's extension (`png:`, `jpeg:`, `gif:` or `webp:`), so ImageMagick never guesses the format.
+2. It coalesces animations and turns the image upright by its EXIF orientation.
+3. It crops the centre to a square of the shorter side, which is what the page's `object-fit: cover` and the share card's crop show anyway.
+4. It shrinks the square to at most 128 px and at most 256 px, and never enlarges it. An upload of 128 px or less gives two files of the same size, and a square no larger than a cap keeps its exact pixels.
+   - A square it shrinks gets a light unsharp mask on its colour channels (`SHARPEN`, `-unsharp 0x0.5+0.5+0`). Resizing alone came out 13–22% softer than Chrome's own downscale of the upload, measured as edge contrast on 12 large uploads, and the mask brings that to within about 5% on average.
+5. It removes every embedded profile but the ICC colour profile, so EXIF, XMP and 8BIM go. That holds for an sRGB source, as every current upload is. Any other source, such as a CMYK or gray one, is converted to sRGB and loses every profile, so no CMYK or gray profile is left on RGB pixels.
+6. Each file is the smaller of a lossy WebP at quality 90 (`WEBP_QUALITY`, with sharp YUV) and a lossless WebP, so flat pixel art usually stays exact.
+7. It checks each file with `webp_info`, a stdlib WebP reader. The file must be square, with a side of the shorter side or the cap, whichever is less. If the source's frames differ (compared by ImageMagick's pixel hash, `%#`), the file must be animated. libwebp merges identical frames, so an animation of identical frames may come out still, which looks the same, and the frame count can drop. Anything else is an `AvatarConvertError`, handled as a failure above.
+   - The per-file check leaves timing alone. The `ConvertAvatar` tests check that an animation keeps its total duration, and the bot runs them on its ImageMagick before it converts (see [Scheduled refresh](operations.md#scheduled-data-refresh)). A frame delay of 0 is written as about 100 ms, as browsers show it.
+
+ImageMagick that cannot be started, takes over 60 seconds on one call (`IMAGEMAGICK_TIMEOUT_SECONDS`), exits with an error, or writes no file is also an `AvatarConvertError`, so a run never stops on one bad upload.
+
+An animated PNG keeps only its first frame, because the `png:` coder reads the default image. None exist today.
 
 ## Pokémon avatars
 
