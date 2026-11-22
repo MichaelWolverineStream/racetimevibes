@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 20;
+const PARTICIPANT_SCHEMA_VERSION = 21;
 // Must match BIO_MAX_LENGTH in scripts/featured.py, in code points as Python counts them.
 const FEATURED_BIO_MAX_LENGTH = 160;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
@@ -34,6 +34,9 @@ let playerIndexById = new Map();
 let raceIndexesByPlayer = [];
 let badgeHolderCounts = new Map();
 let recordCache = new Map();
+let leaderboardRowCache = new Map();
+// The mode and season the leaderboard's mode toggle was last built for; null until the first render.
+let renderedBoardScope = null;
 let ratingRankCache = new Map();
 let ratingRankDeltaCache = new Map();
 let seasonStandingsCache = new Map();
@@ -80,6 +83,8 @@ function medalFor(place, field) {
   return tier ? (tier[1][place - 1] ?? null) : null;
 }
 
+// The page's written statement of the participants.json shape it reads from the Python build, so drift fails
+// loudly ("could not be loaded") instead of rendering undefined or NaN.
 function validateParticipants(data) {
   if (!data || data.schema_version !== PARTICIPANT_SCHEMA_VERSION) {
     throw new Error("Unexpected racer data schema version.");
@@ -176,8 +181,6 @@ function validateParticipants(data) {
         rating === null ||
         typeof rating !== "object" ||
         !Number.isInteger(rating.rating) ||
-        typeof rating.mu !== "number" ||
-        typeof rating.sigma !== "number" ||
         !Number.isInteger(rating.finishes)
       ) {
         throw new Error("Racer data contains an invalid mode rating.");
@@ -226,9 +229,8 @@ function validateParticipants(data) {
       if (typeof entry[5] !== "number") {
         throw new Error("Racer data contains an invalid mode rating after a race.");
       }
-      const seasonRatings = [entry[6], entry[7]];
-      const valid = race.s === undefined ? seasonRatings.every((value) => value === null) : seasonRatings.every(Number.isInteger);
-      if (!valid) {
+      const noSeasonRatings = entry[6] === null && entry[7] === null;
+      if (race.s === undefined ? !noSeasonRatings : !Number.isInteger(entry[6]) || !Number.isInteger(entry[7])) {
         throw new Error("Racer data contains an invalid season rating after a race.");
       }
     });
@@ -675,6 +677,39 @@ function computeHeadToHead(playerIndex, modeId) {
   return [...opponents.values()];
 }
 
+// Every race two racers entered together (ascending race indexes) and the first racer's record against the
+// second in them, in all modes: all time, and in `season` when one is given. Outcomes use compareEntries, like
+// computeHeadToHead, so the two agree.
+function pairRecord(a, b, season = null) {
+  const racesOfB = new Set(raceIndexesByPlayer[b]);
+  const shared = raceIndexesByPlayer[a].filter((raceIndex) => racesOfB.has(raceIndex));
+  const tally = () => ({ wins: 0, losses: 0, draws: 0, meetings: 0 });
+  const allTime = tally();
+  const thisSeason = tally();
+  const count = (record, outcome) => {
+    record.meetings += 1;
+    if (outcome > 0) {
+      record.wins += 1;
+    } else if (outcome < 0) {
+      record.losses += 1;
+    } else {
+      record.draws += 1;
+    }
+  };
+  shared.forEach((raceIndex) => {
+    const race = participants.races[raceIndex];
+    const outcome = compareEntries(
+      race.e.find((entry) => entry[0] === a),
+      race.e.find((entry) => entry[0] === b),
+    );
+    count(allTime, outcome);
+    if (season !== null && race.s === season) {
+      count(thisSeason, outcome);
+    }
+  });
+  return { shared, allTime, thisSeason };
+}
+
 function winRate(wins, losses) {
   const decisive = wins + losses;
   return decisive ? wins / decisive : null;
@@ -744,10 +779,22 @@ function formatRaceDate(isoDate) {
   return dateFormatter.format(new Date(`${isoDate}T00:00:00Z`));
 }
 
-// Race dates are local to the data's timezone, so "today" must be too.
+let zoneDateFormatter = null;
+
+// A moment's calendar date ("2026-11-15") in the data's timezone. Race dates are local to it.
+function dateInZone(date) {
+  zoneDateFormatter ??= new Intl.DateTimeFormat("en-CA", {
+    timeZone: (participants.timezone && participants.timezone.name) || DEFAULT_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return zoneDateFormatter.format(date);
+}
+
+// Race dates are local to the data's timezone, so "today" must be too. Never cached: an open tab rolls over at midnight.
 function todayInZone() {
-  const timeZone = (participants.timezone && participants.timezone.name) || DEFAULT_TIMEZONE;
-  return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  return dateInZone(new Date());
 }
 
 // Start times shown to the viewer use their device's time zone, or Eastern Time when the device names none.
@@ -783,10 +830,6 @@ function shiftIsoDate(isoDate, days) {
 // The last `days` calendar days, counting today.
 function daysAgoCutoff(days) {
   return shiftIsoDate(todayInZone(), -(days - 1));
-}
-
-function inRange(race, range) {
-  return (!range.start || race.d >= range.start) && (!range.end || race.d <= range.end);
 }
 
 function playerHash(playerId, modeId) {
@@ -1099,7 +1142,16 @@ function leaderboardColumns() {
 }
 
 // Rows in order of the selected scope's rating (overall, or in the mode), highest first, unrated last; the players array is name-sorted, so its index breaks ties.
+// Memoised per scope, so callers must copy before sorting or filtering and never change a row.
 function leaderboardRows(modeId, season) {
+  const cacheKey = `${modeId}|${season ?? "all"}`;
+  if (!leaderboardRowCache.has(cacheKey)) {
+    leaderboardRowCache.set(cacheKey, buildLeaderboardRows(modeId, season));
+  }
+  return leaderboardRowCache.get(cacheKey);
+}
+
+function buildLeaderboardRows(modeId, season) {
   const modeIndex = modeIndexFor(modeId);
   let boardRows;
   if (season !== null) {
@@ -1144,18 +1196,23 @@ function leaderboardRows(modeId, season) {
 
 function renderLeaderboard() {
   const container = document.querySelector("#leaderboard-table");
-  renderModeToggle(
-    document.querySelector("#leaderboard-mode-toggle"),
-    participants.modes,
-    leaderboardState.mode,
-    (mode) => {
-      leaderboardState.mode = mode;
-      leaderboardState.sort = DEFAULT_LEADERBOARD_SORT;
-      renderLeaderboard();
-    },
-  );
-
   const { season } = leaderboardState;
+  // Search, filters and sorting leave the toggle alone, so only a new mode or season rebuilds it.
+  const boardScope = `${leaderboardState.mode}|${season ?? "all"}`;
+  if (boardScope !== renderedBoardScope) {
+    renderedBoardScope = boardScope;
+    renderModeToggle(
+      document.querySelector("#leaderboard-mode-toggle"),
+      participants.modes,
+      leaderboardState.mode,
+      (mode) => {
+        leaderboardState.mode = mode;
+        leaderboardState.sort = DEFAULT_LEADERBOARD_SORT;
+        renderLeaderboard();
+      },
+    );
+  }
+
   const columns = leaderboardColumns();
   const all = leaderboardRows(leaderboardState.mode, season);
   const recentCutoff = daysAgoCutoff(RECENT_DAYS);
@@ -1302,8 +1359,8 @@ function headToHeadColumns(playerIndex) {
       label: "Win chance",
       sortLabel: "chance of beating this opponent next time",
       tooltip: "From current overall ratings",
-      sortValue: (row) => winChance(participants.players[playerIndex], row.player),
-      render: (cell, row) => appendText(cell, formatRate(winChance(participants.players[playerIndex], row.player))),
+      sortValue: (row) => row.winChance,
+      render: (cell, row) => appendText(cell, formatRate(row.winChance)),
     },
     {
       key: "trend",
@@ -1342,6 +1399,34 @@ function headToHeadColumns(playerIndex) {
   ];
 }
 
+let matchupCache = null;
+
+// The racer page's opponent rows for one racer and mode, built once: search and sort clicks only filter and
+// sort them, so callers copy before sorting and never change a row.
+function playerMatchups(playerIndex, modeId) {
+  if (matchupCache?.participants === participants && matchupCache.playerIndex === playerIndex && matchupCache.modeId === modeId) {
+    return matchupCache.rows;
+  }
+  const subject = participants.players[playerIndex];
+  const rows = computeHeadToHead(playerIndex, modeId).map((matchup) => {
+    const player = participants.players[matchup.opponent];
+    return {
+      ...matchup,
+      player,
+      winRate: winRate(matchup.wins, matchup.losses),
+      winChance: winChance(subject, player),
+      trend: trendFor(matchup.sequence),
+      rank: 0,
+    };
+  });
+  rows.sort((left, right) => right.meetings - left.meetings || left.player.name.localeCompare(right.player.name));
+  rows.forEach((row, index) => {
+    row.rank = index + 1;
+  });
+  matchupCache = { participants, playerIndex, modeId, rows };
+  return rows;
+}
+
 function renderPlayerView(playerIndex) {
   const player = participants.players[playerIndex];
   const available = playerModes(playerIndex);
@@ -1362,17 +1447,7 @@ function renderPlayerView(playerIndex) {
     renderRacerRating(playerIndex);
   });
 
-  const matchups = computeHeadToHead(playerIndex, playerState.mode).map((matchup) => ({
-    ...matchup,
-    player: participants.players[matchup.opponent],
-    winRate: winRate(matchup.wins, matchup.losses),
-    trend: trendFor(matchup.sequence),
-    rank: 0,
-  }));
-  matchups.sort((left, right) => right.meetings - left.meetings || left.player.name.localeCompare(right.player.name));
-  matchups.forEach((matchup, index) => {
-    matchup.rank = index + 1;
-  });
+  const matchups = playerMatchups(playerIndex, playerState.mode);
 
   const container = document.querySelector("#player-h2h-table");
   const visible = matchups.filter((matchup) => matchesQuery(matchup.player.name, playerState.query));
@@ -1757,6 +1832,9 @@ async function loadParticipants() {
     participants = data;
     buildIndexes(data);
     recordCache = new Map();
+    leaderboardRowCache = new Map();
+    renderedBoardScope = null;
+    zoneDateFormatter = null;
     ratingRankCache = new Map();
     ratingRankDeltaCache = new Map();
     seasonStandingsCache = new Map();

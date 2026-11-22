@@ -459,8 +459,8 @@ class WinnerTests(unittest.TestCase):
 
     def test_dq_has_no_place_and_is_not_a_finish(self):
         result = run([record([dq(0), done(1, 1, 3000.0)])])
-        self.assertEqual(result["players"][0]["streaks"]["finish"]["best"], None)
-        self.assertEqual(result["players"][1]["streaks"]["win"]["best"], [1, 0, 0])
+        self.assertIsNone(best_run(result, "finish", 0))
+        self.assertEqual(best_run(result, "win", 1), [1, 0, 0])
 
 
 class MilestoneTests(unittest.TestCase):
@@ -490,28 +490,37 @@ class MedalTests(unittest.TestCase):
                     self.assertEqual(highlights.medal(place, field), medal)
 
 
+def best_run(result, kind, player):
+    """A racer's best run of a streak kind as [length, start, end], read off the records board."""
+    for index, *run_ in result["records"]["streaks"][kind]["best"]:
+        if index == player:
+            return run_
+    return None
+
+
 class StreakTests(unittest.TestCase):
     def test_win_streak_best_and_current(self):
         records = [duel(0, 1), duel(0, 1), duel(1, 0), duel(0, 1), duel(0, 1), duel(0, 1)]
-        streaks = run(records)["players"][0]["streaks"]["win"]
-        self.assertEqual(streaks["best"], [3, 3, 5])
-        self.assertEqual(streaks["current"], [3, 3, 5])
+        result = run(records)
+        self.assertEqual(best_run(result, "win", 0), [3, 3, 5])
+        self.assertEqual(result["players"][0]["streaks"]["win"], {"current": [3, 3, 5]})
 
     def test_best_streak_tie_keeps_earliest_end(self):
         records = [duel(0, 1), duel(0, 1), duel(1, 0), duel(0, 1), duel(0, 1)]
-        streaks = run(records)["players"][0]["streaks"]["win"]
-        self.assertEqual(streaks["best"], [2, 0, 1])
-        self.assertEqual(streaks["current"], [2, 3, 4])
+        result = run(records)
+        self.assertEqual(best_run(result, "win", 0), [2, 0, 1])
+        self.assertEqual(result["players"][0]["streaks"]["win"]["current"], [2, 3, 4])
 
     def test_current_is_none_when_latest_race_broke_the_streak(self):
         records = [duel(0, 1), duel(0, 1), duel(1, 0)]
-        streaks = run(records)["players"][0]["streaks"]["win"]
-        self.assertEqual(streaks["best"], [2, 0, 1])
-        self.assertIsNone(streaks["current"])
+        result = run(records)
+        self.assertEqual(best_run(result, "win", 0), [2, 0, 1])
+        self.assertIsNone(result["players"][0]["streaks"]["win"]["current"])
 
     def test_racer_without_wins_has_no_win_streak(self):
-        streaks = run([duel(0, 1)])["players"][1]["streaks"]["win"]
-        self.assertEqual(streaks, {"best": None, "current": None})
+        result = run([duel(0, 1)])
+        self.assertIsNone(best_run(result, "win", 1))
+        self.assertEqual(result["players"][1]["streaks"]["win"], {"current": None})
 
     def test_podium_streak_depends_on_the_field_size(self):
         win = duel(0, 1)
@@ -519,7 +528,7 @@ class StreakTests(unittest.TestCase):
         for field, place, held in ((3, 2, False), (5, 3, False), (10, 4, True), (6, 3, True)):
             with self.subTest(field=field, place=place):
                 race = record([done(1, 1, 3000.0), done(0, place, 3100.0)], n=field)
-                best = run([win, race, win])["players"][0]["streaks"]["podium"]["best"]
+                best = best_run(run([win, race, win]), "podium", 0)
                 self.assertEqual(best[0], 3 if held else 1)
 
     def test_dnf_breaks_finish_streak_but_not_daily_streak(self):
@@ -528,39 +537,42 @@ class StreakTests(unittest.TestCase):
             record([dnf(0), done(1, 1, 3000.0), done(2, 2, 3100.0)], day=1),
             duel(0, 1, day=2),
         ]
-        streaks = run(records)["players"][0]["streaks"]
-        self.assertEqual(streaks["finish"]["best"], [1, 0, 0])
+        result = run(records)
+        streaks = result["players"][0]["streaks"]
+        self.assertEqual(best_run(result, "finish", 0), [1, 0, 0])
         self.assertEqual(streaks["finish"]["current"], [1, 2, 2])
-        self.assertEqual(streaks["daily"]["best"], [3, "2026-03-01", "2026-03-03"])
+        self.assertEqual(best_run(result, "daily", 0), [3, "2026-03-01", "2026-03-03"])
         self.assertEqual(streaks["daily"]["current"], [3, "2026-03-01", "2026-03-03"])
 
     def test_dq_breaks_finish_streak_even_in_a_field_of_two(self):
         records = [duel(0, 1), record([dq(0), done(1, 1, 3000.0)]), duel(0, 1)]
-        self.assertEqual(run(records)["players"][0]["streaks"]["finish"]["best"], [1, 0, 0])
+        self.assertEqual(best_run(run(records), "finish", 0), [1, 0, 0])
 
     def test_dnf_against_a_finisher_in_a_field_of_two_is_skipped(self):
         records = [duel(0, 1), record([dnf(0), done(1, 1, 3000.0)]), duel(0, 1)]
-        finish = run(records)["players"][0]["streaks"]["finish"]
-        self.assertEqual(finish["best"], [2, 0, 2])
-        self.assertEqual(finish["current"], [2, 0, 2])
+        result = run(records)
+        self.assertEqual(best_run(result, "finish", 0), [2, 0, 2])
+        self.assertEqual(result["players"][0]["streaks"]["finish"]["current"], [2, 0, 2])
 
     def test_dnf_in_a_field_of_two_without_a_finisher_breaks_finish_streak(self):
         for middle in ([dnf(0), dnf(1)], [dnf(0), dq(1)]):
             records = [duel(0, 1), record(middle), duel(0, 1)]
             with self.subTest(middle=middle):
-                finish = run(records)["players"][0]["streaks"]["finish"]
-                self.assertEqual(finish["best"], [1, 0, 0])
-                self.assertEqual(finish["current"], [1, 2, 2])
+                result = run(records)
+                self.assertEqual(best_run(result, "finish", 0), [1, 0, 0])
+                self.assertEqual(result["players"][0]["streaks"]["finish"]["current"], [1, 2, 2])
 
     def test_gap_breaks_daily_streak_and_current_is_last_run(self):
         records = [duel(0, 1, day=day) for day in (0, 1, 2, 4, 5)]
-        daily = run(records)["players"][0]["streaks"]["daily"]
-        self.assertEqual(daily["best"], [3, "2026-03-01", "2026-03-03"])
-        self.assertEqual(daily["current"], [2, "2026-03-05", "2026-03-06"])
+        result = run(records)
+        self.assertEqual(best_run(result, "daily", 0), [3, "2026-03-01", "2026-03-03"])
+        self.assertEqual(
+            result["players"][0]["streaks"]["daily"]["current"], [2, "2026-03-05", "2026-03-06"]
+        )
 
     def test_several_races_on_one_day_count_once(self):
         records = [duel(0, 1, day=0), duel(0, 1, day=0), duel(0, 1, day=1)]
-        self.assertEqual(run(records)["players"][0]["streaks"]["daily"]["best"][0], 2)
+        self.assertEqual(best_run(run(records), "daily", 0)[0], 2)
 
     def test_streak_boards_rank_by_length_then_earliest_end(self):
         records = [duel(0, 1), duel(0, 1), duel(2, 3), duel(2, 3)]
@@ -1681,7 +1693,10 @@ class PresetTests(unittest.TestCase):
     def test_preset_stats(self):
         stats = run(self.races(), presets=self.presets)["preset_stats"]
         self.assertEqual(stats[0]["races"], 8)
-        self.assertEqual(stats[0]["entries"], 24)
+        self.assertEqual(
+            set(stats[0]),
+            {"races", "dnf_rate", "median_seconds", "median_win_seconds", "mean_field", "best"},
+        )
         self.assertEqual(stats[0]["dnf_rate"], round(8 / 24, 4))
         self.assertEqual(stats[0]["median_win_seconds"], 1004)
         self.assertEqual(stats[0]["mean_field"], 3.0)
@@ -1855,7 +1870,7 @@ class OutputTests(unittest.TestCase):
         result = run([duel(0, 1), duel(2, 3)])
         self.assertEqual(len(result["race_tags"]), 2)
         self.assertEqual(len(result["players"]), 40)
-        self.assertEqual(result["players"][39]["streaks"]["daily"]["best"], None)
+        self.assertEqual(result["players"][39]["streaks"]["daily"], {"current": None})
 
     def test_diagnostics_count_tags_and_badge_holders(self):
         result = run([duel(0, 1, margin=1.0)])

@@ -126,21 +126,17 @@ def ranked_names(result, mode):
 
 class FinishTimeTests(unittest.TestCase):
     def test_parses_hours_minutes_and_seconds(self):
-        self.assertEqual(participant_stats.parse_finish_time("PT1H23M45S"), 5025)
-
-    def test_parses_fractional_seconds_by_rounding(self):
-        self.assertEqual(participant_stats.parse_finish_time("PT45.4S"), 45)
-        self.assertEqual(participant_stats.parse_finish_time("PT45.6S"), 46)
+        self.assertEqual(participant_stats.parse_finish_seconds("PT1H23M45S"), 5025)
 
     def test_exact_seconds_keep_the_fraction(self):
         self.assertAlmostEqual(participant_stats.parse_finish_seconds("PT1M0.61S"), 60.61)
-        self.assertIsNone(participant_stats.parse_finish_seconds(None))
+        self.assertAlmostEqual(participant_stats.parse_finish_seconds("PT45.4S"), 45.4)
 
     def test_parses_day_component(self):
-        self.assertEqual(participant_stats.parse_finish_time("P1DT2H"), 93600)
+        self.assertEqual(participant_stats.parse_finish_seconds("P1DT2H"), 93600)
 
     def test_missing_time_is_none(self):
-        self.assertIsNone(participant_stats.parse_finish_time(None))
+        self.assertIsNone(participant_stats.parse_finish_seconds(None))
 
     def test_rejects_malformed_duration(self):
         for value in ("", "P", "PT", "1H23M", "garbage", "PT1X"):
@@ -148,13 +144,13 @@ class FinishTimeTests(unittest.TestCase):
                 with self.assertRaisesRegex(
                     participant_stats.ParticipantDataError, "ISO 8601 duration"
                 ):
-                    participant_stats.parse_finish_time(value)
+                    participant_stats.parse_finish_seconds(value)
 
     def test_rejects_non_string_duration(self):
         with self.assertRaisesRegex(
             participant_stats.ParticipantDataError, "is not a string"
         ):
-            participant_stats.parse_finish_time(45)
+            participant_stats.parse_finish_seconds(45)
 
 
 class EntrantNormalizationTests(unittest.TestCase):
@@ -302,7 +298,7 @@ class LeaderboardTests(unittest.TestCase):
     def test_second_of_two_earns_no_medal(self):
         result = payload([sized_race("duel", 2, "ana", "ben")])
         ben = row_for(result, "all", "ben")
-        self.assertEqual((ben["wins"], ben["podiums"], ben["finishes"]), (0, 0, 1))
+        self.assertEqual((ben["races"], ben["wins"], ben["podiums"]), (1, 0, 0))
         self.assertEqual(row_for(result, "all", "ana")["gold"], 1)
 
     def test_sorts_by_medal_then_races_then_name(self):
@@ -353,14 +349,11 @@ class LeaderboardTests(unittest.TestCase):
             ]
         )
         racer = row_for(result, "all", "racer")
-        self.assertEqual(racer["min_seconds"], 600)
-        self.assertEqual(racer["max_seconds"], 1800)
         self.assertEqual(racer["median_seconds"], 1200)
-        self.assertEqual(racer["finishes"], 2)
 
         rival = row_for(result, "all", "rival")
-        self.assertEqual((rival["races"], rival["finishes"], rival["dnf"]), (2, 1, 1))
-        self.assertEqual(rival["min_seconds"], 1200)
+        self.assertEqual((rival["races"], rival["dnf"]), (2, 1))
+        self.assertEqual(rival["median_seconds"], 1200)
 
     def test_time_stats_are_null_without_finishes(self):
         result = payload(
@@ -376,9 +369,6 @@ class LeaderboardTests(unittest.TestCase):
         )
         quitter = row_for(result, "all", "quitter")
         self.assertIsNone(quitter["median_seconds"])
-        self.assertIsNone(quitter["min_seconds"])
-        self.assertIsNone(quitter["max_seconds"])
-        self.assertIsNone(quitter["best_place"])
         self.assertEqual((quitter["dnf"], quitter["dq"]), (1, 0))
         self.assertEqual(row_for(result, "all", "banned")["dq"], 1)
 
@@ -395,7 +385,7 @@ class LeaderboardTests(unittest.TestCase):
             ]
         )
         ghost = row_for(result, "all", "ghost")
-        self.assertEqual((ghost["finishes"], ghost["wins"], ghost["dnf"]), (0, 0, 1))
+        self.assertEqual((ghost["races"], ghost["wins"], ghost["dnf"]), (1, 0, 1))
         self.assertEqual(result["diagnostics"]["finishes_without_place"], 1)
 
 
@@ -717,7 +707,7 @@ class SchemaThreeTests(unittest.TestCase):
                 list(player["mode_ratings"]), sorted(player["mode_ratings"], key=int)
             )
             for key, fields in player["mode_ratings"].items():
-                self.assertEqual(set(fields), {"rating", "mu", "sigma", "finishes"})
+                self.assertEqual(set(fields), {"rating", "finishes"})
                 self.assertEqual(fields["rating"], last[(index[player_id], int(key))])
         simple = str(result["races"][1]["m"])
         self.assertEqual(by_id["ana"]["mode_ratings"][simple]["finishes"], 2)
@@ -1440,9 +1430,6 @@ class CommittedParticipantDataTests(unittest.TestCase):
             self.assertEqual(list(mode_ratings), [str(m) for m in sorted(raced.get(index, ()))])
             for key, fields in mode_ratings.items():
                 self.assertEqual(fields["rating"], last[(index, int(key))])
-                self.assertGreaterEqual(
-                    fields["sigma"], self.participants["rating"]["sigma_floor"]
-                )
 
     def test_mode_finishes_sum_to_the_overall_finishes(self):
         for player in self.participants["players"]:
@@ -1483,7 +1470,6 @@ class CommittedParticipantDataTests(unittest.TestCase):
             "m",
             "n",
             "races",
-            "entries",
             "dnf_rate",
             "median_seconds",
             "median_win_seconds",
@@ -1507,11 +1493,11 @@ class CommittedParticipantDataTests(unittest.TestCase):
             "claim",
         }
         allowed_player_keys = required_player_keys | {"a", "badge_notes"}
-        rating_keys = {"rating", "mu", "sigma", "finishes"}
+        mode_rating_keys = {"rating", "finishes"}
         for player in self.participants["players"]:
             self.assertTrue(required_player_keys <= set(player) <= allowed_player_keys)
             for fields in player["mode_ratings"].values():
-                self.assertEqual(set(fields), rating_keys)
+                self.assertEqual(set(fields), mode_rating_keys)
         required_race_keys = {"r", "m", "d", "u", "n", "p", "e"}
         allowed_race_keys = required_race_keys | {"s", "t"}
         for race_row in self.participants["races"]:
@@ -1519,7 +1505,6 @@ class CommittedParticipantDataTests(unittest.TestCase):
         leaderboard_row_keys = {
             "p",
             "races",
-            "finishes",
             "wins",
             "diamond",
             "gold",
@@ -1528,11 +1513,7 @@ class CommittedParticipantDataTests(unittest.TestCase):
             "podiums",
             "dnf",
             "dq",
-            "best_place",
-            "median_place",
             "median_seconds",
-            "min_seconds",
-            "max_seconds",
         }
         for board in self.participants["leaderboards"]:
             self.assertEqual(set(board), {"mode", "rows"})

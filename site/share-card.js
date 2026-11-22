@@ -62,11 +62,6 @@ const ShareCard = (() => {
     return { url: UI.avatarUrl(playerIndex), letter: UI.monogramLetter(name), tint: UI.monogramTint(name) };
   }
 
-  function dateInZone(timestamp) {
-    const timeZone = (participants.timezone && participants.timezone.name) || DEFAULT_TIMEZONE;
-    return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(timestamp));
-  }
-
   // Everything the card shows, covering all modes and the whole archive like the racer page's summary strip.
   function cardModel(playerIndex) {
     const player = participants.players[playerIndex];
@@ -106,7 +101,7 @@ const ShareCard = (() => {
       nemesis: nemesis
         ? { ...avatarParts(nemesis.opponent), name: participants.players[nemesis.opponent].name, record: `${nemesis.wins}–${nemesis.losses}` }
         : null,
-      dataDate: dateInZone(participants.generated_at),
+      dataDate: dateInZone(new Date(participants.generated_at)),
     };
   }
 
@@ -632,5 +627,5 @@ const ShareCard = (() => {
     return control;
   }
 
-  return { button, open };
+  return { button };
 })();

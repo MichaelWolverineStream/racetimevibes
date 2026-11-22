@@ -137,9 +137,11 @@ def avatar_change_times(
         # Newest first. A reverse sort keeps equal keys in their original order, so the
         # first entry is the one current_avatar_urls picks with max().
         newest_first = sorted(seen, key=lambda item: item[0], reverse=True)
-        values = [mirror_name(url) for _key, url in newest_first]
-        for index, value in enumerate(values):
-            if value != values[0]:
+        newest_url = newest_first[0][1]
+        newest_name = mirror_name(newest_url)
+        for index, (_key, url) in enumerate(newest_first):
+            # The same URL always has the same mirror name, so hash only a different one.
+            if url != newest_url and mirror_name(url) != newest_name:
                 changes[user_id] = newest_first[index - 1][0][0]
                 break
     return changes

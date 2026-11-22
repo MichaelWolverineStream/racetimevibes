@@ -438,20 +438,21 @@ const FaceOff = (() => {
   // The pairs who have raced each other most, counted once on first use.
   function topRivalries() {
     if (!rivalries) {
+      const playerCount = participants.players.length;
       const meetings = new Map();
       participants.races.forEach((race) => {
         const field = race.e.map((entry) => entry[0]).sort((left, right) => left - right);
-        field.forEach((first, position) => {
-          field.slice(position + 1).forEach((second) => {
-            const key = `${first}|${second}`;
+        for (let position = 0; position < field.length; position += 1) {
+          for (let next = position + 1; next < field.length; next += 1) {
+            const key = field[position] * playerCount + field[next];
             meetings.set(key, (meetings.get(key) ?? 0) + 1);
-          });
-        });
+          }
+        }
       });
       rivalries = [...meetings]
         .sort((left, right) => right[1] - left[1])
         .slice(0, RIVALRY_POOL)
-        .map(([key]) => key.split("|").map(Number));
+        .map(([key]) => [Math.floor(key / playerCount), key % playerCount]);
     }
     return rivalries;
   }
@@ -474,31 +475,8 @@ const FaceOff = (() => {
   // Every race the two entered together, oldest first, and the red corner's record in them: all time,
   // and in the current season. Outcomes use compareEntries, so they match the racer page's head-to-head.
   function pairFacts(a, b) {
-    const racesOfB = new Set(raceIndexesByPlayer[b]);
-    const shared = raceIndexesByPlayer[a].filter((raceIndex) => racesOfB.has(raceIndex));
     const season = currentSeason();
-    const tally = () => ({ wins: 0, losses: 0, draws: 0, meetings: 0 });
-    const allTime = tally();
-    const thisSeason = tally();
-    const count = (record, outcome) => {
-      record.meetings += 1;
-      if (outcome > 0) {
-        record.wins += 1;
-      } else if (outcome < 0) {
-        record.losses += 1;
-      } else {
-        record.draws += 1;
-      }
-    };
-    shared.forEach((raceIndex) => {
-      const race = participants.races[raceIndex];
-      const outcome = compareEntries(entryOf(race, a), entryOf(race, b));
-      count(allTime, outcome);
-      if (season !== null && race.s === season) {
-        count(thisSeason, outcome);
-      }
-    });
-    return { shared, allTime, thisSeason, season };
+    return { ...pairRecord(a, b, season), season };
   }
 
   // ---- Band: win chance and record ----

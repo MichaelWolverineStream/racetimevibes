@@ -18,10 +18,10 @@
 
 - **Races:** each carries its Eastern Time date `d`, its start time `u` in Unix seconds, its seed preset, its derived tags and its season (see [Season fields](#season-fields)).
 - **Badge definitions:** each carries `repeatable`.
-- **Racers:** each carries an overall rating and one for each mode they have raced, badges, streaks and a claim to fame, plus:
+- **Racers:** each carries an overall rating (points, $\mu$, $\sigma$ and finishes) and one for each mode they have raced (points and finishes), badges, their current streaks and a claim to fame, plus:
   - `badge_counts`, `{badge id: times earned}`, for every [repeatable badge](highlights.md#badges) they hold;
   - `badge_notes`, `{badge id: note}`, when a [badge given by hand](highlights.md#badges-given-by-hand) has a note;
-  - on their leaderboard row, `wins` (first places), `diamond`, `gold`, `silver`, `bronze` and `podiums` (the medal total).
+  - on their leaderboard row, `races`, `wins` (first places), `diamond`, `gold`, `silver`, `bronze`, `podiums` (the medal total), `dnf`, `dq` and `median_seconds`.
 - **`medal_tiers`:** the [medal](definitions.md#entrants) rule.
 - **`avatar_changes`:** the racers whose avatar changed (see [Avatar changes](avatars.md#avatar-changes)).
 - **`featured`:** the coming [featured racers](highlights.md#featured-racer), one per Eastern date from the newest race's date through 15 days after it that has a pick, each as `[date, player, race, tag, bio]`.
@@ -48,15 +48,15 @@ The season fields of `participants.json`:
 - **Entries:** `races[].e[k]` is `[player, place, status, seconds, overall_after, mode_after, season_after, season_mode_after]`. `[6]` and `[7]` are integers when the race has `s`, and both `null` otherwise.
 - **No per-player season fields.** A racer's standing in a season is derived from their entries: their last `[6]` among the season's races for the overall rating, and their last `[7]` among the season's races in a mode for that mode's rating. Their season finishes are their finisher entries in those races, and they are provisional below 5.
 - **`diagnostics.seasons`:** `stray_slots`, `races_without_season`, `left_out_of_locked_seasons` and `mismatched_locked_races`. `races_without_season` counts only races before season 1's span: a race in a [season break](definitions.md#seasons) is excluded, not seasonless.
-- `rating`, each player's rating, $\mu$, $\sigma$, finishes and mode ratings, and `leaderboards` are all-time.
+- `rating`, each player's rating, $\mu$, $\sigma$ and finishes, their mode ratings (points and finishes), and `leaderboards` are all-time.
 
 ## Schedule and participation metrics
 
 `build_stats.py` computes these for `race-stats.json`. They drive the [Ladder data panels](dashboard.md#ladder-data-panels), and the slots they count are defined under [Schedule](definitions.md#schedule).
 
-- **Periods** are calendar quarters (`Q1` to `Q4`). A race belongs to the quarter of its Eastern Time start, and a counted slot to the quarter of its own Eastern Time start. Edge periods are marked partial when the archive does not cover the full quarter. Each period keeps the finished-race summary and its weekday-hour cells, so its slot counts add up to the overall ones. Seasons are not split by period. A counted slot in a quarter with no finished race is a build error.
+- **Periods** are calendar quarters (`Q1` to `Q4`). A race belongs to the quarter of its Eastern Time start, and a counted slot to the quarter of its own Eastern Time start. Edge periods are marked partial (`is_complete` is false) when the archive does not cover the full quarter. Each period keeps its id, label, start and end, `is_complete`, `observed_local_date_range` and its weekday-hour cells, so its slot counts add up to the overall ones. Seasons are not split by period. A counted slot in a quarter with no finished race is a build error.
 - **Race turnout** uses `entrants_count`, which includes repeat participants and entrants who were disqualified or forfeited. It measures race entries, not people. The **season health counts** below measure people.
-- **Monthly participation** is the average entries per finished race: total race entries divided by the finished races in that calendar month. A month's finished-race summary also gives the median, the middle half (quartiles) and the 95% range.
+- **Monthly participation** is the average entries per finished race: total race entries divided by the finished races in that calendar month. A month's finished-race summary also gives the median and the 95% range.
 - **Entries per scheduled day** is the entries of that month's finished races that started on scheduled days (`scheduled_day_entrant_total`), divided by the month's scheduled days (`scheduled_day_count`, see **Scheduled day** under [Schedule](definitions.md#schedule)). It is null, not zero, in a month with no scheduled day. Months without a finished race still appear.
 - **Races fired per scheduled day** is the month's fired races on scheduled days (`fired_race_count`), divided by its scheduled days (`scheduled_day_count`): `fired_per_day`. A **fired** race is a scheduled race that started: an included race that a slot joined (see **Join** under [Schedule](definitions.md#schedule)). A finished race that no slot joined adds to entries per scheduled day but never to this. It is null, not zero, in a month with no scheduled day. Like entries per scheduled day, it ignores **counted through**.
 - **Seasons** is one row per season, oldest first, for every season holding at least one included race or counted scheduled race, as `{season, is_complete, scheduled_count, started_count, real_field_count, race_count, entrant_total, scheduled_day_count, scheduled_day_entrant_total, fired_race_count, fired_entrant_total}` followed by the rest of the season health counts below. A race or slot belongs to the season its own start falls in, by the [season rule](definitions.md#seasons), never the season number it is filed under.
@@ -75,13 +75,13 @@ The season fields of `participants.json`:
   - `previous_racer_count` is the racers of the season before, and `returning_count` how many of them raced this season. Both are null for a season with no racers before it, the first.
   - `newcomer_count` is the season's newcomers, `newcomer_matured_count` how many have matured, and `newcomer_retained_count` how many of those raced again (see **Newcomer** under [Seasons](definitions.md#seasons)).
   - `REAL_FIELD_MIN` (4), `SEASON_WEEK_DAYS` (7) and `NEWCOMER_WINDOW_DAYS` (28) are set in `build_stats.py`, and all three are mirrored in `site/app.js`.
-- **Weekday-hour cells** hold, for each of the 168 weekday and Eastern Time hour combinations, in the overall data and in each period: the counted slots that are scheduled races (`scheduled_count`), how many started (`started_count`), `entrant_total` and `average_racers`, which is `entrant_total / scheduled_count`, or null when nothing was scheduled.
+- **Weekday-hour cells** hold, for each of the 168 weekday and Eastern Time hour combinations, in the overall data and in each period: the counted slots that are scheduled races (`scheduled_count`), how many started (`started_count`) and `average_racers`, the entries of those races divided by `scheduled_count`, or null when nothing was scheduled.
 - **Bands** colour the weekday-hour cells, computed separately for all data and for each quarter:
   - Only cells with at least 5 scheduled races (`BAND_MIN_SCHEDULED`, mirrored in `site/app.js` and the heatmap legend in `site/index.html`) are banded and count toward the quartiles.
   - `q1` and `q3` are the quartiles of those cells' `average_racers`.
   - A cell is `prime` if its `average_racers` is at least `q3`, else `quiet` if it is at most `q1`, else `normal`. A tie at a quartile goes to `prime` or `quiet`.
   - A cell with fewer than 5 scheduled races has no band, and when no cell qualifies none has one.
-- **Medians and quartiles** describe the observed distribution. Quartiles are the median of each half of the sorted values, leaving out the middle value when the count is odd. The 95% ranges are normal confidence intervals for the mean using the sample standard deviation, and the ranges for entry counts never go below zero. A group with fewer than two values has no range.
+- **Medians and quartiles** describe the observed distribution. Only the medians are published; the quartiles set the bands. Quartiles are the median of each half of the sorted values, leaving out the middle value when the count is odd. The 95% ranges are normal confidence intervals for the mean using the sample standard deviation, and the ranges for entry counts never go below zero. A group with fewer than two values has no range.
 - **Diagnostics** report `diagnostics.schedule`: `scheduled_count`, `started_count`, `pulled_count`, and `unscheduled_race_count`, the included races up to **counted through** that no slot became. `diagnostics.seasons` reports `races_without_season` and `slots_without_season`: the included races and counted scheduled races before season 1's span, which the `seasons` rows leave out. `diagnostics.excluded_in_season_breaks`, an integer beside `excluded_by_mode`, counts the races excluded for starting in a [season break](definitions.md#seasons); they are also in `source.excluded_archived_race_count`.
 
 Some of this is deliberate behaviour of the data, not a defect:

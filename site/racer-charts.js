@@ -9,7 +9,6 @@ function dayNumber(isoDate) {
   return Date.parse(`${isoDate}T00:00:00Z`) / DAY_MS;
 }
 
-const ALL_RACES = { start: null, end: null };
 const VIOLIN_CHART_HEIGHT = 500;
 // The bottom fits the tallest label block: swatch, two name lines, a mode line and the finish count,
 // so the plot keeps its height whichever labels a chart needs.
@@ -50,18 +49,18 @@ function modeColor(modeName) {
   return slot ? `var(--mode-${slot})` : "var(--series-muted)";
 }
 
-function timedFinishes(range, includePlayer) {
+// Every timed finish, in archive order, of the races in the given preset slots (a Map keyed by preset index).
+function timedFinishes(slots) {
   const finishes = [];
   participants.races.forEach((race, raceIndex) => {
-    if (!inRange(race, range)) {
+    if (!slots.has(race.p)) {
       return;
     }
-    const day = dayNumber(race.d);
     race.e.forEach((entry) => {
-      if (!isFinisher(entry) || entry[3] === null || !includePlayer(entry[0])) {
+      if (!isFinisher(entry) || entry[3] === null) {
         return;
       }
-      finishes.push({ p: entry[0], m: race.m, day, seconds: entry[3], place: entry[1], n: race.n, raceIndex });
+      finishes.push({ p: entry[0], seconds: entry[3], place: entry[1], n: race.n, raceIndex });
     });
   });
   return finishes;
@@ -81,10 +80,13 @@ function formatClock(seconds) {
   return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, "0")}`;
 }
 
-function median(values) {
-  const sorted = [...values].sort((left, right) => left - right);
+function medianOfSorted(sorted) {
   const middle = Math.floor(sorted.length / 2);
   return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function median(values) {
+  return medianOfSorted([...values].sort((left, right) => left - right));
 }
 
 // Medians of the lower and upper halves, matching _distribution() in scripts/build_stats.py.
@@ -92,17 +94,17 @@ function quartiles(values) {
   const sorted = [...values].sort((left, right) => left - right);
   const lower = sorted.slice(0, Math.floor(sorted.length / 2));
   const upper = sorted.slice(Math.ceil(sorted.length / 2));
-  const middle = median(sorted);
+  const middle = medianOfSorted(sorted);
   return {
-    q1: lower.length ? median(lower) : middle,
+    q1: lower.length ? medianOfSorted(lower) : middle,
     median: middle,
-    q3: upper.length ? median(upper) : middle,
+    q3: upper.length ? medianOfSorted(upper) : middle,
   };
 }
 
 // Gaussian kernel density with Silverman's bandwidth, sampled across the observed range only.
-// Returns null when there is no spread to estimate a shape from.
-function densityProfile(values) {
+// Returns null when there is no spread to estimate a shape from. stats is quartiles(values).
+function densityProfile(values, stats) {
   const n = values.length;
   const min = Math.min(...values);
   const max = Math.max(...values);
@@ -111,7 +113,7 @@ function densityProfile(values) {
   }
   const mean = values.reduce((sum, value) => sum + value, 0) / n;
   const sd = Math.sqrt(values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / (n - 1));
-  const { q1, q3 } = quartiles(values);
+  const { q1, q3 } = stats;
   const spread = q3 > q1 ? Math.min(sd, (q3 - q1) / 1.34) : sd;
   const bandwidth = 0.9 * spread * n ** -0.2;
   const step = (max - min) / (DENSITY_SAMPLES - 1);
@@ -431,8 +433,10 @@ function violinMark({ center, halfLength, level, className, label }) {
 
 // One violin per group on a shared time axis: density wash, every finish as a dot, a median mark,
 // and the median winning time as a gold line. The groups sit centred in VIOLIN_SLOTS equal slots.
-// Each group is { label, name, modeLine, color, indexes, median, gold }: indexes point into finishes,
-// gold is { median, wins } or null, and modeLine is null unless the chart mixes modes.
+// Each group is { label, name, modeLine, color, indexes, median, gold, values, stats, profile, racers }:
+// indexes point into finishes, values are those finishes' seconds, stats is quartiles(values), profile is
+// densityProfile(values, stats) or null, racers counts the distinct racers, gold is { median, wins } or null,
+// and modeLine is null unless the chart mixes modes. The statistics are width-independent, so the caller computes them once.
 function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true, title, description }, width) {
   const height = VIOLIN_CHART_HEIGHT;
   const margin = VIOLIN_CHART_MARGIN;
@@ -467,13 +471,12 @@ function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true,
 
   const violins = [];
   const labels = [];
+  const dotPoints = [];
   groups.forEach((group, groupIndex) => {
-    const { indexes, median: medianSeconds, gold } = group;
-    const values = indexes.map((index) => finishes[index].seconds);
+    const { indexes, median: medianSeconds, gold, values, stats, profile, racers } = group;
     const center = margin.left + band * (firstSlot + groupIndex + 0.5);
     const color = `--violin-color: ${group.color}`;
     const violin = svgElement("g", { class: "violin", style: color });
-    const profile = values.length ? densityProfile(values) : null;
     if (profile) {
       const edge = (sign) => profile.ys.map((value, step) => `${center + sign * (profile.densities[step] / profile.peak) * maxHalf},${y(value)}`);
       violin.append(svgElement("path", { class: "violin-wash", d: `M${edge(1).join("L")}L${edge(-1).reverse().join("L")}Z` }));
@@ -482,12 +485,18 @@ function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true,
       const finish = finishes[index];
       const halfWidth = profile ? profileWidthAt(profile, finish.seconds) * maxHalf : maxHalf * 0.15;
       const highlighted = finish.p === highlightPlayer;
+      const cx = center + halfWidth * stableJitter(finish.raceIndex, finish.p);
+      const cy = y(finish.seconds);
       return {
         highlighted,
+        index,
+        groupIndex,
+        cx,
+        cy,
         element: svgElement("circle", {
           class: highlighted ? "violin-dot violin-dot--highlight" : "violin-dot",
-          cx: center + halfWidth * stableJitter(finish.raceIndex, finish.p),
-          cy: y(finish.seconds),
+          cx,
+          cy,
           r: highlighted ? 3.5 : 2,
           "data-i": index,
           "data-g": groupIndex,
@@ -497,6 +506,8 @@ function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true,
     // The highlighted racer is drawn last so the outlined dots stay on top.
     violin.append(...dots.filter((dot) => !dot.highlighted).map((dot) => dot.element));
     violin.append(...dots.filter((dot) => dot.highlighted).map((dot) => dot.element));
+    // The touch scan reads these in the order the dots sit in the DOM, so a tie picks the same dot.
+    dotPoints.push(...dots.filter((dot) => !dot.highlighted), ...dots.filter((dot) => dot.highlighted));
     // Drawn before the median so the median stays on top when the two are close.
     if (gold) {
       violin.append(
@@ -510,8 +521,6 @@ function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true,
       );
     }
     if (values.length && medianSeconds !== null) {
-      const stats = quartiles(values);
-      const racers = new Set(indexes.map((index) => finishes[index].p)).size;
       violin.append(
         violinMark({
           center,
@@ -575,15 +584,15 @@ function violinChart(finishes, groups, { id, highlightPlayer, fadeOthers = true,
     const y = (event.clientY - bounds.top) * scale;
     let nearest = null;
     let nearestDistance = VIOLIN_TAP_REACH * scale;
-    for (const dot of svg.querySelectorAll("circle[data-i]")) {
-      const distance = Math.hypot(Number(dot.getAttribute("cx")) - x, Number(dot.getAttribute("cy")) - y);
+    for (const dot of dotPoints) {
+      const distance = Math.hypot(dot.cx - x, dot.cy - y);
       if (distance < nearestDistance) {
         nearest = dot;
         nearestDistance = distance;
       }
     }
     if (nearest) {
-      showTouchTooltip(nearest, violinPointLabel(finishes[nearest.dataset.i], groups[nearest.dataset.g].label), svg);
+      showTouchTooltip(nearest.element, violinPointLabel(finishes[nearest.index], groups[nearest.groupIndex].label), svg);
     } else {
       hideTooltip();
     }
@@ -627,7 +636,7 @@ function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, fadeOth
     return;
   }
   const slots = new Map(presetIndexes.map((presetIndex, slot) => [presetIndex, slot]));
-  const finishes = timedFinishes(ALL_RACES, () => true).filter((finish) => slots.has(participants.races[finish.raceIndex].p));
+  const finishes = timedFinishes(slots);
   if (!finishes.length) {
     mountChart(host, () => emptyMessage(emptyText));
     return;
@@ -640,12 +649,18 @@ function renderPresetViolins(host, presetIndexes, { id, highlightPlayer, fadeOth
     const modeName = participants.modes[preset.m];
     const indexes = indexesBySlot[slot];
     const wins = indexes.filter((index) => finishes[index].place === 1).length;
+    const values = indexes.map((index) => finishes[index].seconds);
+    const stats = values.length ? quartiles(values) : null;
     return {
       label: `${modeLabel(modeName)} · ${preset.n}`,
       name: preset.n,
       modeLine: mixesModes ? modeLabel(modeName).toUpperCase() : null,
       color: modeColor(modeName),
       indexes,
+      values,
+      stats,
+      profile: values.length ? densityProfile(values, stats) : null,
+      racers: new Set(indexes.map((index) => finishes[index].p)).size,
       median: preset.median_seconds,
       gold: preset.median_win_seconds === null ? null : { median: preset.median_win_seconds, wins },
     };

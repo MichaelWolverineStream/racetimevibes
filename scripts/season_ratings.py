@@ -218,23 +218,23 @@ def lock_reason(
 
 
 def lock_seasons(
-    archive_dir: Path,
     ledger_dir: Path,
     participants: JsonObject,
     now: datetime,
+    *,
+    rows: list[JsonObject],
+    envelopes: list[JsonObject],
+    ledgers: Mapping[int, Ledger],
 ) -> list[tuple[int, str | None]]:
     """Lock every season without a ledger that is ready, from the payload just built.
 
-    Returns `(season, reason)` for every season in the payload without a ledger
-    before this call: the reason it is not locked yet, or None if it was locked now.
+    `rows` is the ladder schedule, `envelopes` the archived races and `ledgers` the
+    ledgers in `ledger_dir`, all as the build read them. Returns `(season, reason)`
+    for every season in the payload without a ledger before this call: the reason it
+    is not locked yet, or None if it was locked now.
     """
-    rows = schedule_archive.load_schedule(archive_dir)
     starts = schedule_archive.season_starts(rows)
-    ledgers = load_ledgers(ledger_dir)
-    archived = {
-        envelope["race"]["name"]: envelope["race"]
-        for envelope in race_archive.load_races(archive_dir)
-    }
+    archived = {envelope["race"]["name"]: envelope["race"] for envelope in envelopes}
     races = participants["races"]
     if not races:
         return []

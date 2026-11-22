@@ -32,7 +32,7 @@ Badges are recomputed from the whole archive on every build and never taken away
    - Check both files at 46 px and 30 px, the art sizes of the page's standard and compact badge tiles. Art that needs credit (Twemoji) goes in the Twemoji line under [Credits](../../../README.md#credits) in the README.
 2. **Rule** in `highlights.py`: a threshold constant, then a `Badge(...)` row where it should sit among locked badges, with its description built from the constant.
    - A new per-racer count is a `_Player` field (`__slots__` and `__init__`), updated in the per-entry loop before the badge loop.
-   - A fact about the whole race is a set of players computed next to `snipers` and `middle`, added to `_Moment`.
+   - A fact about the whole race is a set of players computed next to `snipers` and `middle`, added to `_Moment`. A non-repeatable badge whose progress is `_mode_finishes(MODE)` also sets `mode=MODE`, so the per-race loop skips it in other modes (a badge given by hand is still checked in its granted race); any other badge leaves `mode` unset.
 3. **A rule that names a mode or preset** adds its constant to `test_badge_rules_use_names_that_exist_in_the_data` (`tests/test_participant_stats.py`), which fails if racetime renames it.
 4. **Tests** in `BadgeTests`: one just below the target and one at it, plus the id in `test_badge_table_order`. A repeatable badge also goes in `test_repeatable_badges`. `duel()` and `solo_finishes()` use fixed times; for a time-based rule build races with `record()`, `done(player, place, seconds)` and `dnf(player)`.
 5. **Rebuild and check:** `build_stats.py`, `version_assets.py`, `python3 -m unittest discover -s tests`, then look at a racer page with `python3 -m http.server 8000 -d site`.

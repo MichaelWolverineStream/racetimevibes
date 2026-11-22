@@ -36,7 +36,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 20
+PARTICIPANT_SCHEMA_VERSION = 21
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -70,12 +70,6 @@ def parse_finish_seconds(value: str | None) -> float | None:
         float(part) if part else 0.0 for part in match.groups()
     )
     return days * 86400 + hours * 3600 + minutes * 60 + seconds
-
-
-def parse_finish_time(value: str | None) -> int | None:
-    """Convert an ISO 8601 duration into whole seconds."""
-    seconds = parse_finish_seconds(value)
-    return None if seconds is None else round(seconds)
 
 
 def _status_value(entrant: JsonObject) -> str:
@@ -112,6 +106,22 @@ def _entrant_place(entrant: JsonObject, race_name: str) -> int | None:
             f"Race {race_name} has entrant place {place!r} that is not a positive integer"
         )
     return place
+
+
+def racer_ids(race: JsonObject) -> frozenset[str]:
+    """Return the user IDs of a race's identified entrants, rejecting the records `_race_entries` rejects for identity."""
+    race_name = race.get("name", "<unnamed>")
+    ids = set()
+    for entrant in race["entrants"]:
+        if not isinstance(entrant, dict):
+            raise ParticipantDataError(f"Race {race_name} contains a malformed entrant record")
+        identity = _entrant_identity(entrant)
+        if identity is None:
+            continue
+        if identity[0] in ids:
+            raise ParticipantDataError(f"Race {race_name} contains a duplicate entrant user ID")
+        ids.add(identity[0])
+    return frozenset(ids)
 
 
 def _race_entries(race: JsonObject, diagnostics: Counter[str]) -> list[list[Any]]:
@@ -159,7 +169,6 @@ def _blank_row(player_index: int) -> JsonObject:
     return {
         "p": player_index,
         "races": 0,
-        "finishes": 0,
         "dnf": 0,
         "dq": 0,
         "wins": 0,
@@ -167,51 +176,42 @@ def _blank_row(player_index: int) -> JsonObject:
         "gold": 0,
         "silver": 0,
         "bronze": 0,
-        "places": [],
         "times": [],
     }
 
 
 def _finalize_row(row: JsonObject) -> JsonObject:
-    places = row.pop("places")
     times = row.pop("times")
     return row | {
         "podiums": sum(row[name] for name in highlights.MEDALS),
-        "best_place": min(places) if places else None,
-        "median_place": statistics.median(places) if places else None,
         "median_seconds": statistics.median(times) if times else None,
-        "min_seconds": min(times) if times else None,
-        "max_seconds": max(times) if times else None,
     }
 
 
-def _leaderboard(
-    races: list[JsonObject], players: list[JsonObject], mode_index: int | None
-) -> list[JsonObject]:
-    totals: dict[int, JsonObject] = {}
-    for race in races:
-        if mode_index is not None and race["m"] != mode_index:
-            continue
-        for player_index, place, status_code, seconds, *_rating in race["e"]:
-            row = totals.get(player_index)
-            if row is None:
-                row = totals[player_index] = _blank_row(player_index)
-            row["races"] += 1
-            if _is_finisher(place, status_code):
-                row["finishes"] += 1
-                row["places"].append(place)
-                if seconds is not None:
-                    row["times"].append(seconds)
-                if place == 1:
-                    row["wins"] += 1
-                earned = highlights.medal(place, race["n"])
-                if earned is not None:
-                    row[earned] += 1
-            elif status_code == DQ_STATUS_CODE:
-                row["dq"] += 1
-            else:
-                row["dnf"] += 1
+def _add_entry(
+    totals: dict[int, JsonObject], race: JsonObject, entry: tuple | list
+) -> None:
+    """Add one race entry to a leaderboard's totals, starting the racer's row on first sight."""
+    player_index, place, status_code, seconds, *_rating = entry
+    row = totals.get(player_index)
+    if row is None:
+        row = totals[player_index] = _blank_row(player_index)
+    row["races"] += 1
+    if _is_finisher(place, status_code):
+        if seconds is not None:
+            row["times"].append(seconds)
+        if place == 1:
+            row["wins"] += 1
+        earned = highlights.medal(place, race["n"])
+        if earned is not None:
+            row[earned] += 1
+    elif status_code == DQ_STATUS_CODE:
+        row["dq"] += 1
+    else:
+        row["dnf"] += 1
 
+
+def _ranked_rows(totals: dict[int, JsonObject], players: list[JsonObject]) -> list[JsonObject]:
     rows = [_finalize_row(row) for row in totals.values()]
     rows.sort(
         key=lambda row: (
@@ -226,8 +226,33 @@ def _leaderboard(
     return rows
 
 
+def _leaderboards(
+    races: list[JsonObject],
+    players: list[JsonObject],
+    modes: list[str],
+    mode_index: Mapping[str, int],
+) -> list[JsonObject]:
+    """Return the all-modes leaderboard, then one per mode, from a single pass over the races.
+
+    Each board's totals start a racer's row at their first race on that board, which
+    is the order the stable sort falls back to on ties.
+    """
+    all_totals: dict[int, JsonObject] = {}
+    mode_totals: dict[int, dict[int, JsonObject]] = {mode_index[mode]: {} for mode in modes}
+    for race in races:
+        in_mode = mode_totals.get(race["m"])
+        for entry in race["e"]:
+            _add_entry(all_totals, race, entry)
+            if in_mode is not None:
+                _add_entry(in_mode, race, entry)
+    boards = [{"mode": ALL_MODES, "rows": _ranked_rows(all_totals, players)}]
+    for mode in modes:
+        boards.append({"mode": mode, "rows": _ranked_rows(mode_totals[mode_index[mode]], players)})
+    return boards
+
+
 def _rating_fields(rating: ladder_rating.PlayerRating | None) -> JsonObject:
-    """Return the published rating fields; an unrated racer has no rating and 0 finishes."""
+    """Return a player's published rating fields; an unrated racer has no rating and 0 finishes."""
     if rating is None:
         return {"rating": None, "mu": None, "sigma": None, "finishes": 0}
     return {
@@ -236,6 +261,12 @@ def _rating_fields(rating: ladder_rating.PlayerRating | None) -> JsonObject:
         "sigma": rating.sigma,
         "finishes": rating.finishes,
     }
+
+
+def _mode_rating_fields(rating: ladder_rating.PlayerRating | None) -> JsonObject:
+    """Return a mode rating's published fields: its points and finishes, not μ or σ."""
+    fields = _rating_fields(rating)
+    return {"rating": fields["rating"], "finishes": fields["finishes"]}
 
 
 def _upcoming(
@@ -331,9 +362,7 @@ def build_participant_payload(
         commenters: set[str] = set()
         for entrant in race["entrants"]:
             identity = _entrant_identity(entrant)
-            if identity is None:
-                continue
-            if _has_comment(entrant):
+            if identity is not None and _has_comment(entrant):
                 commenters.add(identity[0])
         staged.append(
             {
@@ -377,8 +406,8 @@ def build_participant_payload(
         favourite_changes = pokemon_avatars.favourite_change_times(bios or {}, pokemon)
         favourite_holders = {
             user_id
-            for user_id, entry in (bios or {}).items()
-            if pokemon_avatars.favourite_pokemon(entry[0], pokemon) is not None
+            for user_id, favourite in pokemon_avatars.current_favourites(bios or {}, pokemon).items()
+            if favourite is not None
         }
     changed = []
     for user_id, index in player_index.items():
@@ -448,10 +477,13 @@ def build_participant_payload(
         for row in staged
     ]
     assignment = season_ratings.assign(season_races, spans, ledgers)
+    # A locked season's points come from its ledger (overlay ignores what is computed),
+    # so skip rating its races: they count as outside every season here only.
+    to_rate = [None if season in ledgers else season for season in assignment.seasons]
     season_points = season_ratings.overlay(
         season_races,
         assignment.seasons,
-        ladder_rating.rate_by_season(records, len(players), assignment.seasons).points(),
+        ladder_rating.rate_by_season(records, len(players), to_rate).points(),
         ledgers,
     )
     upcoming = _upcoming(schedule, schedule_modes or [], staged, spans, modes)
@@ -472,7 +504,7 @@ def build_participant_payload(
             player["a"] = avatars[user_id]
         player.update(_rating_fields(rating))
         player["mode_ratings"] = {
-            str(mode): _rating_fields(by_player[index])
+            str(mode): _mode_rating_fields(by_player[index])
             for mode, by_player in mode_ratings.players.items()
             if by_player[index] is not None
         }
@@ -515,11 +547,7 @@ def build_participant_payload(
             race_row["t"] = derived["race_tags"][index]
         races.append(race_row)
 
-    leaderboards = [{"mode": ALL_MODES, "rows": _leaderboard(races, players, None)}]
-    for mode in modes:
-        leaderboards.append(
-            {"mode": mode, "rows": _leaderboard(races, players, mode_index[mode])}
-        )
+    leaderboards = _leaderboards(races, players, modes, mode_index)
 
     generated = (generated_at or datetime.now(UTC)).astimezone(UTC)
     status_counts = {

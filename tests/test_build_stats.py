@@ -148,7 +148,7 @@ class AggregationTests(unittest.TestCase):
 
         stats = aggregate(races)
 
-        self.assertEqual(stats["schema_version"], 14)
+        self.assertEqual(stats["schema_version"], build_stats.SCHEMA_VERSION)
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 21)
         self.assertEqual(stats["source"]["excluded_archived_race_count"], 4)
@@ -225,7 +225,7 @@ class AggregationTests(unittest.TestCase):
             ]
         )
 
-        self.assertEqual(stats["schema_version"], 14)
+        self.assertEqual(stats["schema_version"], build_stats.SCHEMA_VERSION)
         self.assertEqual(stats["source"]["data_start_local"], "2025-04-20")
         self.assertEqual(stats["source"]["included_race_count"], 4)
         self.assertEqual(stats["source"]["included_entrant_count"], 23)
@@ -242,23 +242,13 @@ class AggregationTests(unittest.TestCase):
         )
         self.assertEqual(periods["2025-Q2"]["label"], "Q2 2025")
         self.assertEqual(
-            {period_id: item["completeness"] for period_id, item in periods.items()},
+            {period_id: item["is_complete"] for period_id, item in periods.items()},
             {
-                "2025-Q2": "partial",
-                "2025-Q4": "complete",
-                "2026-Q1": "complete",
-                "2026-Q3": "partial",
+                "2025-Q2": False,
+                "2025-Q4": True,
+                "2026-Q1": True,
+                "2026-Q3": False,
             },
-        )
-        self.assertEqual(periods["2025-Q4"]["entrant_total"], 5)
-        self.assertEqual(periods["2026-Q1"]["entrant_total"], 6)
-        self.assertEqual(
-            sum(item["race_count"] for item in stats["periods"]),
-            stats["source"]["included_race_count"],
-        )
-        self.assertEqual(
-            sum(item["entrant_total"] for item in stats["periods"]),
-            stats["source"]["included_entrant_count"],
         )
 
     def test_periods_span_calendar_quarters_and_months(self):
@@ -412,27 +402,21 @@ class ScheduleAggregationTests(unittest.TestCase):
                 key: sum(
                     item[key] for item in stats["weekday_hourly"] if item["hour"] == hour
                 )
-                for key in ("scheduled_count", "started_count", "entrant_total")
+                for key in ("scheduled_count", "started_count")
             }
             for hour in (13, 15, 17)
         }
-        self.assertEqual(
-            by_hour[13], {"scheduled_count": 2, "started_count": 2, "entrant_total": 10}
-        )
-        self.assertEqual(
-            by_hour[15], {"scheduled_count": 1, "started_count": 0, "entrant_total": 0}
-        )
-        self.assertEqual(
-            by_hour[17], {"scheduled_count": 0, "started_count": 0, "entrant_total": 0}
-        )
+        self.assertEqual(by_hour[13], {"scheduled_count": 2, "started_count": 2})
+        self.assertEqual(by_hour[15], {"scheduled_count": 1, "started_count": 0})
+        self.assertEqual(by_hour[17], {"scheduled_count": 0, "started_count": 0})
         monday_13 = next(
             item
             for item in stats["weekday_hourly"]
             if item["weekday_label"] == "Monday" and item["hour"] == 13
         )
         self.assertEqual(
-            (monday_13["entrant_total"], monday_13["average_racers"], monday_13["band"]),
-            (10, 5, None),
+            (monday_13["scheduled_count"], monday_13["average_racers"], monday_13["band"]),
+            (2, 5, None),
         )
 
     def test_stops_a_day_before_the_newest_race(self):
@@ -1380,14 +1364,6 @@ class CommittedDatasetTests(unittest.TestCase):
             all(period["end"] >= source["data_start_local"] for period in data["periods"])
         )
         self.assertEqual(
-            sum(period["race_count"] for period in data["periods"]),
-            source["included_race_count"],
-        )
-        self.assertEqual(
-            sum(period["entrant_total"] for period in data["periods"]),
-            source["included_entrant_count"],
-        )
-        self.assertEqual(
             sum(month["race_count"] for month in data["monthly"]),
             source["included_race_count"],
         )
@@ -1527,7 +1503,6 @@ class CommittedDatasetTests(unittest.TestCase):
             "hour",
             "scheduled_count",
             "started_count",
-            "entrant_total",
             "average_racers",
             "band",
         }
@@ -1536,24 +1511,19 @@ class CommittedDatasetTests(unittest.TestCase):
             "entrant_total",
             "average_racers",
             "median_racers",
-            "q1_racers",
-            "q3_racers",
-            "standard_deviation",
             "ci95_low",
             "ci95_high",
         }
         for selection in [data, *data["periods"]]:
             for cell in selection["weekday_hourly"]:
                 self.assertEqual(set(cell), cell_keys)
-        period_keys = entry_summary_keys | {
+        period_keys = {
             "id",
             "label",
             "start",
             "end",
             "is_complete",
-            "completeness",
             "observed_local_date_range",
-            "included_date_range",
             "weekday_hourly",
         }
         for period in data["periods"]:

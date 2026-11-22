@@ -8,6 +8,7 @@ dashboard build and the schedule planner.
 from __future__ import annotations
 
 import argparse
+import bisect
 import json
 import re
 import statistics
@@ -342,10 +343,13 @@ def season_spans(rows: list[JsonObject]) -> list[SeasonSpan]:
     start on for the newest season, so a misfiled slot never moves an end.
     """
     starts = season_starts(rows)
+    slots_by_season: dict[int, list[datetime]] = {}
+    for row in rows:
+        slots_by_season.setdefault(row["season"], []).append(slot_time(row))
     spans = []
     for index, (season, start) in enumerate(starts):
         following = starts[index + 1][1] if index + 1 < len(starts) else None
-        own = [slot_time(row) for row in rows if row["season"] == season]
+        own = slots_by_season[season]
         last_slot = max(
             started_at
             for started_at in own
@@ -361,12 +365,19 @@ def season_of(started_at: datetime, spans: list[SeasonSpan]) -> int | None:
     A race belongs to the season whose span holds its start; where two spans overlap,
     to the later season. A race before the first season, or in a break between two
     seasons (see `in_season_break`), has none.
+
+    `spans` must come from `season_spans`: in season order, with starts, and so lower
+    bounds (`first_slot - JOIN_EARLY`) and upper bounds (`last_slot + JOIN_LATE`), rising.
     """
-    season = None
-    for span in spans:
-        if span.holds(started_at):
-            season = span.season
-    return season
+    # The last span whose lower bound is at or before the start is the only candidate.
+    # An earlier span that held the start would have a lower bound at or before it and an
+    # upper bound at or after it; the candidate's upper bound is no smaller, so the
+    # candidate would hold it too. Hence if the candidate does not, no earlier span does,
+    # and if it does, it is the later of any overlapping spans, as the rule says.
+    index = bisect.bisect_right(spans, started_at, key=lambda span: span.first_slot - JOIN_EARLY)
+    if index and spans[index - 1].holds(started_at):
+        return spans[index - 1].season
+    return None
 
 
 def in_season_break(started_at: datetime, spans: list[SeasonSpan]) -> bool:

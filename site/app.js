@@ -531,28 +531,18 @@ function hasValidAggregate(aggregate) {
   );
 }
 
-function isIsoDate(value) {
-  return typeof value === "string"
-    && /^\d{4}-\d{2}-\d{2}$/.test(value)
-    && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
-}
-
+// The page's written statement of the race-stats.json shape it reads from the Python build, so drift fails
+// loudly ("could not be loaded") instead of rendering undefined or NaN.
 function validateData(data) {
   if (
     !data
-    || data.schema_version !== 14
+    || data.schema_version !== 15
     || !hasValidAggregate(data)
     || !hasValidSeasons(data.seasons)
     || !Array.isArray(data.periods)
     || data.periods.length === 0
     || data.periods.some((period) => (
       typeof period.id !== "string"
-      || typeof period.start !== "string"
-      || !isIsoDate(period.end)
-      || period.end < data.source?.data_start_local
-      || !period.observed_local_date_range
-      || typeof period.observed_local_date_range.start !== "string"
-      || typeof period.observed_local_date_range.end !== "string"
       || !hasValidAggregate(period)
     ))
     || !Array.isArray(data.monthly)
@@ -560,21 +550,14 @@ function validateData(data) {
     || data.monthly.some((month) => (
       typeof month.id !== "string"
       || typeof month.label !== "string"
-      || typeof month.quarter_id !== "string"
       || !Number.isFinite(month.race_count)
       || !Number.isFinite(month.entrant_total)
       || !(Number.isFinite(month.scheduled_day_count) && month.scheduled_day_count >= 0)
-      || !Number.isFinite(month.scheduled_day_entrant_total)
       || (month.entries_per_day !== null && !Number.isFinite(month.entries_per_day))
-      || !Number.isFinite(month.fired_race_count)
       || (month.fired_per_day !== null && !Number.isFinite(month.fired_per_day))
       || (month.average_racers !== null && !Number.isFinite(month.average_racers))
     ))
     || !data.source
-    || !isIsoDate(data.source.data_start_local)
-    || !Number.isFinite(data.source.archived_race_count)
-    || !Number.isFinite(data.source.included_race_count)
-    || !Number.isFinite(data.source.included_entrant_count)
     || (data.source.schedule_counted_through !== null && Number.isNaN(Date.parse(data.source.schedule_counted_through)))
   ) {
     throw new Error("The generated race dataset has an unsupported shape.");

@@ -56,7 +56,6 @@ ALPHA = 0.5  # field-size damping: a race's update is scaled by (entrants - 1) *
 KAPPA = 1e-4  # smallest share of its variance a racer keeps after one race
 MU0 = 25.0  # a newcomer's starting skill
 BASE = 1000
-K = MU0 / SIGMA0  # makes a newcomer's points exactly BASE
 SCALE = 400 / (math.log(10) * math.sqrt(2 * SIGMA_FLOOR**2 + 2 * BETA**2))
 PROVISIONAL_FINISHES = 5
 VETERAN_RACES = 50
@@ -103,7 +102,12 @@ class PlayerRating:
     mu: float
     sigma: float
     finishes: int
-    provisional: bool
+
+
+def _display(state: State, params: JsonObject) -> int:
+    """Return the points of a `(mean, variance)` state: a conservative, rounded rating."""
+    mean, variance = state
+    return round(params["base"] + params["scale"] * (mean - params["k"] * math.sqrt(variance)))
 
 
 @dataclass(frozen=True)
@@ -119,9 +123,7 @@ class _Ratings:
 
     def display(self, state: State) -> int:
         """Return the points for a `(mean, variance)` state."""
-        mean, variance = state
-        params = self.params
-        return round(params["base"] + params["scale"] * (mean - params["k"] * math.sqrt(variance)))
+        return _display(state, self.params)
 
     def win_chance(self, a: State, b: State) -> float:
         """Return the chance that a racer in state `a` beats one in state `b`."""
@@ -190,22 +192,31 @@ def _update_race(
     damping = _damping(entries, alpha)
     old = [(mean, variance) for mean, variance in states]
     floor_variance = sigma_floor * sigma_floor
+    two_beta_sq = 2 * beta * beta
+    sqrt_variances = [math.sqrt(variance) for _mean, variance in old]
+    omegas = [0.0] * len(old)
+    deltas = [0.0] * len(old)
+    # Each unordered pair is decided once and feeds both racers. With `i` ascending
+    # outer and `q` ascending inner, every racer still meets its partners in ascending
+    # order, so the float sums match a loop over ordered pairs bit for bit. The two
+    # chances keep their own exp calls: `1 - chance` would differ in the low bits.
     for i, (mean_i, variance_i) in enumerate(old):
-        omega = 0.0
-        delta = 0.0
-        for q, (mean_q, variance_q) in enumerate(old):
-            if q == i:
-                continue
+        for q in range(i + 1, len(old)):
             score = _outcome(entries[i], entries[q])
             if score is None:
                 continue
-            c = math.sqrt(variance_i + variance_q + 2 * beta * beta)
-            chance = 1 / (1 + math.exp((mean_q - mean_i) / c))
-            omega += variance_i / c * (score - chance)
-            delta += math.sqrt(variance_i) / c * variance_i / (c * c) * chance * (1 - chance)
+            mean_q, variance_q = old[q]
+            c = math.sqrt(variance_i + variance_q + two_beta_sq)
+            chance_i = 1 / (1 + math.exp((mean_q - mean_i) / c))
+            chance_q = 1 / (1 + math.exp((mean_i - mean_q) / c))
+            omegas[i] += variance_i / c * (score - chance_i)
+            deltas[i] += sqrt_variances[i] / c * variance_i / (c * c) * chance_i * (1 - chance_i)
+            omegas[q] += variance_q / c * ((1.0 - score) - chance_q)
+            deltas[q] += sqrt_variances[q] / c * variance_q / (c * c) * chance_q * (1 - chance_q)
+    for i, (mean_i, variance_i) in enumerate(old):
         # Uncertainty only ever shrinks, and not below the floor.
-        shrunk = max(variance_i * max(1 - damping * delta, kappa), floor_variance)
-        states[i][0] = mean_i + damping * omega
+        shrunk = max(variance_i * max(1 - damping * deltas[i], kappa), floor_variance)
+        states[i][0] = mean_i + damping * omegas[i]
         states[i][1] = min(variance_i, shrunk)
 
 
@@ -267,16 +278,14 @@ def rate(
                 finishes[player] += 1
 
     params = _params(beta=beta, sigma0=sigma0, sigma_floor=sigma_floor, kappa=kappa, alpha=alpha)
-    result = RatingResult(pre=pre, post=post, players=[], params=params)
     players = [
         None
         if means[player] is None
         else PlayerRating(
-            rating=result.display((means[player], variances[player])),
+            rating=_display((means[player], variances[player]), params),
             mu=round(means[player], 4),
             sigma=round(math.sqrt(variances[player]), 4),
             finishes=finishes[player],
-            provisional=finishes[player] < PROVISIONAL_FINISHES,
         )
         for player in range(player_count)
     ]

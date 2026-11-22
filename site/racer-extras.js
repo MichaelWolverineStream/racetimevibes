@@ -130,17 +130,17 @@ const RacerExtras = (() => {
       return;
     }
     const them = participants.players[playerIndex];
-    const record = computeHeadToHead(me, ALL_MODES).find((matchup) => matchup.opponent === playerIndex);
+    const { shared, allTime: record } = pairRecord(me, playerIndex);
     const chance = winChance(participants.players[me], them);
     const chanceText = chance === null ? null : `your win chance next race ${Math.round(chance * 100)}%`;
 
     const title = element("a", "player-versus__title", `You vs ${them.name} \u2192`);
     title.href = faceoffHash(participants.players[me].id, them.id);
     const children = [title];
-    if (record === undefined) {
+    if (record.meetings === 0) {
       children.push(element("p", "player-versus__meta", [`You've never raced ${them.name}`, chanceText].filter(Boolean).join(" \u00B7 ")));
     } else {
-      children.push(versusDuel(me, playerIndex, record), versusMeta(record, chanceText));
+      children.push(versusDuel(me, playerIndex, record), versusMeta(participants.races[shared.at(-1)], chanceText));
     }
     host.replaceChildren(...children);
     host.hidden = false;
@@ -170,8 +170,7 @@ const RacerExtras = (() => {
     return duel;
   }
 
-  function versusMeta(record, chanceText) {
-    const race = participants.races[record.lastRaceIndex];
+  function versusMeta(race, chanceText) {
     const meta = element("p", "player-versus__meta");
     const date = element("a", "player-versus__last", formatRaceDate(race.d));
     date.href = RACE_ROOT + race.r;

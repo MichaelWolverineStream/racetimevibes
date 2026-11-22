@@ -250,6 +250,19 @@ class LockSeasonsTests(unittest.TestCase):
             self.archive_dir, *self.outputs, badge_overrides_path=self.overrides_path
         )[1]
 
+    def lock(self, participants, now, ledger_dir=None):
+        """Lock what is ready, as `build_stats.main` does with the inputs it loaded."""
+        ledger_dir = self.ledger_dir if ledger_dir is None else ledger_dir
+        inputs = build_stats.load_archive_inputs(self.archive_dir, ledger_dir)
+        return season_ratings.lock_seasons(
+            ledger_dir,
+            participants,
+            now,
+            rows=inputs.schedule,
+            envelopes=inputs.envelopes,
+            ledgers=inputs.ledgers,
+        )
+
     def test_the_ledger_sits_beside_the_archive(self):
         self.assertEqual(self.ledger_dir, self.root / "season-ratings")
         self.assertEqual(
@@ -262,7 +275,7 @@ class LockSeasonsTests(unittest.TestCase):
         participants = self.build()
         before = self.outputs[1].read_bytes()
 
-        outcomes = season_ratings.lock_seasons(self.archive_dir, self.ledger_dir, participants, LATE)
+        outcomes = self.lock(participants, LATE)
 
         self.assertEqual(outcomes, [(1, None), (2, "the next season has not started")])
         self.assertEqual([path.name for path in self.ledger_dir.iterdir()], ["season-1.json"])
@@ -283,7 +296,7 @@ class LockSeasonsTests(unittest.TestCase):
         self.assertNotEqual(before, b"")
         # A locked season is not offered again.
         self.assertEqual(
-            season_ratings.lock_seasons(self.archive_dir, self.ledger_dir, rebuilt, LATE),
+            self.lock(rebuilt, LATE),
             [(2, "the next season has not started")],
         )
 
@@ -291,7 +304,7 @@ class LockSeasonsTests(unittest.TestCase):
         self.archive(season_races(recorded=False), schedule())
         participants = self.build()
         now = SEASON_TWO + timedelta(days=3)
-        outcomes = season_ratings.lock_seasons(self.archive_dir, self.ledger_dir, participants, now)
+        outcomes = self.lock(participants, now)
         self.assertEqual(outcomes[0], (1, "1 of its races still await recording"))
         self.assertFalse(self.ledger_dir.exists())
 
@@ -299,8 +312,8 @@ class LockSeasonsTests(unittest.TestCase):
         self.archive(season_races(), schedule())
         participants = self.build()
         other = self.root / "elsewhere"
-        season_ratings.lock_seasons(self.archive_dir, self.ledger_dir, participants, LATE)
-        season_ratings.lock_seasons(self.archive_dir, other, participants, LATE + timedelta(days=9))
+        self.lock(participants, LATE)
+        self.lock(participants, LATE + timedelta(days=9), other)
         self.assertEqual(
             (self.ledger_dir / "season-1.json").read_bytes(), (other / "season-1.json").read_bytes()
         )
@@ -308,7 +321,7 @@ class LockSeasonsTests(unittest.TestCase):
     def test_a_locked_season_survives_a_change_to_the_rating(self):
         self.archive(season_races(), schedule())
         participants = self.build()
-        season_ratings.lock_seasons(self.archive_dir, self.ledger_dir, participants, LATE)
+        self.lock(participants, LATE)
 
         update = ladder_rating._update_race
 

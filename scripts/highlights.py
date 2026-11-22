@@ -226,6 +226,7 @@ class _Player:
         "comment_streak",
         "second_streak",
         "beaten",
+        "max_beaten",
         "finish_times",
         "mystery_fast",
         "mystery_slow",
@@ -260,6 +261,8 @@ class _Player:
         self.comment_streak = 0
         self.second_streak = 0
         self.beaten: Counter[int] = Counter()
+        # The most times any one opponent was beaten: the largest value in `beaten`.
+        self.max_beaten = 0
         self.finish_times: set[int] = set()
         self.mystery_fast = False
         self.mystery_slow = False
@@ -340,6 +343,9 @@ class Badge(NamedTuple):
     progress: Callable[[_Player], int] | None = None
     earned: Callable[[_Moment], bool] | None = None
     repeatable: bool = False
+    # A mode-finish counter: its progress only moves on a finish in this mode, so the
+    # per-race loop skips it in every other mode.
+    mode: str | None = None
 
 
 def medal(place: int, field: int) -> str | None:
@@ -539,7 +545,7 @@ BADGES = (
         "Rival",
         f"Finish ahead of the same opponent {RIVAL_WINS} times.",
         RIVAL_WINS,
-        progress=lambda s: max(s.beaten.values(), default=0),
+        progress=lambda s: s.max_beaten,
     ),
     Badge(
         "sniper",
@@ -621,6 +627,7 @@ BADGES = (
         f"Finish a {GLITCHED_MODE} race.",
         GLITCHED_TIERS[0],
         progress=_mode_finishes(GLITCHED_MODE),
+        mode=GLITCHED_MODE,
     ),
     Badge(
         "glitched_10",
@@ -628,6 +635,7 @@ BADGES = (
         f"Finish {GLITCHED_TIERS[1]} {GLITCHED_MODE} races.",
         GLITCHED_TIERS[1],
         progress=_mode_finishes(GLITCHED_MODE),
+        mode=GLITCHED_MODE,
     ),
     Badge(
         "glitched_30",
@@ -635,6 +643,7 @@ BADGES = (
         f"Finish {GLITCHED_TIERS[2]} {GLITCHED_MODE} races.",
         GLITCHED_TIERS[2],
         progress=_mode_finishes(GLITCHED_MODE),
+        mode=GLITCHED_MODE,
     ),
     Badge(
         "glitched_100",
@@ -642,6 +651,7 @@ BADGES = (
         f"Finish {GLITCHED_TIERS[3]} {GLITCHED_MODE} races.",
         GLITCHED_TIERS[3],
         progress=_mode_finishes(GLITCHED_MODE),
+        mode=GLITCHED_MODE,
     ),
     Badge(
         "the_upside_down",
@@ -649,6 +659,7 @@ BADGES = (
         f"Finish an {INVERTED_MODE} race.",
         INVERTED_TIERS[0],
         progress=_mode_finishes(INVERTED_MODE),
+        mode=INVERTED_MODE,
     ),
     Badge(
         "mirror_universe",
@@ -656,6 +667,7 @@ BADGES = (
         f"Finish {INVERTED_TIERS[1]} {INVERTED_MODE} races.",
         INVERTED_TIERS[1],
         progress=_mode_finishes(INVERTED_MODE),
+        mode=INVERTED_MODE,
     ),
     Badge(
         "keys",
@@ -663,6 +675,7 @@ BADGES = (
         f"Finish a {KEYS_MODE} race.",
         KEYS_TIERS[0],
         progress=_mode_finishes(KEYS_MODE),
+        mode=KEYS_MODE,
     ),
     Badge(
         "locksmith",
@@ -670,6 +683,7 @@ BADGES = (
         f"Finish {KEYS_TIERS[1]} {KEYS_MODE} races.",
         KEYS_TIERS[1],
         progress=_mode_finishes(KEYS_MODE),
+        mode=KEYS_MODE,
     ),
     Badge(
         "simpler_times",
@@ -677,6 +691,7 @@ BADGES = (
         f"Finish {SIMPLE_TIERS[0]} {SIMPLE_MODE} races.",
         SIMPLE_TIERS[0],
         progress=_mode_finishes(SIMPLE_MODE),
+        mode=SIMPLE_MODE,
     ),
     Badge(
         "simpler_life",
@@ -684,6 +699,7 @@ BADGES = (
         f"Finish {SIMPLE_TIERS[1]} {SIMPLE_MODE} races.",
         SIMPLE_TIERS[1],
         progress=_mode_finishes(SIMPLE_MODE),
+        mode=SIMPLE_MODE,
     ),
     Badge(
         "had_fun",
@@ -691,6 +707,7 @@ BADGES = (
         f"Finish a {FUN_MODE} race.",
         FUN_TIERS[0],
         progress=_mode_finishes(FUN_MODE),
+        mode=FUN_MODE,
     ),
     Badge(
         "kept_having_fun",
@@ -698,6 +715,7 @@ BADGES = (
         f"Finish {FUN_TIERS[1]} {FUN_MODE} races.",
         FUN_TIERS[1],
         progress=_mode_finishes(FUN_MODE),
+        mode=FUN_MODE,
     ),
     Badge(
         "jet_seed",
@@ -759,6 +777,7 @@ BADGES = (
         f"Finish {MYSTERY_TIERS[0]} {MYSTERY_MODE} races.",
         MYSTERY_TIERS[0],
         progress=_mode_finishes(MYSTERY_MODE),
+        mode=MYSTERY_MODE,
     ),
     Badge(
         "bustin",
@@ -766,6 +785,7 @@ BADGES = (
         f"Finish {MYSTERY_TIERS[1]} {MYSTERY_MODE} races.",
         MYSTERY_TIERS[1],
         progress=_mode_finishes(MYSTERY_MODE),
+        mode=MYSTERY_MODE,
     ),
     Badge(
         "both_ends",
@@ -866,28 +886,23 @@ def _daily_streaks(dates: list[str]) -> tuple[list[Any], list[Any]] | None:
     return best, [length, start, previous]
 
 
-def _ranking_top(
-    states: dict[int, _Player], race_ordinal: int
-) -> list[int]:
-    """Non-provisional racers active in the window, best pre-race mean first."""
-    ranked = [
-        (-state.mean, index)
-        for index, state in states.items()
-        if state.mean is not None
-        and state.finishes >= PROVISIONAL_FINISHES
-        and race_ordinal - state.last_ordinal <= RANKING_WINDOW_DAYS
-    ]
-    ranked.sort()
-    return [index for _mean, index in ranked]
-
-
 def _top_rated(states: dict[int, _Player], race_ordinal: int, entries: list[Any]) -> int | None:
-    """The race's top-rated entrant by `_ranking_top`, if any entrant is ranked."""
-    entrant_ids = {e[0] for e in entries}
-    return next(
-        (index for index in _ranking_top(states, race_ordinal) if index in entrant_ids),
-        None,
-    )
+    """The race's best pre-race mean among its ranked entrants, or None if none is ranked.
+
+    A racer is ranked when not provisional and active in the window. Ties on the mean
+    go to the lower player index.
+    """
+    ranked = []
+    for entry in entries:
+        state = states.get(entry[0])
+        if (
+            state is not None
+            and state.mean is not None
+            and state.finishes >= PROVISIONAL_FINISHES
+            and race_ordinal - state.last_ordinal <= RANKING_WINDOW_DAYS
+        ):
+            ranked.append((-state.mean, entry[0]))
+    return min(ranked)[1] if ranked else None
 
 
 def _middle_finisher(entries: list[Any], n: int) -> set[int]:
@@ -916,22 +931,21 @@ def _retimed(timed: list[Any]) -> set[int]:
     return tied
 
 
-def _alphabetical_field(
-    entries: list[Any], n: int, names: dict[int, str], *, reverse: bool = False
-) -> set[int]:
-    """Every entrant, when all of a big enough field finished in alphabetical order (or reverse).
+def _alphabetical_fields(entries: list[Any], n: int, names: dict[int, str]) -> tuple[set[int], set[int]]:
+    """Return every entrant twice: when all of a big enough field finished in alphabetical order, and when in reverse.
 
-    `names` holds each entrant's name as archived with the race, so a later rename
-    never changes the outcome.
+    Each set is empty unless its order holds. `names` holds each entrant's name as
+    archived with the race, so a later rename never changes the outcome.
     """
     if n < STEP_LETTER_MIN_FIELD or len(entries) != n:
-        return set()
+        return set(), set()
     if not all(_is_finisher(e[1], e[2]) for e in entries):
-        return set()
+        return set(), set()
     ordered = [names[e[0]].casefold() for e in sorted(entries, key=lambda e: e[1])]
-    if ordered != sorted(ordered, reverse=reverse):
-        return set()
-    return {e[0] for e in entries}
+    everyone = {e[0] for e in entries}
+    forward = everyone if ordered == sorted(ordered) else set()
+    backward = set(everyone) if ordered == sorted(ordered, reverse=True) else set()
+    return forward, backward
 
 
 def _top(rows: list[list[Any]], key, limit: int) -> list[list[Any]]:
@@ -1091,22 +1105,29 @@ def compute(
         # God Route, Big Routing and Upsetti need the pre-race ranking, so they run before
         # state updates.
         god_route: set[int] = set()
-        if margin is not None and margin > GOD_ROUTE_MIN_MARGIN and n >= GOD_ROUTE_MIN_FIELD:
-            if _top_rated(states, race_ordinal, entries) != winner[0]:
-                god_route = {winner[0]}
         big_routing: set[int] = set()
-        if margin is not None and margin > BIG_ROUTING_MIN_MARGIN and n >= BIG_ROUTING_MIN_FIELD:
-            if _top_rated(states, race_ordinal, entries) == winner[0]:
-                big_routing = {winner[0]}
         upsetti: set[int] = set()
-        if margin is not None and margin >= UPSETTI_MIN_MARGIN and n >= UPSETTI_MIN_FIELD:
-            if _top_rated(states, race_ordinal, entries) == runner_up[0]:
+        god_route_possible = (
+            margin is not None and margin > GOD_ROUTE_MIN_MARGIN and n >= GOD_ROUTE_MIN_FIELD
+        )
+        big_routing_possible = (
+            margin is not None and margin > BIG_ROUTING_MIN_MARGIN and n >= BIG_ROUTING_MIN_FIELD
+        )
+        upsetti_possible = (
+            margin is not None and margin >= UPSETTI_MIN_MARGIN and n >= UPSETTI_MIN_FIELD
+        )
+        if god_route_possible or big_routing_possible or upsetti_possible:
+            top_rated = _top_rated(states, race_ordinal, entries)
+            if god_route_possible and top_rated != winner[0]:
+                god_route = {winner[0]}
+            if big_routing_possible and top_rated == winner[0]:
+                big_routing = {winner[0]}
+            if upsetti_possible and top_rated == runner_up[0]:
                 upsetti = {runner_up[0]}
 
         middle = _middle_finisher(entries, n)
         lanterne_rouge = _lanterne_rouge(entries, n)
-        step_letter = _alphabetical_field(entries, n, rec["names"])
-        rettel_pets = _alphabetical_field(entries, n, rec["names"], reverse=True)
+        step_letter, rettel_pets = _alphabetical_fields(entries, n, rec["names"])
         if step_letter:
             alphabetical_races += 1
         retimed = _retimed(timed)
@@ -1143,6 +1164,7 @@ def compute(
                         _is_finisher(other[1], other[2]) and other[1] <= place
                     ):
                         state.beaten[other[0]] += 1
+                        state.max_beaten = max(state.max_beaten, state.beaten[other[0]])
                 # Records come in start order, so the window stays sorted.
                 state.window_starts.append(started)
                 while started - state.window_starts[0] >= RANDO_SICKO_HOURS * 3600:
@@ -1247,7 +1269,10 @@ def compute(
                 held = badge.id in state.badges
                 if held and not badge.repeatable:
                     continue
-                if (player, badge.id) in granted:
+                by_hand = (player, badge.id) in granted
+                if badge.mode is not None and badge.mode != mode_name and not by_hand:
+                    continue  # non-repeatable, and its progress did not move in this race
+                if by_hand:
                     fired = granted[(player, badge.id)] == ri  # rule never checked: fires once
                 elif badge.progress is not None:
                     value = badge.progress(state)
@@ -1318,7 +1343,6 @@ def compute(
         preset_stats.append(
             {
                 "races": row["races"],
-                "entries": row["entries"],
                 "dnf_rate": round(row["bad"] / row["entries"], 4) if row["entries"] else None,
                 "median_seconds": round(preset_medians[index]) if index in preset_medians else None,
                 "median_win_seconds": round(statistics.median(row["wins"])) if row["wins"] else None,
@@ -1352,12 +1376,9 @@ def compute(
                 "badge_counts": {b.id: state.badge_counts[b.id] for b in BADGES if state.badge_counts[b.id]},
                 "progress": _progress(state, targets),
                 "streaks": {
-                    "daily": {"best": daily[index][0], "current": daily[index][1]},
+                    "daily": {"current": daily[index][1]},
                     **{
-                        kind: {
-                            "best": state.runs[kind].best_value(),
-                            "current": state.runs[kind].current_value(),
-                        }
+                        kind: {"current": state.runs[kind].current_value()}
                         for kind in STREAK_KINDS
                     },
                 },
@@ -1445,7 +1466,7 @@ def compute(
 
 
 def _empty_player() -> JsonObject:
-    empty = {"best": None, "current": None}
+    empty = {"current": None}
     return {
         "badges": {},
         "badge_counts": {},
@@ -1667,9 +1688,10 @@ def _facts(
             ]
         )
 
+    races_per_mode = Counter(r["m"] for r in records)
     by_races = sorted(
         (m for m in range(len(modes)) if modes[m] != UNKNOWN_MODE),
-        key=lambda m: (-sum(1 for r in records if r["m"] == m), m),
+        key=lambda m: (-races_per_mode[m], m),
     )
     for m in by_races[:FACT_RECORD_MODES]:
         steps = result["records"]["modes"][m]["steps"]
@@ -1836,7 +1858,7 @@ def _facts(
         )
 
     if records:
-        latest = max(date.fromisoformat(r["d"]).toordinal() for r in records)
+        latest = date.fromisoformat(records[-1]["d"]).toordinal()  # records are chronological
         standing: list[tuple[int, int, list[Any]]] = []
         for m, mode_records in enumerate(result["records"]["modes"]):
             steps = mode_records["steps"]
@@ -1901,7 +1923,9 @@ def _facts(
             [f"{name(top[0])} came back after ", count(top[1]), f" {noun(top[1], 'day')} away."]
         )
 
-    weekdays = Counter(WEEKDAYS[date.fromisoformat(r["d"]).weekday()] for r in records)
+    weekdays: Counter[str] = Counter()
+    for race_date, races_on_date in Counter(r["d"] for r in records).items():
+        weekdays[WEEKDAYS[date.fromisoformat(race_date).weekday()]] += races_on_date
     if weekdays:
         weekday, races = min(
             weekdays.items(), key=lambda item: (-item[1], WEEKDAYS.index(item[0]))

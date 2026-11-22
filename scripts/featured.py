@@ -52,7 +52,6 @@ HIGHLIGHT_ORDER = (
     ("badge", 1),
 )
 HIGHLIGHT_RANKS = {kind: rank for rank, (kind, _tickets) in enumerate(HIGHLIGHT_ORDER)}
-TICKETS = dict(HIGHLIGHT_ORDER)
 # A tag kind added later ranks last, with one ticket.
 UNKNOWN_KIND_RANK = len(HIGHLIGHT_ORDER)
 UNKNOWN_KIND_TICKETS = 1
@@ -168,6 +167,10 @@ def _highlight_kind(tag: Sequence[Any], holders: Mapping[str, set[int]], racers:
     return "badge"
 
 
+def _rank(kind: str) -> int:
+    return HIGHLIGHT_RANKS.get(kind, UNKNOWN_KIND_RANK)
+
+
 def replay(
     races: Sequence[Mapping[str, Any]],
     player_ids: Sequence[str],
@@ -188,6 +191,9 @@ def replay(
     holders: dict[str, set[int]] = {}
     seen: set[int] = set()
     window: deque[int] = deque()
+    # Per race and tag, the rank of a tag whose kind never changes, or None for a badge
+    # tag, whose kind moves with the holder counts and so is ranked afresh every day.
+    static_ranks: list[list[int | None]] = []
     last_featured: dict[str, date] = {}
     picks: list[Pick] = []
     added = 0
@@ -204,6 +210,9 @@ def replay(
             for tag in race.get("t", ()):
                 if tag[0] == "badge":
                     holders.setdefault(tag[2], set()).add(tag[1])
+            static_ranks.append(
+                [None if tag[0] == "badge" else _rank(tag[0]) for tag in race.get("t", ())]
+            )
             window.append(added)
             added += 1
         while window and races[window[0]]["d"] < opens:
@@ -213,8 +222,9 @@ def replay(
         best: dict[int, tuple[int, int, int]] = {}
         for race_index in window:
             for tag_index, tag in enumerate(races[race_index].get("t", ())):
-                kind = _highlight_kind(tag, holders, len(seen))
-                rank = HIGHLIGHT_RANKS.get(kind, UNKNOWN_KIND_RANK)
+                rank = static_ranks[race_index][tag_index]
+                if rank is None:
+                    rank = _rank(_highlight_kind(tag, holders, len(seen)))
                 current = best.get(tag[1])
                 if current is None or rank <= current[0]:
                     best[tag[1]] = (rank, race_index, tag_index)

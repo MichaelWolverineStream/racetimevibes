@@ -270,16 +270,6 @@
   }
 }
 
-.ui-tag--new {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-fill);
-}
-
-.ui-tag--new .ui-tag__dot {
-  background: var(--on-fill);
-}
-
 .follow-star {
   padding: 0 2px;
   border: 0;

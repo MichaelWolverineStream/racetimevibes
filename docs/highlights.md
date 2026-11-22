@@ -172,12 +172,13 @@ A badge is either a counter, which unlocks when a count reaches its target, or a
 
 ## Streaks
 
+- **Published:** each racer carries only their current streak of each kind. Best runs are published only in the [streak boards](#records).
 - **Daily:** consecutive Eastern Time dates with at least one entry. The current streak is the run ending on the racer's last race day.
 - **Win, podium and finish:** runs over the racer's own race sequence across all modes. Podium means a finish that earns a [medal](definitions.md#entrants), so it depends on the field; finish means finisher. A finish run follows the DNF exception under [Streak and count badges](#badges). The current streak is the run still open after the racer's latest race, and is absent if that race broke it.
 
 ## Presets
 
-Presets are named as defined under [Races](definitions.md#races). Statistics are races, entries, DNF rate (entries that are not finishers), median time, median winning time, mean field size, and the fastest finish.
+Presets are named as defined under [Races](definitions.md#races). Statistics are races, DNF rate (entries that are not finishers), median time, median winning time, mean field size, and the fastest finish.
 
 - **Hardest preset:** the highest DNF rate among presets with 8 or more races.
 

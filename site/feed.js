@@ -306,29 +306,21 @@ const Feed = (() => {
     };
   }
 
+  // One description per tag, except that PB tags of one kind and badge tags of one badge share one description,
+  // placed where the first of them appears.
   function raceTagDescriptions(race) {
-    const tags = race.t || [];
-    const pbTagsByKind = new Map();
-    tags.filter((tag) => Object.hasOwn(PB_LABELS, tag[0])).forEach((tag) => {
-      pbTagsByKind.set(tag[0], [...(pbTagsByKind.get(tag[0]) ?? []), tag]);
-    });
-    const badgeTagsById = new Map();
-    tags.filter((tag) => tag[0] === "badge").forEach((tag) => {
-      badgeTagsById.set(tag[2], [...(badgeTagsById.get(tag[2]) ?? []), tag]);
-    });
     const descriptions = [];
-    tags.forEach((tag) => {
-      if (Object.hasOwn(PB_LABELS, tag[0])) {
-        const sameKind = pbTagsByKind.get(tag[0]);
-        if (tag === sameKind[0]) {
-          descriptions.push(pbTag(tag[0], sameKind));
-        }
-        return;
-      }
-      if (tag[0] === "badge") {
-        const sameBadge = badgeTagsById.get(tag[2]);
-        if (tag === sameBadge[0]) {
-          descriptions.push(badgeTag(sameBadge));
+    const groups = new Map();
+    (race.t || []).forEach((tag) => {
+      const isPb = Object.hasOwn(PB_LABELS, tag[0]);
+      if (isPb || tag[0] === "badge") {
+        const key = isPb ? tag[0] : `badge:${tag[2]}`;
+        const group = groups.get(key);
+        if (group) {
+          group.tags.push(tag);
+        } else {
+          groups.set(key, { tags: [tag], position: descriptions.length, isPb });
+          descriptions.push(null);
         }
         return;
       }
@@ -336,6 +328,9 @@ const Feed = (() => {
       if (description) {
         descriptions.push(description);
       }
+    });
+    groups.forEach(({ tags, position, isPb }) => {
+      descriptions[position] = isPb ? pbTag(tags[0][0], tags) : badgeTag(tags);
     });
     return descriptions;
   }
@@ -675,7 +670,6 @@ const Feed = (() => {
       detail.hidden = !open;
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Hide entrants" : "Show entrants");
-      wrapper.classList.toggle("feed-row--open", open);
     }
     toggle.addEventListener("click", toggleDetail);
     line.addEventListener("click", (event) => {

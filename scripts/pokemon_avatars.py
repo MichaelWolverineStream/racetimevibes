@@ -194,6 +194,13 @@ def favourite_pokemon(
     return None
 
 
+def current_favourites(
+    bios: Mapping[str, Sequence], catalogue: Catalogue
+) -> dict[str, int | Literal["random"] | None]:
+    """Return each racer's favourite from their current bio (see `favourite_pokemon`)."""
+    return {user_id: favourite_pokemon(entry[0], catalogue) for user_id, entry in bios.items()}
+
+
 def favourite_change_times(
     bios: Mapping[str, Sequence], catalogue: Catalogue
 ) -> dict[str, datetime]:
@@ -209,6 +216,8 @@ def favourite_change_times(
     """
     changes: dict[str, datetime] = {}
     for user_id, entry in bios.items():
+        if not entry[3]:
+            continue  # a timeline of one bio has no change
         timeline = [*entry[3], [entry[0], entry[2]]]
         favourites = [favourite_pokemon(text, catalogue) for text, _since in timeline]
         for index in range(len(timeline) - 1, 0, -1):

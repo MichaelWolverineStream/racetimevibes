@@ -196,11 +196,11 @@ class RatingResultTests(unittest.TestCase):
         self.assertAlmostEqual(params["k"], 25 / 12)
         self.assertAlmostEqual(params["scale"], 13.7336, places=3)
 
-    def test_a_rating_is_provisional_below_five_finishes(self):
-        result = ladder_rating.rate(league(4), 5)
-        self.assertTrue(all(player.provisional and player.finishes == 4 for player in result.players))
-        result = ladder_rating.rate(league(5), 5)
-        self.assertTrue(all(not player.provisional for player in result.players))
+    def test_a_rating_counts_each_finish(self):
+        for finishes in (ladder_rating.PROVISIONAL_FINISHES - 1, ladder_rating.PROVISIONAL_FINISHES):
+            with self.subTest(finishes=finishes):
+                result = ladder_rating.rate(league(finishes), 5)
+                self.assertTrue(all(player.finishes == finishes for player in result.players))
 
     def test_players_who_never_raced_have_no_rating(self):
         result = ladder_rating.rate(league(2), 6)
@@ -255,12 +255,12 @@ class ModeRatingTests(unittest.TestCase):
         for position in range(3):
             self.assertEqual(by_mode.display(by_mode.pre[6][position]), 1000)
 
-    def test_provisional_is_per_mode(self):
+    def test_finishes_are_counted_per_mode(self):
         by_mode = ladder_rating.rate_by_mode(self.two_modes(), 4)
-        self.assertFalse(by_mode.players[0][0].provisional)
         self.assertEqual(by_mode.players[0][0].finishes, 6)
-        self.assertTrue(by_mode.players[1][0].provisional)
+        self.assertGreaterEqual(by_mode.players[0][0].finishes, ladder_rating.PROVISIONAL_FINISHES)
         self.assertEqual(by_mode.players[1][0].finishes, 2)
+        self.assertLess(by_mode.players[1][0].finishes, ladder_rating.PROVISIONAL_FINISHES)
 
     def test_a_racer_has_no_rating_in_a_mode_they_never_raced(self):
         by_mode = ladder_rating.rate_by_mode(self.two_modes(), 4)

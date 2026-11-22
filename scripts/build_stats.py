@@ -10,6 +10,7 @@ import re
 import statistics
 import sys
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -44,7 +45,7 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "site" / "data"
 OUTPUT_PATH = DATA_DIR / "race-stats.json"
 PARTICIPANTS_OUTPUT_PATH = DATA_DIR / "participants.json"
 COMMENTS_OUTPUT_PATH = DATA_DIR / "comments.json"
-SCHEMA_VERSION = 14
+SCHEMA_VERSION = 15
 
 SCHEDULE_TIMEZONE_NAME = "America/New_York"
 SCHEDULE_TIMEZONE = ZoneInfo(SCHEDULE_TIMEZONE_NAME)
@@ -156,7 +157,6 @@ def _distribution(values: list[float], *, lower_bound: float | None = None) -> J
             "median": None,
             "q1": None,
             "q3": None,
-            "standard_deviation": None,
             "ci95_low": None,
             "ci95_high": None,
         }
@@ -186,7 +186,6 @@ def _distribution(values: list[float], *, lower_bound: float | None = None) -> J
         "median": median,
         "q1": q1,
         "q3": q3,
-        "standard_deviation": standard_deviation,
         "ci95_low": ci95_low,
         "ci95_high": ci95_high,
     }
@@ -199,9 +198,6 @@ def _entry_summary(values: list[int]) -> JsonObject:
         "entrant_total": sum(values),
         "average_racers": distribution["mean"],
         "median_racers": distribution["median"],
-        "q1_racers": distribution["q1"],
-        "q3_racers": distribution["q3"],
-        "standard_deviation": distribution["standard_deviation"],
         "ci95_low": distribution["ci95_low"],
         "ci95_high": distribution["ci95_high"],
     }
@@ -226,13 +222,6 @@ def _date_range(started_at_values: list[datetime]) -> JsonObject | None:
     return {
         "start": min(started_at_values).isoformat().replace("+00:00", "Z"),
         "end": max(started_at_values).isoformat().replace("+00:00", "Z"),
-    }
-
-
-def _race_summary(records: list[JsonObject]) -> JsonObject:
-    """Summarize finished races: their entries and their date range."""
-    return _entry_summary([record["entrants_count"] for record in records]) | {
-        "included_date_range": _date_range([record["started_at"] for record in records]),
     }
 
 
@@ -273,7 +262,6 @@ def _slot_weekday_hourly(slots: list[JsonObject]) -> list[JsonObject]:
                 "hour": hour,
                 "scheduled_count": len(items),
                 "started_count": sum(slot["started"] for slot in items),
-                "entrant_total": entrant_total,
                 "average_racers": _average(entrant_total, len(items)),
             }
         )
@@ -601,7 +589,6 @@ def _period_coverage(
     is_complete = archive_start <= period_start and archive_end >= period_end
     return {
         "is_complete": is_complete,
-        "completeness": "complete" if is_complete else "partial",
         "observed_local_date_range": {
             "start": min(observed_dates).isoformat(),
             "end": max(observed_dates).isoformat(),
@@ -658,14 +645,32 @@ def classify_race(
     }, None
 
 
+Classification = tuple[JsonObject | None, tuple[str, str] | None]
+
+
+def classify_races(
+    races: list[JsonObject], spans: list[schedule_archive.SeasonSpan]
+) -> list[Classification]:
+    """Return `classify_race` for every race, in order, so one build classifies each race once."""
+    return [classify_race(race, spans) for race in races]
+
+
 def included_envelopes(
     envelopes: list[JsonObject], spans: list[schedule_archive.SeasonSpan]
 ) -> list[JsonObject]:
     """Return the archive envelopes whose races pass the dashboard filters."""
+    return _included_envelopes(
+        envelopes, classify_races([envelope["race"] for envelope in envelopes], spans)
+    )
+
+
+def _included_envelopes(
+    envelopes: list[JsonObject], classified: list[Classification]
+) -> list[JsonObject]:
     return [
         envelope
-        for envelope in envelopes
-        if classify_race(envelope["race"], spans)[0] is not None
+        for envelope, (context, _reason) in zip(envelopes, classified, strict=True)
+        if context is not None
     ]
 
 
@@ -673,12 +678,11 @@ def included_race_contexts(
     races: list[JsonObject], spans: list[schedule_archive.SeasonSpan]
 ) -> list[JsonObject]:
     """Return the context for every race that passes the dashboard filters."""
-    contexts = []
-    for race in races:
-        context, _reason = classify_race(race, spans)
-        if context is not None:
-            contexts.append(context)
-    return contexts
+    return _included_contexts(classify_races(races, spans))
+
+
+def _included_contexts(classified: list[Classification]) -> list[JsonObject]:
+    return [context for context, _reason in classified if context is not None]
 
 
 def aggregate_races(
@@ -689,6 +693,27 @@ def aggregate_races(
     generated_at: datetime | None = None,
 ) -> JsonObject:
     """Filter and aggregate races and the ladder schedule into the page's JSON schema."""
+    spans = schedule_archive.season_spans(schedule)
+    return _aggregate_classified(
+        races,
+        classify_races(races, spans),
+        spans=spans,
+        schedule=schedule,
+        modes=modes,
+        generated_at=generated_at,
+    )
+
+
+def _aggregate_classified(
+    races: list[JsonObject],
+    classified: list[Classification],
+    *,
+    spans: list[schedule_archive.SeasonSpan],
+    schedule: list[JsonObject],
+    modes: list[JsonObject],
+    generated_at: datetime | None = None,
+) -> JsonObject:
+    """Aggregate races already classified by `classify_races` (with the same `spans`)."""
     excluded_statuses: Counter[str] = Counter()
     excluded_modes: Counter[str] = Counter()
     excluded_in_season_breaks = 0
@@ -699,10 +724,8 @@ def aggregate_races(
     period_records: dict[str, list[JsonObject]] = defaultdict(list)
     period_metadata: dict[str, JsonObject] = {}
     unknown_mode_count = 0
-    spans = schedule_archive.season_spans(schedule)
 
-    for race in races:
-        context, reason = classify_race(race, spans)
+    for race, (context, reason) in zip(races, classified, strict=True):
         if context is None:
             kind, detail = reason
             if kind == "status":
@@ -730,10 +753,7 @@ def aggregate_races(
             "local_started_at": local_started_at,
             "entrants_count": context["entrants_count"],
             # The identified entrants. Only counts of them leave the build.
-            "racer_ids": frozenset(
-                user_id
-                for user_id, *_rest in participant_stats._race_entries(race, Counter())
-            ),
+            "racer_ids": participant_stats.racer_ids(race),
         }
         contexts.append(context)
         included_records.append(record)
@@ -793,7 +813,6 @@ def aggregate_races(
             for context in contexts
         )
 
-    overall = _race_summary(included_records)
     periods = []
     for period_id in sorted(period_records):
         records = period_records[period_id]
@@ -802,7 +821,6 @@ def aggregate_races(
             | _period_coverage(
                 period_metadata[period_id], records, archive_start, archive_end
             )
-            | _race_summary(records)
             | _slot_summary(period_slots[period_id])
         )
 
@@ -817,7 +835,8 @@ def aggregate_races(
     )
 
     generated = (generated_at or datetime.now(UTC)).astimezone(UTC)
-    included_count = overall["race_count"]
+    included_count = len(included_records)
+    included_entrant_count = sum(record["entrants_count"] for record in included_records)
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -831,9 +850,11 @@ def aggregate_races(
             "data_start_local": archive_start.isoformat(),
             "archived_race_count": len(races),
             "included_race_count": included_count,
-            "included_entrant_count": overall["entrant_total"],
+            "included_entrant_count": included_entrant_count,
             "excluded_archived_race_count": len(races) - included_count,
-            "included_date_range": overall["included_date_range"],
+            "included_date_range": _date_range(
+                [record["started_at"] for record in included_records]
+            ),
             "schedule_counted_through": (
                 counted_through.astimezone(UTC).isoformat().replace("+00:00", "Z")
                 if counted_through
@@ -863,21 +884,20 @@ def aggregate_races(
     }
 
 
-def build(
-    archive_dir: Path = race_archive.ARCHIVE_DIR,
-    output_path: Path = OUTPUT_PATH,
-    participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
-    comments_output_path: Path = COMMENTS_OUTPUT_PATH,
-    pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
-    ledger_dir: Path | None = None,
-    season_names_path: Path = season_names.NAMES_PATH,
-    badge_overrides_path: Path = badge_overrides.OVERRIDES_PATH,
-) -> tuple[JsonObject, JsonObject, JsonObject]:
-    """Build and write the three datasets. It reads the season ledgers in `ledger_dir`,
-    by default the one beside the archive, and never writes one."""
+@dataclass(frozen=True)
+class ArchiveInputs:
+    """What a build reads from disk: the archived races, the schedule and the ledgers."""
+
+    envelopes: list[JsonObject]
+    schedule: list[JsonObject]
+    modes: list[JsonObject]
+    ledgers: dict[int, season_ratings.Ledger]
+
+
+def load_archive_inputs(archive_dir: Path, ledger_dir: Path | None = None) -> ArchiveInputs:
+    """Read the archive, its schedule and the season ledgers, refusing an empty archive or schedule."""
     envelopes = race_archive.load_races(archive_dir)
-    races = [envelope["race"] for envelope in envelopes]
-    if not races:
+    if not envelopes:
         raise DataError(
             f"Archive {archive_dir} has no races; run scripts/race_archive.py first"
         )
@@ -888,11 +908,44 @@ def build(
             f"Archive {archive_dir} has no ladder schedule; "
             "run scripts/schedule_archive.py first"
         )
+    ledgers = season_ratings.load_ledgers(
+        season_ratings.ledger_dir_for(archive_dir) if ledger_dir is None else ledger_dir
+    )
+    return ArchiveInputs(envelopes, schedule, modes, ledgers)
+
+
+def build(
+    archive_dir: Path = race_archive.ARCHIVE_DIR,
+    output_path: Path = OUTPUT_PATH,
+    participants_output_path: Path = PARTICIPANTS_OUTPUT_PATH,
+    comments_output_path: Path = COMMENTS_OUTPUT_PATH,
+    pokemon_dir: Path = pokemon_avatars.POKEMON_DIR,
+    ledger_dir: Path | None = None,
+    season_names_path: Path = season_names.NAMES_PATH,
+    badge_overrides_path: Path = badge_overrides.OVERRIDES_PATH,
+    inputs: ArchiveInputs | None = None,
+) -> tuple[JsonObject, JsonObject, JsonObject]:
+    """Build and write the three datasets. It reads the season ledgers in `ledger_dir`,
+    by default the one beside the archive, and never writes one.
+
+    `inputs` is `load_archive_inputs` of the same archive, when the caller has it."""
+    if inputs is None:
+        inputs = load_archive_inputs(archive_dir, ledger_dir)
+    envelopes = inputs.envelopes
+    races = [envelope["race"] for envelope in envelopes]
+    schedule = inputs.schedule
+    modes = inputs.modes
     generated_at = datetime.now(UTC)
     spans = schedule_archive.season_spans(schedule)
-    contexts = included_race_contexts(races, spans)
-    stats = aggregate_races(
-        races, schedule=schedule, modes=modes, generated_at=generated_at
+    classified = classify_races(races, spans)
+    contexts = _included_contexts(classified)
+    stats = _aggregate_classified(
+        races,
+        classified,
+        spans=spans,
+        schedule=schedule,
+        modes=modes,
+        generated_at=generated_at,
     )
     participants = participant_stats.build_participant_payload(
         contexts,
@@ -901,14 +954,12 @@ def build(
         timezone_name=SCHEDULE_TIMEZONE_NAME,
         generated_at=generated_at,
         current_names=race_archive.load_racer_names(archive_dir),
-        envelopes=included_envelopes(envelopes, spans),
+        envelopes=_included_envelopes(envelopes, classified),
         avatar_observations=race_archive.load_racer_avatars(archive_dir),
         bios=racer_bios.load_racer_bios(archive_dir),
         pokemon=pokemon_avatars.load_catalogue(pokemon_dir),
         schedule=schedule,
-        ledgers=season_ratings.load_ledgers(
-            season_ratings.ledger_dir_for(archive_dir) if ledger_dir is None else ledger_dir
-        ),
+        ledgers=inputs.ledgers,
         schedule_modes=modes,
         season_names=season_names.load(season_names_path),
         badge_overrides=badge_overrides.load(badge_overrides_path),
@@ -966,19 +1017,23 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
+        inputs = load_archive_inputs(args.archive)
         stats, participants, comments = build(
             args.archive,
             args.output,
             args.participants_output,
             args.comments_output,
             args.pokemon,
+            inputs=inputs,
         )
         locks = (
             season_ratings.lock_seasons(
-                args.archive,
                 season_ratings.ledger_dir_for(args.archive),
                 participants,
                 datetime.now(UTC),
+                rows=inputs.schedule,
+                envelopes=inputs.envelopes,
+                ledgers=inputs.ledgers,
             )
             if args.lock_seasons
             else []
