@@ -13,7 +13,7 @@ This README covers the project, the [ladder rating](#ladder-rating) and [privacy
 
 ## Requirements
 
-- Python 3.12 or newer, standard library only. The site is plain HTML, CSS and JavaScript with no build step.
+- Python 3.12 or newer, standard library only. The site is plain HTML, CSS and JavaScript with no build step; the deploy only strips the comments from the CSS.
 - A network connection for the syncs and the avatar mirror.
 - ImageMagick 7, only for `scripts/badge_images.py` (badge art) and `scripts/pokemon_images.py` (sprite framing).
 - ImageMagick 6 or 7, for `scripts/avatar_mirror.py`, only when it has a racetime.gg avatar to download. It converts each one to WebP.
@@ -42,7 +42,7 @@ How to write a test, and which suite it belongs to, is in [docs/testing.md](docs
 
 ## Deployment and data refresh
 
-`.github/workflows/pages.yml` runs the production suite and deploys `site/` to GitHub Pages on every push to `main`. A bot syncs, builds and commits the data every two hours as `YYYY-MM-DD data`, so pull before you start, and never pass `--lock-seasons` locally. The refresh steps, their options, the tests, the workflows and how to resolve a conflict with the bot are in [docs/operations.md](docs/operations.md).
+`.github/workflows/pages.yml` runs the production suite and deploys `site/`, with its CSS comments stripped, to GitHub Pages on every push to `main`. A bot syncs, builds and commits the data every two hours as `YYYY-MM-DD data`, so pull before you start, and never pass `--lock-seasons` locally. The refresh steps, their options, the tests, the workflows and how to resolve a conflict with the bot are in [docs/operations.md](docs/operations.md).
 
 ## Layout
 

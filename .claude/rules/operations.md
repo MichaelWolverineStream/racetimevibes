@@ -3,6 +3,8 @@ paths:
   - ".github/workflows/**"
   - "scripts/version_assets.py"
   - "tests/test_version_assets.py"
+  - "scripts/publish_site.py"
+  - "tests/test_publish_site.py"
 ---
 
 # Workflows and asset versioning
@@ -13,3 +15,4 @@ paths:
 - `update-data.yml` is the only caller of `build_stats.py --lock-seasons`. Its pushes use `GITHUB_TOKEN`, which triggers no workflow, so it starts **Deploy GitHub Pages** itself.
 - `update-bios.yml` has no `concurrency` group on purpose: the same group as its callee would deadlock.
 - `version_assets.py` hashes `site/index.html` and `VERSIONED_ASSETS` into one token, rewrites every asset reference to `?v=<token>` and writes `site/version.json`. The Barlow fonts are not stamped.
+- `pages.yml` deploys the copy `publish_site.py` writes to `$RUNNER_TEMP/site`: `site/` with every CSS comment line removed, and nothing else changed. Keep that step after the tests and the upload pointed at its output. Stamps hash the source, not the copy.

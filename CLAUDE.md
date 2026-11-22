@@ -32,7 +32,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
    - `race-stats.json`: `SCHEMA_VERSION` in `build_stats.py` and `validateData` in `app.js`.
    - `comments.json`: `COMMENTS_SCHEMA_VERSION` in `comment_stats.py` and `ui.js`.
 6. **The README and `docs/` are the spec.** Update the matching doc in the same change as any behaviour change. Badges follow the `badges` skill (`.claude/skills/badges/SKILL.md`).
-7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.12+. The site is plain files. ImageMagick is needed only by `badge_images.py` and `pokemon_images.py` (7), and by `avatar_mirror.py` when it downloads (6 or 7; the bot installs 6 only then).
+7. **No third-party dependencies, no build step.** Python is stdlib-only, 3.12+. The site is plain files, deployed as committed except that `pages.yml` strips the comments from its CSS (`publish_site.py`). ImageMagick is needed only by `badge_images.py` and `pokemon_images.py` (7), and by `avatar_mirror.py` when it downloads (6 or 7; the bot installs 6 only then).
 8. **Ladder rating invariants are tested across the whole archive**, for the overall, every mode, and every season and season-mode track:
    - A winner's points never fall. Finish times never affect the rating.
    - Mode and season ratings use the overall parameters, untuned; every racer debuts at 1000 in every season. A locked season's ledger wins over what the rating computes today.
@@ -53,7 +53,7 @@ A static dashboard for the ALTTPR Step Ladder category on racetime.gg.
 | `docs/highlights.md` | Tags, badges, badges given by hand, streaks, presets, records, claims, facts, featured racer | `highlights.py`, `badge_images.py`, `badge_overrides.py`, `featured.py` |
 | `docs/avatars.md` | Avatar mirror, Pokémon avatars, sprites, avatar changes | `avatar_mirror.py`, `pokemon_avatars.py`, `pokemon_images.py` |
 | `docs/dashboard.md` | Everything the page shows and does | `site/` |
-| `docs/operations.md` | Refresh steps and options, asset versioning, browser caching, tests, workflows | `.github/workflows/`, `version_assets.py` |
+| `docs/operations.md` | Refresh steps and options, asset versioning, browser caching, tests, workflows, deployment | `.github/workflows/`, `version_assets.py`, `publish_site.py` |
 | `docs/analyses.md` | Mode overlap, schedule planner and lab, rating lab | `mode_overlap.py`, `schedule_planner.py`, `schedule_lab.py`, `rating_lab.py` |
 | `docs/testing.md` | Test tiers, where a new test goes, rules for every test, time budgets | `tests/`, `tests/analyses/` |
 

@@ -29,12 +29,14 @@ jobs:
         run: python -m unittest discover -s tests -v --durations 10
       - name: Check site JavaScript syntax
         run: for f in site/*.js; do node --check "$f"; done
+      - name: Strip CSS comments for the deploy
+        run: python scripts/publish_site.py "${{ runner.temp }}/site"
       - name: Configure Pages
         uses: actions/configure-pages@v6
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: site
+          path: ${{ runner.temp }}/site
 
   deploy:
     needs: test

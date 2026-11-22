@@ -88,6 +88,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 - A sideways scroller at 980px and below uses the scroll-shadow backgrounds in `styles.css` (`.table-wrap--leaderboard`, `.mode-toggle`), with `--scroll-cue` as the shadow. The cover gradient must match the ground behind the container.
 - A table with a sticky column uses `border-collapse: separate`. A collapsed border is painted by the table, so a sticky cell's background can cover it.
 - `styles.css` is organised by `/* Section */` comments. Add rules to the matching section and never reorder existing ones: the cascade depends on order.
+- The deploy strips every CSS comment (`scripts/publish_site.py`), so explain freely: comments cost no visitor anything. Each comment has its lines to itself, never after or before code on a line, or the publish fails. Nothing may depend on a comment at runtime.
 
 ## Checking the page
 

@@ -1,8 +1,8 @@
 # Operations
 
 - **Purpose:** how to refresh the data, restamp the static assets, run the tests, and how the workflows test, refresh and deploy.
-- **Read before:** running the pipeline by hand, or changing a workflow or `version_assets.py`.
-- **Code:** `.github/workflows/`, `scripts/version_assets.py`, and the pipeline scripts in [README › Quick start](../README.md#quick-start).
+- **Read before:** running the pipeline by hand, or changing a workflow, `version_assets.py` or `publish_site.py`.
+- **Code:** `.github/workflows/`, `scripts/version_assets.py`, `scripts/publish_site.py`, and the pipeline scripts in [README › Quick start](../README.md#quick-start).
 
 ## Refreshing the data
 
@@ -104,6 +104,11 @@ The production suite's `Committed*` classes check the committed files.
 ## Deployment
 
 - `.github/workflows/pages.yml` runs the production suite and `node --check` on `site/*.js`, then deploys `site/` whenever `main` is pushed, or from **Actions › Deploy GitHub Pages**. Pages must be set to deploy from GitHub Actions.
+- **The deployed copy has no CSS comments.** After the checks, `python scripts/publish_site.py "$RUNNER_TEMP/site"` copies `site/` to the runner's temp directory and removes every comment line from its stylesheets. The comments are a third of the CSS once it is gzipped. Everything else, whitespace included, ships as committed.
+  - Each CSS comment must have its lines to itself. A comment that shares a line with code fails the publish, and a test in the production suite (`test_publish_site.py`) fails first, so a stylesheet that would break the deploy never reaches it.
+  - The `?v=` stamps hash the source, so a change to a comment alone also gives new asset URLs. That does no harm.
+  - To preview what ships: `python3 scripts/publish_site.py "$TMPDIR/site" && python3 -m http.server 8000 -d "$TMPDIR/site"`. The output directory must not exist yet.
+- Compression is left to the hosts: GitHub Pages gzips CSS, JS and JSON, and Cloudflare passes that through. A Brotli or zstd setting at Cloudflare would not shrink them, because its on-the-fly levels compress this CSS no better than GitHub's gzip.
 - After the tests pass, their job uploads the Pages artifact; a separate deploy job waits for it, avoiding an immediate artifact lookup that can race the upload.
 - `.github/workflows/analysis-tests.yml` runs the analysis suite on pushes to `main` and on pull requests that change `scripts/`, `tests/analyses/`, `schedule-plan.json` or the workflow itself, weekly against the newest archive (the run that carries the rating monitors), and on demand. It never blocks a deploy.
 
