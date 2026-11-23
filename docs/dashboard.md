@@ -423,8 +423,8 @@ A page that sets two racers on one mirrored card. It computes everything in the 
 
 ## Automatic updates
 
-`site/version-check.js` checks `version.json` when the page loads, whenever the tab becomes visible again, and every five minutes. It reloads the page once if the published token no longer matches the one embedded in the loaded document (see [Versioning static assets](operations.md#versioning-static-assets)).
+`site/version-check.js` checks `version.json` when the page loads, whenever the tab becomes visible again, and every 30 minutes, but never within 5 minutes of the previous check, so switching tabs back and forth costs at most one request per 5 minutes. It reloads the page once if the published token no longer matches the one embedded in the loaded document (see [Versioning static assets](operations.md#versioning-static-assets)).
 
 - A check on load or when the tab becomes visible reloads at once.
-- A five-minute poll that finds a new version while the page is on screen waits instead, and reloads at the next visibility change, so the page never reloads under someone reading it. A tab that stays on screen the whole time therefore keeps the old version until it is hidden.
+- A 30-minute poll that finds a new version while the page is on screen waits instead, and reloads as soon as the tab is hidden, with the version it already found and no second check, so the page never reloads under someone reading it. A tab that stays on screen the whole time therefore keeps the old version until it is hidden.
 - The reload is guarded by `sessionStorage`: a tab reloads at most once per newly published version. Without that guard a browser still serving a cached `index.html` would report the old token forever and reload in a loop.
