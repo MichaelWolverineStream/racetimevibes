@@ -120,6 +120,7 @@ CLAIM_KINDS = (
 TAG_KINDS = (
     "record",
     "preset_record",
+    "season_record",
     "first_win",
     "upset",
     "photo",
@@ -978,6 +979,8 @@ def compute(
     blowouts: list[list[Any]] = []
     big_fields: list[list[Any]] = []
     preset_steps: dict[int, list[list[Any]]] = {p: [] for p in range(len(presets))}
+    # The fastest whole-second time on each preset within each season, keyed by (season, preset).
+    season_preset_best: dict[tuple[int, int], int] = {}
     season_photos: dict[int, list[list[Any]]] = defaultdict(list)
     season_blowouts: dict[int, list[list[Any]]] = defaultdict(list)
     season_big_fields: dict[int, list[list[Any]]] = defaultdict(list)
@@ -1049,6 +1052,19 @@ def compute(
                 tags["preset_record"].append(
                     ["preset_record", fastest[0], fastest_seconds, preset_best[1]]
                 )
+
+        # Season record: the race's fastest time against the best on its preset earlier in
+        # its season, unless a wider record already tagged this race. The season best moves
+        # either way, so a later race is judged against the record that race set.
+        if timed and rec["p"] is not None and season is not None:
+            season_key = (season, rec["p"])
+            season_best = season_preset_best.get(season_key)
+            if season_best is None or fastest_seconds < season_best:
+                if season_best is not None and not tags["record"] and not tags["preset_record"]:
+                    tags["season_record"].append(
+                        ["season_record", fastest[0], fastest_seconds, season_best]
+                    )
+                season_preset_best[season_key] = fastest_seconds
 
         # Upset, from pre-race ratings.
         if winner is not None and len(entries) >= UPSET_MIN_ENTRANTS:

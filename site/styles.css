@@ -102,11 +102,14 @@
   --me-wash: #e9f1ee;
   --negative-on-me: #b8443a;
   /* One hue per race-tag kind, in race-tag order with Hardest last; every pair stays apart under colour-blind simulation.
-     The record kinds share PB's green on purpose: a record is a PB for the whole ladder. Their shine (ui.css) and labels tell them apart.
+     The all-time record kinds share PB's green on purpose: a record is a PB for the whole ladder. Their shine (ui.css) and labels tell them apart.
      Preset PB shares PB's green on purpose too: its label tells them apart.
+     Season record has its own violet: a record on a narrower scope, so it wears the records' fill and sparkle but not their
+     glow or sheen (ui.css).
      Badges are gold, and a rarer badge shines more (ui.css). The gold is its own value, so medals can change apart. */
   --tag-record: var(--tag-pb);
   --tag-preset-record: var(--tag-pb);
+  --tag-season-record: #7f30e7;
   --tag-first-win: #842375;
   --tag-upset: var(--red);
   --tag-photo: #3152a5;
@@ -210,6 +213,7 @@
   --corner-b: #3987e5;
   --me-wash: #24352e;
   --negative-on-me: #fe7365;
+  --tag-season-record: #9250fb;
   --tag-first-win: #b14f9f;
   --tag-photo: #5c82da;
   --tag-pb: #66ceac;

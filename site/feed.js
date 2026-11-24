@@ -28,6 +28,7 @@ const Feed = (() => {
     ["preset_pb", "Preset PB"],
     ["record", "Mode record"],
     ["preset_record", "Preset record"],
+    ["season_record", "Season record"],
     ["first_win", "First win"],
     ["upset", "Upset"],
     ["photo", "Photo finish"],
@@ -56,7 +57,7 @@ const Feed = (() => {
   const RECAP_PLACES_SHOWN = 6;
   const RECAP_TIP_RACES = 8;
   // Race-tag order (docs/highlights.md): the order a celebration is picked in.
-  const CELEBRATION_KINDS = ["record", "preset_record", "first_win", "upset", "photo", "pb", "preset_pb", "milestone", "badge"];
+  const CELEBRATION_KINDS = ["record", "preset_record", "season_record", "first_win", "upset", "photo", "pb", "preset_pb", "milestone", "badge"];
 
   function element(tag, className, text = null) {
     const node = document.createElement(tag);
@@ -259,7 +260,7 @@ const Feed = (() => {
     };
   }
 
-  function describeTag(tag) {
+  function describeTag(tag, race) {
     const [kind, playerIndex, a, b] = tag;
     switch (kind) {
       case "record": {
@@ -271,6 +272,12 @@ const Feed = (() => {
           kind,
           label: "Preset record",
           detail: `${playerName(playerIndex)}: ${formatDuration(a)}, previous record ${formatDuration(b)}`,
+        };
+      case "season_record":
+        return {
+          kind,
+          label: "Season record",
+          detail: `${playerName(playerIndex)}: ${formatDuration(a)}, previous Season ${race.s} record ${formatDuration(b)}`,
         };
       case "first_win":
         return { kind, label: "First win", detail: `${playerName(playerIndex)} won for the first time` };
@@ -324,7 +331,7 @@ const Feed = (() => {
         }
         return;
       }
-      const description = describeTag(tag);
+      const description = describeTag(tag, race);
       if (description) {
         descriptions.push(description);
       }
@@ -351,20 +358,20 @@ const Feed = (() => {
   }
 
   // One tag on its own, for the entrant it names: PBs and badges are grouped only on the race row.
-  function tagDescription(tag) {
+  function tagDescription(tag, race) {
     if (Object.hasOwn(PB_LABELS, tag[0])) {
       return pbTag(tag[0], [tag]);
     }
     if (tag[0] === "badge") {
       return badgeTag([tag]);
     }
-    return describeTag(tag);
+    return describeTag(tag, race);
   }
 
   function entrantTagDescriptions(race, playerIndex) {
     return (race.t || [])
       .filter((tag) => tag[1] === playerIndex)
-      .map(tagDescription)
+      .map((tag) => tagDescription(tag, race))
       .filter(Boolean);
   }
 
@@ -1061,6 +1068,8 @@ const Feed = (() => {
         return `You got the ${mode} record! ${formatDuration(a)}`;
       case "preset_record":
         return `You got the ${preset} record! ${formatDuration(a)}`;
+      case "season_record":
+        return `You got the ${preset} season record! ${formatDuration(a)}`;
       case "first_win":
         return "You got your first win!";
       case "upset":
@@ -1134,6 +1143,8 @@ const Feed = (() => {
         return `${modeLabel(modeName(race))} record`;
       case "preset_record":
         return `${participants.presets[race.p].n} record`;
+      case "season_record":
+        return `${participants.presets[race.p].n} season record`;
       case "upset":
         return "Upset win";
       case "photo":
@@ -1338,7 +1349,7 @@ const Feed = (() => {
   function spotlightCard({ playerIndex, raceIndex, tag, bio }) {
     const player = participants.players[playerIndex];
     const race = participants.races[raceIndex];
-    const description = tagDescription(tag) ?? { kind: "badge", detail: null, rarity: "common" };
+    const description = tagDescription(tag, race) ?? { kind: "badge", detail: null, rarity: "common" };
     const kind = TAG_KINDS.has(tag[0]) ? tag[0] : "badge";
     const card = UI.markRacers(element("article", "feed-spotlight"), [playerIndex]);
     card.style.setProperty("--spot", `var(--tag-${kind.replaceAll("_", "-")})`);

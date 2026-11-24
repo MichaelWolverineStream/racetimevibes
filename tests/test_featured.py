@@ -158,6 +158,21 @@ class ReplayTests(unittest.TestCase):
         best = {(pick.day - DAY_ZERO).days: pick.race for pick in picks}
         self.assertEqual(best, {22: 1, 23: 1, **{day: 3 for day in range(24, 38)}})
 
+    def test_a_season_record_ranks_between_a_milestone_and_a_pb_with_a_pbs_tickets(self):
+        races = [
+            leaders(),
+            race(20, [entry(3)], tags=[["season_record", 3, 1, 2]]),
+            race(21, [entry(3)], tags=[["pb", 3, 1, 2]]),
+            race(22, [entry(3)], tags=[["milestone", 3, 25]]),
+        ]
+        with mock.patch.object(featured, "COOLDOWN_DAYS", 1):
+            picks = featured.replay(races, ids(4), MODES)
+        best = {(pick.day - DAY_ZERO).days: pick.race for pick in picks}
+        # The season record beats the later PB, then the milestone beats both.
+        self.assertEqual(best, {22: 1, 23: 1, **{day: 3 for day in range(24, 38)}})
+        tickets = dict(featured.HIGHLIGHT_ORDER)
+        self.assertEqual(tickets["season_record"], tickets["pb"])
+
     def test_badge_rarity_is_measured_at_the_cutoff(self):
         # 50 racers by day 10, when 3 alone unlocks "keys" (2%: legendary); 30 more unlock it on day 30.
         races = [leaders(), race(1, [entry(p) for p in range(3, 50)])]

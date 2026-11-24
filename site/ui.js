@@ -11,7 +11,7 @@ const COMMENTS_SCHEMA_VERSION = 2;
 const PALINDROME_EVENT = "racetimevibes:palindrome";
 const DIALOG_DEFAULT_MS = 3000;
 const SPEECH_AVATAR_SIZES = { hero: 56, compact: 28 };
-const TAG_KINDS = new Set(["pb", "preset_pb", "record", "preset_record", "first_win", "photo", "upset", "hardest", "milestone", "badge"]);
+const TAG_KINDS = new Set(["pb", "preset_pb", "record", "preset_record", "season_record", "first_win", "photo", "upset", "hardest", "milestone", "badge"]);
 // A badge's rarity by the share of racers holding it, rarest first: the first limit the share is
 // at or under names it, and a share above every limit is common. Names must match the
 // .ui-tag--rare and .ui-tag--legendary rules in ui.css.

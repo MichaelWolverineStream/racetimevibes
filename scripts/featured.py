@@ -47,6 +47,7 @@ HIGHLIGHT_ORDER = (
     ("photo", 4),
     ("rare_badge", 4),
     ("milestone", 4),
+    ("season_record", 1),
     ("pb", 1),
     ("preset_pb", 1),
     ("badge", 1),

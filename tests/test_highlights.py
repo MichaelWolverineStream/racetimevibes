@@ -209,6 +209,83 @@ class PresetRecordTests(unittest.TestCase):
             self.assertEqual(tags_of(result, index, "preset_record"), [])
 
 
+class SeasonRecordTests(unittest.TestCase):
+    presets = PresetRecordTests.presets
+    # Season 1 holds the mode and preset records, so season 2's slower races set neither.
+    opening = (
+        duel(0, 1, first_seconds=3000.0, preset=0),
+        duel(0, 1, first_seconds=3600.0, preset=0, day=1),
+    )
+
+    def test_the_first_race_on_a_preset_in_a_season_is_the_baseline_and_untagged(self):
+        result = run(list(self.opening), presets=self.presets, seasons=[1, 2])
+        self.assertEqual(tags_of(result, 0, "season_record"), [])
+        self.assertEqual(tags_of(result, 1, "season_record"), [])
+
+    def test_an_improvement_on_the_seasons_own_best_is_tagged_with_it(self):
+        # 3500 is slower than season 1's 3000, so only season 2's best can be beaten.
+        records = [*self.opening, duel(2, 1, first_seconds=3500.4, preset=0, day=2)]
+        result = run(records, presets=self.presets, seasons=[1, 2, 2])
+        self.assertEqual(tags_of(result, 2, "season_record"), [["season_record", 2, 3500, 3600]])
+        self.assertEqual(tags_of(result, 2, "record") + tags_of(result, 2, "preset_record"), [])
+
+    def test_equal_slower_or_sub_second_improvements_are_not_tagged(self):
+        for seconds in (3600.0, 3599.6, 3600.4, 3700.0):
+            with self.subTest(seconds=seconds):
+                records = [*self.opening, duel(0, 1, first_seconds=seconds, preset=0, day=2)]
+                result = run(records, presets=self.presets, seasons=[1, 2, 2])
+                self.assertEqual(tags_of(result, 2, "season_record"), [])
+
+    def test_a_wider_record_is_not_also_a_season_record_but_still_sets_the_seasons_best(self):
+        openings = {
+            "record": [duel(0, 1, first_seconds=3600.0, preset=0)],
+            # Preset 1 holds the mode record, so preset 0's 3500 is a preset record alone.
+            "preset_record": [
+                duel(0, 1, first_seconds=3000.0, preset=1),
+                duel(0, 1, first_seconds=3600.0, preset=0),
+            ],
+        }
+        for wider, opening in openings.items():
+            records = [
+                *opening,
+                duel(2, 1, first_seconds=3500.0, preset=0, day=1),
+                # Faster than 3600 but not than the wider record's 3500.
+                duel(3, 1, first_seconds=3550.0, preset=0, day=2),
+            ]
+            with self.subTest(wider=wider):
+                result = run(records, presets=self.presets, seasons=[1] * len(records))
+                record_race = len(opening)
+                self.assertEqual(len(tags_of(result, record_race, wider)), 1)
+                self.assertEqual(tags_of(result, record_race, "season_record"), [])
+                self.assertEqual(tags_of(result, record_race + 1, "season_record"), [])
+
+    def test_each_preset_keeps_its_own_season_best(self):
+        records = [
+            duel(0, 1, first_seconds=3000.0, preset=0),
+            duel(0, 1, first_seconds=3100.0, preset=1),
+            duel(0, 1, first_seconds=3600.0, preset=0, day=1),
+            duel(0, 1, first_seconds=3500.0, preset=1, day=2),
+            duel(0, 1, first_seconds=3400.0, preset=1, day=3),
+        ]
+        result = run(records, presets=self.presets, seasons=[1, 1, 2, 2, 2])
+        # Preset 1's first season-2 race is its own baseline, not a record against preset 0's 3600.
+        self.assertEqual(tags_of(result, 3, "season_record"), [])
+        self.assertEqual(tags_of(result, 4, "season_record"), [["season_record", 0, 3400, 3500]])
+
+    def test_races_without_a_preset_times_or_season_do_not_tag(self):
+        improved = duel(0, 1, first_seconds=3500.0, preset=0, day=2)
+        cases = {
+            "no preset": (duel(0, 1, first_seconds=3500.0, day=2), [1, 2, 2]),
+            "no times": (record([dnf(0), dq(1)], preset=0, day=2), [1, 2, 2]),
+            "no season": (improved, [1, 2, None]),
+            "no seasons given": (improved, None),
+        }
+        for name, (last, seasons) in cases.items():
+            with self.subTest(name):
+                result = run([*self.opening, last], presets=self.presets, seasons=seasons)
+                self.assertEqual(tags_of(result, 2, "season_record"), [])
+
+
 class PresetPersonalBestTests(unittest.TestCase):
     presets = ({"m": 0, "n": "Easy"}, {"m": 0, "n": "Hard"})
 
@@ -1662,8 +1739,10 @@ class UpsetTests(unittest.TestCase):
         self.assertEqual(kinds, ["record", "first_win", "upset", "photo", "pb", "pb", "pb", "badge", "badge"])
         order = highlights.TAG_KINDS
         self.assertEqual(order.index("preset_record"), order.index("record") + 1)
+        self.assertEqual(order.index("season_record"), order.index("preset_record") + 1)
         self.assertEqual(order.index("preset_pb"), order.index("pb") + 1)
         self.assertIn("preset_record", result["diagnostics"]["tag_counts"])
+        self.assertIn("season_record", result["diagnostics"]["tag_counts"])
         self.assertIn("preset_pb", result["diagnostics"]["tag_counts"])
 
 

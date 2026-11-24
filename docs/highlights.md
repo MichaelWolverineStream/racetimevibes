@@ -8,13 +8,15 @@
 
 ## Race tags
 
-Within a race, tags appear in the order mode record, preset record, first win, upset, photo, PB, preset PB, milestone, badge.
+Within a race, tags appear in the order mode record, preset record, season record, first win, upset, photo, PB, preset PB, milestone, badge.
 
 Each kind has its own colour, and so does the Hardest preset tag. The colour fills the tag's dot and outlines its pill. The colours stay distinct from each other under colour-blind simulation in both the light and the dark theme, and every tag names its kind, so colour is never the only cue.
 
-The two record tags are the exception: they share the PB tag's green, because a record is a PB for the whole ladder, and they shine instead. Their pill has a green-tinted fill and a soft glow, their dot is a four-point sparkle, and a sheen sweeps across them every four seconds. With reduced motion the sheen stays still and the rest remains.
+The two all-time record tags, Mode record and Preset record, are the exception: they share the PB tag's green, because a record is a PB for the whole ladder, and they shine instead. Their pill has a green-tinted fill and a soft glow, their dot is a four-point sparkle, and a sheen sweeps across them every four seconds. With reduced motion the sheen stays still and the rest remains.
 
 The Preset PB tag shares the PB tag's green too, without the shine, because it is a PB on a narrower scope. Its label tells the two apart.
+
+The Season record tag has its own violet. It is a record on a narrower scope, so it wears only part of the records' shine: the tinted fill and the four-point sparkle dot, with no glow and no sheen. It never moves.
 
 Badge tags are gold, so a badge never looks like a PB, and a rarer badge shines more. Rarity is the share of all racers who hold the badge today, the same share its tooltip shows, so a badge's rarity can drop as more racers earn it:
 
@@ -26,6 +28,7 @@ The Badge count in the *New since your last visit* header stands for several bad
 
 - **Mode record:** the race's fastest time beats the mode's record in whole seconds, the precision the page shows. The first race in a mode sets the baseline and is not tagged.
 - **Preset record:** the race's fastest time beats the preset's record in whole seconds, and the race does not set a mode record. A mode record always beats the preset's record too, so a race carries one record tag at most, the wider one. The first race in a preset sets the baseline and is not tagged. A race without a preset has no preset record.
+- **Season record:** the race's fastest time beats, in whole seconds, the fastest time on the same preset earlier in the race's [season](definitions.md#seasons), and the race sets neither a mode record nor a preset record. An all-time record always beats the season's too, so a race still carries one record tag at most, the widest one, and that race still becomes the season's best on its preset. The first race on a preset in a season sets that season's baseline and is not tagged. A race without a preset or without a season has no season record.
 - **First win:** the racer's first place-1 result in any mode.
 - **Upset:** the winner's pre-race win chance against the favourite is 15% or less. The favourite is the highest pre-race overall rating among the entrants who are not provisional; the race needs at least 3 identified entrants, and the winner must not be the favourite.
 - **Photo finish:** places 1 and 2 are both timed finishers separated by less than 5 seconds. The margin uses the exact times.
@@ -224,7 +227,7 @@ The [Featured daily racer](dashboard.md#featured-daily-racer) is one racer a day
   |---|---|---|
   | 1–3 | Mode record, preset record, legendary badge | 8 |
   | 4–8 | Upset, first win, photo finish, rare badge, milestone | 4 |
-  | 9–12 | PB, Preset PB, common badge, any other tag | 1 |
+  | 9–13 | Season record, PB, Preset PB, common badge, any other tag | 1 |
 
   - A badge's rarity uses the badge tags' 2% and 10% thresholds (see [Race tags](#race-tags)), but on the share at the end of D−2: the racers holding it by then over the racers who had entered a race by then. Today's share would change past picks.
 - **Excluded:**

@@ -186,6 +186,10 @@
   --kind-color: var(--tag-preset-record);
 }
 
+.ui-tag--season_record {
+  --kind-color: var(--tag-season-record);
+}
+
 .ui-tag--first_win {
   --kind-color: var(--tag-first-win);
 }
@@ -219,11 +223,14 @@
 }
 
 /* Shine comes in three layers: a tinted fill, a glow, and a sheen that sweeps across now and
-   then, plus a sparkle for a dot. Record tags share PB's green but wear it all. A common badge
-   has none of it; UI.tag adds --rare (the fill alone) or --legendary (the fill, a glow, the
-   sheen and the sparkle) by how few racers hold it. Reduced motion keeps all but the sweep. */
+   then, plus a sparkle for a dot. All-time record tags share PB's green but wear it all. The season
+   record, a record on a narrower scope, wears the fill and the sparkle alone, so it never moves.
+   A common badge has none of it; UI.tag adds --rare (the fill alone) or --legendary (the fill,
+   a glow, the sheen and the sparkle) by how few racers hold it. Reduced motion keeps all but
+   the sweep. */
 .ui-tag--record,
 .ui-tag--preset_record,
+.ui-tag--season_record,
 .ui-tag--rare,
 .ui-tag--legendary {
   background: color-mix(in srgb, var(--kind-color) 14%, var(--panel));
@@ -251,6 +258,7 @@
 
 .ui-tag--record .ui-tag__dot,
 .ui-tag--preset_record .ui-tag__dot,
+.ui-tag--season_record .ui-tag__dot,
 .ui-tag--legendary .ui-tag__dot {
   width: 9px;
   height: 9px;
