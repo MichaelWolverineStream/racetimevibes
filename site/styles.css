@@ -1454,6 +1454,7 @@ body.viewing-player #dashboard,
 body.viewing-player #top-rated,
 body.viewing-player #upcoming,
 body.viewing-player #updates,
+body.viewing-player #presets,
 body.viewing-player #pool-room,
 body.viewing-player #leaderboard {
   display: none;
@@ -1465,6 +1466,7 @@ body.viewing-faceoff #dashboard,
 body.viewing-faceoff #top-rated,
 body.viewing-faceoff #upcoming,
 body.viewing-faceoff #updates,
+body.viewing-faceoff #presets,
 body.viewing-faceoff #pool-room,
 body.viewing-faceoff #leaderboard {
   display: none;

@@ -32,7 +32,8 @@ BASE_URL = "https://alttpr.racing/api/v1"
 SCHEDULE_DIRECTORY = "ladder-schedule"
 MODES_FILE = "modes.json"
 SEASON_FILE = re.compile(r"season-(\d+)\.json")
-# alttpr.racing names no archetypes, so this map is checked against the races they became.
+# alttpr.racing names no archetypes. Archetype 8 never became a race, and its Crosskeys
+# presets place it in entrance; the rest of the map is checked against the races they became.
 ARCHETYPE_CATEGORIES = {
     1: "simple",
     2: "entrance",
@@ -41,6 +42,7 @@ ARCHETYPE_CATEGORIES = {
     5: "glitched",
     6: "fun",
     7: "mystery",
+    8: "entrance",
     9: "spoiler",
 }
 SEED_RACE_PATTERN = re.compile(r"getseed\.php\?race=(\d+)")

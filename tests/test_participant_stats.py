@@ -75,6 +75,8 @@ def payload(
     schedule_modes=None,
     season_names=None,
     badge_overrides=None,
+    preset_slots=None,
+    schedule_counted_through=None,
 ):
     # Each race file was fetched when its race ended.
     envelopes = [{"fetched_at": item["ended_at"], "race": item} for item in races]
@@ -98,6 +100,8 @@ def payload(
         schedule_modes=schedule_modes,
         season_names=season_names,
         badge_overrides=badge_overrides,
+        preset_slots=preset_slots,
+        schedule_counted_through=schedule_counted_through,
     )
 
 
@@ -1217,6 +1221,7 @@ class CommittedParticipantDataTests(unittest.TestCase):
             "seasons",
             "season_names",
             "upcoming",
+            "preset_slots",
             "medal_tiers",
         ):
             self.assertIn(key, self.participants)
@@ -1240,6 +1245,29 @@ class CommittedParticipantDataTests(unittest.TestCase):
         self.assertIn(highlights.CASUAL_BOOTS_PRESET, preset_names)
         season_numbers = {season["n"] for season in self.participants["seasons"]}
         self.assertIn(highlights.PANDAMONIUM_SEASON, season_numbers)
+
+    def test_preset_slots_reconcile_with_the_dashboard_dataset(self):
+        published = self.participants["preset_slots"]
+        rows = published["rows"]
+        schedule = self.stats["diagnostics"]["schedule"]
+        self.assertEqual(published["counted_through"], self.stats["source"]["schedule_counted_through"])
+        self.assertEqual(sum(row[3] for row in rows), schedule["scheduled_count"])
+        self.assertEqual(sum(row[4] for row in rows), schedule["started_count"])
+        for season in self.stats["seasons"]:
+            season_rows = [row for row in rows if row[0] == season["season"]]
+            self.assertEqual(sum(row[3] for row in season_rows), season["scheduled_count"])
+            self.assertEqual(sum(row[4] for row in season_rows), season["started_count"])
+
+    def test_preset_slot_rows_are_consistent_with_the_presets(self):
+        modes = self.participants["modes"]
+        known = {(preset["m"], preset["n"]) for preset in self.participants["presets"]}
+        for season, mode, preset, scheduled, started in self.participants["preset_slots"]["rows"]:
+            with self.subTest(row=[season, mode, preset]):
+                self.assertLessEqual(started, scheduled)
+                if started and mode is not None and preset is not None:
+                    self.assertIn((mode, preset), known)
+                if mode is not None:
+                    self.assertLess(mode, len(modes))
 
     def test_avatars_are_mirror_names_or_sprites(self):
         pattern = re.compile(r"^[0-9a-f]{16}\.webp$")
@@ -1462,6 +1490,7 @@ class CommittedParticipantDataTests(unittest.TestCase):
                 "seasons",
                 "season_names",
                 "upcoming",
+                "preset_slots",
                 "diagnostics",
             },
         )
@@ -1556,11 +1585,11 @@ class CommittedParticipantDataTests(unittest.TestCase):
 
 
 class UpcomingPayloadTests(unittest.TestCase):
-    # archetype 1 is "simple", 2 is "entrance", 8 has no category.
+    # archetype 1 is "simple", 2 is "entrance", the next one after the map has none.
     MODES = [
         {"id": 1, "archetype": 1, "name": "Open"},
         {"id": 2, "archetype": 2, "name": "Entrance Open"},
-        {"id": 3, "archetype": 8, "name": "Odd"},
+        {"id": 3, "archetype": max(schedule_archive.ARCHETYPE_CATEGORIES) + 1, "name": "Odd"},
     ]
     NEWEST = "2026-09-17T20:00:00Z"
 
@@ -1622,6 +1651,34 @@ class UpcomingPayloadTests(unittest.TestCase):
 
     def test_without_a_schedule_there_is_nothing_upcoming(self):
         self.assertEqual(payload(self.races())["upcoming"], [])
+
+    def test_preset_slots_are_published_as_encoded_rows(self):
+        rows = [
+            {"season": 1, "mode": "simple", "preset": "Open", "scheduled_count": 3, "started_count": 2},
+            {"season": 1, "mode": "entrance", "preset": None, "scheduled_count": 1, "started_count": 0},
+            {"season": None, "mode": "simple", "preset": "Cancelled", "scheduled_count": 1, "started_count": 0},
+        ]
+        result = payload(
+            self.races(), preset_slots=rows, schedule_counted_through="2026-09-17T20:00:00Z"
+        )
+        simple = result["modes"].index("simple")
+        self.assertEqual(
+            result["preset_slots"],
+            {
+                "counted_through": "2026-09-17T20:00:00Z",
+                "rows": [
+                    [1, simple, "Open", 3, 2],
+                    # The entrance category is not published, as no race was run in it.
+                    [1, None, None, 1, 0],
+                    [None, simple, "Cancelled", 1, 0],
+                ],
+            },
+        )
+
+    def test_without_preset_slots_there_are_no_rows(self):
+        self.assertEqual(
+            payload(self.races())["preset_slots"], {"counted_through": None, "rows": []}
+        )
 
     def test_season_names_are_published(self):
         names = self.result([], season_names={11: "Panda"})["season_names"]

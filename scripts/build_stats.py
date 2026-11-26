@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import bisect
 import calendar
 import math
 import re
@@ -140,10 +141,60 @@ def extract_preset(info: str) -> str | None:
     preset = match.group(1).strip()
     if PRESET_URL_TAIL.search(preset):
         preset = PRESET_SLUG_TAIL.sub("", PRESET_URL_TAIL.sub("", preset))
-    preset = preset.replace("[", "(").replace("]", ")")
+    return normalize_preset(preset)
+
+
+def normalize_preset(text: str) -> str | None:
+    """Return a preset name with brackets as parentheses, whitespace collapsed and
+    the Grab Bag option list dropped, or None when nothing is left."""
+    preset = text.replace("[", "(").replace("]", ")")
     preset = " ".join(preset.split())
     preset = " ".join(_collapse_grab_bag(preset).split())
     return preset or None
+
+
+def slot_presets(
+    joined: list[schedule_archive.JoinedSlot],
+) -> dict[int, tuple[str, str | None]]:
+    """Give every joined slot a (mode, preset), keyed by the slot's id.
+
+    A started slot takes its race's. A slot that never started takes those of the
+    nearest started slot with the same schedule mode id: the smaller gap between start
+    times wins, the earlier slot on a tie. The schedule's names differ from the race
+    presets and change over time ("Crosskeys [VT]" slots became races named "Crosskeys"
+    until 2026-01-03 and "Crosskeys (VT)" after; "MMMM (Not Slow)" moved from mystery
+    to fun), so a cancelled slot is named as its neighbours were. All joined slots
+    are searched, not only the counted ones, so a name never depends on the
+    counted-through cut. With no started sibling, the slot has its mode's category
+    and its normalized schedule name.
+    """
+    started: dict[int, list[schedule_archive.JoinedSlot]] = defaultdict(list)
+    for slot in joined:
+        if slot.race is not None:
+            started[slot.row["mode"]].append(slot)
+    for slots in started.values():
+        slots.sort(key=lambda slot: slot.started_at)
+    times = {
+        mode_id: [slot.started_at for slot in slots] for mode_id, slots in started.items()
+    }
+
+    presets: dict[int, tuple[str, str | None]] = {}
+    for slot in joined:
+        if slot.race is not None:
+            presets[slot.row["id"]] = (slot.race["mode"], slot.race["preset"])
+            continue
+        siblings = started.get(slot.row["mode"])
+        if not siblings:
+            name = normalize_preset(slot.mode["name"]) if slot.mode else None
+            presets[slot.row["id"]] = (slot.category or "unknown", name)
+            continue
+        sibling_times = times[slot.row["mode"]]
+        after = bisect.bisect_left(sibling_times, slot.started_at)
+        candidates = siblings[max(after - 1, 0) : after + 1]
+        # min keeps the first of equal gaps, which is the earlier slot.
+        nearest = min(candidates, key=lambda c: abs(c.started_at - slot.started_at))
+        presets[slot.row["id"]] = (nearest.race["mode"], nearest.race["preset"])
+    return presets
 
 
 def _average(total: int, count: int) -> float | None:
@@ -685,6 +736,45 @@ def _included_contexts(classified: list[Classification]) -> list[JsonObject]:
     return [context for context, _reason in classified if context is not None]
 
 
+def _preset_slots(
+    slot_records: list[JsonObject], spans: list[schedule_archive.SeasonSpan]
+) -> list[JsonObject]:
+    """Count the counted, unpulled slots and how many started per season, mode and preset.
+
+    A slot is in the season its start falls in, as `_season_summary` buckets it; the
+    season None holds those in none, so the rows sum to the slot totals."""
+    counts: dict[tuple[int | None, str, str | None], list[int]] = {}
+    for slot in slot_records:
+        key = (
+            schedule_archive.season_of(slot["started_at"], spans),
+            slot["mode"],
+            slot["preset"],
+        )
+        scheduled_started = counts.setdefault(key, [0, 0])
+        scheduled_started[0] += 1
+        scheduled_started[1] += slot["started"]
+    rows = [
+        {
+            "season": season,
+            "mode": mode,
+            "preset": preset,
+            "scheduled_count": scheduled,
+            "started_count": started,
+        }
+        for (season, mode, preset), (scheduled, started) in counts.items()
+    ]
+    return sorted(
+        rows,
+        key=lambda row: (
+            row["season"] is None,
+            row["season"] or 0,
+            row["mode"],
+            row["preset"] is None,
+            (row["preset"] or "").casefold(),
+        ),
+    )
+
+
 def aggregate_races(
     races: list[JsonObject],
     *,
@@ -694,7 +784,7 @@ def aggregate_races(
 ) -> JsonObject:
     """Filter and aggregate races and the ladder schedule into the page's JSON schema."""
     spans = schedule_archive.season_spans(schedule)
-    return _aggregate_classified(
+    stats, _ = _aggregate_classified(
         races,
         classify_races(races, spans),
         spans=spans,
@@ -702,6 +792,7 @@ def aggregate_races(
         modes=modes,
         generated_at=generated_at,
     )
+    return stats
 
 
 def _aggregate_classified(
@@ -712,8 +803,11 @@ def _aggregate_classified(
     schedule: list[JsonObject],
     modes: list[JsonObject],
     generated_at: datetime | None = None,
-) -> JsonObject:
-    """Aggregate races already classified by `classify_races` (with the same `spans`)."""
+) -> tuple[JsonObject, list[JsonObject]]:
+    """Aggregate races already classified by `classify_races` (with the same `spans`).
+
+    Returns the race-stats dataset and the per season, mode and preset slot counts
+    `participants.json` publishes."""
     excluded_statuses: Counter[str] = Counter()
     excluded_modes: Counter[str] = Counter()
     excluded_in_season_breaks = 0
@@ -771,6 +865,7 @@ def _aggregate_classified(
     joined = schedule_archive.join_races(schedule, modes, contexts, excluded_seeds)
     scheduled_days = _scheduled_days(joined, spans, archive_start, archive_end)
     joined_races = {slot.race["race"]["name"] for slot in joined if slot.race}
+    presets = slot_presets(joined)
     slot_records: list[JsonObject] = []
     period_slots: dict[str, list[JsonObject]] = defaultdict(list)
     pulled_count = 0
@@ -801,6 +896,8 @@ def _aggregate_classified(
             "local_started_at": local_started_at,
             "racers": slot.race["entrants_count"] if slot.race else 0,
             "started": slot.race is not None,
+            "mode": presets[slot.row["id"]][0],
+            "preset": presets[slot.row["id"]][1],
         }
         slot_records.append(slot_record)
         period_slots[period_id].append(slot_record)
@@ -838,7 +935,7 @@ def _aggregate_classified(
     included_count = len(included_records)
     included_entrant_count = sum(record["entrants_count"] for record in included_records)
 
-    return {
+    stats = {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated.isoformat().replace("+00:00", "Z"),
         "source_url": race_archive.SOURCE_URL,
@@ -882,6 +979,7 @@ def _aggregate_classified(
             "seasons": season_diagnostics,
         },
     }
+    return stats, _preset_slots(slot_records, spans)
 
 
 @dataclass(frozen=True)
@@ -939,7 +1037,7 @@ def build(
     spans = schedule_archive.season_spans(schedule)
     classified = classify_races(races, spans)
     contexts = _included_contexts(classified)
-    stats = _aggregate_classified(
+    stats, preset_slots = _aggregate_classified(
         races,
         classified,
         spans=spans,
@@ -963,6 +1061,8 @@ def build(
         schedule_modes=modes,
         season_names=season_names.load(season_names_path),
         badge_overrides=badge_overrides.load(badge_overrides_path),
+        preset_slots=preset_slots,
+        schedule_counted_through=stats["source"]["schedule_counted_through"],
     )
     comments = comment_stats.build_comments_payload(
         contexts, generated_at=generated_at

@@ -10,10 +10,12 @@ from scripts import build_stats, highlights, race_archive, schedule_archive
 
 
 DEFAULT_ENTRANTS = object()
+# An archetype alttpr.racing lists but the map names no category for.
+UNMAPPED_ARCHETYPE = max(schedule_archive.ARCHETYPE_CATEGORIES) + 1
 MODES = [
     {"id": 1, "archetype": 1, "name": "Open", "active": True},
     {"id": 4, "archetype": 4, "name": "Keys", "active": True},
-    {"id": 8, "archetype": 8, "name": "Odd", "active": True},
+    {"id": 8, "archetype": UNMAPPED_ARCHETYPE, "name": "Odd", "active": True},
 ]
 
 
@@ -367,6 +369,141 @@ class AggregationTests(unittest.TestCase):
 # before the newest race never cuts the schedule short.
 MONDAYS = ("2026-06-01", "2026-06-08", "2026-06-15", "2026-06-22", "2026-06-29")
 NEWEST = race("newest", started_at="2026-08-31T16:00:00Z")
+
+
+def joined_slot(slot_id, mode_id, started_at, *, preset=None, mode="simple", mode_name="Open", archetype=1):
+    """A joined slot that started (a race with `preset`) when `preset` is given."""
+    moment = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+    return schedule_archive.JoinedSlot(
+        row={"id": slot_id, "mode": mode_id, "raceId": None},
+        started_at=moment,
+        mode={"id": mode_id, "archetype": archetype, "name": mode_name},
+        race={"mode": mode, "preset": preset} if preset else None,
+    )
+
+
+class SlotPresetsTests(unittest.TestCase):
+    def test_names_each_slot_by_its_race_or_nearest_started_sibling_or_schedule(self):
+        cases = {
+            "a started slot takes its race's mode and preset": (
+                [joined_slot(1, 1, "2026-06-01T17:00:00Z", preset="Race Name", mode="fun")],
+                {1: ("fun", "Race Name")},
+            ),
+            "a cancelled slot takes the nearest started sibling": (
+                [
+                    joined_slot(1, 1, "2026-06-01T17:00:00Z", preset="Early"),
+                    joined_slot(2, 1, "2026-06-08T17:00:00Z", preset="Late", mode="fun"),
+                    joined_slot(3, 1, "2026-06-06T17:00:00Z"),
+                ],
+                {1: ("simple", "Early"), 2: ("fun", "Late"), 3: ("fun", "Late")},
+            ),
+            "a cancelled slot before and after every sibling takes the only side": (
+                [
+                    joined_slot(1, 1, "2026-06-05T17:00:00Z"),
+                    joined_slot(2, 1, "2026-06-08T17:00:00Z", preset="Only"),
+                    joined_slot(3, 1, "2026-06-20T17:00:00Z"),
+                ],
+                {1: ("simple", "Only"), 2: ("simple", "Only"), 3: ("simple", "Only")},
+            ),
+            "a tie goes to the earlier sibling": (
+                [
+                    joined_slot(1, 1, "2026-06-01T17:00:00Z", preset="Earlier"),
+                    joined_slot(2, 1, "2026-06-05T17:00:00Z"),
+                    joined_slot(3, 1, "2026-06-09T17:00:00Z", preset="Later"),
+                ],
+                {1: ("simple", "Earlier"), 2: ("simple", "Earlier"), 3: ("simple", "Later")},
+            ),
+            "a sibling must share the schedule mode id": (
+                [
+                    joined_slot(1, 2, "2026-06-01T17:00:00Z", preset="Other"),
+                    joined_slot(2, 1, "2026-06-01T17:00:00Z", mode_name="Crosskeys [VT]", archetype=2),
+                ],
+                {1: ("simple", "Other"), 2: ("entrance", "Crosskeys (VT)")},
+            ),
+            "with no started sibling the slot has its category and normalized name": (
+                [joined_slot(1, 1, "2026-06-01T17:00:00Z", mode_name="Keys  [DR]", archetype=4)],
+                {1: ("keys", "Keys (DR)")},
+            ),
+            "an unmapped archetype is unknown": (
+                [joined_slot(1, 1, "2026-06-01T17:00:00Z", archetype=UNMAPPED_ARCHETYPE)],
+                {1: ("unknown", "Open")},
+            ),
+        }
+        for name, (joined, expected) in cases.items():
+            with self.subTest(name):
+                self.assertEqual(build_stats.slot_presets(joined), expected)
+
+
+class PresetSlotsTests(unittest.TestCase):
+    def record(self, started_at, *, started, mode="simple", preset="Open"):
+        return {
+            "started_at": datetime.fromisoformat(started_at.replace("Z", "+00:00")),
+            "started": started,
+            "mode": mode,
+            "preset": preset,
+        }
+
+    def test_counts_slots_per_season_mode_and_preset_in_order(self):
+        spans = schedule_archive.season_spans(
+            [
+                slot(1, None, "2026-06-01T17:00:00Z", season=1),
+                slot(2, None, "2026-06-30T17:00:00Z", season=1),
+                slot(3, None, "2026-07-15T17:00:00Z", season=2),
+            ]
+        )
+        records = [
+            self.record("2026-07-15T17:00:00Z", started=True, mode="keys", preset="b"),
+            self.record("2026-06-02T17:00:00Z", started=True),
+            self.record("2026-06-03T17:00:00Z", started=False),
+            self.record("2026-06-04T17:00:00Z", started=False, preset=None),
+            self.record("2026-06-05T17:00:00Z", started=True, preset="Alpha"),
+            # Before the first season: no season.
+            self.record("2026-01-01T17:00:00Z", started=False),
+        ]
+        rows = build_stats._preset_slots(records, spans)
+        self.assertEqual(
+            [(row["season"], row["mode"], row["preset"]) for row in rows],
+            [
+                (1, "simple", "Alpha"),
+                (1, "simple", "Open"),
+                (1, "simple", None),
+                (2, "keys", "b"),
+                (None, "simple", "Open"),
+            ],
+        )
+        self.assertEqual(
+            [(row["scheduled_count"], row["started_count"]) for row in rows],
+            [(1, 1), (2, 1), (1, 0), (1, 1), (1, 0)],
+        )
+
+    def test_aggregation_leaves_out_pulled_slots_and_slots_past_the_counted_through_cut(self):
+        races = [
+            race("a", started_at="2026-06-01T17:00:00Z", info=seeded(101)),
+            race("b", started_at="2026-06-08T17:00:00Z", info=seeded(105)),
+            NEWEST,
+        ]
+        schedule = published_ahead(
+            [
+                slot(1, 101, "2026-06-01T17:00:00Z"),
+                slot(2, 102, "2026-06-01T19:00:00Z"),
+                slot(3, None, "2026-06-01T21:00:00Z"),
+                slot(5, 105, "2026-06-08T17:00:00Z"),
+                slot(6, 106, "2026-08-31T12:00:00Z"),
+            ]
+        )
+        modes = MODES
+        spans = schedule_archive.season_spans(schedule)
+        _stats, rows = build_stats._aggregate_classified(
+            races,
+            build_stats.classify_races(races, spans),
+            spans=spans,
+            schedule=schedule,
+            modes=modes,
+            generated_at=datetime(2026, 9, 17, 12, tzinfo=UTC),
+        )
+        self.assertEqual(sum(row["scheduled_count"] for row in rows), 3)
+        self.assertEqual(sum(row["started_count"] for row in rows), 2)
+        self.assertEqual({row["season"] for row in rows}, {1})
 
 
 class ScheduleAggregationTests(unittest.TestCase):

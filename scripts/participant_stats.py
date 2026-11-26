@@ -36,7 +36,7 @@ except ImportError:
     import season_ratings
 
 
-PARTICIPANT_SCHEMA_VERSION = 21
+PARTICIPANT_SCHEMA_VERSION = 22
 # At least two days of runway even at one slot an hour, so a page built up to two hours
 # earlier still has races to show.
 UPCOMING_SLOTS = 48
@@ -318,6 +318,8 @@ def build_participant_payload(
     schedule_modes: list[JsonObject] | None = None,
     season_names: Mapping[int, str] | None = None,
     badge_overrides: Sequence[badge_overrides_module.Override] | None = None,
+    preset_slots: list[JsonObject] | None = None,
+    schedule_counted_through: str | None = None,
 ) -> JsonObject:
     """Build the racer leaderboard payload from included race contexts.
 
@@ -340,6 +342,11 @@ def build_participant_payload(
 
     `badge_overrides` are badges given by hand (see `badge_overrides`): each unlocks in
     its racer's last race on its date, and its note is published in `badge_notes`.
+
+    `preset_slots` are the build's per season, mode and preset slot counts, published
+    in `preset_slots` as rows [season, mode index, preset, scheduled, started] with the
+    day the schedule was counted through (`schedule_counted_through`, an ISO time).
+    Without them the rows are empty.
     """
     if not contexts:
         raise ParticipantDataError("No races were supplied for the racer leaderboard")
@@ -586,6 +593,19 @@ def build_participant_payload(
         ),
         "season_names": season_names_module.published_names(season_names or {}),
         "upcoming": upcoming,
+        "preset_slots": {
+            "counted_through": schedule_counted_through,
+            "rows": [
+                [
+                    row["season"],
+                    modes.index(row["mode"]) if row["mode"] in modes else None,
+                    row["preset"],
+                    row["scheduled_count"],
+                    row["started_count"],
+                ]
+                for row in preset_slots or []
+            ],
+        },
         "diagnostics": {
             "race_count": len(races),
             "player_count": len(players),

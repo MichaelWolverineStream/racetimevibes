@@ -127,7 +127,7 @@ Both limits are whole numbers of at least 1. They are caps, never targets: a cat
 - A name matches a mode of any category, ignoring case and treating square brackets and parentheses alike, so `HMG (VT)` matches `HMG [VT]`. An exact match wins.
 - A name that matches no mode is an error that suggests close names. A name that matches several, such as `HMG`, is an error that lists their ids.
 - A name listed twice in one plan category is an error.
-- A mode's category comes from its archetype, mapped as under [Schedule](definitions.md#schedule). An archetype without a category is an error, and so is a category with no slots in the history window.
+- A mode's category comes from its archetype, mapped as under [Schedule](definitions.md#schedule). An archetype the map lacks (none today) is an error, and so is a category with no slots in the history window.
 
 **Events.** Each event has a `name`, an `effect`, a `start` (`HH:MM`), a `timezone` (an IANA name) and `hours`. It also has exactly one of `weekly` (a weekday name, lowercase) and `date` (`YYYY-MM-DD`). Only `avoid` takes `categories`, which may name categories and plan categories. An `avoid` event that lists a category also avoids every plan category with a mode from it. A weekly event is placed in its own timezone, so a UTC event keeps its UTC time across daylight saving.
 
@@ -150,7 +150,7 @@ A ladder race runs for 2 hours from its start, and it is **inside** an event whe
 - **Left out of the history:**
   - slots whose race is archived but excluded for its mode (`ladder_test`);
   - slots pulled from the schedule, which have a null `raceId` and no race.
-- **Errors.** A slot whose mode is not listed is an error. So is a cancelled slot whose archetype has no category.
+- **Errors.** A slot whose mode is not listed is an error. So is a cancelled slot whose archetype the map lacks (none today).
 
 #### Day groups
 

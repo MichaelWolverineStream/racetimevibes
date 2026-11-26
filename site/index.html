@@ -5,22 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#12634a">
     <meta name="description" content="Stats don't lie - but chickens might.">
-    <meta name="app-version" content="81f1b313f421">
+    <meta name="app-version" content="df0d4f8a5bd9">
     <link rel="icon" href="assets/alttpr-ladder.png" type="image/png">
     <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-    <script src="theme.js?v=81f1b313f421"></script>
-    <link rel="stylesheet" href="styles.css?v=81f1b313f421">
-    <link rel="stylesheet" href="ui.css?v=81f1b313f421">
-    <link rel="stylesheet" href="feed.css?v=81f1b313f421">
-    <link rel="stylesheet" href="top-rated.css?v=81f1b313f421">
-    <link rel="stylesheet" href="upcoming.css?v=81f1b313f421">
-    <link rel="stylesheet" href="pool-room.css?v=81f1b313f421">
-    <link rel="stylesheet" href="records.css?v=81f1b313f421">
-    <link rel="stylesheet" href="racer-extras.css?v=81f1b313f421">
-    <link rel="stylesheet" href="share-card.css?v=81f1b313f421">
-    <link rel="stylesheet" href="faceoff.css?v=81f1b313f421">
-    <link rel="stylesheet" href="easter-eggs.css?v=81f1b313f421">
+    <script src="theme.js?v=df0d4f8a5bd9"></script>
+    <link rel="stylesheet" href="styles.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="ui.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="feed.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="top-rated.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="upcoming.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="pool-room.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="records.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="presets.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="racer-extras.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="share-card.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="faceoff.css?v=df0d4f8a5bd9">
+    <link rel="stylesheet" href="easter-eggs.css?v=df0d4f8a5bd9">
     <title>ALTTPR Step Ladder Racer Dashboard</title>
   </head>
   <body>
@@ -86,6 +87,7 @@
           <a id="nav-me" class="section-nav__me" hidden></a>
           <a class="section-nav__link" href="#updates">Latest</a>
           <a class="section-nav__link" href="#leaderboard">Racers</a>
+          <a class="section-nav__link" href="#presets">Presets</a>
           <a class="section-nav__link" href="#pool-room">Pool Room</a>
         </div>
         <div class="section-nav__group section-nav__group--battle" role="group" aria-labelledby="section-nav-battle">
@@ -182,11 +184,53 @@
         </article>
       </section>
 
+      <section id="presets" class="presets-section" aria-labelledby="presets-title" hidden>
+        <article class="chart-panel chart-panel--presets">
+          <header class="panel-heading">
+            <div>
+              <p class="panel-index">03 / Presets</p>
+              <h2 id="presets-title">What we race</h2>
+            </div>
+            <p>Crosskeys again?</p>
+          </header>
+          <div class="leaderboard-controls presets-controls">
+            <div id="presets-mode-toggle" class="mode-toggle" role="group" aria-label="Choose a race mode"></div>
+            <div id="presets-season-control" class="leaderboard-control">
+              <label for="presets-season">Season</label>
+              <select id="presets-season"></select>
+            </div>
+          </div>
+          <div id="presets-spotlights" class="presets-spotlights"></div>
+          <div class="heatmap-heading">
+            <h3 id="presets-board-title">By mode</h3>
+            <p id="presets-board-note"></p>
+          </div>
+          <div id="presets-board" class="table-wrap table-wrap--leaderboard presets-board"></div>
+          <div id="presets-mix-block">
+            <div class="heatmap-heading">
+              <h3 id="presets-mix-title">Mode mix by season</h3>
+              <p>Share of race entries · pick a season</p>
+            </div>
+            <div class="presets-mix-row">
+              <div id="presets-mix" class="presets-mix-host"></div>
+              <div id="presets-you" class="presets-you-host" hidden></div>
+            </div>
+          </div>
+          <div id="presets-cross-block" hidden>
+            <div class="heatmap-heading">
+              <h3 id="presets-cross-title">Where racers also race</h3>
+              <p id="presets-cross-note"></p>
+            </div>
+            <ul id="presets-cross" class="presets-cross"></ul>
+          </div>
+        </article>
+      </section>
+
       <section id="pool-room" class="pool-room-section" aria-labelledby="pool-room-title" hidden>
         <article class="chart-panel chart-panel--pool-room">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">03 / The Pool Room</p>
+              <p class="panel-index">04 / The Pool Room</p>
               <h2 id="pool-room-title">Hall of Fame</h2>
             </div>
             <p>It's going straight to the pool room</p>
@@ -217,7 +261,7 @@
         <article id="primetime" class="chart-panel chart-panel--primetime" style="--i: 0">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">04 / Primetime</p>
+              <p class="panel-index">05 / Primetime</p>
               <h2>Primetime heatmap</h2>
             </div>
             <p>Racers per scheduled race</p>
@@ -233,7 +277,7 @@
         <article id="participation" class="chart-panel chart-panel--participation" style="--i: 1">
           <header class="panel-heading">
             <div>
-              <p class="panel-index">05 / Participation</p>
+              <p class="panel-index">06 / Participation</p>
               <h2>Season health</h2>
             </div>
             <p>By season <span class="bar-key"><span class="heatmap-key heatmap-key--in-progress"></span>Season in progress</span></p>
@@ -426,21 +470,22 @@
     </footer>
 
     <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
-    <script src="app.js?v=81f1b313f421" defer></script>
-    <script src="racer-charts.js?v=81f1b313f421" defer></script>
-    <script src="store.js?v=81f1b313f421" defer></script>
-    <script src="ui.js?v=81f1b313f421" defer></script>
-    <script src="top-rated.js?v=81f1b313f421" defer></script>
-    <script src="upcoming.js?v=81f1b313f421" defer></script>
-    <script src="feed.js?v=81f1b313f421" defer></script>
-    <script src="pool-room.js?v=81f1b313f421" defer></script>
-    <script src="records.js?v=81f1b313f421" defer></script>
-    <script src="racer-extras.js?v=81f1b313f421" defer></script>
-    <script src="share-card.js?v=81f1b313f421" defer></script>
-    <script src="faceoff.js?v=81f1b313f421" defer></script>
-    <script src="easter-eggs.js?v=81f1b313f421" defer></script>
-    <script src="leaderboard.js?v=81f1b313f421" defer></script>
-    <script src="version-check.js?v=81f1b313f421" defer></script>
-    <script src="visitor-counter.js?v=81f1b313f421" defer></script>
+    <script src="app.js?v=df0d4f8a5bd9" defer></script>
+    <script src="racer-charts.js?v=df0d4f8a5bd9" defer></script>
+    <script src="store.js?v=df0d4f8a5bd9" defer></script>
+    <script src="ui.js?v=df0d4f8a5bd9" defer></script>
+    <script src="top-rated.js?v=df0d4f8a5bd9" defer></script>
+    <script src="upcoming.js?v=df0d4f8a5bd9" defer></script>
+    <script src="feed.js?v=df0d4f8a5bd9" defer></script>
+    <script src="pool-room.js?v=df0d4f8a5bd9" defer></script>
+    <script src="records.js?v=df0d4f8a5bd9" defer></script>
+    <script src="presets.js?v=df0d4f8a5bd9" defer></script>
+    <script src="racer-extras.js?v=df0d4f8a5bd9" defer></script>
+    <script src="share-card.js?v=df0d4f8a5bd9" defer></script>
+    <script src="faceoff.js?v=df0d4f8a5bd9" defer></script>
+    <script src="easter-eggs.js?v=df0d4f8a5bd9" defer></script>
+    <script src="leaderboard.js?v=df0d4f8a5bd9" defer></script>
+    <script src="version-check.js?v=df0d4f8a5bd9" defer></script>
+    <script src="visitor-counter.js?v=df0d4f8a5bd9" defer></script>
   </body>
 </html>

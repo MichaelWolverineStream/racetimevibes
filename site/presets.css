@@ -1,0 +1,419 @@
+/* 03 / Presets */
+
+/* A Racing section, so it takes the gold top rule of Racers and the Pool Room. */
+.chart-panel--presets {
+  border-top-color: var(--gold);
+}
+
+/* The mode toggle on the left, the season select on the right, both on the row's bottom edge. */
+.presets-controls {
+  padding-top: 16px;
+}
+
+.presets-controls .leaderboard-control {
+  margin-left: auto;
+}
+
+/* Spotlights: tiles in the top-rated banner's language, a coloured left edge on the paper ground
+   and a ringed avatar. Each crosses one sheen on arrival. */
+.presets-spotlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 4px 24px 22px;
+}
+
+.presets-spot {
+  --spot-color: var(--gold);
+  min-width: 0;
+  padding: 12px 14px 12px 12px;
+  border-left: 3px solid var(--spot-color);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(105deg, transparent 40%, color-mix(in srgb, var(--shine-color) 75%, transparent) 50%, transparent 60%) no-repeat -100% 0 / 250% 100%,
+    var(--paper);
+  animation: presets-shine 1200ms 700ms ease-out both;
+}
+
+.presets-spot:nth-child(2) {
+  animation-delay: 820ms;
+}
+
+.presets-spot:nth-child(3) {
+  animation-delay: 940ms;
+}
+
+@keyframes presets-shine {
+  from {
+    background-position: 200% 0, 0 0;
+  }
+  to {
+    background-position: -100% 0, 0 0;
+  }
+}
+
+.presets-spot__label {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.presets-spot__racer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.presets-spot__racer > .ui-avatar,
+.presets-faces .ui-avatar {
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--spot-color);
+}
+
+.presets-spot__racer > .ui-avatar[data-me],
+.presets-faces .ui-avatar[data-me] {
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--me);
+}
+
+.presets-spot__text {
+  min-width: 0;
+}
+
+.presets-spot__text .racer-link {
+  display: block;
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: var(--text-lg);
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presets-spot__racer > .ui-avatar[data-me] + .presets-spot__text .racer-link {
+  font-weight: 800;
+}
+
+.presets-spot__caption,
+.presets-spot__empty {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.presets-spot__caption:focus-visible,
+.presets-faces__more:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.presets-spot__time {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+/* A mode as the headline: the name in the display face, after its dot. */
+.presets-spot__mode-name {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 700 var(--text-lg)/1.15 var(--display);
+  cursor: pointer;
+}
+
+.presets-spot__mode-name .ui-mode-dot {
+  width: 12px;
+  height: 12px;
+}
+
+.presets-spot__mode-name:hover span {
+  color: var(--accent);
+}
+
+.presets-spot__mode-name:focus-visible,
+.presets-mode-link:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.presets-faces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 2px 4px;
+}
+
+.presets-faces__face {
+  display: inline-flex;
+  border-radius: 4px;
+  transition: transform 140ms ease;
+}
+
+.presets-faces__face:hover {
+  transform: translateY(-2px);
+}
+
+.presets-faces__more {
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 800;
+}
+
+.presets-faces__more[data-me] {
+  border-color: var(--me);
+  color: var(--ink);
+}
+
+/* The board */
+
+/* The never-started key: the hatch the bars use, in the muted ink. */
+.presets-key {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(135deg, var(--muted) 0 1.5px, transparent 1.5px 4.5px);
+  box-shadow: inset 0 0 0 1px var(--muted);
+  vertical-align: -1px;
+}
+
+/* The pool rows of a racer mark the whole row, but only the racer it names goes bold. */
+.presets-board tbody tr[data-me] .racer-link {
+  font-weight: inherit;
+}
+
+.presets-board .presets-racer[data-me] .racer-link {
+  font-weight: 800;
+}
+
+.presets-mode-link {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 700 var(--text-sm)/1.2 var(--body);
+  cursor: pointer;
+}
+
+.presets-mode-link:hover span {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.presets-muted,
+.presets-dash {
+  color: var(--muted);
+}
+
+.presets-dash:focus-visible,
+.presets-meter:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* A bar against its column's largest value, then the value. The track takes the cell's width, so the bars
+   read as one chart across the table. ::before is the solid share; the rest of the bar is hatched, so a
+   cancelled race never relies on colour alone. */
+.presets-meter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.presets-meter__track {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 96px;
+  height: 12px;
+}
+
+.presets-meter__bar {
+  position: relative;
+  display: block;
+  width: var(--share);
+  min-width: 2px;
+  height: 100%;
+  border-radius: 2px;
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--bar-color) 70%, transparent) 0 1.5px, transparent 1.5px 4.5px);
+  box-shadow: inset 0 0 0 1px var(--bar-color);
+}
+
+.presets-meter__bar::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--fill);
+  border-radius: 2px;
+  background: var(--bar-color);
+  content: "";
+}
+
+.presets-meter__value {
+  min-width: 4.6ch;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* The time, then the racer who set it, centred on one line. */
+.presets-best {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.presets-racer {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.presets-racer[data-me] .ui-avatar {
+  box-shadow: 0 0 0 2px var(--me);
+}
+
+/* Mode mix by season */
+
+.presets-mix-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 24px 22px;
+}
+
+.presets-mix-host {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 230px;
+  overflow-x: auto;
+}
+
+/* Only while a racer is set ("This is me"), set apart from the seasons by a dashed rule. */
+.presets-you-host {
+  flex: none;
+  padding-left: 10px;
+  border-left: 1px dashed var(--line);
+}
+
+.presets-mix__column {
+  cursor: pointer;
+}
+
+.presets-mix__segment {
+  stroke: var(--panel);
+  stroke-width: 1;
+}
+
+.presets-mix__pick {
+  fill: none;
+  stroke: transparent;
+}
+
+.presets-mix__column[aria-pressed="true"] .presets-mix__pick {
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+
+.presets-mix__column[aria-pressed="true"] .presets-mix__label {
+  fill: var(--ink);
+  font-weight: 800;
+}
+
+.presets-mix__you {
+  fill: var(--ink);
+  font-weight: 800;
+}
+
+/* Crossover */
+
+.presets-cross {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 40px;
+  margin: 0;
+  padding: 6px 24px 24px;
+  list-style: none;
+}
+
+.presets-cross__row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--grid);
+  font-size: var(--text-sm);
+}
+
+/* The rows you are among: the recipe's wash and bar. */
+.presets-cross__row[data-me] {
+  background: var(--me-wash);
+  box-shadow: inset 3px 0 0 var(--me);
+}
+
+.presets-cross__name {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  font-weight: 700;
+}
+
+.presets-cross__meter {
+  flex: 0 0 55%;
+}
+
+.presets-cross__row--only .presets-cross__name {
+  color: var(--muted);
+}
+
+.presets-cross__empty {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 980px) {
+  .presets-controls .leaderboard-control {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .presets-spotlights,
+  .presets-cross {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 16px;
+  }
+
+  .presets-mix-row {
+    padding-inline: 8px;
+  }
+
+  .presets-meter__track {
+    min-width: 64px;
+  }
+}
+
+@media (hover: none) {
+  .presets-faces__face:hover {
+    transform: none;
+  }
+}

@@ -1,4 +1,4 @@
-const PARTICIPANT_SCHEMA_VERSION = 21;
+const PARTICIPANT_SCHEMA_VERSION = 22;
 // Must match BIO_MAX_LENGTH in scripts/featured.py, in code points as Python counts them.
 const FEATURED_BIO_MAX_LENGTH = 160;
 // Medal names, best first. Must match MEDALS in scripts/highlights.py and the .medal-count--* and .rank-badge--* classes in styles.css.
@@ -235,6 +235,29 @@ function validateParticipants(data) {
       }
     });
   });
+  // preset_slots rows: [season, mode, preset, scheduled, started]; see scripts/participant_stats.py.
+  // A row's season need not be in `seasons`, which lists only seasons with a race: a new season's first
+  // slots can be cancelled before anyone races in it. Such rows count under All time only.
+  if (
+    data.preset_slots === null ||
+    typeof data.preset_slots !== "object" ||
+    !(data.preset_slots.counted_through === null || typeof data.preset_slots.counted_through === "string") ||
+    !Array.isArray(data.preset_slots.rows) ||
+    !data.preset_slots.rows.every((row) => (
+      Array.isArray(row) &&
+      row.length === 5 &&
+      (row[0] === null || (Number.isInteger(row[0]) && row[0] > 0)) &&
+      (row[1] === null || (Number.isInteger(row[1]) && row[1] >= 0 && row[1] < data.modes.length)) &&
+      (row[2] === null || typeof row[2] === "string") &&
+      Number.isInteger(row[3]) &&
+      row[3] >= 0 &&
+      Number.isInteger(row[4]) &&
+      row[4] >= 0 &&
+      row[4] <= row[3]
+    ))
+  ) {
+    throw new Error("Racer data contains an invalid preset slot.");
+  }
   const modes = data.leaderboards.map((board) => board.mode);
   if (modes[0] !== ALL_MODES) {
     throw new Error("Racer data is missing the combined leaderboard.");
@@ -1891,6 +1914,9 @@ async function loadParticipants() {
     }
     if (typeof Feed !== "undefined") {
       runFeature("Feed.init", () => Feed.init());
+    }
+    if (typeof Presets !== "undefined") {
+      runFeature("Presets.init", () => Presets.init());
     }
     if (typeof PoolRoom !== "undefined") {
       runFeature("PoolRoom.init", () => PoolRoom.init());

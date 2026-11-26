@@ -46,7 +46,11 @@ These terms use the [ladder schedule mirror](archive.md#ladder-schedule-mirror).
 - **Join:** a slot becomes an included race in one of two ways, tried in this order.
   1. The slot's `raceId` matches the number in an included race's `getseed.php?race=<n>`.
   2. Failing that, it matches an included race without such a number. The race must be in the category of the slot mode's archetype and start between 5 minutes before and 30 minutes after the slot (`JOIN_EARLY` and `JOIN_LATE`). Each such race matches once.
-- **Category of an archetype:** `ARCHETYPE_CATEGORIES` maps an archetype to a race mode: 1 simple, 2 entrance, 3 inverted, 4 keys, 5 glitched, 6 fun, 7 mystery, 9 spoiler. **Archetype 8** (modes 20 to 24) has no category, so its slots join only by seed. That is not an error in the build.
+- **Category of an archetype:** `ARCHETYPE_CATEGORIES` maps an archetype to a race mode: 1 simple, 2 entrance, 3 inverted, 4 keys, 5 glitched, 6 fun, 7 mystery, 8 entrance, 9 spoiler. **Archetype 8** (modes 20 to 24, the `Crosskeys_*` presets) never became a race, so the map places it by its presets. An archetype the map lacks would have no category, and its slots would join only by seed.
+- **Preset of a slot:** the mode and preset a slot is counted under in [`preset_slots`](datasets.md#season-fields). `build_stats.slot_presets` gives each joined slot one.
+  1. A slot that started takes its race's mode and preset.
+  2. A slot that never started takes those of the nearest started slot with the same schedule mode id: the smaller gap between start times wins, the earlier slot on a tie. All joined slots are searched, not only the counted ones, so a name never depends on the counted-through cut. The schedule's names differ from the race presets and change over time, so a cancelled slot is named as its neighbours were.
+  3. With no started slot of that mode id, its archetype's category (`unknown` when the archetype has none) and its schedule name normalized like a race preset: brackets as parentheses, whitespace collapsed and the Grab Bag option list dropped (`build_stats.normalize_preset`).
 - **Slot outcomes:**
   - A slot whose `raceId` belongs to a race excluded for its mode (`ladder_test`) is dropped.
   - A slot with a null `raceId` and no race is **pulled**: it was removed from the schedule.

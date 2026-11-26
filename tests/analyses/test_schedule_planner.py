@@ -444,7 +444,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual([c.name for c in chosen], ["a", "b"])
 
     def test_an_archetype_without_a_category_is_an_error(self):
-        self.rejected({"odd": {"modes": ["Odd One"]}}, "archetype 8")
+        self.rejected({"odd": {"modes": ["Odd One"]}}, f"archetype {fx.UNMAPPED_ARCHETYPE}")
 
     def test_a_category_with_no_slots_in_the_history_window_is_an_error(self):
         self.rejected({"fun": {"modes": ["F One"]}}, "fun", "no slots")

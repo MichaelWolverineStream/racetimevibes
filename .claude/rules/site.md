@@ -16,7 +16,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
 
 **Load order and module shape**
 - Use another script's globals only inside functions that run later (render, init, handlers), never at a file's or an IIFE body's top level. If `const X = (() => …)()` throws, even `typeof X` then throws, and every `typeof` guard in `leaderboard.js` that names `X` would take the page down with it (for example `typeof Feed` in `loadParticipants`).
-- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Upcoming`, `PoolRoom`, `Records`, `RacerExtras`, `ShareCard`, `FaceOff`, `EasterEggs`, `Store`, `Following`, `Me`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
+- A feature with an API is `const Name = (() => { …; return { … }; })();` (`UI`, `Feed`, `TopRated`, `Upcoming`, `PoolRoom`, `Records`, `Presets`, `RacerExtras`, `ShareCard`, `FaceOff`, `EasterEggs`, `Store`, `Following`, `Me`). A self-running script is a bare `(() => { … })();` (`version-check.js`, `visitor-counter.js`).
 - Declare at top level only helpers meant to be shared. `tests/test_site_globals.py` fails if two scripts declare the same top-level name.
 
 **Shared helpers: reuse, don't rebuild**
@@ -31,7 +31,7 @@ Classic `<script defer>` files sharing one global scope, loaded in `index.html` 
   - `currentSeason()` returns the newest season or null. A season is a number; `null` means all time. `ratingFor`, `ratingRanks`, `ratingRankDeltas` and the other rank helpers take an optional `season`, so callers passing nothing stay all-time. Predictions (`hasRating`, `winChance`), the racer page's rating chart and the player card never pass one. The racer page's rating strip passes the current season unless its toggle is on All time.
   - ▲/▼ is for rank movement only. A points change shows as +N, −N or ±0.
 - `ui.js` exposes `UI`: `avatarUrl`, `avatar`, `monogramLetter`, `monogramTint`, `speech`, `tag`, `modeDot`, `crown`, `followStar`, `markRacers`, `syncMarks`, `nextBadge`, `time`, `badge`, `badgePanel`, `badgeShare`, `badgeRarity`, `modalPanel`, `dialogBox`, `comments`, `chestPace`, `relativeDay`.
-- The private `element(tag, className, text)` copies in `ui.js`, `top-rated.js`, `upcoming.js`, `feed.js`, `pool-room.js`, `records.js`, `racer-extras.js`, `share-card.js` and `faceoff.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
+- The private `element(tag, className, text)` copies in `ui.js`, `top-rated.js`, `upcoming.js`, `feed.js`, `pool-room.js`, `records.js`, `presets.js`, `racer-extras.js`, `share-card.js` and `faceoff.js` are deliberate: sharing one would need a load-time dependency or about 140 renamed call sites.
 
 **Modals and events**
 - Modals use `holdModal(close)` in `ui.js`: it makes `main` and `footer` inert, closes on Escape and restores focus. A new modal box starts from `UI.modalPanel({ className, labelledBy, onClose })`, which returns `{ panel, close }`.

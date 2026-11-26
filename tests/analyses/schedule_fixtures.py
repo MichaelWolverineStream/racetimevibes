@@ -12,6 +12,8 @@ from scripts import schedule_planner as sp
 EASTERN = ZoneInfo("America/New_York")
 GENERATED_AT = datetime(2026, 11, 3, tzinfo=UTC)
 NEWEST = datetime(2026, 6, 1, 12, tzinfo=UTC)
+# An archetype alttpr.racing lists but the map names no category for.
+UNMAPPED_ARCHETYPE = max(sp.schedule_archive.ARCHETYPE_CATEGORIES) + 1
 
 CATEGORIES = ("simple", "entrance", "keys", "mystery")
 MODES = [
@@ -27,7 +29,7 @@ MODES = [
     {"id": 71, "archetype": 7, "name": "Myst A", "slug": "ma", "active": True, "grabbag": False, "schedule_weight": 1},
     {"id": 72, "archetype": 7, "name": "Myst B", "slug": "mb", "active": True, "grabbag": False, "schedule_weight": 1},
     {"id": 15, "archetype": 1, "name": "<i>Chaos&Co", "slug": "chaos", "active": True, "grabbag": False, "schedule_weight": 1},
-    {"id": 80, "archetype": 8, "name": "Odd", "slug": "odd", "active": True, "grabbag": False, "schedule_weight": 1},
+    {"id": 80, "archetype": UNMAPPED_ARCHETYPE, "name": "Odd", "slug": "odd", "active": True, "grabbag": False, "schedule_weight": 1},
 ]
 
 
@@ -346,7 +348,7 @@ HAND_MODES = [
     api_mode(71, 7, "M One"),
     # A category the history never saw, and an archetype with no category.
     api_mode(61, 6, "F One"),
-    api_mode(81, 8, "Odd One"),
+    api_mode(81, UNMAPPED_ARCHETYPE, "Odd One"),
 ]
 HAND_MODEL = sp.Model(
     block={name: [1.0] * 6 for name in ("simple", "entrance", "keys", "glitched", "mystery")},

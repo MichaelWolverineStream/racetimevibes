@@ -217,11 +217,12 @@ class LoaderTests(ScheduleTestCase):
             schedule_archive.load_modes(self.archive)
 
 
+UNMAPPED_ARCHETYPE = max(schedule_archive.ARCHETYPE_CATEGORIES) + 1
 JOIN_AT = datetime(2026, 6, 1, 18, 0, tzinfo=UTC)
 JOIN_MODES = [
     {"id": 11, "archetype": 1, "name": "Simple", "active": True},
     {"id": 41, "archetype": 4, "name": "Keys", "active": True},
-    {"id": 80, "archetype": 8, "name": "Odd", "active": True},
+    {"id": 80, "archetype": UNMAPPED_ARCHETYPE, "name": "Odd", "active": True},
 ]
 
 
@@ -318,7 +319,7 @@ class JoinTests(unittest.TestCase):
         )
         self.assertIsNone(unlisted.mode)
         self.assertIsNone(unlisted.category)
-        self.assertEqual(odd.mode["archetype"], 8)
+        self.assertEqual(odd.mode["archetype"], UNMAPPED_ARCHETYPE)
         self.assertIsNone(odd.category)
         self.assertIs(odd.race, seeded)
 
